@@ -28,20 +28,16 @@ import Photos
     // MARK: Public properties
     public weak var imagePickerDelegate: ImagePickerControllerDelegate?
     public var settings: Settings = Settings()
-    public var doneButton: UIBarButtonItem = UIBarButtonItem(title: "", style: .done, target: nil, action: nil)
-    public var cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
+    public var doneButton: UIBarButtonItem = UIBarButtonItem(title: "완료", style: .done, target: nil, action: nil)
+    public var cancelButton: UIBarButtonItem = UIBarButtonItem(title: "취소", style: .done, target: nil, action: nil)
     public var albumButton: UIButton = UIButton(type: .custom)
-    public var selectedAssets: [PHAsset] {
-        get {
-            return assetStore.assets
-        }
-    }
+    public var selectedAssets: [PHAsset] { get { return assetStore.assets } }
 
     // Note this trick to get the apple localization no longer works.
     // Figure out why. Until then, expose the variable for users to set to whatever they want it localized to
     // TODO: Fix this ^^
     /// Title to use for button
-    public var doneButtonTitle = Bundle(identifier: "com.apple.UIKit")?.localizedString(forKey: "Done", value: "Done", table: "") ?? "Done"
+    public var doneButtonTitle = Bundle(identifier: "com.apple.UIKit")?.localizedString(forKey: "완료", value: "완료", table: "") ?? "완료"
 
     // MARK: Internal properties
     var assetStore: AssetStore
@@ -134,10 +130,10 @@ import Photos
         updatedDoneButton()
         updateAlbumButton()
 
-        // We need to have some color to be able to match with the drop down
-        if navigationBar.barTintColor == nil {
-            navigationBar.barTintColor = .systemBackgroundColor
-        }
+//        // We need to have some color to be able to match with the drop down
+//        if navigationBar.barTintColor == nil {
+//            navigationBar.barTintColor = .systemBackgroundColor
+//        }
 
         if let firstAlbum = albums.first {
             select(album: firstAlbum)
@@ -151,8 +147,7 @@ import Photos
     }
     
     func updatedDoneButton() {
-        doneButton.title = assetStore.count > 0 ? doneButtonTitle + " (\(assetStore.count))" : doneButtonTitle
-      
+        doneButton.title = assetStore.count > 0 ? "완료 \(assetStore.count)" : "완료"
         doneButton.isEnabled = assetStore.count >= settings.selection.min
     }
 

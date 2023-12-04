@@ -59,7 +59,7 @@ final class AlbumsTableViewDataSource : NSObject, UITableViewDataSource {
         let fetchOptions = settings.fetch.assets.options.copy() as! PHFetchOptions
         fetchOptions.fetchLimit = 1
         
-        let imageSize = CGSize(width: 84, height: 84).resize(by: scale)
+        let imageSize = CGSize(width: 60, height: 60).resize(by: scale)
         let imageContentMode: PHImageContentMode = .aspectFill
         if let asset = PHAsset.fetchAssets(in: album, options: fetchOptions).firstObject {
             imageManager.requestImage(for: asset, targetSize: imageSize, contentMode: imageContentMode, options: settings.fetch.preview.photoOptions) { (image, _) in
@@ -67,6 +67,8 @@ final class AlbumsTableViewDataSource : NSObject, UITableViewDataSource {
                 cell.albumImageView.image = image
             }
         }
+        cell.albumImageView.layer.cornerRadius = 10
+        cell.albumImageView.clipsToBounds = true
         
         return cell
     }

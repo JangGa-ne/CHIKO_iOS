@@ -48,7 +48,6 @@ class AlbumsViewController: UIViewController {
         tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 100
         tableView.separatorStyle = .none
         tableView.sectionHeaderHeight = .leastNormalMagnitude
         tableView.sectionFooterHeight = .leastNormalMagnitude
@@ -57,7 +56,7 @@ class AlbumsViewController: UIViewController {
         tableView.register(AlbumCell.self, forCellReuseIdentifier: AlbumCell.identifier)
         tableView.dataSource = dataSource
         tableView.delegate = self
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = settings.theme.backgroundColor
         view.addSubview(tableView)
 
         let lineHeight: CGFloat = 0.5
