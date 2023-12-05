@@ -18,6 +18,7 @@ class WhGoodsUploadVC: UIViewController {
     var ItemArray: [(file_name: String, file_data: Data, file_size: Int)] = []
     
     var option_key: String = ""
+    var notice_sale_price: Bool = true
     var ColorArray: [(option_name: String, option_color: String)] = []
     var SizeArray: [(option_name: String, option_select: Bool)] = []
     var MaterialArray: [(option_name: String, option_percent: String)] = []
@@ -26,17 +27,20 @@ class WhGoodsUploadVC: UIViewController {
     var OptionPriceArray: [(color_name: String, size_price: [(size: String, price: Int)])] = []
     var option_price: Bool = false
     
-    var MaterialInfoArray: [String: Any] = [:]
-    var WashingInfoArray: [String] = []
     var StyleArray: [String] = []
     var style_row: Int? = nil
     var ContentsArray: [(file_name: String, file_data: Data, file_size: Int)] = []
+    var MaterialInfoArray: [String: Any] = [:]
+    var WashingInfoArray: [String] = []
+    
+    var OtherTypeArray: [String: Any] = ["build": "편물(니트/다이마루)", "manufacture_country": "대한민국", "disclosure": "전체 공개"]
     
     var collectionViewContentOffsets: [Int: CGFloat] = [:]
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var upload_btn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +59,8 @@ class WhGoodsUploadVC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
+        
+        upload_btn.addTarget(self, action: #selector(upload_btn(_:)), for: .touchUpInside)
     }
     
     func loadingData(all: Bool = false, index: Int = 0) {
@@ -81,6 +87,17 @@ class WhGoodsUploadVC: UIViewController {
                     SizeArray.filter { $0.option_select }.forEach { size_price.append((size: $0.option_name, price: GoodsObject.item_sale_price)) }
                     return (color_name: data.option_name, size_price: size_price)
                 }
+                OptionPriceArray.forEach { (color_name: String, size_price: [(size: String, price: Int)]) in
+                    size_price.forEach { (size: String, price: Int) in
+                        let itemOptionValue = GoodsOptionData()
+                        itemOptionValue.color = color_name
+                        itemOptionValue.price = price
+                        itemOptionValue.size = size
+                        itemOptionValue.sold_out = false
+                        /// 데이터 추가
+                        data.item_option.append(itemOptionValue)
+                    }
+                }
             }
         }
         if all || index == 2 {
@@ -94,12 +111,33 @@ class WhGoodsUploadVC: UIViewController {
                 }
             }
         }
-        if all || index == 3 {
-            MaterialInfoArray.removeAll()
-            WashingInfoArray.removeAll()
-        }
     }
     
+    @objc func upload_btn(_ sender: UIButton) {
+        
+        view.endEditing(true)
+        
+        let data = GoodsObject
+        print(data)
+        if ItemArray.count == 0 {
+            customAlert(message: "상품 이미지를 첨부해 주세요.", time: 1)
+        } else if data.item_category_name.count == 0 {
+            customAlert(message: "카테고리를 선택해 주세요.", time: 1)
+        } else if data.item_name == "" {
+            customAlert(message: "상품명을 입력해 주세요.", time: 1)
+        } else if data.item_price == 0 && data.item_sale_price == 0 || !notice_sale_price {
+            customAlert(message: "단가를 입력해 주세요.", time: 1)
+        } else if data.item_option.count == 0 {
+            customAlert(message: "색상∙사이즈를 설정해 주세요.", time: 1)
+        } else {
+            
+//            customLoadingIndicator(animated: true)
+            
+            
+            
+        }
+    }
+     
     override func viewWillAppear(_ animated: Bool) {
         super .viewWillAppear(animated)
         
@@ -129,7 +167,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let cell = cell as! WhGoodsUploadTC
+        guard let cell = cell as? WhGoodsUploadTC else { return }
         
         if indexPath.section == 0 {
             collectionViewContentOffsets[0] = cell.itemCollectionView.contentOffset.x
@@ -203,7 +241,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             } else {
                 cell.itemSalePrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .lightGray)
             }
-            cell.noticeItemSalePrice_label.isHidden = true
+            cell.noticeItemSalePrice_label.isHidden = notice_sale_price
             cell.sale_btn.isSelected = item_sale
             cell.sale_btn.tag = 0; cell.sale_btn.addTarget(cell, action: #selector(cell.select_btn(_:)), for: .touchUpInside)
             
@@ -252,8 +290,9 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.materialCollectionView.contentOffset.x = max(cell.materialCollectionView.contentSize.width - cell.materialCollectionView.bounds.width, 0)
             cell.material_btn.tag = 2; cell.material_btn.addTarget(cell, action: #selector(cell.category_btn(_:)), for: .touchUpInside)
             
-            cell.materialWashing_img_s.forEach { img in img.image = UIImage(named: "check_off") }
-            cell.materialWashing_label_s.forEach { label in label.textColor = .black.withAlphaComponent(0.3) }
+            cell.materialInfo_sv.isHidden = !option_key.contains("의류")
+            cell.materialWashing_imgs.forEach { img in img.image = UIImage(named: "check_off") }
+            cell.materialWashing_labels.forEach { label in label.textColor = .black.withAlphaComponent(0.3) }
             
             let material: [String: [String: Int]] = ["thickness": ["두꺼움": 0, "보통": 1, "얇음": 2], "see_through": ["있음": 3, "보통": 4, "없음": 5], "flexibility": ["좋음": 6, "보통": 7, "없음": 8], "lining": ["있음": 9, "없음": 10, "기모안감": 11]]
             MaterialInfoArray.forEach { (key: String, value: Any) in
@@ -274,9 +313,20 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
                     washing_btn.tag = tag; cell.materialWashing_btn(washing_btn)
                 }
             }
-            cell.materialWashing_btn_s.forEach { btn in
-                btn.addTarget(cell, action: #selector(cell.materialWashing_btn(_:)), for: .touchUpInside)
+            cell.materialWashing_btns.forEach { btn in btn.addTarget(cell, action: #selector(cell.materialWashing_btn(_:)), for: .touchUpInside) }
+            
+            let other_type: [String: [String: Int]] = ["build": ["편물(니트/다이마루)": 0, "직물(우븐)": 1], "manufacture_country": ["대한민국": 2, "대한민국외 국가": 3], "disclosure": ["전체 공개": 4, "거래처만 공개": 5]]
+            OtherTypeArray.forEach { (key: String, value: Any) in
+                
+                let value = value as? String ?? ""
+                let otherType_btn = UIButton()
+                
+                if let map = other_type[key], let tag = map[value] {
+                    otherType_btn.tag = tag; cell.otherType_btn(otherType_btn)
+                }
             }
+            
+            cell.otherType_btns.forEach { btn in btn.addTarget(cell, action: #selector(cell.otherType_btn(_:)), for: .touchUpInside) }
             
             return cell
         } else {

@@ -189,7 +189,7 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 1 {
             
             let data = BasketArray[indexPath.row]
-            let cell = cell as! ReBasketTC
+            guard let cell = cell as? ReBasketTC else { return }
             
             setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
         }

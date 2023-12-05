@@ -56,7 +56,7 @@ extension ReStoreVisitTC: UICollectionViewDelegate, UICollectionViewDataSource, 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
         let data = GoodsArray[indexPath.row]
-        let cell = cell as! ReStoreVisitCC
+        guard let cell = cell as? ReStoreVisitCC else { return }
         
         setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
     }
@@ -146,7 +146,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
         if indexPath.row == 0 {
             
             let data = VisitObject.StoreObject
-            let cell = cell as! ReStoreVisitTC
+            guard let cell = cell as? ReStoreVisitTC else { return }
             
             setNuke(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
         }

@@ -79,7 +79,7 @@ extension ChoiceStoreVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         let data = StoreArray[indexPath.row]
-        let cell = cell as! ChoiceStoreTC
+        guard let cell = cell as? ChoiceStoreTC else { return }
         
         setNuke(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
     }

@@ -94,7 +94,7 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         let data = search_StoreArray[indexPath.row]
-        let cell = cell as! SearchStoreTC
+        guard let cell = cell as? SearchStoreTC else { return }
         
         setNuke(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
     }

@@ -273,7 +273,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         let data = GoodsObject
-        let cell = cell as! ReGoodsDetailTC
+        guard let cell = cell as? ReGoodsDetailTC else { return }
         
         if indexPath.section == 0 {
             setNuke(imageView: cell.store_img, imageUrl: store_mainphoto_img, cornerRadius: 18)

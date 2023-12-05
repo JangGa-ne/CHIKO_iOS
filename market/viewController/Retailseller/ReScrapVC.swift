@@ -75,7 +75,7 @@ extension ReScrapVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         let data = ScrapArray[indexPath.row]
-        let cell = cell as! ReScrapTC
+        guard let cell = cell as? ReScrapTC else { return }
         
         setNuke(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
     }

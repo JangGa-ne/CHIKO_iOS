@@ -111,7 +111,7 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         let data = GoodsArray[indexPath.row]
-        let cell = cell as! ReGoodsTC
+        guard let cell = cell as? ReGoodsTC else { return }
         
         setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
     }

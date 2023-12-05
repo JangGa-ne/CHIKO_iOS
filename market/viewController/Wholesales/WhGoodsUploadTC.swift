@@ -81,9 +81,14 @@ class WhGoodsUploadTC: UITableViewCell {
     @IBOutlet weak var materialCollectionView: UICollectionView!
     @IBOutlet weak var material_btn: UIButton!
     
-    @IBOutlet var materialWashing_img_s: [UIImageView]!
-    @IBOutlet var materialWashing_label_s: [UILabel]!
-    @IBOutlet var materialWashing_btn_s: [UIButton]!
+    @IBOutlet weak var materialInfo_sv: UIStackView!
+    @IBOutlet var materialWashing_imgs: [UIImageView]!
+    @IBOutlet var materialWashing_labels: [UILabel]!
+    @IBOutlet var materialWashing_btns: [UIButton]!
+    
+    @IBOutlet var otherType_imgs: [UIImageView]!
+    @IBOutlet var otherType_labels: [UILabel]!
+    @IBOutlet var otherType_btns: [UIButton]!
     
     func viewDidLoad() {
         
@@ -230,26 +235,30 @@ class WhGoodsUploadTC: UITableViewCell {
         let item_price = Int(itemPrice_tf.text!.replacingOccurrences(of: ",", with: "")) ?? 0
         let item_sale_price = Int(itemSalePrice_tf.text!.replacingOccurrences(of: ",", with: "")) ?? 0
         
-        if (sender == itemPrice_tf) {
+        if sender == itemPrice_tf {
             
-            if (100 > item_price) {
+            if 100 > item_price {
                 itemPrice_tf.text = "100"
                 DispatchQueue.main.async { self.itemPrice_tf.resignFirstResponder(); self.itemSalePrice_tf.resignFirstResponder() }
                 WhGoodsUploadVCdelegate.customAlert(message: "가격(원가)을 정확히 입력해 주세요.\n(최소 단위: 100원)", time: 2) { self.itemPrice_tf.becomeFirstResponder() }
-            } else if (WhGoodsUploadVCdelegate.item_sale && item_price <= item_sale_price) {
-                noticeItemSalePrice_label.isHidden = false; noticeItemSalePrice_label.text = "할인가는 원가보다 크거나 같을 수 없습니다."
-            } else if (WhGoodsUploadVCdelegate.item_sale && item_sale_price > 0 && Int(item_price/item_sale_price) > 10) {
-                noticeItemSalePrice_label.isHidden = false; noticeItemSalePrice_label.text = "할인가는 원가의 10배를 넘을 수 없습니다."
+            } else if item_price <= item_sale_price {
+                WhGoodsUploadVCdelegate.notice_sale_price = false; noticeItemSalePrice_label.text = "할인가는 원가보다 크거나 같을 수 없습니다."
+            } else if item_sale_price > 0 && Int(item_price/item_sale_price) > 10 {
+                WhGoodsUploadVCdelegate.notice_sale_price = false; noticeItemSalePrice_label.text = "할인가는 원가의 10배를 넘을 수 없습니다."
+            } else {
+                WhGoodsUploadVCdelegate.notice_sale_price = true
             }
             
-        } else if (sender == itemSalePrice_tf) { noticeItemSalePrice_label.isHidden = true
+        } else if sender == itemSalePrice_tf {
             
-            if (100 > item_sale_price) {
-                noticeItemSalePrice_label.isHidden = false; noticeItemSalePrice_label.text = "할인가를 정확히 입력해 주세요.(최소 단위: 100원)"
-            } else if (item_price/item_sale_price > 10) {
-                noticeItemSalePrice_label.isHidden = false; noticeItemSalePrice_label.text = "할인가는 원가의 10배를 넘을 수 없습니다."
-            } else if (item_price <= item_sale_price) {
-                noticeItemSalePrice_label.isHidden = false; noticeItemSalePrice_label.text = "할인가는 원가보다 크거나 같을 수 없습니다."
+            if 100 > item_sale_price {
+                WhGoodsUploadVCdelegate.notice_sale_price = false; noticeItemSalePrice_label.text = "할인가를 정확히 입력해 주세요.(최소 단위: 100원)"
+            } else if WhGoodsUploadVCdelegate.item_sale && item_price/item_sale_price > 10 {
+                WhGoodsUploadVCdelegate.notice_sale_price = false; noticeItemSalePrice_label.text = "할인가는 원가의 10배를 넘을 수 없습니다."
+            } else if WhGoodsUploadVCdelegate.item_sale && item_price <= item_sale_price {
+                WhGoodsUploadVCdelegate.notice_sale_price = false; noticeItemSalePrice_label.text = "할인가는 원가보다 크거나 같을 수 없습니다."
+            } else {
+                WhGoodsUploadVCdelegate.notice_sale_price = true
             }
         }
         
@@ -308,8 +317,10 @@ class WhGoodsUploadTC: UITableViewCell {
     
     @objc func materialWashing_btn(_ sender: UIButton) {
         
-        WhGoodsUploadVCdelegate.view.endEditing(true)
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        if sender.frame != .zero {
+            WhGoodsUploadVCdelegate.view.endEditing(true)
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
         
         let data = WhGoodsUploadVCdelegate.GoodsObject
         
@@ -317,9 +328,7 @@ class WhGoodsUploadTC: UITableViewCell {
             WhGoodsUploadVCdelegate.customAlert(message: "카테고리를 선택해 주세요.", time: 1); return
         }
         
-        let material_washing = ["두꺼움", "보통", "얇음", "있음", "보통", "없음", "있음", "보통", "없음", "있음", "없음", "기모안감", "손세탁", "드라이클리닝", "물세탁", "단독세탁", "울세탁", "표백제사용금지", "다림질금지", "세탁기금지"][sender.tag]
-        
-        materialWashing_img_s.forEach { img in
+        materialWashing_imgs.forEach { img in
             
             switch (img.tag, sender.tag) {
             case (0...2, 0...2), (3...5, 3...5), (6...8, 6...8), (9...11, 9...11):
@@ -331,7 +340,7 @@ class WhGoodsUploadTC: UITableViewCell {
             }
         }
         
-        materialWashing_label_s.forEach { label in
+        materialWashing_labels.forEach { label in
             
             switch (label.tag, sender.tag) {
             case (0...2, 0...2), (3...5, 3...5), (6...8, 6...8), (9...11, 9...11):
@@ -343,7 +352,8 @@ class WhGoodsUploadTC: UITableViewCell {
             }
         }
         
-        materialWashing_btn_s.forEach { btn in
+        let material_washing = ["두꺼움", "보통", "얇음", "있음", "보통", "없음", "좋음", "보통", "없음", "있음", "없음", "기모안감", "손세탁", "드라이클리닝", "물세탁", "단독세탁", "울세탁", "표백제사용금지", "다림질금지", "세탁기금지"][sender.tag]
+        materialWashing_btns.forEach { btn in
             
             switch (btn.tag, btn.tag == sender.tag) {
             case (0...2, true):
@@ -368,6 +378,54 @@ class WhGoodsUploadTC: UITableViewCell {
                     }
                     data.item_material_washing["washing"] = WhGoodsUploadVCdelegate.WashingInfoArray
                 }
+            default:
+                break
+            }
+        }
+    }
+    
+    @objc func otherType_btn(_ sender: UIButton) {
+            
+        if sender.frame != .zero {
+            WhGoodsUploadVCdelegate.view.endEditing(true)
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
+        
+        let data = WhGoodsUploadVCdelegate.GoodsObject
+        
+        otherType_imgs.forEach { img in
+            
+            switch (img.tag, sender.tag) {
+            case (0...1, 0...1), (2...3, 2...3), (4...5, 4...5):
+                img.image = (img.tag == sender.tag) ? UIImage(named: "check_on") : UIImage(named: "check_off")
+            default:
+                break
+            }
+        }
+        
+        otherType_labels.forEach { label in
+            
+            switch (label.tag, sender.tag) {
+            case (0...1, 0...1), (2...3, 2...3), (4...5, 4...5):
+                label.textColor = (label.tag == sender.tag) ? .black : .black.withAlphaComponent(0.3)
+            default:
+                break
+            }
+        }
+        
+        let other_type = ["편물(니트/다이마루)", "직물(우븐)", "대한민국", "대한민국외 국가", "전체 공개", "거래처만 공개"][sender.tag]
+        otherType_btns.forEach { btn in
+            
+            switch (btn.tag, btn.tag == sender.tag) {
+            case (0...1, true):
+                WhGoodsUploadVCdelegate.OtherTypeArray["build"] = other_type
+                data.item_build = other_type
+            case (2...3, true):
+                WhGoodsUploadVCdelegate.OtherTypeArray["manufacture_country"] = other_type
+                data.item_manufacture_country = other_type
+            case (4...5, true):
+                WhGoodsUploadVCdelegate.OtherTypeArray["disclosure"] = other_type
+                data.item_disclosure = other_type
             default:
                 break
             }
@@ -424,13 +482,13 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
         if indexPath.section == 1, collectionView == itemCollectionView {
             
             let data = WhGoodsUploadVCdelegate.ItemArray[indexPath.row]
-            let cell = cell as! WhGoodsUploadCC
+            guard let cell = cell as? WhGoodsUploadCC else { return }
             
             cell.item_img.image = UIImage(data: data.file_data)
         } else if indexPath.section == 0, collectionView == contentCollectionView {
             
             let data = WhGoodsUploadVCdelegate.ContentsArray[indexPath.row]
-            let cell = cell as! WhGoodsUploadCC
+            guard let cell = cell as? WhGoodsUploadCC else { return }
             
             cell.content_img.image = UIImage(data: data.file_data)
         }

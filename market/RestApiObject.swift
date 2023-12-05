@@ -158,9 +158,9 @@ class GoodsData {
     var item_style: String = ""
     var item_content: String = ""
     var item_content_imgs: [String] = []
-    var item_build: String = ""
+    var item_build: String = "편물(니트/다이마루)"
     var item_sheet: String = ""
-    var item_manufacture_country: String = ""
+    var item_manufacture_country: String = "대한민국"
     var item_disclosure: String = "전체 공개"
     var item_soldout: Bool = false
     var item_soldout_time: String = ""

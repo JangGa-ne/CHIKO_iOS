@@ -44,7 +44,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         let data = BestItemArray[indexPath.row]
-        let cell = cell as! ReGoodsTC
+        guard let cell = cell as? ReGoodsTC else { return }
         
         setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
     }
@@ -128,7 +128,7 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
         if indexpath_section == 0 {
             
             let data = BestStoreArray[indexPath.row]
-            let cell = cell as! ReHomeCC
+            guard let cell = cell as? ReHomeCC else { return }
             
             setNuke(imageView: cell.store_img, imageUrl: data.StoreObject.store_mainphoto_img, cornerRadius: 15)
             setNuke(imageView: cell.item_img, imageUrl: data.GoodsObject.item_mainphoto_img, cornerRadius: 10)
