@@ -26,7 +26,8 @@ class WhGoodsUploadVC: UIViewController {
     var OptionPriceArray: [(color_name: String, size_price: [(size: String, price: Int)])] = []
     var option_price: Bool = false
     
-    var WashingArray: [String] = []
+    var MaterialInfoArray: [String: Any] = [:]
+    var WashingInfoArray: [String] = []
     var StyleArray: [String] = []
     var style_row: Int? = nil
     var ContentsArray: [(file_name: String, file_data: Data, file_size: Int)] = []
@@ -92,6 +93,10 @@ class WhGoodsUploadVC: UIViewController {
                     }
                 }
             }
+        }
+        if all || index == 3 {
+            MaterialInfoArray.removeAll()
+            WashingInfoArray.removeAll()
         }
     }
     
@@ -240,39 +245,42 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.content_tv.contentInset = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
             cell.content_tv.backgroundColor = .white
             cell.content_tv.delegate = cell
-            cell.content_btn.addTarget(self, action: #selector(content_btn(_:)), for: .touchUpInside)
+            cell.content_btn.addTarget(cell, action: #selector(cell.content_btn(_:)), for: .touchUpInside)
             cell.content_view.isHidden = (ContentsArray.count == 0)
             
             cell.materialCollectionView.isHidden = (MaterialArray.count == 0)
             cell.materialCollectionView.contentOffset.x = max(cell.materialCollectionView.contentSize.width - cell.materialCollectionView.bounds.width, 0)
             cell.material_btn.tag = 2; cell.material_btn.addTarget(cell, action: #selector(cell.category_btn(_:)), for: .touchUpInside)
             
+            cell.materialWashing_img_s.forEach { img in img.image = UIImage(named: "check_off") }
+            cell.materialWashing_label_s.forEach { label in label.textColor = .black.withAlphaComponent(0.3) }
+            
+            let material: [String: [String: Int]] = ["thickness": ["두꺼움": 0, "보통": 1, "얇음": 2], "see_through": ["있음": 3, "보통": 4, "없음": 5], "flexibility": ["좋음": 6, "보통": 7, "없음": 8], "lining": ["있음": 9, "없음": 10, "기모안감": 11]]
+            MaterialInfoArray.forEach { (key: String, value: Any) in
+                
+                let value = value as? String ?? ""
+                let material_btn = UIButton()
+
+                if let map = material[key], let tag = map[value] {
+                    material_btn.tag = tag; cell.materialWashing_btn(material_btn)
+                }
+            }
+            let washing: [String: Int] = ["손세탁": 12, "드라이클리닝": 13, "물세탁": 14, "단독세탁": 15, "울세탁": 16, "표백제사용금지": 17, "다림질금지": 18, "세탁기금지": 19]
+            WashingInfoArray.forEach { value in
+                
+                let washing_btn = UIButton()
+                
+                if let tag = washing[value] {
+                    washing_btn.tag = tag; cell.materialWashing_btn(washing_btn)
+                }
+            }
+            cell.materialWashing_btn_s.forEach { btn in
+                btn.addTarget(cell, action: #selector(cell.materialWashing_btn(_:)), for: .touchUpInside)
+            }
+            
             return cell
         } else {
             return UITableViewCell()
-        }
-    }
-    
-    @objc func content_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        
-        if 10-ContentsArray.count == 0 {
-            
-            let alert = UIAlertController(title: "", message: "이미지는 최대 10장까지\n등록할 수 있습니다.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: nil))
-            present(alert, animated: true, completion: nil)
-        } else {
-            
-            setPhoto(max: 10-ContentsArray.count) { photos in
-                photos.forEach { photo in
-                    self.ContentsArray.append(photo)
-                    UIView.setAnimationsEnabled(false)
-                    self.tableView.reloadSections(IndexSet(integer: 3), with: .none)
-                    UIView.setAnimationsEnabled(true)
-                }
-            }
         }
     }
     

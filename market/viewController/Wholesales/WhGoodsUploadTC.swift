@@ -70,16 +70,20 @@ class WhGoodsUploadTC: UITableViewCell {
     @IBOutlet weak var optionPriceCollectionView: UICollectionView!
     @IBOutlet weak var optionPriceCollectionView_height: NSLayoutConstraint!
     
+    @IBOutlet weak var content_tv: UITextView!
+    @IBOutlet weak var content_btn: UIButton!
+    @IBOutlet weak var content_view: UIView!
+    @IBOutlet weak var contentCollectionView: UICollectionView!
+    
     @IBOutlet weak var style_sv: UIStackView!
     @IBOutlet weak var styleCollectionView: UICollectionView!
     
     @IBOutlet weak var materialCollectionView: UICollectionView!
     @IBOutlet weak var material_btn: UIButton!
     
-    @IBOutlet weak var content_tv: UITextView!
-    @IBOutlet weak var content_btn: UIButton!
-    @IBOutlet weak var content_view: UIView!
-    @IBOutlet weak var contentCollectionView: UICollectionView!
+    @IBOutlet var materialWashing_img_s: [UIImageView]!
+    @IBOutlet var materialWashing_label_s: [UILabel]!
+    @IBOutlet var materialWashing_btn_s: [UIButton]!
     
     func viewDidLoad() {
         
@@ -254,7 +258,8 @@ class WhGoodsUploadTC: UITableViewCell {
     
     @objc func select_btn(_ sender: UIButton) {
         
-        WhGoodsUploadVCdelegate.view.endEditing(true); UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        WhGoodsUploadVCdelegate.view.endEditing(true)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
         let data = WhGoodsUploadVCdelegate.GoodsObject
         
@@ -278,6 +283,95 @@ class WhGoodsUploadTC: UITableViewCell {
         }
         
         WhGoodsUploadVCdelegate.tableView.reloadData()
+    }
+    
+    @objc func content_btn(_ sender: UIButton) {
+        
+        WhGoodsUploadVCdelegate.view.endEditing(true)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        
+        if 10-WhGoodsUploadVCdelegate.ContentsArray.count == 0 {
+            
+            let alert = UIAlertController(title: "", message: "이미지는 최대 10장까지\n등록할 수 있습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: nil))
+            WhGoodsUploadVCdelegate.present(alert, animated: true, completion: nil)
+        } else {
+            
+            WhGoodsUploadVCdelegate.setPhoto(max: 10-WhGoodsUploadVCdelegate.ContentsArray.count) { photos in
+                photos.forEach { photo in
+                    self.WhGoodsUploadVCdelegate.ContentsArray.append(photo)
+                    self.WhGoodsUploadVCdelegate.tableView.reloadData()
+                }
+            }
+        }
+    }
+    
+    @objc func materialWashing_btn(_ sender: UIButton) {
+        
+        WhGoodsUploadVCdelegate.view.endEditing(true)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        
+        let data = WhGoodsUploadVCdelegate.GoodsObject
+        
+        if data.item_category_name.count == 0 {
+            WhGoodsUploadVCdelegate.customAlert(message: "카테고리를 선택해 주세요.", time: 1); return
+        }
+        
+        let material_washing = ["두꺼움", "보통", "얇음", "있음", "보통", "없음", "있음", "보통", "없음", "있음", "없음", "기모안감", "손세탁", "드라이클리닝", "물세탁", "단독세탁", "울세탁", "표백제사용금지", "다림질금지", "세탁기금지"][sender.tag]
+        
+        materialWashing_img_s.forEach { img in
+            
+            switch (img.tag, sender.tag) {
+            case (0...2, 0...2), (3...5, 3...5), (6...8, 6...8), (9...11, 9...11):
+                img.image = (img.tag == sender.tag) ? UIImage(named: "check_on") : UIImage(named: "check_off")
+            case (12...19, 12...19):
+                img.image = (img.tag == sender.tag) ? (img.image == UIImage(named: "check_on") ? UIImage(named: "check_off") : UIImage(named: "check_on")) : img.image
+            default:
+                break
+            }
+        }
+        
+        materialWashing_label_s.forEach { label in
+            
+            switch (label.tag, sender.tag) {
+            case (0...2, 0...2), (3...5, 3...5), (6...8, 6...8), (9...11, 9...11):
+                label.textColor = (label.tag == sender.tag) ? .black : .black.withAlphaComponent(0.3)
+            case (12...19, 12...19):
+                label.textColor = (label.tag == sender.tag) ? (label.textColor != .black) ? .black : .black.withAlphaComponent(0.3) : label.textColor
+            default:
+                break
+            }
+        }
+        
+        materialWashing_btn_s.forEach { btn in
+            
+            switch (btn.tag, btn.tag == sender.tag) {
+            case (0...2, true):
+                WhGoodsUploadVCdelegate.MaterialInfoArray["thickness"] = material_washing
+                data.item_material_washing["thickness"] = material_washing
+            case (3...5, true):
+                WhGoodsUploadVCdelegate.MaterialInfoArray["see_through"] = material_washing
+                data.item_material_washing["see_through"] = material_washing
+            case (6...8, true):
+                WhGoodsUploadVCdelegate.MaterialInfoArray["flexibility"] = material_washing
+                data.item_material_washing["flexibility"] = material_washing
+            case (9...11, true):
+                WhGoodsUploadVCdelegate.MaterialInfoArray["lining"] = material_washing
+                data.item_material_washing["lining"] = material_washing
+            case (12...19, true):
+                if sender.frame != .zero {
+                    btn.isSelected = !btn.isSelected
+                    if btn.isSelected {
+                        WhGoodsUploadVCdelegate.WashingInfoArray.append(material_washing)
+                    } else if let index = WhGoodsUploadVCdelegate.WashingInfoArray.firstIndex(of: material_washing) {
+                        WhGoodsUploadVCdelegate.WashingInfoArray.remove(at: index)
+                    }
+                    data.item_material_washing["washing"] = WhGoodsUploadVCdelegate.WashingInfoArray
+                }
+            default:
+                break
+            }
+        }
     }
 }
 
@@ -441,7 +535,6 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         WhGoodsUploadVCdelegate.view.endEditing(true)
-        
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
         let data = WhGoodsUploadVCdelegate.GoodsObject

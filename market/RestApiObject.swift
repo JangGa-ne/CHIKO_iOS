@@ -21,7 +21,7 @@ class CategoryData {
     // 주요소재(의류/나머지)
     var MaterialArray: Array<[String: Any]> = []
     // 주요소재및세탁법(의류/소재+세탁법,나머지/세탁법)
-    var MaterialWashingArray: Array<[String: Any]> = []
+    var MaterialWashingInfoArray: Array<[String: Any]> = []
 }
 
 class VisitData {
