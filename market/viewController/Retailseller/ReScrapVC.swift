@@ -44,7 +44,7 @@ class ReScrapVC: UIViewController {
         customLoadingIndicator(animated: true)
         
         /// ReScrap 요청
-        requestReScrap(store_id: StoreArray[store_index].store_id) { StoreArray, status in
+        requestReScrap(store_id: StoreObject.store_id) { StoreArray, status in
             
             self.customLoadingIndicator(animated: false)
             
@@ -110,7 +110,7 @@ extension ReScrapVC: UITableViewDelegate, UITableViewDataSource {
             
             let data = ScrapArray[indexPath.row]
             /// ReAccount Delete 요청
-            requestReAccount(action: "favorites_delete", re_store_id: StoreArray[store_index].store_id, wh_store_id: data.store_id) { status in
+            requestReAccount(action: "favorites_delete", re_store_id: StoreObject.store_id, wh_store_id: data.store_id) { status in
                 
                 switch status {
                 case 200:

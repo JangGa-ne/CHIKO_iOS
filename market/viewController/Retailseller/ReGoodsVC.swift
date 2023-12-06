@@ -36,8 +36,8 @@ class ReGoodsVC: UIViewController {
         
         setKeyboard()
         
-        setNuke(imageView: storeMain_img, imageUrl: StoreArray[store_index].store_mainphoto_img, cornerRadius: 15)
-        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
+//        setNuke(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
+//        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
         choiceCategory_btn.addTarget(self, action: #selector(choiceCategory_btn(_:)), for: .touchUpInside)
         categoryName_label.layer.cornerRadius = 7.5

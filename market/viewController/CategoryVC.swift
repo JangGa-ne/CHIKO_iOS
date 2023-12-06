@@ -111,7 +111,7 @@ class CategoryVC: UIViewController {
             
         } else if option_type == "material", let delegate = WhGoodsUploadVCdelegate { 
             
-            mainTitle_label.text = "주요 소재"
+            mainTitle_label.text = "주요소재"
             
             if delegate.option_key.contains("의류") { indexpath_section = 0 } else { indexpath_section = 1 }
             
@@ -332,7 +332,7 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
             
             customAlert(message: "카테고리 변경으로 일부 옵션 설정값이 초기화 됩니다.", time: 1) {
                 /// 데이터 삭제
-                VCdelegate.option_price = false
+                VCdelegate.item_option_type = false
                 VCdelegate.style_row = nil
                 VCdelegate.ColorArray.removeAll()
                 VCdelegate.SizeArray.removeAll()

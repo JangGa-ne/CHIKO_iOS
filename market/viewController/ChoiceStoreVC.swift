@@ -130,12 +130,10 @@ extension ChoiceStoreVC: UITableViewDelegate, UITableViewDataSource {
             customLoadingIndicator(animated: false)
             
             WhHomeVCdelegate = nil
-            if StoreArray[store_index].waiting_step == 2 {
-                segueViewController(identifier: "WhHomeVC")
-            } else if StoreArray[store_index].waiting_step == 3 {
-                
-            } else {
+            if StoreArray[store_index].waiting_step == 0 || StoreArray[store_index].waiting_step == 1 {
                 segueViewController(identifier: "WhWaitingVC")
+            } else if StoreArray[store_index].waiting_step == 2 {
+                segueViewController(identifier: "WhHomeVC")
             }
         }
     }

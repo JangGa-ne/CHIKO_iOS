@@ -166,7 +166,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             cell.storeTag_label.isHidden = true//(data.store_tag.count == 0)
             data.store_tag.forEach { store_tag in cell.storeTag_label.text!.append("#\(store_tag) ") }
             
-            if data.store_favorites.contains(StoreArray[store_index].store_id) {
+            if data.store_favorites.contains(StoreObject.store_id) {
                 cell.following_view.layer.borderColor = UIColor.H_8CD26B.cgColor
                 cell.following_view.layer.borderWidth = 1
             } else {
@@ -192,7 +192,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             }
             cell.detail_btn.tag = indexPath.row; cell.detail_btn.addTarget(self, action: #selector(detail_btn(_:)), for: .touchUpInside)
             cell.viewDidLoad()
-            cell.collectionView.isHidden = (indexPath.row == 3 && !(VisitObject.StoreObject.store_favorites.contains(StoreArray[store_index].store_id)))
+            cell.collectionView.isHidden = (indexPath.row == 3 && !(VisitObject.StoreObject.store_favorites.contains(StoreObject.store_id)))
             cell.collectionView.backgroundColor = .white
             
             return cell
@@ -204,7 +204,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
         let data = VisitObject.StoreObject
         
         var action: String = ""
-        if !data.store_favorites.contains(StoreArray[store_index].store_id) {
+        if !data.store_favorites.contains(StoreObject.store_id) {
             action = "favorites_add"
         } else {
             action = "favorites_delete"
@@ -213,7 +213,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
         customLoadingIndicator(animated: true)
         
         /// ReAccount Add / Delete 요청
-        requestReAccount(action: action, re_store_id: StoreArray[store_index].store_id, wh_store_id: data.store_id) { status in
+        requestReAccount(action: action, re_store_id: StoreObject.store_id, wh_store_id: data.store_id) { status in
             
             self.customLoadingIndicator(animated: false)
             
@@ -221,10 +221,10 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             case 200:
                 
                 if action == "favorites_add" {
-                    data.store_favorites.append(StoreArray[store_index].store_id)
+                    data.store_favorites.append(StoreObject.store_id)
                     data.account_counting += 1
                 } else if action == "favorites_delete" {
-                    data.store_favorites = data.store_favorites.filter { $0 != StoreArray[store_index].store_id }
+                    data.store_favorites = data.store_favorites.filter { $0 != StoreObject.store_id }
                     data.account_counting -= 1
                 }
                 self.tableView.reloadData()

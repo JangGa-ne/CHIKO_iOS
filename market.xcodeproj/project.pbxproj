@@ -22,6 +22,7 @@
 		C22B91FA2AFF586B0092ACD0 /* ReGoodsDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22B91F92AFF586B0092ACD0 /* ReGoodsDetailVC.swift */; };
 		C22D641E2B183EF900A160F3 /* ReScrapVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22D641D2B183EF900A160F3 /* ReScrapVC.swift */; };
 		C241796E2B0B47B5006497DF /* ReStoreVisitVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241796D2B0B47B5006497DF /* ReStoreVisitVC.swift */; };
+		C24AF1582B200A710032EC04 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C24AF15A2B200A710032EC04 /* Localizable.strings */; };
 		C24E443B2AFC64D500885BBB /* CategoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E443A2AFC64D500885BBB /* CategoryVC.swift */; };
 		C25B23692AE0D0CA00AA3A30 /* s_regularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25B23682AE0D0CA00AA3A30 /* s_regularExpression.swift */; };
 		C25FF24F2AFFD2F20026BB82 /* ReGoodsOptionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25FF24E2AFFD2F20026BB82 /* ReGoodsOptionVC.swift */; };
@@ -73,6 +74,9 @@
 		C22B91F92AFF586B0092ACD0 /* ReGoodsDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsDetailVC.swift; sourceTree = "<group>"; };
 		C22D641D2B183EF900A160F3 /* ReScrapVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReScrapVC.swift; sourceTree = "<group>"; };
 		C241796D2B0B47B5006497DF /* ReStoreVisitVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReStoreVisitVC.swift; sourceTree = "<group>"; };
+		C24AF1592B200A710032EC04 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C24AF15B2B200A900032EC04 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C24AF15C2B200BD30032EC04 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C24E443A2AFC64D500885BBB /* CategoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryVC.swift; sourceTree = "<group>"; };
 		C25B23682AE0D0CA00AA3A30 /* s_regularExpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = s_regularExpression.swift; sourceTree = "<group>"; };
 		C25FF24E2AFFD2F20026BB82 /* ReGoodsOptionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsOptionVC.swift; sourceTree = "<group>"; };
@@ -210,6 +214,7 @@
 				C2682ECF2AD77C5000FC6099 /* Main.storyboard */,
 				C2682ED22AD77C5100FC6099 /* Assets.xcassets */,
 				C2682ED72AD77C5100FC6099 /* Info.plist */,
+				C24AF15A2B200A710032EC04 /* Localizable.strings */,
 			);
 			path = market;
 			sourceTree = "<group>";
@@ -306,6 +311,8 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
+				"zh-Hans",
 			);
 			mainGroup = C2682EBD2AD77C5000FC6099;
 			productRefGroup = C2682EC72AD77C5000FC6099 /* Products */;
@@ -323,6 +330,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C2682ED32AD77C5100FC6099 /* Assets.xcassets in Resources */,
+				C24AF1582B200A710032EC04 /* Localizable.strings in Resources */,
 				C226F34B2AF3361A004DA6C8 /* Cafe24SsurroundMedium.otf in Resources */,
 				C226F34A2AF3361A004DA6C8 /* Cafe24SsurroundBold.otf in Resources */,
 				C2682ED12AD77C5000FC6099 /* Main.storyboard in Resources */,
@@ -427,6 +435,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		C24AF15A2B200A710032EC04 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C24AF1592B200A710032EC04 /* en */,
+				C24AF15B2B200A900032EC04 /* ko */,
+				C24AF15C2B200BD30032EC04 /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		C2682ECF2AD77C5000FC6099 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -443,6 +461,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -506,6 +525,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

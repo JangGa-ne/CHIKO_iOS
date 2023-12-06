@@ -36,7 +36,6 @@ class SplashVC: UIViewController {
         /// SignIn 요청
         dispatchGroup.enter()
         requestSignIn { status in
-            status_code = status; dispatchGroup.leave()
             
             if status == 200, MemberObject.member_type == "retailseller" {
                 /// ReMain 요청
@@ -50,6 +49,8 @@ class SplashVC: UIViewController {
                     status_code = status; dispatchGroup.leave()
                 }
             }
+            
+            status_code = status; dispatchGroup.leave()
         }
         /// Category 요청
         dispatchGroup.enter()
@@ -63,20 +64,22 @@ class SplashVC: UIViewController {
             
             switch status_code {
             case 200:
-                if !store_index_select {
-                    back_btn_hidden = true
-                    self.segueViewController(identifier: "ChoiceStoreVC")
-                } else if MemberObject.member_type == "retailseller" {
+//                if !store_index_select {
+//                    back_btn_hidden = true
+//                    self.segueViewController(identifier: "ChoiceStoreVC")
+//                } else
+                if MemberObject.member_type == "retailseller" {
                     self.segueTabBarController(identifier: "ReMainTBC", idx: 0)
                 } else if MemberObject.member_type == "wholesales" {
-                    if StoreArray[store_index].waiting_step == 2 {
+                    if StoreObject.waiting_step == 0 || StoreObject.waiting_step == 1 {
+                        self.segueViewController(identifier: "WhWaitingVC")
+                    } else if StoreObject.waiting_step == 2 {
                         self.segueViewController(identifier: "WhHomeVC")
-                    } else if StoreArray[store_index].waiting_step == 3 {
-                        
-                    } else {
-                        back_btn_hidden = true
-                        self.segueViewController(identifier: "ChoiceStoreVC")
                     }
+//                    else {
+//                        back_btn_hidden = true
+//                        self.segueViewController(identifier: "ChoiceStoreVC")
+//                    }
                 }; return
             case 204:
                 self.customAlert(message: "No data", time: 1)

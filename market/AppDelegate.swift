@@ -16,11 +16,11 @@ var device_info: String = ""
 var device_ratio: String = ""
 var divice_radius: CGFloat = 0.0
 /// Register
-var SignUpMemberObject: MemberData = MemberData()
-var SignUpStoreObject: StoreData = StoreData()
+var MemberObject_signup: MemberData = MemberData()
+var StoreObject_signup: StoreData = StoreData()
 /// Retailseller
-var BestStoreArray: [(StoreObject: StoreData, GoodsObject: GoodsData)] = []
-var BestItemArray: [GoodsData] = []
+var StoreArray_best: [(StoreObject: StoreData, GoodsObject: GoodsData)] = []
+var GoodsArray_best: [GoodsData] = []
 var BasketArray: [BasketData] = []
 
 var MemberObject: MemberData = MemberData()

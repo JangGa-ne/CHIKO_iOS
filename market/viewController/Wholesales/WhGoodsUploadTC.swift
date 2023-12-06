@@ -31,8 +31,34 @@ class WhGoodsUploadCC: UICollectionViewCell {
     @IBOutlet weak var content_img: UIImageView!
     @IBOutlet weak var contentRow_label: UILabel!
     
-    @objc func optionPrice_tf(_ sender: UITextField) {
-        WhGoodsUploadVCdelegate.OptionPriceArray[indexpath_row].size_price[sender.tag].price = Int(sender.text!) ?? 0
+    @objc func edit_optionPrice_tf(_ sender: UITextField) {
+        let price = priceFormatter.string(from: (Int(sender.text!.replacingOccurrences(of: ",", with: "")) ?? 0) as NSNumber) ?? "0"
+        if sender.text! == "0" || sender.text! == "" { sender.text!.removeAll() } else { sender.text! = price }
+    }
+    
+    @objc func end_optionPrice_tf(_ sender: UITextField) {
+        
+        let data = WhGoodsUploadVCdelegate.GoodsObject
+        
+        let color = WhGoodsUploadVCdelegate.OptionPriceArray[indexpath_row].color_name
+        let size = WhGoodsUploadVCdelegate.OptionPriceArray[indexpath_row].size_price[sender.tag].size
+        var price: Int = 0
+        
+        if sender.text! == "0" || sender.text! == "" {
+            price = Int(sender.placeholder!.replacingOccurrences(of: ",", with: "")) ?? 0
+        } else {
+            price = Int(sender.text!.replacingOccurrences(of: ",", with: "")) ?? 0
+        }
+        
+        if data.item_sale_price > price {
+            sender.resignFirstResponder()
+            WhGoodsUploadVCdelegate.customAlert(message: "설정한 단가 보다 낮을 수 없습니다.", time: 1) {
+                sender.text!.removeAll(); sender.becomeFirstResponder()
+            }
+        } else if let option = data.item_option.first(where: { $0.color == color && $0.size == size }) {
+            WhGoodsUploadVCdelegate.OptionPriceArray[indexpath_row].size_price[sender.tag].price = price
+            option.price = price
+        }
     }
 }
 
@@ -202,9 +228,9 @@ class WhGoodsUploadTC: UITableViewCell {
             
             if (3000000 < item_price) {
                 data.item_price = 3000000
-                itemPrice_tf.text = "3,000,000"
-                itemPrice_tf.resignFirstResponder()
-                WhGoodsUploadVCdelegate.customAlert(message: "최대 300만원까지만 입력 가능합니다.", time: 1) { self.itemPrice_tf.resignFirstResponder() }
+                sender.text = "3,000,000"
+                sender.resignFirstResponder()
+                WhGoodsUploadVCdelegate.customAlert(message: "최대 300만원까지만 입력 가능합니다.", time: 1) { sender.becomeFirstResponder() }
             }
         } else if sender.tag == 2 {
             
@@ -219,11 +245,11 @@ class WhGoodsUploadTC: UITableViewCell {
             
             if (3000000 < item_sale_price) {
                 data.item_sale_price = 3000000
-                itemSalePrice_tf.text = "3,000,000"
-                itemSalePrice_tf.resignFirstResponder()
-                WhGoodsUploadVCdelegate.customAlert(message: "최대 300만원까지만 입력 가능합니다.", time: 1) { self.itemSalePrice_tf.resignFirstResponder() }
+                sender.text = "3,000,000"
+                sender.resignFirstResponder()
+                WhGoodsUploadVCdelegate.customAlert(message: "최대 300만원까지만 입력 가능합니다.", time: 1) { sender.becomeFirstResponder() }
             } else if itemPrice_tf.text! != "" && item_price < item_sale_price {
-                itemSalePrice_tf.text = priceFormatter.string(from: item_price as NSNumber) ?? sender.text!
+                sender.text = priceFormatter.string(from: item_price as NSNumber) ?? sender.text!
             }
         }
         
@@ -238,7 +264,7 @@ class WhGoodsUploadTC: UITableViewCell {
         if sender == itemPrice_tf {
             
             if 100 > item_price {
-                itemPrice_tf.text = "100"
+                sender.text = "100"
                 DispatchQueue.main.async { self.itemPrice_tf.resignFirstResponder(); self.itemSalePrice_tf.resignFirstResponder() }
                 WhGoodsUploadVCdelegate.customAlert(message: "가격(원가)을 정확히 입력해 주세요.\n(최소 단위: 100원)", time: 2) { self.itemPrice_tf.becomeFirstResponder() }
             } else if item_price <= item_sale_price {
@@ -275,7 +301,8 @@ class WhGoodsUploadTC: UITableViewCell {
         if sender.tag == 0 {
             
             WhGoodsUploadVCdelegate.item_sale = !WhGoodsUploadVCdelegate.item_sale
-            if !WhGoodsUploadVCdelegate.item_sale { 
+            data.item_sale = !data.item_sale
+            if !WhGoodsUploadVCdelegate.item_sale {
                 data.item_price = data.item_sale_price; itemPrice_tf.text!.removeAll()
             }
         } else if sender.tag == 1 {
@@ -287,7 +314,8 @@ class WhGoodsUploadTC: UITableViewCell {
             } else if WhGoodsUploadVCdelegate.SizeArray.filter({ $0.option_select }).count == 0 {
                 WhGoodsUploadVCdelegate.customAlert(message: "사이즈를 설정해 주세요.", time: 1)
             } else {
-                WhGoodsUploadVCdelegate.option_price = !WhGoodsUploadVCdelegate.option_price
+                WhGoodsUploadVCdelegate.item_option_type = !WhGoodsUploadVCdelegate.item_option_type
+                data.item_option_type = !data.item_option_type
             }
         }
         
@@ -529,7 +557,17 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
                 
                 cell.optionSize_label.text = data.size
                 cell.optionPrice_tf.placeholder(text: priceFormatter.string(from: WhGoodsUploadVCdelegate.GoodsObject.item_sale_price as NSNumber) ?? "0", color: .lightGray)
-                cell.optionPrice_tf.tag = indexPath.row; cell.optionPrice_tf.addTarget(cell, action: #selector(cell.optionPrice_tf(_:)), for: .editingChanged)
+                if let option = WhGoodsUploadVCdelegate.GoodsObject.item_option.first(where: { $0.color == WhGoodsUploadVCdelegate.OptionPriceArray[indexpath_row].color_name && data.size == $0.size }), data.price != option.price {
+                    WhGoodsUploadVCdelegate.OptionPriceArray[indexpath_row].size_price[indexPath.row].price = option.price
+                    cell.optionPrice_tf.text = priceFormatter.string(from: option.price as NSNumber) ?? "0"
+                } else if WhGoodsUploadVCdelegate.GoodsObject.item_sale_price < data.price {
+                    cell.optionPrice_tf.text = priceFormatter.string(from: data.price as NSNumber) ?? "0"
+                } else {
+                    cell.optionPrice_tf.text!.removeAll()
+                }
+                cell.optionPrice_tf.tag = indexPath.row
+                cell.optionPrice_tf.addTarget(cell, action: #selector(cell.edit_optionPrice_tf(_:)), for: .editingChanged)
+                cell.optionPrice_tf.addTarget(cell, action: #selector(cell.end_optionPrice_tf(_:)), for: .editingDidEnd)
             } else if collectionView == styleCollectionView {
                 
                 cell.styleName_label.text = WhGoodsUploadVCdelegate.StyleArray[indexPath.row]

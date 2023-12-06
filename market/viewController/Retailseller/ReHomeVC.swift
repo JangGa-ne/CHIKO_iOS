@@ -38,12 +38,12 @@ class ReHomeCC: UICollectionViewCell {
 extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if BestItemArray.count > 0 { return BestItemArray.count } else { return .zero }
+        if GoodsArray_best.count > 0 { return GoodsArray_best.count } else { return .zero }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let data = BestItemArray[indexPath.row]
+        let data = GoodsArray_best[indexPath.row]
         guard let cell = cell as? ReGoodsTC else { return }
         
         setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
@@ -51,7 +51,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let data = BestItemArray[indexPath.row]
+        let data = GoodsArray_best[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsTC", for: indexPath) as! ReGoodsTC
         
         if indexPath.row == 0 {
@@ -78,7 +78,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func store_btn(_ sender: UIButton) {
         
-        let data = BestItemArray[sender.tag]
+        let data = GoodsArray_best[sender.tag]
         let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = data.store_id
         ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true)
@@ -87,7 +87,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
-        segue.GoodsObject = BestItemArray[indexPath.row]
+        segue.GoodsObject = GoodsArray_best[indexPath.row]
         ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true)
     }
 }
@@ -114,9 +114,9 @@ class ReHomeTC: UITableViewCell {
 extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if indexpath_section == 0, BestStoreArray.count > 0 {
-            return BestStoreArray.count
-        } else if indexpath_section == 1, BestItemArray.count > 0 {
+        if indexpath_section == 0, StoreArray_best.count > 0 {
+            return StoreArray_best.count
+        } else if indexpath_section == 1, GoodsArray_best.count > 0 {
             return 1
         } else {
             return .zero
@@ -127,7 +127,7 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
         
         if indexpath_section == 0 {
             
-            let data = BestStoreArray[indexPath.row]
+            let data = StoreArray_best[indexPath.row]
             guard let cell = cell as? ReHomeCC else { return }
             
             setNuke(imageView: cell.store_img, imageUrl: data.StoreObject.store_mainphoto_img, cornerRadius: 15)
@@ -152,7 +152,7 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexpath_section == 0 {
             
-            let data = BestStoreArray[indexPath.row]
+            let data = StoreArray_best[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReHomeCC0", for: indexPath) as! ReHomeCC
             
             cell.storeNameEng_label.text = data.StoreObject.store_name_eng
@@ -181,7 +181,7 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
         
         if indexpath_section == 0 {
             
-            let data = BestStoreArray[indexPath.row]
+            let data = StoreArray_best[indexPath.row]
             let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
             segue.GoodsObject = data.GoodsObject
             ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true)
@@ -227,17 +227,17 @@ class ReHomeVC: UIViewController {
         
         ReHomeVCdelegate = self
         
-        setNuke(imageView: storeMain_img, imageUrl: StoreArray[store_index].store_mainphoto_img, cornerRadius: 15)
-        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
+//        setNuke(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
+//        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         if #available(iOS 15.0, *) { tableView.sectionHeaderTopPadding = .zero }
         tableView.delegate = self; tableView.dataSource = self
         
-        preheatImages(urls: BestStoreArray.compactMap { URL(string: $0.StoreObject.store_mainphoto_img) })
-        preheatImages(urls: BestStoreArray.compactMap { URL(string: $0.GoodsObject.item_mainphoto_img) })
-        preheatImages(urls: BestItemArray.compactMap { URL(string: $0.item_mainphoto_img) })
+        preheatImages(urls: StoreArray_best.compactMap { URL(string: $0.StoreObject.store_mainphoto_img) })
+        preheatImages(urls: StoreArray_best.compactMap { URL(string: $0.GoodsObject.item_mainphoto_img) })
+        preheatImages(urls: GoodsArray_best.compactMap { URL(string: $0.item_mainphoto_img) })
     }
     
     @objc func choiceStore_btn(_ sender: UIButton) {
@@ -271,9 +271,9 @@ extension ReHomeVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0, BestStoreArray.count > 0 {
+        if section == 0, StoreArray_best.count > 0 {
             return 1
-        } else if section == 1, BestItemArray.count > 0 {
+        } else if section == 1, GoodsArray_best.count > 0 {
             return 1
         } else {
             return .zero

@@ -25,7 +25,7 @@ class WhGoodsUploadVC: UIViewController {
     var item_sale: Bool = false
     
     var OptionPriceArray: [(color_name: String, size_price: [(size: String, price: Int)])] = []
-    var option_price: Bool = false
+    var item_option_type: Bool = false
     
     var StyleArray: [String] = []
     var style_row: Int? = nil
@@ -118,7 +118,15 @@ class WhGoodsUploadVC: UIViewController {
         view.endEditing(true)
         
         let data = GoodsObject
-        print(data)
+        
+        data.upload_files.removeAll()
+        ItemArray.enumerated().forEach { i, data in
+            GoodsObject.upload_files.append((field_name: "item_photo_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
+        }
+        ContentsArray.enumerated().forEach { i, data in
+            GoodsObject.upload_files.append((field_name: "item_content_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
+        }
+        
         if ItemArray.count == 0 {
             customAlert(message: "상품 이미지를 첨부해 주세요.", time: 1)
         } else if data.item_category_name.count == 0 {
@@ -131,10 +139,41 @@ class WhGoodsUploadVC: UIViewController {
             customAlert(message: "색상∙사이즈를 설정해 주세요.", time: 1)
         } else {
             
-//            customLoadingIndicator(animated: true)
+            let timestamp: Int64 = setKoreaUnixTimestamp()
             
+            customLoadingIndicator(text: "상품 등록중...", animated: true)
             
+            var status_code: Int = 500
+            /// WhGoods Upload 요청
+            dispatchGroup.enter()
+            requestWhGoodsUpload(GoodsObject: GoodsObject, timestamp: timestamp) { status in
+                if status == 200, data.upload_files.count > 0 {
+                    /// File Upload 요청
+                    requestFileUpload(collection_id: "goods", document_id: "\(StoreObject.store_id)_\(timestamp)", file_data: data.upload_files) { status in
+                        status_code = status; dispatchGroup.leave()
+                    }
+                } else {
+                    status_code = status; dispatchGroup.leave()
+                }
+            }
             
+            dispatchGroup.notify(queue: .main) {
+                
+                self.customLoadingIndicator(animated: false)
+                
+                switch status_code {
+                case 200:
+                    let alert = UIAlertController(title: "", message: "상품등록 완료!", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: { _ in
+                        self.navigationController?.popViewController(animated: true)
+                    }))
+                    self.present(alert, animated: true, completion: nil)
+                case 600:
+                    self.customAlert(message: "Error occurred during data conversion", time: 1)
+                default:
+                    self.customAlert(message: "Internal Server Error", time: 1)
+                }
+            }
         }
     }
      
@@ -227,6 +266,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.itemName_tf.placeholder(text: "소매에게 노출할 상품명을 입력해 주세요.", color: .lightGray)
             cell.itemName_tf.text = data.item_name
             
+            data.item_sale = item_sale
             if item_sale {
                 cell.sale_img.image = UIImage(named: "check_on")
                 cell.sale_label.textColor = .black
@@ -245,12 +285,19 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.sale_btn.isSelected = item_sale
             cell.sale_btn.tag = 0; cell.sale_btn.addTarget(cell, action: #selector(cell.select_btn(_:)), for: .touchUpInside)
             
-            if option_price {
+            data.item_option_type = item_option_type
+            if item_option_type {
                 cell.optionPrice_img.image = UIImage(named: "check_on")
                 cell.optionPrice_label.textColor = .black
             } else {
                 cell.optionPrice_img.image = UIImage(named: "check_off")
                 cell.optionPrice_label.textColor = .black.withAlphaComponent(0.3)
+                OptionPriceArray.enumerated().forEach { i, data in
+                    data.size_price.enumerated().forEach { j, data in
+                        OptionPriceArray[i].size_price[j].price = 0
+                    }
+                }
+                data.item_option.forEach { $0.price = 0 }
             }
             cell.optionPrice_btn.tag = 1; cell.optionPrice_btn.addTarget(cell, action: #selector(cell.select_btn(_:)), for: .touchUpInside)
             
@@ -335,7 +382,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 2, !option_price { return .zero } else { return UITableView.automaticDimension }
+        if indexPath.section == 2, !item_option_type { return .zero } else { return UITableView.automaticDimension }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

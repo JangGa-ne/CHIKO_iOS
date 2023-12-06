@@ -25,7 +25,7 @@ class SearchStoreVC: UIViewController {
     var ChoiceStoreVCdelegate: ChoiceStoreVC? = nil
     
     var search_store_type: String = ""
-    var search_StoreArray: [StoreData] = []
+    var StoreArray_search: [StoreData] = []
     
     @IBAction func back_btn(_ sender: UIButton) { view.endEditing(true); navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
@@ -57,7 +57,7 @@ class SearchStoreVC: UIViewController {
     
     @objc func searchStore_btn(_ sender: UIButton) {
         /// 데이터 삭제
-        search_StoreArray.removeAll()
+        StoreArray_search.removeAll()
         
         customLoadingIndicator(animated: true)
         /// Search Store 요청
@@ -88,12 +88,12 @@ class SearchStoreVC: UIViewController {
 extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if search_StoreArray.count > 0 { return search_StoreArray.count } else { return .zero }
+        if StoreArray_search.count > 0 { return StoreArray_search.count } else { return .zero }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let data = search_StoreArray[indexPath.row]
+        let data = StoreArray_search[indexPath.row]
         guard let cell = cell as? SearchStoreTC else { return }
         
         setNuke(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
@@ -101,7 +101,7 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let data = search_StoreArray[indexPath.row]
+        let data = StoreArray_search[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "SearchStoreTC", for: indexPath) as! SearchStoreTC
         
         cell.storeName_label.text = data.store_name
@@ -119,7 +119,7 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
         /// hidden keyboard
         view.endEditing(true)
         
-        let data = search_StoreArray[indexPath.row]
+        let data = StoreArray_search[indexPath.row]
         let alert = UIAlertController(title: "비밀번호 입력", message: "스토어를 등록하기 위해\n 비밀번호를 입력해 주세요.", preferredStyle: .alert)
         alert.addTextField()
         let storePw_tf = alert.textFields?[0] ?? UITextField()
@@ -130,9 +130,9 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
                 /// signup member
                 if let delegate = self.SignUpMemberVCdelegate {
                     /// 데이터 삭제
-                    SignUpStoreObject = StoreData()
+                    StoreObject_signup = StoreData()
                     /// 데이터 추가
-                    SignUpStoreObject = data
+                    StoreObject_signup = data
                     delegate.registerSearchStoreName_label.text = data.store_name
                     delegate.registerSearchStore_btn.isSelected = true
                     delegate.registerSearchStore_btn.backgroundColor = .H_8CD26B

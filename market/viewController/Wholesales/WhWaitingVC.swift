@@ -34,7 +34,7 @@ class WhWaitingVC: UIViewController {
         logout_btn.isHidden = !back_btn_hidden
         logout_btn.addTarget(self, action: #selector(logout_btn(_:)), for: .touchUpInside)
         
-        let data = StoreArray[store_index]
+        let data = StoreObject
         
         if data.waiting_step == 0 {
             navi_label.text = "입점대기 중"

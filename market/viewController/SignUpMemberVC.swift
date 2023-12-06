@@ -92,7 +92,7 @@ class SignUpMemberVC: UIViewController {
         
         scrollView.delegate = self
         /// member type
-        SignUpMemberObject.member_grade = "ceo"
+        MemberObject_signup.member_grade = "ceo"
         for (i, btn) in ([ceo_btn, employee_btn] as [UIButton]).enumerated() {
             btn.tag = i; btn.addTarget(self, action: #selector(memberType_btn(_:)), for: .touchUpInside)
             if btn.tag == 0 { btn.isSelected = true } else { btn.isSelected = false }
@@ -105,9 +105,9 @@ class SignUpMemberVC: UIViewController {
         /// member id card
         memberIdCard_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(memberIdCard_view(_:))))
         /// submit document
-        if SignUpMemberObject.member_type == "retailseller" {
+        if MemberObject_signup.member_type == "retailseller" {
             submitDocu_sv.isHidden = false
-        } else if SignUpMemberObject.member_type == "wholesales" {
+        } else if MemberObject_signup.member_type == "wholesales" {
             submitDocu_sv.isHidden = true
         }
         /// register or search store
@@ -245,7 +245,7 @@ class SignUpMemberVC: UIViewController {
         
         if sender.tag == 0 {
             /// ceo
-            SignUpMemberObject.member_grade = "ceo"
+            MemberObject_signup.member_grade = "ceo"
             ceo_btn.isSelected = true; employee_btn.isSelected = false
             ceo_btn.backgroundColor = .H_8CD26B; employee_btn.backgroundColor = .white
             /// set register store
@@ -257,7 +257,7 @@ class SignUpMemberVC: UIViewController {
             registerSearchStore_btn.backgroundColor = .black.withAlphaComponent(0.3)
         } else if sender.tag == 1 {
             /// employee
-            SignUpMemberObject.member_grade = "employee"
+            MemberObject_signup.member_grade = "employee"
             ceo_btn.isSelected = false; employee_btn.isSelected = true
             ceo_btn.backgroundColor = .white; employee_btn.backgroundColor = .H_8CD26B
             /// set searh store
@@ -332,12 +332,12 @@ class SignUpMemberVC: UIViewController {
     }
     
     @objc func registerSearchStore_btn(_ sender: UIButton) {
-        if SignUpMemberObject.member_grade == "ceo" {
+        if MemberObject_signup.member_grade == "ceo" {
             segueViewController(identifier: "SignUpStoreVC")
-        } else if SignUpMemberObject.member_grade == "employee" {
+        } else if MemberObject_signup.member_grade == "employee" {
             let segue = storyboard?.instantiateViewController(withIdentifier: "SearchStoreVC") as! SearchStoreVC
             segue.SignUpMemberVCdelegate = self
-            segue.search_store_type = SignUpMemberObject.member_type
+            segue.search_store_type = MemberObject_signup.member_type
             navigationController?.pushViewController(segue, animated: true)
         }
     }
@@ -347,7 +347,7 @@ class SignUpMemberVC: UIViewController {
         view.endEditing(true)
         
         setPhoto(max: 1) { photo in
-            SignUpMemberObject.upload_member_idcard_img = photo
+            MemberObject_signup.upload_member_idcard_img = photo
             self.memberIdCard_img.image = UIImage(data: photo[0].file_data)
             self.checkMemberIdCard_img.isHidden = false
         }
@@ -359,7 +359,7 @@ class SignUpMemberVC: UIViewController {
         let check_btn: [UIButton] = [phoneNum_btn, memberId_btn, registerSearchStore_btn]
         var check_img: [UIImageView] = [checkPhoneNumCheck_img, checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img]
         
-        if SignUpMemberObject.member_type == "retailseller" {
+        if MemberObject_signup.member_type == "retailseller" {
             check_img = check_img+[checkMemberIdCard_img]
         }
         check_btn.forEach { btn in
@@ -371,17 +371,17 @@ class SignUpMemberVC: UIViewController {
         
         if !final_check { return }
         /// member
-        SignUpMemberObject.fcm_id = UserDefaults.standard.string(forKey: "fcm_id") ?? ""
-        SignUpMemberObject.member_num = phoneNum_tf.text!
-        SignUpMemberObject.member_id = memberId_tf.text!
-        SignUpMemberObject.member_pw = memberPwCheck_tf.text!
-        SignUpMemberObject.member_name = memberName_tf.text!
-        SignUpMemberObject.member_email = memberEmail_tf.text!
-        SignUpMemberObject.my_store = [SignUpStoreObject.store_id]
+        MemberObject_signup.fcm_id = UserDefaults.standard.string(forKey: "fcm_id") ?? ""
+        MemberObject_signup.member_num = phoneNum_tf.text!
+        MemberObject_signup.member_id = memberId_tf.text!
+        MemberObject_signup.member_pw = memberPwCheck_tf.text!
+        MemberObject_signup.member_name = memberName_tf.text!
+        MemberObject_signup.member_email = memberEmail_tf.text!
+        MemberObject_signup.my_store = StoreObject_signup.store_id
         /// store
-        if SignUpMemberObject.member_grade == "ceo" {
-            SignUpStoreObject.ceo_name = SignUpMemberObject.member_name
-            SignUpStoreObject.ceo_num = SignUpMemberObject.member_num
+        if MemberObject_signup.member_grade == "ceo" {
+            StoreObject_signup.ceo_name = MemberObject_signup.member_name
+            StoreObject_signup.ceo_num = MemberObject_signup.member_num
         }
         /// segue agreement
         presentPanModal(storyboard?.instantiateViewController(withIdentifier: "SignUpRegisterVC") as! SignUpRegisterVC)

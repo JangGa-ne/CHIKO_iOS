@@ -75,44 +75,44 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
     ]
     /// member
     params["device_info"] = device_info
-    params["fcm_id"] = SignUpMemberObject.fcm_id
-    params["marketing_agree"] = String(SignUpMemberObject.marketing_agree)
-    params["member_position"] = SignUpMemberObject.member_grade
-    params["my_store"] = SignUpMemberObject.my_store
+    params["fcm_id"] = MemberObject_signup.fcm_id
+    params["marketing_agree"] = String(MemberObject_signup.marketing_agree)
+    params["member_position"] = MemberObject_signup.member_grade
+    params["my_store"] = MemberObject_signup.my_store
     params["platform_type"] = "iOS"
     params["signup_time"] = String(timestamp)
-    params["user_num"] = SignUpMemberObject.member_num
-    params["user_id"] = SignUpMemberObject.member_id
-    params["user_pw"] = SignUpMemberObject.member_pw
-    params["user_name"] = SignUpMemberObject.member_name
-    params["user_email"] = SignUpMemberObject.member_email
-    params["user_type"] = SignUpMemberObject.member_type
+    params["user_num"] = MemberObject_signup.member_num
+    params["user_id"] = MemberObject_signup.member_id
+    params["user_pw"] = MemberObject_signup.member_pw
+    params["user_name"] = MemberObject_signup.member_name
+    params["user_email"] = MemberObject_signup.member_email
+    params["user_type"] = MemberObject_signup.member_type
     /// member grade
-    if SignUpMemberObject.member_grade == "ceo" {
+    if MemberObject_signup.member_grade == "ceo" {
         /// store
-        if SignUpMemberObject.member_type == "retailseller" {
-            SignUpStoreObject.store_id = "re"+String(timestamp)
-            params["onoff_type"] = SignUpStoreObject.onoff_type
-            params["store_domain"] = SignUpStoreObject.store_domain
-            params["store_address"] = SignUpStoreObject.store_address_street
-            params["store_address_detail"] = SignUpStoreObject.store_address_detail
-            params["store_address_zipcode"] = SignUpStoreObject.store_address_zipcode
-        } else if SignUpMemberObject.member_type == "wholesales" {
-            SignUpStoreObject.store_id = "wh"+String(timestamp)
-            params["business_reg_status"] = String(SignUpStoreObject.business_reg_status)
-            params["business_reg_num"] = SignUpStoreObject.business_reg_num
+        if MemberObject_signup.member_type == "retailseller" {
+            StoreObject_signup.store_id = "re"+String(timestamp)
+            params["onoff_type"] = StoreObject_signup.onoff_type
+            params["store_domain"] = StoreObject_signup.store_domain
+            params["store_address"] = StoreObject_signup.store_address_street
+            params["store_address_detail"] = StoreObject_signup.store_address_detail
+            params["store_address_zipcode"] = StoreObject_signup.store_address_zipcode
+        } else if MemberObject_signup.member_type == "wholesales" {
+            StoreObject_signup.store_id = "wh"+String(timestamp)
+            params["business_reg_status"] = String(StoreObject_signup.business_reg_status)
+            params["business_reg_num"] = StoreObject_signup.business_reg_num
         }
-        params["ceo_name"] = SignUpStoreObject.ceo_name
-        params["ceo_num"] = SignUpStoreObject.ceo_num
-        params["store_id"] = SignUpStoreObject.store_id
-        params["store_type"] = SignUpStoreObject.store_type
-        params["store_member"] = [SignUpMemberObject.member_id]
-        params["store_name"] = SignUpStoreObject.store_name
-        params["store_name_eng"] = SignUpStoreObject.store_name_eng
-        params["store_tel"] = SignUpStoreObject.store_tel
-        params["account"] = SignUpStoreObject.account
+        params["ceo_name"] = StoreObject_signup.ceo_name
+        params["ceo_num"] = StoreObject_signup.ceo_num
+        params["store_id"] = StoreObject_signup.store_id
+        params["store_type"] = StoreObject_signup.store_type
+        params["store_member"] = [MemberObject_signup.member_id]
+        params["store_name"] = StoreObject_signup.store_name
+        params["store_name_eng"] = StoreObject_signup.store_name_eng
+        params["store_tel"] = StoreObject_signup.store_tel
+        params["account"] = StoreObject_signup.account
         /// member
-        params["my_store"] = [SignUpStoreObject.store_id]
+        params["my_store"] = StoreObject_signup.store_id
     }
     /// x-www-form-urlencoded
     AF.request(requestUrl+"/dk_sto", method: .post, parameters: params).responseData { response in
@@ -159,7 +159,9 @@ func requestFileUpload(collection_id: String, document_id: String, file_data: [(
             if !field_name.contains("_imgs") {
                 formData.append(file_data, withName: field_name, fileName: field_name, mimeType: file_name.mimeType())
             } else {
+                
                 let index: String = field_name.components(separatedBy: "_imgs")[1]
+                
                 if (field_name.contains("item_content_imgs")) {
                     formData.append(file_data, withName: field_name, fileName: "detail\(index)", mimeType: file_name.mimeType())
                 } else if (field_name == "item_photo_imgs0") {
@@ -213,32 +215,21 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
                 if let dict = responseJson["data"] as? [String: Any] {
                     /// member info
                     let memberDict = dict["member"] as? [String: Any] ?? [:]
-                    let memberValue = MemberData()
-                    memberValue.end_session_time = memberDict["end_session_time"] as? String ?? ""
-                    memberValue.fcm_id = memberDict["fcm_id"] as? String ?? ""
-                    memberValue.marketing_agree = Bool(memberDict["marketing_agree"] as? String ?? "false") ?? false
-                    memberValue.marketing_agree_type = memberDict["marketing_agree_type"] as? [String] ?? []
-                    memberValue.member_grade = memberDict["member_position"] as? String ?? ""
-                    memberValue.my_store = memberDict["my_store"] as? [String] ?? []
-                    memberValue.profile_img = memberDict["profile_img"] as? String ?? ""
-                    memberValue.session_id = memberDict["session_id"] as? String ?? ""
-                    memberValue.session_time = memberDict["session_time"] as? String ?? ""
-                    memberValue.signup_time = memberDict["signup_time"] as? String ?? ""
-                    memberValue.member_email = memberDict["user_email"] as? String ?? ""
-                    memberValue.member_id = memberDict["user_id"] as? String ?? ""
-                    memberValue.member_name = memberDict["user_name"] as? String ?? ""
-                    memberValue.member_num = memberDict["user_num"] as? String ?? ""
-                    memberValue.member_pw = memberDict["user_pw"] as? String ?? ""
-                    memberValue.member_type = memberDict["user_type"] as? String ?? ""
-                    memberValue.member_idcard_img = memberDict["user_idcard_img"] as? String ?? ""
                     /// 데이터 추가
-                    MemberObject = memberValue
+                    MemberObject = setMember(memberDict: memberDict)
                     /// store info
-                    let storeArray = dict["store"] as? Array<[String: Any]> ?? []
-                    storeArray.forEach { storeDict in
-                        /// 데이터 추가
-                        StoreArray.append(setStore(storeDict: storeDict))
-                    }
+                    let storeDict = dict["store"] as? [String: Any] ?? [:]
+                    /// 데이터 추가
+                    StoreObject = setStore(storeDict: storeDict)
+                    
+//                    let storeArray = dict["store"] as? Array<[String: Any]> ?? []
+//                    StoreObject = setStore(storeDict: storeArray.first ?? [:])
+                    
+//                    let storeArray = dict["store"] as? Array<[String: Any]> ?? []
+//                    storeArray.forEach { storeDict in
+//                        /// 데이터 추가
+//                        StoreArray.append(setStore(storeDict: storeDict))
+//                    }
                     completionHandler(200)
                 } else {
                     completionHandler(204)
@@ -333,7 +324,7 @@ func requestSearchStore(storeType: String, storeName: String, completionHandler:
                     storeArray.forEach { storeDict in
                         /// 데이터 추가
                         if let delegate = SearchStoreVCdelegate {
-                            delegate.search_StoreArray.append(setStore(storeDict: storeDict))
+                            delegate.StoreArray_search.append(setStore(storeDict: storeDict))
                         }
                     }
                     completionHandler(200)
@@ -378,7 +369,7 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
                         GoodsObject = setGoods(goodsDict: bestItemDict)
                     }
                     /// 데이터 추가
-                    BestStoreArray.append((
+                    StoreArray_best.append((
                         StoreObject: setStore(storeDict: bestStoreDict),
                         GoodsObject: GoodsObject
                     ))
@@ -387,12 +378,12 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
                 let _: [()] = (data["best_item"] as? [String: Any] ?? [:]).compactMap { (key: String, value: Any) in
                     let bestItemDict = value as? [String: Any] ?? [:]
                     /// 데이터 추가
-                    BestItemArray.append(setGoods(goodsDict: bestItemDict))
+                    GoodsArray_best.append(setGoods(goodsDict: bestItemDict))
                 }
                 
-                if BestStoreArray.count+BestItemArray.count > 0 {
-                    BestStoreArray.sort { $0.StoreObject.store_name_eng < $1.StoreObject.store_name_eng }
-                    BestItemArray.sort { $0.item_pullup_time > $1.item_pullup_time }
+                if StoreArray_best.count+GoodsArray_best.count > 0 {
+                    StoreArray_best.sort { $0.StoreObject.store_name_eng < $1.StoreObject.store_name_eng }
+                    GoodsArray_best.sort { $0.item_pullup_time > $1.item_pullup_time }
                     completionHandler(200)
                 } else {
                     completionHandler(204)
@@ -465,7 +456,7 @@ func requestReBasket(type: String = "get", params: [String: Any] = [:], completi
     } else if type == "delete" {
         params["action"] = "basket_delete"
     }
-    params["re_store_id"] = StoreArray[store_index].store_id
+    params["re_store_id"] = StoreObject.store_id
     
     AF.request(requestUrl+"/order", method: .post, parameters: params).responseData { response in
         do {
@@ -677,7 +668,50 @@ func requestReScrap(store_id: String, completionHandler: @escaping (([StoreData]
     }
 }
 
-
+func requestWhGoodsUpload(GoodsObject: GoodsData, timestamp: Int64, completionHandler: @escaping ((Int) -> Void)) {
+    
+    let data = GoodsObject
+    
+    let params: Parameters = [
+        "action": "product_registration",
+        "user_id": MemberObject.member_id,
+        "item_key": String(timestamp),
+        "item_category_name": data.item_category_name,
+        "item_name": data.item_name,
+        "item_sale": String(data.item_sale),
+        "item_price": data.item_price,
+        "item_sale_price": data.item_sale_price,
+        "item_colors": data.item_colors,
+        "item_sizes": data.item_sizes,
+        "item_option": data.item_option.map { ["color": $0.color, "price": $0.price, "size": $0.size, "sold_out": "false"] },
+        "item_option_type": String(data.item_option_type),
+        "item_content": data.item_content,
+        "item_style": data.item_style,
+        "item_materials": data.item_materials,
+        "item_material_washing": data.item_material_washing,
+        "item_build": data.item_build,
+        "item_manufacture_country": data.item_manufacture_country,
+        "item_disclosure": data.item_disclosure,
+        "store_id": StoreObject.store_id,
+        "store_name": StoreObject.store_name,
+        "store_name_eng": StoreObject.store_name_eng,
+        "store_mainphoto_img": StoreObject.store_mainphoto_img
+    ]
+    
+    AF.request(requestUrl+"/goods", method: .post, parameters: params).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+                print(responseJson)
+                completionHandler(200)
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}
 
 
 

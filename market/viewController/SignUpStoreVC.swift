@@ -87,7 +87,7 @@ class SignUpStoreVC: UIViewController {
         
         setKeyboard()
         // init
-        StoreObject.store_type = SignUpMemberObject.member_type
+        StoreObject.store_type = MemberObject_signup.member_type
         /// navi
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
@@ -329,7 +329,7 @@ class SignUpStoreVC: UIViewController {
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
             if let delegate = SignUpMemberVCdelegate {
                 /// 데이터 삭제
-                SignUpStoreObject = StoreData()
+                StoreObject_signup = StoreData()
                 
                 self.StoreObject.store_name = self.storeNameChi_tf.text!
                 self.StoreObject.store_name_eng = self.storeNameEng_tf.text!
@@ -343,7 +343,7 @@ class SignUpStoreVC: UIViewController {
                 } else if self.StoreObject.store_type == "wholesales" {
                     self.StoreObject.business_reg_num = self.businessRegNum_tf.text!
                 }
-                SignUpStoreObject = self.StoreObject
+                StoreObject_signup = self.StoreObject
                 delegate.new_label.isHidden = false
                 delegate.registerSearchStoreName_label.text = "\(self.StoreObject.store_name)(\(self.StoreObject.store_name_eng))"
                 delegate.registerSearchStore_btn.isSelected = true

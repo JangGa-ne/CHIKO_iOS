@@ -47,8 +47,8 @@ class ReMyPageVC: UIViewController {
         
         ReMyPageVCdelegate = self
         
-        setNuke(imageView: storeMain_img, imageUrl: StoreArray[store_index].store_mainphoto_img, cornerRadius: 15)
-        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
+//        setNuke(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
+//        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
         tableView.contentInset = .zero

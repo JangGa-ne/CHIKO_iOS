@@ -120,7 +120,6 @@ class SignInVC: UIViewController {
                 /// SignIn 요청
                 dispatchGroup.enter()
                 requestSignIn { status in
-                    status_code = status; dispatchGroup.leave()
                     
                     if status == 200, MemberObject.member_type == "retailseller" {
                         /// ReMain 요청
@@ -134,6 +133,8 @@ class SignInVC: UIViewController {
                             status_code = status; dispatchGroup.leave()
                         }
                     }
+                    
+                    status_code = status; dispatchGroup.leave()
                 }
                 /// 모든 요청이 완료된 후 실행
                 dispatchGroup.notify(queue: .main) {
@@ -145,7 +146,16 @@ class SignInVC: UIViewController {
                         UserDefaults.standard.setValue(appDelegate.member_type, forKey: "member_type")
                         UserDefaults.standard.setValue(appDelegate.member_id, forKey: "member_id")
                         UserDefaults.standard.setValue(appDelegate.member_pw, forKey: "member_pw")
-                        self.segueViewController(identifier: "ChoiceStoreVC")
+//                        self.segueViewController(identifier: "ChoiceStoreVC")
+                        if MemberObject.member_type == "retailseller" {
+                            self.segueTabBarController(identifier: "ReMainTBC", idx: 0)
+                        } else if MemberObject.member_type == "wholesales" {
+                            if StoreObject.waiting_step == 0 || StoreObject.waiting_step == 1 {
+                                self.segueViewController(identifier: "WhWaitingVC")
+                            } else if StoreObject.waiting_step == 2 {
+                                self.segueViewController(identifier: "WhHomeVC")
+                            }
+                        }
                     case 204:
                         self.customAlert(message: "No data", time: 1)
                     case 600:
@@ -159,11 +169,11 @@ class SignInVC: UIViewController {
             /// signup
             let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "소매자 회원가입", style: .default, handler: { _ in
-                SignUpMemberObject.member_type = "retailseller"
+                MemberObject_signup.member_type = "retailseller"
                 DispatchQueue.main.async { self.segueViewController(identifier: "SignUpMemberVC") }
             }))
             alert.addAction(UIAlertAction(title: "도매 판매자 회원가입", style: .default, handler: { _ in
-                SignUpMemberObject.member_type = "wholesales"
+                MemberObject_signup.member_type = "wholesales"
                 DispatchQueue.main.async { self.segueViewController(identifier: "SignUpMemberVC") }
             }))
             alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
@@ -180,11 +190,11 @@ class SignInVC: UIViewController {
         
         appDelegate.member_type = "retailseller"
         /// 데이터 삭제
-        BestStoreArray.removeAll()
-        BestItemArray.removeAll()
+        StoreArray_best.removeAll()
+        GoodsArray_best.removeAll()
         BasketArray.removeAll()
-        SignUpMemberObject = MemberData()
-        SignUpStoreObject = StoreData()
+        MemberObject_signup = MemberData()
+        StoreObject_signup = StoreData()
         MemberObject = MemberData()
         StoreObject = StoreData()
         StoreArray.removeAll()

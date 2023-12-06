@@ -49,7 +49,7 @@ class MemberData {
     var end_session_time: String = ""
     var signup_time: String = ""
     var profile_img: String = ""
-    var my_store: [String] = []
+    var my_store: String = ""
     // 소매자
     var member_idcard_img: String = ""
     
@@ -58,6 +58,30 @@ class MemberData {
     
     var upload_files: [(field_name: String, file_name: String, file_data: Data, file_size: Int)] = []
     var load_img: Bool = false
+}
+
+func setMember(memberDict: [String: Any]) -> MemberData {
+    
+    let memberValue = MemberData()
+    memberValue.end_session_time = memberDict["end_session_time"] as? String ?? ""
+    memberValue.fcm_id = memberDict["fcm_id"] as? String ?? ""
+    memberValue.marketing_agree = Bool(memberDict["marketing_agree"] as? String ?? "false") ?? false
+    memberValue.marketing_agree_type = memberDict["marketing_agree_type"] as? [String] ?? []
+    memberValue.member_grade = memberDict["member_position"] as? String ?? ""
+    memberValue.my_store = memberDict["my_store"] as? String ?? ""
+    memberValue.profile_img = memberDict["profile_img"] as? String ?? ""
+    memberValue.session_id = memberDict["session_id"] as? String ?? ""
+    memberValue.session_time = memberDict["session_time"] as? String ?? ""
+    memberValue.signup_time = memberDict["signup_time"] as? String ?? ""
+    memberValue.member_email = memberDict["user_email"] as? String ?? ""
+    memberValue.member_id = memberDict["user_id"] as? String ?? ""
+    memberValue.member_name = memberDict["user_name"] as? String ?? ""
+    memberValue.member_num = memberDict["user_num"] as? String ?? ""
+    memberValue.member_pw = memberDict["user_pw"] as? String ?? ""
+    memberValue.member_type = memberDict["user_type"] as? String ?? ""
+    memberValue.member_idcard_img = memberDict["user_idcard_img"] as? String ?? ""
+    /// 데이터 추가
+    return memberValue
 }
 
 class StoreData {
@@ -170,6 +194,7 @@ class GoodsData {
     var item_exposure_count: Int = 0
     var item_favorite_count: Int = 0
     var item_option: [GoodsOptionData] = []
+    var item_option_type: Bool = false
     var item_top_check: Bool = false
     var item_top_grade: Int = 0
     var store_id: String = ""
@@ -233,6 +258,7 @@ func setGoods(goodsDict: [String: Any]) -> GoodsData {
         /// 데이터 추가
         goodsValue.item_option.append(goodsOptionValue)
     }
+    goodsValue.item_option_type = Bool(goodsDict["item_option_type"] as? String ?? "false") ?? false
     goodsValue.store_id = goodsDict["store_id"] as? String ?? ""
     goodsValue.store_name = goodsDict["store_name"] as? String ?? ""
     goodsValue.store_name_eng = goodsDict["store_name_eng"] as? String ?? ""
