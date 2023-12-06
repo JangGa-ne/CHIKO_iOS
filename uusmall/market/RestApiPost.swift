@@ -205,9 +205,6 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
         "user_pw": appDelegate.member_pw,
     ]
     /// x-www-form-urlencoded
-    AF.requestQueue.async {
-        
-    }
     AF.request(requestUrl+"/dk_sto", method: .post, parameters: params).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -672,6 +669,16 @@ func requestWhGoodsUpload(GoodsObject: GoodsData, timestamp: Int64, completionHa
     
     let data = GoodsObject
     
+    var item_option: Array<[String: Any]> = []
+    data.item_option.forEach { data in
+        item_option.append([
+            "color": data.color,
+            "price": data.price,
+            "size": data.size,
+            "sold_out": String(data.sold_out)
+        ])
+    }
+    
     let params: Parameters = [
         "action": "product_registration",
         "user_id": MemberObject.member_id,
@@ -683,7 +690,7 @@ func requestWhGoodsUpload(GoodsObject: GoodsData, timestamp: Int64, completionHa
         "item_sale_price": data.item_sale_price,
         "item_colors": data.item_colors,
         "item_sizes": data.item_sizes,
-        "item_option": data.item_option.map { ["color": $0.color, "price": $0.price, "size": $0.size, "sold_out": "false"] },
+        "item_option": item_option,
         "item_option_type": String(data.item_option_type),
         "item_content": data.item_content,
         "item_style": data.item_style,
@@ -701,8 +708,12 @@ func requestWhGoodsUpload(GoodsObject: GoodsData, timestamp: Int64, completionHa
     AF.request(requestUrl+"/goods", method: .post, parameters: params).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
-                print(responseJson)
-                completionHandler(200)
+//                print(responseJson)
+                if let dict = responseJson["data"] as? [String: Any] {
+                    completionHandler(200)
+                } else {
+                    completionHandler(204)
+                }
             } else {
                 completionHandler(600)
             }

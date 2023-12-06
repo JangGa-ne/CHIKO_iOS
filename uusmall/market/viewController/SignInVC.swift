@@ -49,6 +49,7 @@ class SignInVC: UIViewController {
         
         setKeyboard()
         // init
+        appDelegate.member_type = "retailseller"
         /// navi
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
@@ -188,7 +189,6 @@ class SignInVC: UIViewController {
         
         SignUpMemberVCdelegate = nil
         
-        appDelegate.member_type = "retailseller"
         /// 데이터 삭제
         StoreArray_best.removeAll()
         GoodsArray_best.removeAll()
