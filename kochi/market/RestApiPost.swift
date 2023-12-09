@@ -390,21 +390,24 @@ func requestReGoods(category: [String] = [], startAt: String = "", limit: Int = 
     
     var params: Parameters = [
         "action": "search",
-        "filterValue": [""],                                  // 카테고리
-        "filteredColorFilter": "",                            // 색상
-        "storeNameFilter": "",                                // 매장명
-        "styleFilter": "",                                    // 스타일
-        "priceRangeFilter": ["minPrice", "maxPrice"],         // 가격범위(원가)
-        "salePriceRangeFilter": ["minPrice", "maxPrice"],     // 가격범위(할인가)
-        "start_index": startAt,
+//        "filteredColorFilter": "",                            // 색상
+//        "storeNameFilter": "",                                // 매장명
+//        "styleFilter": "",                                    // 스타일
+//        "priceRangeFilter": ["minPrice", "maxPrice"],         // 가격범위(원가)
+//        "salePriceRangeFilter": ["minPrice", "maxPrice"],     // 가격범위(할인가)
         "limit": limit,
     ]
+    
+    if startAt != "" { params["startIndex"] = startAt }
     
     if category.count == 0 {
         params["filter"] = "전체보기"
     } else {
         params["filter"] = "카테고리"
+        params["filterValue"] = category
     }
+    
+    print(params)
     
     var GoodsArray: [GoodsData] = []
     

@@ -58,7 +58,7 @@ class ReGoodsDetailTC: UITableViewCell {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         guard let data = ReGoodsDetailVCdelegate?.OptionArray[sender.tag] else { return }
         if data.quantity > 1 { data.quantity -= 1; optionQuantity_label.text = "\(data.quantity)" }
-        optionPrice_label.text = "\(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")원"
+        optionPrice_label.text = "₩ \(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
         ReGoodsDetailVCdelegate?.setTotalPrice()
     }
     
@@ -66,7 +66,7 @@ class ReGoodsDetailTC: UITableViewCell {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         guard let data = ReGoodsDetailVCdelegate?.OptionArray[sender.tag] else { return }
         data.quantity += 1; optionQuantity_label.text = "\(data.quantity)"
-        optionPrice_label.text = "\(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")원"
+        optionPrice_label.text = "₩ \(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
         ReGoodsDetailVCdelegate?.setTotalPrice()
     }
 }
@@ -235,7 +235,7 @@ class ReGoodsDetailVC: UIViewController {
             total_price += (data.price*data.quantity)
             total_quantity += data.quantity
         }
-        totalPrice_label.text = "\(priceFormatter.string(from: total_price as NSNumber) ?? "0")원"
+        totalPrice_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -296,8 +296,8 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.itemImgPage_view.isHidden = !(data.item_photo_imgs.count > 1)
             cell.itemImgCount_label.text = "| \(data.item_photo_imgs.count)"
             cell.itemName_label.text = data.item_name
-            cell.itemPrice_label.text = "\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")원"
-            cell.itemSalePrice_label.text = "\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")원"
+            cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+            cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
             let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
             cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
             cell.itemSalePercent_label.text = "↓ \(percent)%"
@@ -321,7 +321,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.optionMinus_btn.tag = indexPath.row; cell.optionMinus_btn.addTarget(cell, action: #selector(cell.optionMinus_btn(_:)), for: .touchUpInside)
             cell.optionQuantity_label.text = "\(data.quantity)"
             cell.optionPlus_btn.tag = indexPath.row; cell.optionPlus_btn.addTarget(cell, action: #selector(cell.optionPlus_btn(_:)), for: .touchUpInside)
-            cell.optionPrice_label.text = "\(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")원"
+            cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
             
             return cell
         } else if indexPath.section == 2 {

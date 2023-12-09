@@ -94,7 +94,7 @@ class SignInVC: UIViewController {
             retailseller_btn.isSelected = false; wholesales_btn.isSelected = true
             retailseller_btn.backgroundColor = .H_F2F2F7; wholesales_btn.backgroundColor = .H_8CD26B
             
-            memberId_tf.text = "fmf7778"; memberPw_tf.text = "1q2w3e4r!"
+            memberId_tf.text = "testnike"; memberPw_tf.text = "qqq111---"
         }
     }
     
@@ -131,6 +131,12 @@ class SignInVC: UIViewController {
                         /// ReBasket 요청
                         dispatchGroup.enter()
                         requestReBasket(type: "get") { status in
+                            status_code = status; dispatchGroup.leave()
+                        }
+                    } else if status == 200, MemberObject.member_type == "wholesales" {
+                        /// WhRealTime 요청
+                        dispatchGroup.enter()
+                        requestWhRealTime(filter: "최신순", limit: 3) { status in
                             status_code = status; dispatchGroup.leave()
                         }
                     }
@@ -190,14 +196,19 @@ class SignInVC: UIViewController {
         SignUpMemberVCdelegate = nil
         
         /// 데이터 삭제
-        StoreArray_best.removeAll()
-        GoodsArray_best.removeAll()
-        BasketArray.removeAll()
+        /// Common
         MemberObject_signup = MemberData()
         StoreObject_signup = StoreData()
         MemberObject = MemberData()
         StoreObject = StoreData()
         StoreArray.removeAll()
+        /// Retailseller
+        StoreArray_best.removeAll()
+        GoodsArray_best.removeAll()
+        BasketArray.removeAll()
+        /// Wholesales
+        GoodsArray_realtime.removeAll()
+        
         UserDefaults.standard.removeObject(forKey: "store_index_select")
         UserDefaults.standard.removeObject(forKey: "store_index")
         UserDefaults.standard.removeObject(forKey: "member_type")

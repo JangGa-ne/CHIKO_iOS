@@ -25,15 +25,15 @@ class ReMyPageVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    let menu_names: [(title: String, content: [String])] = [
-        (title: "매장관리", content: ["직원관리", "매장태그관리"]),
+    let menus: [(title: String, content: [String])] = [
+        (title: "매장관리", content: ["직원관리"]),
         (title: "정보관리", content: ["계좌관리", "사업자관리", "내정보"]),
-        (title: "고객센터", content: [] as [String]),
+        (title: "고객센터", content: ["문의하기"] as [String]),
     ]
-    let segue_ids: [(String, [String])] = [
-        ("매장관리", ["직원관리", "매장태그관리"]),
-        ("정보관리", ["계좌관리", "사업자관리", "내정보"]),
-        ("고객센터", [] as [String]),
+    let segues: [(String, [String])] = [
+        ("매장관리", ["ReEmployeeVC"]),
+        ("정보관리", ["", "", ""]),
+        ("고객센터", [""] as [String]),
     ]
     
     @IBOutlet weak var storeMain_img: UIImageView!
@@ -88,12 +88,13 @@ class ReMyPageVC: UIViewController {
 extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return menu_names.count+1
+        return menus.count+1
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTCT") as! ReMyPageTC
-        cell.title_label.text = menu_names[section-1].title
+        cell.title_label.text = menus[section-1].title
         return cell
     }
     
@@ -102,7 +103,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 1 } else { return menu_names[section-1].content.count }
+        if section == 0 { return 1 } else { return menus[section-1].content.count }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -110,18 +111,15 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTC0", for: indexPath) as! ReMyPageTC
-            
             cell.basket_noticeView.isHidden = (BasketArray.count == 0)
             ([cell.mDotPoint_view, cell.order_view, cell.basket_view, cell.scrap_view, cell.setting_view] as [UIView]).enumerated().forEach { i, view in
                 view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(segue_view(_:))))
             }
-            
             return cell
-            
         } else {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTC1", for: indexPath) as! ReMyPageTC
-            cell.title_label.text = menu_names[indexPath.section-1].content[indexPath.row]
+            cell.title_label.text = menus[indexPath.section-1].content[indexPath.row]
             return cell
         }
     }
@@ -140,6 +138,13 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
             segueViewController(identifier: "ReScrapVC")
         } else if sender.tag == 4 {
             
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if indexPath.section != 0 {
+            segueViewController(identifier: segues[indexPath.section-1].1[indexPath.row])
         }
     }
 }

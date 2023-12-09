@@ -27,4 +27,4 @@ var ReStoreVisitVCdelegate: ReStoreVisitVC? = nil
 
 var WhHomeVCdelegate: WhHomeVC? = nil
 var WhGoodsUploadVCdelegate: WhGoodsUploadVC? = nil
-var WhGoodsEditVCdelegate: WhGoodsEditVC? = nil
+var WhGoodsDetailVCdelegate: WhGoodsDetailVC? = nil

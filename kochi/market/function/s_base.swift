@@ -19,3 +19,8 @@ extension UITableViewCell {
         selectionStyle = .none
     }
 }
+
+class FetchingMoreTC: UITableViewCell {
+    
+    @IBOutlet weak var fetchingMore_indicatorView: UIActivityIndicatorView!
+}

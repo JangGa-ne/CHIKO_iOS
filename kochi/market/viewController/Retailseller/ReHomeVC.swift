@@ -67,8 +67,8 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
         cell.storeName_btn.setTitle(data.store_name, for: .normal)
         cell.storeName_btn.tag = indexPath.row; cell.storeName_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
         cell.itemName_label.text = data.item_name
-        cell.itemPrice_label.text = "\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")원"
-        cell.itemSalePrice_label.text = "\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")원"
+        cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+        cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
         let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
         cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
         cell.itemSalePercent_label.text = "↓ \(percent)%"
@@ -160,8 +160,8 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             cell.item_gv.layer.cornerRadius = 15
             cell.item_gv.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             cell.itemName_label.text = data.GoodsObject.item_name
-            cell.itemPrice_label.text = "\(priceFormatter.string(from: data.GoodsObject.item_price as NSNumber) ?? "0")원"
-            cell.itemSalePrice_label.text = "\(priceFormatter.string(from: data.GoodsObject.item_sale_price as NSNumber) ?? "0")원"
+            cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.GoodsObject.item_price as NSNumber) ?? "0")"
+            cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.GoodsObject.item_sale_price as NSNumber) ?? "0")"
             let percent = ((Double(data.GoodsObject.item_price)-Double(data.GoodsObject.item_sale_price))/Double(data.GoodsObject.item_price)*1000).rounded()/10
             cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.GoodsObject.item_sale)
             cell.itemSalePercent_label.text = "↓ \(percent)%"

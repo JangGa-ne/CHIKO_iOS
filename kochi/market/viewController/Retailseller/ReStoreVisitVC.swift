@@ -67,7 +67,7 @@ extension ReStoreVisitTC: UICollectionViewDelegate, UICollectionViewDataSource, 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReStoreVisitCC", for: indexPath) as! ReStoreVisitCC
         
         cell.itemName_label.text = data.item_name
-        cell.itemPrice_label.text = "\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")원"
+        cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
         
         return cell
     }

@@ -35,8 +35,7 @@ class WhHomeTC: UITableViewCell {
             
             if i == 0 {
                 let layout = UICollectionViewFlowLayout()
-                layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10
-                layout.scrollDirection = .horizontal
+                layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
                 layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
                 collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
             }
@@ -103,7 +102,7 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             cell.grade_label.text = String(indexPath.row+1)
             
             cell.itemName_label.text = data.item_name
-            cell.itemPrice_label.text = "\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")원"
+            cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
             cell.orderCount_label.text = "\(priceFormatter.string(from: data.item_order_count as NSNumber) ?? "0")건"
         }
         
@@ -133,6 +132,9 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             }
         } else if collectionView == collectionView2 {
             
+            let segue = WhHomeVCdelegate.storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
+            segue.GoodsObject = GoodsArray_realtime[indexPath.row]
+            WhHomeVCdelegate.navigationController?.pushViewController(segue, animated: true)
         }
     }
 }
@@ -165,6 +167,7 @@ class WhHomeVC: UIViewController {
         setBackSwipeGesture(false)
         
         WhGoodsUploadVCdelegate = nil
+        WhGoodsDetailVCdelegate = nil
     }
 }
 
@@ -204,6 +207,7 @@ extension WhHomeVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         if indexPath.section == 0 {
             
         }

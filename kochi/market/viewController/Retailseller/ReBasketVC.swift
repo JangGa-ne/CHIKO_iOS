@@ -51,7 +51,7 @@ extension ReBasketTC: UITableViewDelegate, UITableViewDataSource {
         
         cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0")원)"
         cell.optionQuantity_label.text = "수량. \(data.quantity)개"
-        cell.optionPrice_label.text = "\(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")원"
+        cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
         return cell
     }
@@ -64,8 +64,7 @@ class ReBasketVC: UIViewController {
     }
     
     var BasketArray_filter: [BasketData] = []
-    var startIndex: Int = 0
-    var limit: Int = 10
+    var refreshControl: UIRefreshControl = UIRefreshControl()
     
     var choice_total: Int = 0
     var sale_total: Int = 0
@@ -91,8 +90,23 @@ class ReBasketVC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
+        tableView.refreshControl = refreshControl
+        refreshControl.tintColor = .lightGray
+        refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         preheatImages(urls: BasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
+    }
+    
+    @objc func refreshControl(_ sender: UIRefreshControl) {
+        /// 데이터 삭제
+        BasketArray.removeAll(); tableView.reloadData()
+        /// ReBasket 요청
+        requestReBasket(type: "get") { _ in
+            
+            self.choiceAllData()
+            self.totalData()
+            self.tableView.reloadData()
+        }; sender.endRefreshing()
     }
     
     @objc func choiceAll_btn(_ sender: UIButton) {
@@ -137,7 +151,7 @@ class ReBasketVC: UIViewController {
             }
         }
         
-        orderTotalPrice_label.text = "\(priceFormatter.string(from: order_total as NSNumber) ?? "0")원"
+        orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
     }
     
     @objc func order_btn(_ sender: UIButton) {
@@ -226,13 +240,13 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
                 }
             }
             
-            cell.orderTotalPrice_label.text = "\(priceFormatter.string(from: order_total as NSNumber) ?? "0")원"
+            cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
             
             return cell
         } else if indexPath.section == 2 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC3", for: indexPath) as! ReBasketTC
-            cell.orderTotalPrice_label.text = "\(priceFormatter.string(from: order_total as NSNumber) ?? "0")원"
+            cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
             return cell
         } else {
             return UITableViewCell()

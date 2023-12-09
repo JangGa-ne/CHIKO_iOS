@@ -238,20 +238,20 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                 let optionMain_name = option_title[indexpath_section]
                 let optionSub_name = option_content[indexpath_section].option1[indexPath.row]
                 
-                delegate.category = [optionMain_name, optionSub_name]
+                delegate.item_category_name = [optionMain_name, optionSub_name]
                 delegate.categoryName_label.text = "\(optionMain_name) > \(optionSub_name)"
             } else {
                 
                 let optionMain_name = women_clothes[indexPath.section].option1
                 let optionSub_name = women_clothes[indexPath.section].option2[indexPath.row]
                 
-                delegate.category = ["여성의류", optionMain_name, optionSub_name]
+                delegate.item_category_name = ["여성의류", optionMain_name, optionSub_name]
                 delegate.categoryName_label.text = "여성의류 > \(optionMain_name) > \(optionSub_name)"
             }
             
             delegate.categoryName_label_width.constant = stringWidth(text: delegate.categoryName_label.text!, fontSize: 12)+20
             
-            dismiss(animated: true, completion: nil)
+            dismiss(animated: true) { delegate.loadingData(first: true) }
         }
         /// 도매자(상품등록)
         if let VCdelegate = WhGoodsUploadVCdelegate {

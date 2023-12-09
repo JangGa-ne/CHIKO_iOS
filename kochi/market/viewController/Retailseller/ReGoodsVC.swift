@@ -15,8 +15,12 @@ class ReGoodsVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    var category: [String] = []
+    var item_category_name: [String] = []
+    
     var GoodsArray: [GoodsData] = []
+    var fetchingMore: Bool = false
+    var startIndex: Int = 0
+    var refreshControl: UIRefreshControl = UIRefreshControl()
     
     @IBOutlet weak var storeMain_img: UIImageView!
     @IBOutlet weak var choiceStore_btn: UIButton!
@@ -49,6 +53,9 @@ class ReGoodsVC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 22, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
+        tableView.refreshControl = refreshControl
+        refreshControl.tintColor = .lightGray
+        refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         loadingData(first: true)
     }
@@ -69,26 +76,27 @@ class ReGoodsVC: UIViewController {
         
     }
     
+    @objc func refreshControl(_ sender: UIRefreshControl) {
+        loadingData(first: true); refreshControl.endRefreshing()
+    }
+    
     func loadingData(first: Bool = false, startAt: String = "") {
         /// 데이터 삭제
         if first { GoodsArray.removeAll(); tableView.reloadData() }
-        
-        customLoadingIndicator(animated: true)
         /// ReGoods 요청
-        requestReGoods(category: category, startAt: startAt, limit: 10) { ResData, status in
-            
-            self.customLoadingIndicator(animated: false)
+        requestReGoods(category: item_category_name, startAt: startAt, limit: 10) { ResData, status in
             
             if status == 200 {
                 self.GoodsArray += ResData
                 preheatImages(urls: self.GoodsArray.compactMap { URL(string: $0.item_mainphoto_img) })
+                self.tableView.reloadData(); self.fetchingMore = false
             } else if first, status == 204 {
                 self.customAlert(message: "No Data", time: 1)
             } else if first, status == 600 {
                 self.customAlert(message: "Error occurred during data conversion", time: 1)
             } else if first, status != 200 {
                 self.customAlert(message: "Internal server error", time: 1)
-            }; self.tableView.reloadData()
+            }
         }
     }
     
@@ -102,10 +110,37 @@ class ReGoodsVC: UIViewController {
     }
 }
 
+extension ReGoodsVC: UIScrollViewDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        let contentOffsetY: CGFloat = scrollView.contentOffset.y
+        let contentHeight: CGFloat = scrollView.contentSize.height
+        let frameHeight: CGFloat = scrollView.frame.height
+        
+        if contentOffsetY > contentHeight-frameHeight && contentOffsetY > 0 && !fetchingMore {
+            fetchingMore = true
+            DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
+                self.loadingData(startAt: self.GoodsArray[self.GoodsArray.count-1].item_key)
+            }
+        }
+    }
+}
+
 extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if GoodsArray.count > 0 { return GoodsArray.count } else { return .zero }
+        if section == 0, GoodsArray.count > 0 {
+            return GoodsArray.count
+        } else if section == 1, fetchingMore {
+            return 1
+        } else {
+            return .zero
+        }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -118,28 +153,42 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let data = GoodsArray[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsTC", for: indexPath) as! ReGoodsTC
-        
-        cell.storeName_btn.setTitle(data.store_name, for: .normal)
-        cell.storeName_btn.tag = indexPath.row; cell.storeName_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
-        cell.itemName_label.text = data.item_name
-        cell.itemPrice_label.text = "\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")원"
-        cell.itemSalePrice_label.text = "\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")원"
-        let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
-        cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
-        cell.itemSalePercent_label.text = "↓ \(percent)%"
-        
-        if (indexPath.row == GoodsArray.count-1) && !data.load {
-            data.load = true
-            if data.item_pullup_time != "0" {
-                loadingData(startAt: data.item_pullup_time)
-            } else {
-                loadingData(startAt: data.item_key)
-            }
+        if indexPath.section == 0 {
+            
+            let data = GoodsArray[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsTC", for: indexPath) as! ReGoodsTC
+            
+            cell.storeName_btn.setTitle(data.store_name, for: .normal)
+            cell.storeName_btn.tag = indexPath.row; cell.storeName_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
+            cell.itemName_label.text = data.item_name
+            cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+            cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
+            let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
+            cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
+            cell.itemSalePercent_label.text = "↓ \(percent)%"
+            
+//            if (indexPath.row == GoodsArray.count-1) && !data.load {
+//                data.load = true
+//                if data.item_pullup_time != "0" {
+//                    loadingData(startAt: data.item_pullup_time)
+//                } else {
+//                    loadingData(startAt: data.item_key)
+//                }
+//            }
+            
+            return cell
+            
+        } else if indexPath.section == 1 {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FetchingMoreTC", for: indexPath) as! FetchingMoreTC
+            
+            cell.fetchingMore_indicatorView.color = .lightGray
+            cell.fetchingMore_indicatorView.startAnimating()
+            
+            return cell
+        } else {
+            return UITableViewCell()
         }
-        
-        return cell
     }
     
     @objc func store_btn(_ sender: UIButton) {
