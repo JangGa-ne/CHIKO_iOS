@@ -33,6 +33,7 @@
 		C27DD9DC2ADE2CDE00997D7D /* s_keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27DD9DB2ADE2CDE00997D7D /* s_keyboard.swift */; };
 		C290705B2B05A0740097AA74 /* RestApiPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290705A2B05A0740097AA74 /* RestApiPost.swift */; };
 		C290705E2B05A9F60097AA74 /* ReBasketVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290705D2B05A9F60097AA74 /* ReBasketVC.swift */; };
+		C29292C22B2754CF00DBC9D3 /* ReGoodsMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29292C12B2754CF00DBC9D3 /* ReGoodsMenuVC.swift */; };
 		C299D3562B01FC3B006FAD09 /* ReMyPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C299D3552B01FC3B006FAD09 /* ReMyPageVC.swift */; };
 		C2A0F7D82B24B649007442A3 /* WhGoodsTop30VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A0F7D72B24B649007442A3 /* WhGoodsTop30VC.swift */; };
 		C2A654122AFB1E16009BE424 /* ReGoodsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A654112AFB1E16009BE424 /* ReGoodsVC.swift */; };
@@ -92,6 +93,7 @@
 		C27DD9DB2ADE2CDE00997D7D /* s_keyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = s_keyboard.swift; sourceTree = "<group>"; };
 		C290705A2B05A0740097AA74 /* RestApiPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestApiPost.swift; sourceTree = "<group>"; };
 		C290705D2B05A9F60097AA74 /* ReBasketVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReBasketVC.swift; sourceTree = "<group>"; };
+		C29292C12B2754CF00DBC9D3 /* ReGoodsMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsMenuVC.swift; sourceTree = "<group>"; };
 		C299D3552B01FC3B006FAD09 /* ReMyPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReMyPageVC.swift; sourceTree = "<group>"; };
 		C2A0F7D72B24B649007442A3 /* WhGoodsTop30VC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoodsTop30VC.swift; sourceTree = "<group>"; };
 		C2A654112AFB1E16009BE424 /* ReGoodsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsVC.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				C2155CD92AF0F612008B21F2 /* ReHomeVC.swift */,
 				C20D37BF2AFB22DD00E8B7B0 /* ReGoodsTC.swift */,
 				C2A654112AFB1E16009BE424 /* ReGoodsVC.swift */,
+				C29292C12B2754CF00DBC9D3 /* ReGoodsMenuVC.swift */,
 				C299D3552B01FC3B006FAD09 /* ReMyPageVC.swift */,
 				C22B91F92AFF586B0092ACD0 /* ReGoodsDetailVC.swift */,
 				C25FF24E2AFFD2F20026BB82 /* ReGoodsOptionVC.swift */,
@@ -435,6 +438,7 @@
 				C2C971E82ADD1B9400827DA0 /* s_base.swift in Sources */,
 				C22B91FA2AFF586B0092ACD0 /* ReGoodsDetailVC.swift in Sources */,
 				C2155CDA2AF0F612008B21F2 /* ReHomeVC.swift in Sources */,
+				C29292C22B2754CF00DBC9D3 /* ReGoodsMenuVC.swift in Sources */,
 				C2682ECA2AD77C5000FC6099 /* AppDelegate.swift in Sources */,
 				C25FF24F2AFFD2F20026BB82 /* ReGoodsOptionVC.swift in Sources */,
 				C241796E2B0B47B5006497DF /* ReStoreVisitVC.swift in Sources */,

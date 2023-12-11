@@ -249,6 +249,8 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                 delegate.categoryName_label.text = "여성의류 > \(optionMain_name) > \(optionSub_name)"
             }
             
+            delegate.categoryAll_label.isHidden = true
+            delegate.categoryName_view.isHidden = false
             delegate.categoryName_label_width.constant = stringWidth(text: delegate.categoryName_label.text!, fontSize: 12)+20
             
             dismiss(animated: true) { delegate.loadingData(first: true) }
@@ -369,7 +371,7 @@ extension CategoryVC: PanModalPresentable {
     }
     
     var shortFormHeight: PanModalHeight {
-        return .contentHeight(320)
+        return .contentHeight(360)
     }
     
     var longFormHeight: PanModalHeight {

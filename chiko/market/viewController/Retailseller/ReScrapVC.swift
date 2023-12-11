@@ -44,16 +44,15 @@ class ReScrapVC: UIViewController {
         customLoadingIndicator(animated: true)
         
         /// ReScrap 요청
-        requestReScrap(store_id: StoreObject.store_id) { StoreArray, status in
+        requestReScrap(store_id: StoreObject.store_id) { array, status in
             
             self.customLoadingIndicator(animated: false)
             
-            switch status {
-            case 200:
-                self.ScrapArray = StoreArray; self.tableView.reloadData()
-            case 600:
+            if status == 200, array != nil {
+                self.ScrapArray = array ?? [StoreData()]; self.tableView.reloadData()
+            } else if status == 600 {
                 self.customAlert(message: "Error occurred during data conversion", time: 1)
-            default:
+            } else {
                 self.customAlert(message: "Internal server error", time: 1)
             }
         }

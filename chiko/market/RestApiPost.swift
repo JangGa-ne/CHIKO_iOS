@@ -398,7 +398,7 @@ func requestReGoods(category: [String] = [], startAt: String = "", limit: Int = 
         "limit": limit,
     ]
     
-    if startAt != "" { params["startIndex"] = startAt }
+    if startAt != "" { params["start_index"] = startAt }
     
     if category.count == 0 {
         params["filter"] = "전체보기"
@@ -647,14 +647,14 @@ func requestReScrap(store_id: String, completionHandler: @escaping (([StoreData]
                     
                     completionHandler(StoreArray, 200)
                 } else {
-                    completionHandler(StoreArray, 204)
+                    completionHandler([], 204)
                 }
             } else {
-                completionHandler(StoreArray, 600)
+                completionHandler([], 600)
             }
         } catch {
             print(response.error as Any)
-            completionHandler(StoreArray, response.error?.responseCode ?? 500)
+            completionHandler([], response.error?.responseCode ?? 500)
         }
     }
 }

@@ -26,6 +26,8 @@ class ReGoodsVC: UIViewController {
     @IBOutlet weak var choiceStore_btn: UIButton!
     
     @IBOutlet weak var choiceCategory_btn: UIButton!
+    @IBOutlet weak var categoryAll_label: UILabel!
+    @IBOutlet weak var categoryName_view: UIView!
     @IBOutlet weak var categoryName_label: UILabel!
     @IBOutlet weak var categoryFilter_view: UIView!
     @IBOutlet weak var categoryName_label_width: NSLayoutConstraint!
@@ -44,8 +46,11 @@ class ReGoodsVC: UIViewController {
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
         choiceCategory_btn.addTarget(self, action: #selector(choiceCategory_btn(_:)), for: .touchUpInside)
-        categoryName_label.layer.cornerRadius = 7.5
-        categoryName_label.clipsToBounds = true
+        categoryAll_label.layer.cornerRadius = 7.5
+        categoryAll_label.clipsToBounds = true
+        categoryAll_label.isHidden = false
+        categoryName_view.isHidden = true
+        categoryName_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(categoryName_view(_:))))
         categoryName_label_width.constant = stringWidth(text: categoryName_label.text!, fontSize: 12)+20
         categoryFilter_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(categoryFilter_view(_:))))
         search_tf.placeholder(text: "상품명을 입력하세요.", color: .lightGray)
@@ -66,10 +71,24 @@ class ReGoodsVC: UIViewController {
     
     @objc func choiceCategory_btn(_ sender: UIButton) {
         
+        view.endEditing(true)
+        
         let segue = storyboard?.instantiateViewController(withIdentifier: "CategoryVC") as! CategoryVC
         segue.ReGoodsVCdelegate = self
         segue.option_type = "category"
         presentPanModal(segue)
+    }
+    
+    @objc func categoryName_view(_ semder: UITapGestureRecognizer) {
+        
+        view.endEditing(true)
+        
+        item_category_name.removeAll()
+        
+        categoryAll_label.isHidden = false
+        categoryName_view.isHidden = true
+        
+        loadingData(first: true)
     }
     
     @objc func categoryFilter_view(_ sender: UITapGestureRecognizer) {
@@ -82,19 +101,21 @@ class ReGoodsVC: UIViewController {
     
     func loadingData(first: Bool = false, startAt: String = "") {
         /// 데이터 삭제
-        if first { GoodsArray.removeAll(); tableView.reloadData() }
+        if first { GoodsArray.removeAll(); self.tableView.reloadData() }
         /// ReGoods 요청
-        requestReGoods(category: item_category_name, startAt: startAt, limit: 10) { ResData, status in
+        requestReGoods(category: item_category_name, startAt: startAt, limit: 10) { array, status in
             
-            if status == 200 {
-                self.GoodsArray += ResData
-                preheatImages(urls: self.GoodsArray.compactMap { URL(string: $0.item_mainphoto_img) })
-                self.tableView.reloadData(); self.fetchingMore = false
-            } else if first, status == 204 {
+            self.GoodsArray += array
+            preheatImages(urls: self.GoodsArray.compactMap { URL(string: $0.item_mainphoto_img) })
+            self.fetchingMore = false; self.tableView.reloadData()
+            
+            guard first else { return }
+            
+            if status == 204 {
                 self.customAlert(message: "No Data", time: 1)
-            } else if first, status == 600 {
+            } else if status == 600 {
                 self.customAlert(message: "Error occurred during data conversion", time: 1)
-            } else if first, status != 200 {
+            } else if status != 200 {
                 self.customAlert(message: "Internal server error", time: 1)
             }
         }
@@ -119,9 +140,9 @@ extension ReGoodsVC: UIScrollViewDelegate {
         let frameHeight: CGFloat = scrollView.frame.height
         
         if contentOffsetY > contentHeight-frameHeight && contentOffsetY > 0 && !fetchingMore {
-            fetchingMore = true
+            fetchingMore = true; tableView.reloadData()
             DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
-                self.loadingData(startAt: self.GoodsArray[self.GoodsArray.count-1].item_key)
+                self.loadingData(startAt: self.GoodsArray[self.GoodsArray.count-1].item_pullup_time)
             }
         }
     }
@@ -200,6 +221,8 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        view.endEditing(true)
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
         segue.GoodsObject = GoodsArray[indexPath.row]

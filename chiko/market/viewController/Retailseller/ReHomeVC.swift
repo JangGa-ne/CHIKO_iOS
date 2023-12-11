@@ -260,16 +260,6 @@ extension ReHomeVC: UITableViewDelegate, UITableViewDataSource {
         return 2
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let section_view = UIView()
-        section_view.backgroundColor = .clear
-        return section_view
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 20
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0, StoreArray_best.count > 0 {
             return 1

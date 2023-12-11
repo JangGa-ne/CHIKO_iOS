@@ -113,13 +113,13 @@ class ReGoodsDetailVC: UIViewController {
         
         customLoadingIndicator(animated: true)
         
-        requestFindReGoods(store_id: store_id, item_key: item_key) { GoodsObject, status in
+        requestFindReGoods(store_id: store_id, item_key: item_key) { object, status in
             
             self.store_id = ""; self.item_key = ""; self.customLoadingIndicator(animated: false)
             
             switch status {
             case 200:
-                self.GoodsObject = GoodsObject; self.viewDidLoad()
+                self.GoodsObject = object; self.viewDidLoad()
             case 600:
                 self.customAlert(message: "Error occurred during data conversion", time: 1)
             default:
@@ -168,6 +168,10 @@ class ReGoodsDetailVC: UIViewController {
     @objc func basket_order_btn(_ sender: UIButton) {
         
         guard OptionArray.count != 0 else { customAlert(message: "상품을 선택해주세요.", time: 1); return }
+        
+//        if BasketArray.filter({ $0.item_key == GoodsObject.item_key }).isEmpty {
+//            
+//        }
         
         var item_option: Array<[String: Any]> = []
         OptionArray.forEach { data in
