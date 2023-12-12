@@ -33,12 +33,12 @@ class WhHomeTC: UITableViewCell {
             
             collectionView.delegate = nil; collectionView.dataSource = nil
             
+            let layout = UICollectionViewFlowLayout()
             if i == 0 {
-                let layout = UICollectionViewFlowLayout()
                 layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
                 layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
-                collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
             }
+            collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
             collectionView.delegate = self; collectionView.dataSource = self
         }
     }
@@ -63,7 +63,7 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             let data = GoodsArray_realtime[indexPath.row]
             guard let cell = cell as? WhHomeCC else { return }
             
-            setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 5)
+            setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 7.5)
         }
     }
     
@@ -91,6 +91,8 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             cell.title_label.text = ["최신순", "끌올순", "오래된순", "품절순"][indexPath.row]
             
         } else if collectionView == collectionView2 {
+            
+            cell.frame.size.width = UIScreen.main.bounds.width-70
             
             let data = GoodsArray_realtime[indexPath.row]
             
@@ -145,11 +147,12 @@ class WhHomeVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    @IBAction func aaaa(_ sender: UIButton) { segueViewController(identifier: "WhGoodsUploadVC") }
     @IBAction func logout(_ sender: UIButton) { segueViewController(identifier: "SignInVC") }
      
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tableView: UITableView!
+    
+    @IBOutlet weak var goodsUpload_view: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -159,6 +162,12 @@ class WhHomeVC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
+        
+        goodsUpload_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(goodsUpload_view(_:))))
+    }
+    
+    @objc func goodsUpload_view(_ sender: UITapGestureRecognizer) {
+        segueViewController(identifier: "WhGoodsUploadVC")
     }
     
     override func viewWillAppear(_ animated: Bool) {

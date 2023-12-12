@@ -13,8 +13,6 @@
 		C2155CDA2AF0F612008B21F2 /* ReHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2155CD92AF0F612008B21F2 /* ReHomeVC.swift */; };
 		C21E2FFE2B285D5100FE2A16 /* MemberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21E2FFD2B285D5100FE2A16 /* MemberVC.swift */; };
 		C226F3462AF33453004DA6C8 /* UIGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C226F3452AF33452004DA6C8 /* UIGradientView.swift */; };
-		C226F34A2AF3361A004DA6C8 /* Cafe24SsurroundBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C226F3482AF3361A004DA6C8 /* Cafe24SsurroundBold.otf */; };
-		C226F34B2AF3361A004DA6C8 /* Cafe24SsurroundMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = C226F3492AF3361A004DA6C8 /* Cafe24SsurroundMedium.otf */; };
 		C22A0E1B2AE75DE100F73F7A /* s_device.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22A0E1A2AE75DE100F73F7A /* s_device.swift */; };
 		C22A0E1D2AE7A89D00F73F7A /* s_time.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22A0E1C2AE7A89D00F73F7A /* s_time.swift */; };
 		C22A0E1F2AE7AEB900F73F7A /* SignUpRegisterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22A0E1E2AE7AEB900F73F7A /* SignUpRegisterVC.swift */; };
@@ -25,6 +23,8 @@
 		C241796E2B0B47B5006497DF /* ReStoreVisitVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241796D2B0B47B5006497DF /* ReStoreVisitVC.swift */; };
 		C24AF1582B200A710032EC04 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C24AF15A2B200A710032EC04 /* Localizable.strings */; };
 		C24E443B2AFC64D500885BBB /* CategoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E443A2AFC64D500885BBB /* CategoryVC.swift */; };
+		C25A1E502B28AE5C000995BD /* Cafe24SsurroundBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C226F3482AF3361A004DA6C8 /* Cafe24SsurroundBold.otf */; };
+		C25A1E512B28AE60000995BD /* Cafe24SsurroundMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = C226F3492AF3361A004DA6C8 /* Cafe24SsurroundMedium.otf */; };
 		C25B23692AE0D0CA00AA3A30 /* s_regularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25B23682AE0D0CA00AA3A30 /* s_regularExpression.swift */; };
 		C25FF24F2AFFD2F20026BB82 /* ReGoodsOptionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25FF24E2AFFD2F20026BB82 /* ReGoodsOptionVC.swift */; };
 		C2682ECA2AD77C5000FC6099 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2682EC92AD77C5000FC6099 /* AppDelegate.swift */; };
@@ -359,11 +359,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				C2682ED32AD77C5100FC6099 /* Assets.xcassets in Resources */,
+				C25A1E502B28AE5C000995BD /* Cafe24SsurroundBold.otf in Resources */,
 				C24AF1582B200A710032EC04 /* Localizable.strings in Resources */,
-				C226F34B2AF3361A004DA6C8 /* Cafe24SsurroundMedium.otf in Resources */,
-				C226F34A2AF3361A004DA6C8 /* Cafe24SsurroundBold.otf in Resources */,
 				C2682ED12AD77C5000FC6099 /* Main.storyboard in Resources */,
 				C2DF32D62AE18422002732F0 /* GoogleService-Info.plist in Resources */,
+				C25A1E512B28AE60000995BD /* Cafe24SsurroundMedium.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
