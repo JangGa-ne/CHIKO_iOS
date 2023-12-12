@@ -240,7 +240,7 @@ func setGoods(goodsDict: [String: Any]) -> GoodsData {
     goodsValue.item_disclosure = goodsDict["item_disclosure"] as? String ?? ""
     goodsValue.item_soldout = Bool(goodsDict["item_soldout"] as? String ?? "") ?? false
     goodsValue.item_soldout_time = goodsDict["item_soldout_time"] as? String ?? ""
-    goodsValue.item_pullup_time = goodsDict["item_pullup_time"] as? String ?? ""
+    goodsValue.item_pullup_time = goodsDict["item_pullup_time"] as? String ?? "0"
     goodsValue.item_click_count = goodsDict["item_click_count"] as? Int ?? 0
     goodsValue.item_order_count = goodsDict["item_order_count"] as? Int ?? 0
     goodsValue.item_exposure_count = goodsDict["item_exposure_count"] as? Int ?? 0

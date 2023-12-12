@@ -19,11 +19,11 @@ var ChineseBankListVCdelegate: ChineseBankListVC? = nil
 
 var ReHomeVCdelegate: ReHomeVC? = nil
 var ReGoodsVCdelegate: ReGoodsVC? = nil
-var ReGoodsFilterVCdelegate: ReGoodsMenuVC? = nil
+var ReGoodsFilterVCdelegate: ReGoodsFilterVC? = nil
 var ReGoodsDetailVCdelegate: ReGoodsDetailVC? = nil
 var ReMyPageVCdelegate: ReMyPageVC? = nil
 var ReBasketVCdelegate: ReBasketVC? = nil
-var ReScrapVCdelegate: ReScrapVC? = nil
+var ReBookMarkVCdelegate: ReBookMarkVC? = nil
 var ReStoreVisitVCdelegate: ReStoreVisitVC? = nil
 
 var WhHomeVCdelegate: WhHomeVC? = nil

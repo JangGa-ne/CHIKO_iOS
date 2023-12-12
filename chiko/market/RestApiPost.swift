@@ -386,7 +386,7 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
     }
 }
 
-func requestReGoods(category: [String] = [], startAt: String = "", limit: Int = 99999, completionHandler: @escaping (([GoodsData], Int) -> Void)) {
+func requestReGoods(item_category_name: [String] = [], item_pullup_time: String = "0", item_key: String = "0", limit: Int = 99999, completionHandler: @escaping (([GoodsData], Int) -> Void)) {
     
     var params: Parameters = [
         "action": "search",
@@ -395,16 +395,18 @@ func requestReGoods(category: [String] = [], startAt: String = "", limit: Int = 
 //        "styleFilter": "",                                    // 스타일
 //        "priceRangeFilter": ["minPrice", "maxPrice"],         // 가격범위(원가)
 //        "salePriceRangeFilter": ["minPrice", "maxPrice"],     // 가격범위(할인가)
+        "item_pullup_time": item_pullup_time,
+        "item_key": item_key,
         "limit": limit,
     ]
     
-    if startAt != "" { params["start_index"] = startAt }
+//    if startAt != "" { params["start_index"] = startAt }
     
-    if category.count == 0 {
+    if item_category_name.count == 0 {
         params["filter"] = "전체보기"
     } else {
         params["filter"] = "카테고리"
-        params["filterValue"] = category
+        params["filterValue"] = item_category_name
     }
     
     print(params)
@@ -602,7 +604,7 @@ func requestReStoreAdd(store_id: String, store_pw: String, completionHandler: @e
     }
 }
 
-func requestReAccount(action: String, re_store_id: String, wh_store_id: String, completionHandler: @escaping ((Int) -> Void)) {
+func requestReBookMark(action: String, re_store_id: String, wh_store_id: String, completionHandler: @escaping ((Int) -> Void)) {
     
     let params: Parameters = [
         "action": action,
@@ -625,7 +627,7 @@ func requestReAccount(action: String, re_store_id: String, wh_store_id: String, 
     }
 }
 
-func requestReScrap(store_id: String, completionHandler: @escaping (([StoreData], Int) -> Void)) {
+func requestReBookMark(store_id: String, completionHandler: @escaping (([StoreData], Int) -> Void)) {
     
     let params: Parameters = [
         "action": "favorites_find",
@@ -752,7 +754,39 @@ func requestWhGoodsUpload(GoodsObject: GoodsData, timestamp: Int64, completionHa
     }
 }
 
-
+func requestEmployee(completionHandler: @escaping (([MemberData], Int) -> Void)) {
+    
+    let params: Parameters = [
+        "action": "employee_admin",
+        "store_id": StoreObject.store_id,
+    ]
+    
+    var EmployeeArray: [MemberData] = []
+    
+    AF.request(requestUrl+"/dk_sto", method: .post, parameters: params).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                let array = responseJson["data"] as? Array<[String: Any]> ?? []
+                array.forEach { dict in
+                    /// 데이터 추가
+                    EmployeeArray.append(setMember(memberDict: dict))
+                }
+                
+                if array.count > 0 {
+                    completionHandler(EmployeeArray, 200)
+                } else {
+                    completionHandler([], 204)
+                }
+            } else {
+                completionHandler([], 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler([], response.error?.responseCode ?? 500)
+        }
+    }
+}
 
 //    func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
 //

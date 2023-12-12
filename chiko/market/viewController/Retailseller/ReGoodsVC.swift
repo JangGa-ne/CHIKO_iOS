@@ -15,10 +15,13 @@ class ReGoodsVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
+    var isMenuOpen: Bool = false
+    
     var item_category_name: [String] = []
     
     var GoodsArray: [GoodsData] = []
     var fetchingMore: Bool = false
+    var startIndexChange: Bool = false
     var startIndex: Int = 0
     var refreshControl: UIRefreshControl = UIRefreshControl()
     
@@ -39,6 +42,7 @@ class ReGoodsVC: UIViewController {
         super.viewDidLoad()
         
         ReGoodsVCdelegate = self
+        ReGoodsFilterVCdelegate = storyboard?.instantiateViewController(withIdentifier: "ReGoodsFilterVC") as? ReGoodsFilterVC
         
         setKeyboard()
         
@@ -93,31 +97,51 @@ class ReGoodsVC: UIViewController {
     
     @objc func categoryFilter_view(_ sender: UITapGestureRecognizer) {
         
+//        guard let delegate = ReGoodsFilterVCdelegate else { return }
+//        
+//        if !isMenuOpen {
+//            addChild(delegate)
+//            view.addSubview(delegate.view)
+//            delegate.didMove(toParent: self)
+//        }
+//        
+//        let ReGoodsFilterVCwidth = delegate.view.frame.width
+//        let ReGoodsFilterVCtransform = CGAffineTransform(translationX: !isMenuOpen ? -ReGoodsFilterVCwidth+100 : 0, y: 0)
+//        let scaleTransform = CGAffineTransform(scaleX: !isMenuOpen ? 0.8 : 1.0, y: !isMenuOpen ? 0.8 : 1.0)
+//        
+//        UIView.animate(withDuration: 0.3) {
+//            self.view.transform = ReGoodsFilterVCtransform
+//            delegate.view.transform = scaleTransform
+//        } completion: { _ in
+//            if self.isMenuOpen {
+//                delegate.view.removeFromSuperview()
+//                delegate.removeFromParent()
+//            }
+//        }
+//        
+//        isMenuOpen = !isMenuOpen
     }
     
     @objc func refreshControl(_ sender: UIRefreshControl) {
-        loadingData(first: true); refreshControl.endRefreshing()
+        startIndexChange = false; loadingData(first: true); refreshControl.endRefreshing()
     }
     
-    func loadingData(first: Bool = false, startAt: String = "") {
+    func loadingData(first: Bool = false, item_pullup_time: String = "0", item_key: String = "0") {
         /// 데이터 삭제
         if first { GoodsArray.removeAll(); self.tableView.reloadData() }
         /// ReGoods 요청
-        requestReGoods(category: item_category_name, startAt: startAt, limit: 10) { array, status in
+        requestReGoods(item_category_name: item_category_name, item_pullup_time: item_pullup_time, item_key: item_key, limit: 10) { array, status in
             
-            self.GoodsArray += array
-            preheatImages(urls: self.GoodsArray.compactMap { URL(string: $0.item_mainphoto_img) })
-            self.fetchingMore = false; self.tableView.reloadData()
-            
-            guard first else { return }
-            
-            if status == 204 {
+            if status == 200 {
+                self.GoodsArray += array
+                preheatImages(urls: self.GoodsArray.compactMap { URL(string: $0.item_mainphoto_img) })
+            } else if first, status == 204 {
                 self.customAlert(message: "No Data", time: 1)
-            } else if status == 600 {
+            } else if first, status == 600 {
                 self.customAlert(message: "Error occurred during data conversion", time: 1)
-            } else if status != 200 {
+            } else if first, status != 200 {
                 self.customAlert(message: "Internal server error", time: 1)
-            }
+            }; self.fetchingMore = false; self.tableView.reloadData()
         }
     }
     
@@ -140,10 +164,8 @@ extension ReGoodsVC: UIScrollViewDelegate {
         let frameHeight: CGFloat = scrollView.frame.height
         
         if contentOffsetY > contentHeight-frameHeight && contentOffsetY > 0 && !fetchingMore {
-            fetchingMore = true; tableView.reloadData()
-            DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
-                self.loadingData(startAt: self.GoodsArray[self.GoodsArray.count-1].item_pullup_time)
-            }
+            fetchingMore = true; startIndexChange = true; tableView.reloadData()
+            loadingData(item_pullup_time: GoodsArray[GoodsArray.count-1].item_pullup_time, item_key: GoodsArray[GoodsArray.count-1].item_key)
         }
     }
 }
@@ -166,10 +188,13 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let data = GoodsArray[indexPath.row]
-        guard let cell = cell as? ReGoodsTC else { return }
-        
-        setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        if indexPath.section == 0 {
+            
+            let data = GoodsArray[indexPath.row]
+            guard let cell = cell as? ReGoodsTC else { return }
+            
+            setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -187,15 +212,6 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
             let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
             cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
             cell.itemSalePercent_label.text = "↓ \(percent)%"
-            
-//            if (indexPath.row == GoodsArray.count-1) && !data.load {
-//                data.load = true
-//                if data.item_pullup_time != "0" {
-//                    loadingData(startAt: data.item_pullup_time)
-//                } else {
-//                    loadingData(startAt: data.item_key)
-//                }
-//            }
             
             return cell
             

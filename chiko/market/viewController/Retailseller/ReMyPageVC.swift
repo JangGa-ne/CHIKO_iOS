@@ -27,12 +27,12 @@ class ReMyPageVC: UIViewController {
     
     let menus: [(title: String, content: [String])] = [
         (title: "매장관리", content: ["직원관리"]),
-        (title: "정보관리", content: ["계좌관리", "사업자관리", "내정보"]),
+        (title: "정보관리", content: ["계좌관리", "사업자관리", "내정보관리"]),
         (title: "고객센터", content: ["문의하기"] as [String]),
     ]
     let segues: [(String, [String])] = [
-        ("매장관리", ["ReEmployeeVC"]),
-        ("정보관리", ["", "", ""]),
+        ("매장관리", ["EmployeeVC"]),
+        ("정보관리", ["AccountVC", "StoreVC", "MemberVC"]),
         ("고객센터", [""] as [String]),
     ]
     
@@ -79,7 +79,7 @@ class ReMyPageVC: UIViewController {
         
         ChoiceStoreVCdelegate = nil
         ReBasketVCdelegate = nil
-        ReScrapVCdelegate = nil
+        ReBookMarkVCdelegate = nil
         
         tableView.reloadData()
     }
@@ -135,7 +135,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         } else if sender.tag == 2 {
             segueViewController(identifier: "ReBasketVC")
         } else if sender.tag == 3 {
-            segueViewController(identifier: "ReScrapVC")
+            segueViewController(identifier: "ReBookMarkVC")
         } else if sender.tag == 4 {
             
         }

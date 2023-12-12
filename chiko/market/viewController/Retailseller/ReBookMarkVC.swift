@@ -1,5 +1,5 @@
 //
-//  ReScrapVC.swift
+//  ReBookMarkVC.swift
 //  market
 //
 //  Created by Busan Dynamic on 11/30/23.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ReScrapTC: UITableViewCell {
+class ReBookMarkTC: UITableViewCell {
     
     @IBOutlet weak var store_img: UIImageView!
     @IBOutlet weak var storeName_label: UILabel!
@@ -15,13 +15,13 @@ class ReScrapTC: UITableViewCell {
     @IBOutlet weak var lineView: UIView!
 }
 
-class ReScrapVC: UIViewController {
+class ReBookMarkVC: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    var ScrapArray: [StoreData] = []
+    var BookMarkArray: [StoreData] = []
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
@@ -30,7 +30,7 @@ class ReScrapVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        ReScrapVCdelegate = self
+        ReBookMarkVCdelegate = self
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
@@ -43,13 +43,13 @@ class ReScrapVC: UIViewController {
         
         customLoadingIndicator(animated: true)
         
-        /// ReScrap 요청
-        requestReScrap(store_id: StoreObject.store_id) { array, status in
+        /// ReBookMark 요청
+        requestReBookMark(store_id: StoreObject.store_id) { array, status in
             
             self.customLoadingIndicator(animated: false)
             
-            if status == 200, array != nil {
-                self.ScrapArray = array ?? [StoreData()]; self.tableView.reloadData()
+            if status == 200 {
+                self.BookMarkArray += array; self.tableView.reloadData()
             } else if status == 600 {
                 self.customAlert(message: "Error occurred during data conversion", time: 1)
             } else {
@@ -65,35 +65,35 @@ class ReScrapVC: UIViewController {
     }
 }
 
-extension ReScrapVC: UITableViewDelegate, UITableViewDataSource {
+extension ReBookMarkVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if ScrapArray.count > 0 { return ScrapArray.count } else { return .zero }
+        if BookMarkArray.count > 0 { return BookMarkArray.count } else { return .zero }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let data = ScrapArray[indexPath.row]
-        guard let cell = cell as? ReScrapTC else { return }
+        let data = BookMarkArray[indexPath.row]
+        guard let cell = cell as? ReBookMarkTC else { return }
         
         setNuke(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let data = ScrapArray[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ReScrapTC", for: indexPath) as! ReScrapTC
+        let data = BookMarkArray[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReBookMarkTC", for: indexPath) as! ReBookMarkTC
         
         cell.storeName_label.text = data.store_name
         cell.storeNameEng_label.text = data.store_name_eng
-        cell.lineView.isHidden = (indexPath.row == ScrapArray.count-1)
+        cell.lineView.isHidden = (indexPath.row == BookMarkArray.count-1)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let data = ScrapArray[indexPath.row]
+        let data = BookMarkArray[indexPath.row]
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = data.store_id
         navigationController?.pushViewController(segue, animated: true)
@@ -107,13 +107,13 @@ extension ReScrapVC: UITableViewDelegate, UITableViewDataSource {
         
         if editingStyle == .delete {
             
-            let data = ScrapArray[indexPath.row]
-            /// ReAccount Delete 요청
-            requestReAccount(action: "favorites_delete", re_store_id: StoreObject.store_id, wh_store_id: data.store_id) { status in
+            let data = BookMarkArray[indexPath.row]
+            /// ReBookMark Delete 요청
+            requestReBookMark(action: "favorites_delete", re_store_id: StoreObject.store_id, wh_store_id: data.store_id) { status in
                 
                 switch status {
                 case 200:
-                    self.ScrapArray.remove(at: indexPath.row); tableView.deleteRows(at: [indexPath], with: .none)
+                    self.BookMarkArray.remove(at: indexPath.row); tableView.deleteRows(at: [indexPath], with: .none)
                 case 600:
                     self.customAlert(message: "Error occurred during data conversion", time: 1)
                 default:

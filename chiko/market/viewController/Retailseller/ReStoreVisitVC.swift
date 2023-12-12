@@ -212,8 +212,8 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
         
         customLoadingIndicator(animated: true)
         
-        /// ReAccount Add / Delete 요청
-        requestReAccount(action: action, re_store_id: StoreObject.store_id, wh_store_id: data.store_id) { status in
+        /// ReBookMark Add / Delete 요청
+        requestReBookMark(action: action, re_store_id: StoreObject.store_id, wh_store_id: data.store_id) { status in
             
             self.customLoadingIndicator(animated: false)
             
@@ -229,7 +229,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
                 }
                 self.tableView.reloadData()
                 
-                if let delegate = ReScrapVCdelegate {
+                if let delegate = ReBookMarkVCdelegate {
                     delegate.loadingData()
                 }
             case 600:
