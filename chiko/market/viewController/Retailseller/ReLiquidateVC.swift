@@ -1,0 +1,252 @@
+//
+//  ReLiquidateVC.swift
+//  market
+//
+//  Created by Busan Dynamic on 12/14/23.
+//
+
+import UIKit
+import PanModal
+
+class ReLiquidateTC: UITableViewCell {
+    
+    @IBOutlet weak var optionName_label: UILabel!
+    @IBOutlet weak var optionQuantity_label: UILabel!
+    @IBOutlet weak var optionPrice_label: UILabel!
+}
+
+class ReLiquidateCC: UICollectionViewCell {
+    
+    @IBOutlet weak var deliveryNick_label: UILabel!
+    @IBOutlet weak var deliveryAddressStreet_label: UILabel!
+    @IBOutlet weak var deliveryAddressDetail_label: UILabel!
+}
+
+class ReLiquidateVC: UIViewController {
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if #available(iOS 13.0, *) { return .darkContent } else { return .default }
+    }
+    
+    var LiquidateArray: [BasketData] = []
+    
+    var total_price: Int = 0
+    var total_vat: Int = 0
+    
+    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
+    
+    @IBOutlet weak var scrollView: UIScrollView!
+    
+    @IBOutlet weak var whStoreName_btn: UIButton!
+    @IBOutlet weak var item_img: UIImageView!
+    @IBOutlet weak var itemName_btn: UIButton!
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView_heignt: NSLayoutConstraint!
+    @IBOutlet weak var itemTotalPrice_label: UILabel!
+    @IBOutlet weak var moreItem_sv: UIStackView!
+    @IBOutlet weak var moreItem_view: UIView!
+    @IBOutlet weak var moreItemCount_label: UILabel!
+    
+    @IBOutlet weak var orderStoreName_label: UILabel!
+    @IBOutlet weak var orderMemberName_label: UILabel!
+    @IBOutlet weak var orderMenberNum_label: UILabel!
+    
+    @IBOutlet weak var collectionView: UICollectionView!
+    
+    @IBOutlet weak var eximbay_view: UIView!
+    @IBOutlet weak var eximbay_img: UIImageView!
+    @IBOutlet weak var eximbay_label: UILabel!
+    @IBOutlet weak var accountTransfer_view: UIView!
+    @IBOutlet weak var accountTransfer_img: UIImageView!
+    @IBOutlet weak var accountTransfer_label: UILabel!
+    @IBOutlet weak var bankTransfer_view: UIView!
+    @IBOutlet weak var bankTransfer_img: UIImageView!
+    @IBOutlet weak var bankTransfer_label: UILabel!
+    @IBOutlet weak var mPay_view: UIView!
+    @IBOutlet weak var mPay_img: UIImageView!
+    @IBOutlet weak var mPay_label: UILabel!
+    
+    @IBOutlet weak var mPay_sv: UIStackView!
+    @IBOutlet weak var reStoreName_label: UILabel!
+    @IBOutlet weak var reStoreCash_label: UILabel!
+    @IBOutlet weak var reStoreCash_tf: UITextField!
+    @IBOutlet weak var reStoreCash_btn: UIButton!
+    
+    @IBOutlet weak var totalPrice1_label: UILabel!
+    @IBOutlet weak var totalPrice2_label: UILabel!
+    @IBOutlet weak var totalPrice3_label: UILabel!
+    
+    @IBOutlet weak var agreement1_btn: UIButton!
+    @IBOutlet weak var agreement2_btn: UIButton!
+    @IBOutlet weak var agreement3_btn: UIButton!
+    
+    @IBOutlet weak var payment_btn: UIButton!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        /// 주문상품
+        let data = LiquidateArray[0]
+        
+        whStoreName_btn.setTitle(data.store_name, for: .normal)
+        setNuke(imageView: item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        itemName_btn.setTitle(data.item_name, for: .normal)
+        
+        tableView.separatorStyle = .none
+        tableView.contentInset = .zero
+        tableView.delegate = self; tableView.dataSource = self
+        tableView_heignt.constant = CGFloat(data.item_option.count*50)
+        
+        var item_total_price: Int = 0
+        data.item_option.forEach { data in item_total_price += data.price*data.quantity }
+        itemTotalPrice_label.text = "₩ \(priceFormatter.string(from: item_total_price as NSNumber) ?? "0")"
+        moreItem_sv.isHidden = !(LiquidateArray.count > 1)
+        moreItem_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moreItem_view(_:))))
+        moreItemCount_label.text = "\(LiquidateArray.count)개"
+        /// 주문정보
+        orderStoreName_label.text = "\(StoreObject.store_name)(\(StoreObject.store_name_eng))"
+        orderMemberName_label.text = MemberObject.member_name
+        orderMenberNum_label.text = MemberObject.member_num
+        /// 배송정보
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+        collectionView.delegate = self; collectionView.dataSource = self
+        /// 결제수단
+        ([eximbay_view, accountTransfer_view, bankTransfer_view, mPay_view] as [UIView]).enumerated().forEach { i, view in
+            view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(payment_view(_:))))
+        }
+        ([eximbay_img, accountTransfer_img, bankTransfer_img, mPay_img] as [UIImageView]).forEach { img in
+            img.image = UIImage(named: "check_off")
+        }
+        ([eximbay_label, accountTransfer_label, bankTransfer_label, mPay_label] as [UILabel]).forEach { label in
+            label.textColor = .black.withAlphaComponent(0.3)
+        }
+        /// M . Pay
+        mPay_sv.isHidden = true
+        reStoreName_label.text = "\(StoreObject.store_name)의"
+        reStoreCash_label.text = priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0"
+        reStoreCash_tf.placeholder(text: priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0", color: .lightGray)
+        reStoreCash_tf.addTarget(self, action: #selector(reStoreCash_tf(_:)), for: .editingChanged)
+        
+        LiquidateArray.forEach { data in data.item_option.forEach { data in total_price += data.price*data.quantity } }
+        totalPrice1_label.text = "₩ \(priceFormatter.string(from: total_price-total_vat as NSNumber) ?? "0")"
+        totalPrice2_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
+        totalPrice3_label.text = "₩ \(priceFormatter.string(from: total_vat as NSNumber) ?? "0")"
+        
+        ([agreement1_btn, agreement2_btn, agreement3_btn] as [UIButton]).enumerated().forEach { i, btn in
+            btn.tag = i; btn.addTarget(self, action: #selector(agreement_btn(_:)), for: .touchUpInside)
+        }
+    }
+    
+    @objc func moreItem_view(_ sender: UITapGestureRecognizer) {
+        
+        view.endEditing(true)
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReLiquidateDetailVC") as! ReLiquidateDetailVC
+        segue.LiquidateArray = LiquidateArray
+        segue.order_total = Int(totalPrice1_label.text!.replacingOccurrences(of: ",", with: "")) ?? 0
+        presentPanModal(segue)
+    }
+    
+    @objc func reStoreCash_tf(_ sender: UITextField) {
+        
+        
+    }
+    
+    @objc func payment_view(_ sender: UITapGestureRecognizer) {
+        
+        view.endEditing(true)
+        
+        guard let sender = sender.view else { return }
+        
+        ([(eximbay_img, eximbay_label), (accountTransfer_img, accountTransfer_label), (bankTransfer_img, bankTransfer_label), (mPay_img, mPay_label)] as [(UIImageView, UILabel)]).enumerated().forEach { i, option in
+            option.0.image = (i == sender.tag) ? UIImage(named: "check_on") : UIImage(named: "check_off")
+            option.1.textColor = (i == sender.tag) ? .black : .black.withAlphaComponent(0.3)
+        }
+        
+        mPay_sv.isHidden = (sender.tag != 3)
+        if mPay_sv.isHidden { reStoreCash_tf.text!.removeAll() }
+    }
+    
+    @objc func agreement_btn(_ sender: UIButton) {
+        
+        view.endEditing(true)
+        
+        if sender.tag == 0 {
+            
+        } else if sender.tag == 1 {
+            
+        } else if sender.tag == 2 {
+            
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        setBackSwipeGesture(false)
+    }
+}
+
+extension ReLiquidateVC: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if LiquidateArray[0].item_option.count > 0 { return LiquidateArray[0].item_option.count } else { return .zero }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let data = LiquidateArray[0].item_option[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateTC", for: indexPath) as! ReLiquidateTC
+        
+        cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0")원)"
+        cell.optionQuantity_label.text = "수량. \(data.quantity)개"
+        cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
+        
+        return cell
+    }
+}
+
+extension ReLiquidateVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if StoreObject.store_delivery.count > 0 { return StoreObject.store_delivery.count } else { return .zero }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let data = StoreObject.store_delivery[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReLiquidateCC", for: indexPath) as! ReLiquidateCC
+        
+        if indexPath.row == StoreObject.store_delivery_position {
+            cell.layer.borderColor = UIColor.H_8CD26B.cgColor
+            cell.layer.borderWidth = 1
+        } else {
+            cell.layer.borderColor = UIColor.clear.cgColor
+            cell.layer.borderWidth = 0
+        }
+        
+        let delivery_nickname = data["nickname"] as? String ?? ""
+        let delivery_address_street = data["address"] as? String ?? ""
+        let delivery_address_detail = data["address_detail"] as? String ?? ""
+        
+        if delivery_nickname == "" {
+            cell.deliveryNick_label.text = "⭐️ 배송지 \(indexPath.row+1)"
+        } else {
+            cell.deliveryNick_label.text = "⭐️ \(delivery_nickname)"
+        }
+        cell.deliveryAddressStreet_label.text = delivery_address_street
+        cell.deliveryAddressDetail_label.text = delivery_address_detail
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 240, height: collectionView.frame.height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        StoreObject.store_delivery_position = indexPath.row; collectionView.reloadData()
+    }
+}
