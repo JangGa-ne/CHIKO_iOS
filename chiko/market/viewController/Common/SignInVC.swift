@@ -126,18 +126,18 @@ class SignInVC: UIViewController {
                         /// ReMain 요청
                         dispatchGroup.enter()
                         requestReMain { status in
-                            status_code = status; dispatchGroup.leave()
+                            dispatchGroup.leave()
                         }
                         /// ReBasket 요청
                         dispatchGroup.enter()
                         requestReBasket(type: "get") { status in
-                            status_code = status; dispatchGroup.leave()
+                            dispatchGroup.leave()
                         }
                     } else if status == 200, MemberObject.member_type == "wholesales" {
                         /// WhRealTime 요청
                         dispatchGroup.enter()
                         requestWhRealTime(filter: "최신순", limit: 3) { status in
-                            status_code = status; dispatchGroup.leave()
+                            dispatchGroup.leave()
                         }
                     }
                     

@@ -74,7 +74,7 @@ class SignUpMemberVC: UIViewController {
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(scrollView(_:))))
         /// placeholder, delegate, edit, return next/done
         ([phoneNum_tf, phoneNumCheck_tf, memberId_tf, memberPw_tf, memberPwCheck_tf, memberName_tf, memberEmail_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["-없이 입력", "", "영문 소문자 또는 숫자 4~20자리", "영문+숫자+특수문자 조합 8~15자리", "", "", "@이하 주소까지 모두 입력"][i], color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: ["-없이 입력", "", "영어 소문자 또는 숫자 4~20자리", "영어+숫자+특수문자 조합 8~15자리", "", "", "@이하 주소까지 모두 입력"][i], color: .black.withAlphaComponent(0.3))
             tf.delegate = self
             tf.tag = i
             tf.addTarget(self, action: #selector(changedEditMemberInfo_if(_:)), for: .editingChanged)
@@ -172,7 +172,7 @@ class SignUpMemberVC: UIViewController {
             if sender.text!.count < 4 || sender.text!.count > 20 {
                 notice.text = "4~20자까지 입력 가능합니다."
             } else if sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) != nil {
-                notice.text = "영문 소문자 또는 숫자 조합"
+                notice.text = "영어 소문자 또는 숫자 조합"
             } else {
                 check.isHidden = false
             }
@@ -190,9 +190,9 @@ class SignUpMemberVC: UIViewController {
             if sender.text!.count < 8 || sender.text!.count > 15 {
                 notice.text = "8~15자까지 입력 가능합니다."
             } else if sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) != nil {
-                notice.text = "영문, 숫자, 특수문자 - ' ! @ # $ % ^ & * ( ) - + = 조합"
+                notice.text = "영어, 숫자, 특수문자 - ' ! @ # $ % ^ & * ( ) - + = 조합"
             } else if !isPasswordValid(sender.text!) {
-                notice.text = "영문, 숫자, 특수문자가 최소 1자 이상 포함되어야 합니다."
+                notice.text = "영어, 숫자, 특수문자가 최소 1자 이상 포함되어야 합니다."
             } else {
                 check.isHidden = false
             }

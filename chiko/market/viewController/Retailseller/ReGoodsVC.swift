@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SideMenu
 import Nuke
 import PanModal
 
@@ -97,8 +98,15 @@ class ReGoodsVC: UIViewController {
     
     @objc func categoryFilter_view(_ sender: UITapGestureRecognizer) {
         
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsFilterVC") as! ReGoodsFilterVC
+        let root = UISideMenuNavigationController(rootViewController: segue, settings: .init())
+        root.statusBarEndAlpha = .zero
+        root.presentationStyle = .viewSlideOutMenuIn
+        root.menuWidth = UIScreen.main.bounds.width-100
+        present(root, animated: true, completion: nil)
+        
 //        guard let delegate = ReGoodsFilterVCdelegate else { return }
-//        
+//
 //        if !isMenuOpen {
 //            addChild(delegate)
 //            view.addSubview(delegate.view)

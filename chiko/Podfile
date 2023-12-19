@@ -29,6 +29,9 @@ target 'market' do
   
   # bottom sheet
   pod 'PanModal'
+
+  # slide side menu
+  pod 'SideMenu', '6.0'
 end
 
 post_install do |installer|

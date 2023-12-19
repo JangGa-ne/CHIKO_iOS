@@ -770,7 +770,11 @@ func requestEmployee(completionHandler: @escaping (([MemberData], Int) -> Void))
                 let array = responseJson["data"] as? Array<[String: Any]> ?? []
                 array.forEach { dict in
                     /// 데이터 추가
-                    EmployeeArray.append(setMember(memberDict: dict))
+                    if dict["user_id"] as? String ?? "" == MemberObject.member_id {
+                        EmployeeArray.insert(setMember(memberDict: dict), at: 0)
+                    } else {
+                        EmployeeArray.append(setMember(memberDict: dict))
+                    }
                 }
                 
                 if array.count > 0 {

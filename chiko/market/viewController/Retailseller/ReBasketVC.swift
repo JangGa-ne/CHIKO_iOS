@@ -48,7 +48,11 @@ extension ReBasketTC: UITableViewDelegate, UITableViewDataSource {
         let data = BasketObject.item_option[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC2", for: indexPath) as! ReBasketTC
         
-        cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0")원)"
+        if (data.price-BasketObject.item_sale_price) < 0 {
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
+        } else {
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
+        }
         cell.optionQuantity_label.text = "수량. \(data.quantity)개"
         cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
@@ -85,8 +89,6 @@ class ReBasketVC: UIViewController {
         super.viewDidLoad()
         
         ReBasketVCdelegate = self
-        
-        BasketArray.sort { $0.basket_key > $1.basket_key }
         
         choiceAll_btn.addTarget(self, action: #selector(choiceAll_btn(_:)), for: .touchUpInside)
         
@@ -182,6 +184,8 @@ class ReBasketVC: UIViewController {
         super.viewWillAppear(animated)
         
         setBackSwipeGesture(true)
+        
+        BasketArray.sort { $0.basket_key > $1.basket_key }
         
         choiceAllData()
         totalData()

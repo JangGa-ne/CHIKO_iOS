@@ -322,7 +322,11 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             
             cell.optionColor_view.backgroundColor = .init(hex: "#\(ColorArray[data.color] ?? "ffffff")")
             cell.optionSequence_label.text = "상품 \(data.sequence)."
-            cell.optionName_label.text = "\(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0")원)"
+            if (data.price-GoodsObject.item_sale_price) < 0 {
+                cell.optionName_label.text = "\(data.color) + \(data.size) (\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
+            } else {
+                cell.optionName_label.text = "\(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
+            }
             cell.optionDelete_btn.tag = indexPath.row; cell.optionDelete_btn.addTarget(self, action: #selector(optionDelete_btn(_:)), for: .touchUpInside)
             cell.optionMinus_btn.tag = indexPath.row; cell.optionMinus_btn.addTarget(cell, action: #selector(cell.optionMinus_btn(_:)), for: .touchUpInside)
             cell.optionQuantity_label.text = "\(data.quantity)"

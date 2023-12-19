@@ -30,8 +30,6 @@ class SplashVC: UIViewController {
             segueViewController(identifier: "SignInVC"); return
         }
         
-        customLoadingIndicator(animated: true)
-        
         var status_code: Int = 500
         /// SignIn 요청
         dispatchGroup.enter()
@@ -41,18 +39,18 @@ class SplashVC: UIViewController {
                 /// ReMain 요청
                 dispatchGroup.enter()
                 requestReMain { status in
-                    status_code = status; dispatchGroup.leave()
+                    dispatchGroup.leave()
                 }
                 /// ReBasket 요청
                 dispatchGroup.enter()
                 requestReBasket(type: "get") { status in
-                    status_code = status; dispatchGroup.leave()
+                    dispatchGroup.leave()
                 }
             } else if status == 200, MemberObject.member_type == "wholesales" {
                 /// WhRealTime 요청
                 dispatchGroup.enter()
                 requestWhRealTime(filter: "최신순", limit: 3) { status in
-                    status_code = status; dispatchGroup.leave()
+                    dispatchGroup.leave()
                 }
             }
             
@@ -65,8 +63,6 @@ class SplashVC: UIViewController {
         }
         /// 모든 요청이 완료된 후 실행
         dispatchGroup.notify(queue: .main) {
-            
-            self.customLoadingIndicator(animated: false)
             
             switch status_code {
             case 200:

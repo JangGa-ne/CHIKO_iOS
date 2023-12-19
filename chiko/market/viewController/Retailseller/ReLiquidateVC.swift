@@ -66,10 +66,9 @@ class ReLiquidateVC: UIViewController {
     @IBOutlet weak var mPay_img: UIImageView!
     @IBOutlet weak var mPay_label: UILabel!
     
-    @IBOutlet weak var mPay_sv: UIStackView!
+    @IBOutlet weak var mPay_view2: UIView!
     @IBOutlet weak var reStoreName_label: UILabel!
     @IBOutlet weak var reStoreCash_label: UILabel!
-    @IBOutlet weak var reStoreCash_tf: UITextField!
     @IBOutlet weak var reStoreCash_btn: UIButton!
     
     @IBOutlet weak var totalPrice1_label: UILabel!
@@ -123,11 +122,12 @@ class ReLiquidateVC: UIViewController {
             label.textColor = .black.withAlphaComponent(0.3)
         }
         /// M . Pay
-        mPay_sv.isHidden = true
+        mPay_view2.isHidden = true
         reStoreName_label.text = "\(StoreObject.store_name)의"
         reStoreCash_label.text = priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0"
-        reStoreCash_tf.placeholder(text: priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0", color: .lightGray)
-        reStoreCash_tf.addTarget(self, action: #selector(reStoreCash_tf(_:)), for: .editingChanged)
+        reStoreCash_btn.layer.cornerRadius = 10
+        reStoreCash_btn.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+        reStoreCash_btn.clipsToBounds = true
         
         LiquidateArray.forEach { data in data.item_option.forEach { data in total_price += data.price*data.quantity } }
         totalPrice1_label.text = "₩ \(priceFormatter.string(from: total_price-total_vat as NSNumber) ?? "0")"
@@ -165,8 +165,7 @@ class ReLiquidateVC: UIViewController {
             option.1.textColor = (i == sender.tag) ? .black : .black.withAlphaComponent(0.3)
         }
         
-        mPay_sv.isHidden = (sender.tag != 3)
-        if mPay_sv.isHidden { reStoreCash_tf.text!.removeAll() }
+        mPay_view2.isHidden = (sender.tag != 3)
     }
     
     @objc func agreement_btn(_ sender: UIButton) {
@@ -200,7 +199,11 @@ extension ReLiquidateVC: UITableViewDelegate, UITableViewDataSource {
         let data = LiquidateArray[0].item_option[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateTC", for: indexPath) as! ReLiquidateTC
         
-        cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0")원)"
+        if (data.price-LiquidateArray[0].item_sale_price) < 0 {
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
+        } else {
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
+        }
         cell.optionQuantity_label.text = "수량. \(data.quantity)개"
         cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
