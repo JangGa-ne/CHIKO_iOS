@@ -288,6 +288,7 @@ class BasketData {
     var re_store_id: String = ""
     var wh_store_id: String = ""
     var store_name: String = ""
+    var store_name_eng: String = ""
     var user_id: String = ""
 }
 
@@ -317,6 +318,7 @@ func setBasket(basketDict: [String: Any]) -> BasketData {
     basketValue.re_store_id = basketDict["re_store_id"] as? String ?? ""
     basketValue.wh_store_id = basketDict["wh_store_id"] as? String ?? ""
     basketValue.store_name = basketDict["store_name"] as? String ?? ""
+    basketValue.store_name_eng = basketDict["store_name_eng"] as? String ?? ""
     basketValue.user_id = basketDict["user_id"] as? String ?? ""
     /// 데이터 추가
     return basketValue

@@ -30,6 +30,9 @@ class ReLiquidateVC: UIViewController {
     
     var LiquidateArray: [BasketData] = []
     
+    var payment_type: String = ""
+    
+    var order_total: Int = 0
     var total_price: Int = 0
     var total_vat: Int = 0
     
@@ -130,13 +133,17 @@ class ReLiquidateVC: UIViewController {
         reStoreCash_btn.clipsToBounds = true
         
         LiquidateArray.forEach { data in data.item_option.forEach { data in total_price += data.price*data.quantity } }
-        totalPrice1_label.text = "₩ \(priceFormatter.string(from: total_price-total_vat as NSNumber) ?? "0")"
+        order_total = total_price-total_vat
+        
+        totalPrice1_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
         totalPrice2_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
         totalPrice3_label.text = "₩ \(priceFormatter.string(from: total_vat as NSNumber) ?? "0")"
         
         ([agreement1_btn, agreement2_btn, agreement3_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.tag = i; btn.addTarget(self, action: #selector(agreement_btn(_:)), for: .touchUpInside)
         }
+        
+        payment_btn.addTarget(self, action: #selector(payment_btn(_:)), for: .touchUpInside)
     }
     
     @objc func moreItem_view(_ sender: UITapGestureRecognizer) {
@@ -145,13 +152,8 @@ class ReLiquidateVC: UIViewController {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReLiquidateDetailVC") as! ReLiquidateDetailVC
         segue.LiquidateArray = LiquidateArray
-        segue.order_total = Int(totalPrice1_label.text!.replacingOccurrences(of: ",", with: "")) ?? 0
+        segue.order_total = order_total
         presentPanModal(segue)
-    }
-    
-    @objc func reStoreCash_tf(_ sender: UITextField) {
-        
-        
     }
     
     @objc func payment_view(_ sender: UITapGestureRecognizer) {
@@ -166,6 +168,15 @@ class ReLiquidateVC: UIViewController {
         }
         
         mPay_view2.isHidden = (sender.tag != 3)
+        
+        switch sender.tag {
+        case 0: payment_type = "eximbay"
+        case 1: payment_type = "account"
+        case 2: payment_type = "virtual"
+        case 3: payment_type = "mpay"
+        default:
+            break
+        }
     }
     
     @objc func agreement_btn(_ sender: UIButton) {
@@ -178,6 +189,37 @@ class ReLiquidateVC: UIViewController {
             
         } else if sender.tag == 2 {
             
+        }
+    }
+    
+    @objc func payment_btn(_ sender: UIButton) {
+        
+        view.endEditing(true)
+        
+        if StoreObject.store_delivery.count == 0 {
+            customAlert(message: "배송지를 추가해 주세요.", time: 1)
+        } else if payment_type == "" {
+            customAlert(message: "결제수단을 선택해 주세요.", time: 1)
+        } else if payment_type == "mpay", StoreObject.store_cash < order_total {
+            customAlert(message: "M.PAY 잔액이 부족합니다.", time: 1)
+        } else {
+            
+            customLoadingIndicator(animated: true)
+            
+            /// Liquidate 요청
+            requestReLiquidate(LiquidateArray: LiquidateArray, payment_type: payment_type) { status in
+                
+                self.customLoadingIndicator(animated: false)
+                
+                switch status {
+                case 200:
+                    self.customAlert(message: "주문완료", time: 1)
+                case 600:
+                    self.customAlert(message: "Error occurred during data conversion", time: 1)
+                default:
+                    self.customAlert(message: "Internal server error", time: 1)
+                }
+            }
         }
     }
     
