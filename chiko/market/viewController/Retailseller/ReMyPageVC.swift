@@ -112,7 +112,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTC0", for: indexPath) as! ReMyPageTC
-            cell.basket_noticeView.isHidden = (BasketArray.count == 0)
+            cell.basket_noticeView.isHidden = (ReBasketArray.count == 0)
             ([cell.mPay_view, cell.order_view, cell.basket_view, cell.scrap_view, cell.setting_view] as [UIView]).enumerated().forEach { i, view in
                 view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(segue_view(_:))))
             }
@@ -130,16 +130,14 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         
         guard let sender = sender.view else { return }
         
-        if sender.tag == 0 {
-            
-        } else if sender.tag == 1 {
-            
-        } else if sender.tag == 2 {
-            segueViewController(identifier: "ReBasketVC")
-        } else if sender.tag == 3 {
-            segueViewController(identifier: "ReBookMarkVC")
-        } else if sender.tag == 4 {
-            
+        switch sender.tag {
+        case 0: break
+        case 1: segueViewController(identifier: "ReOrderVC")
+        case 2: segueViewController(identifier: "ReBasketVC")
+        case 3: segueViewController(identifier: "ReBookMarkVC")
+        case 4: break
+        default:
+            break
         }
     }
     

@@ -35,23 +35,30 @@ class SplashVC: UIViewController {
         dispatchGroup.enter()
         requestSignIn { status in
             
-            if status == 200, MemberObject.member_type == "retailseller" {
-                /// ReMain 요청
-                dispatchGroup.enter()
-                requestReMain { status in
-                    dispatchGroup.leave()
+            if status == 200 {
+                if MemberObject.member_type == "retailseller" {
+                    /// ReMain 요청
+                    dispatchGroup.enter()
+                    requestReMain { status in
+                        dispatchGroup.leave()
+                    }
+                    /// ReBasket 요청
+                    dispatchGroup.enter()
+                    requestReBasket(type: "get") { status in
+                        dispatchGroup.leave()
+                    }
+                } else if MemberObject.member_type == "wholesales" {
+                    /// WhRealTime 요청
+                    dispatchGroup.enter()
+                    requestWhRealTime(filter: "최신순", limit: 3) { status in
+                        dispatchGroup.leave()
+                    }
                 }
-                /// ReBasket 요청
-                dispatchGroup.enter()
-                requestReBasket(type: "get") { status in
-                    dispatchGroup.leave()
-                }
-            } else if status == 200, MemberObject.member_type == "wholesales" {
-                /// WhRealTime 요청
-                dispatchGroup.enter()
-                requestWhRealTime(filter: "최신순", limit: 3) { status in
-                    dispatchGroup.leave()
-                }
+//                /// Order 요청
+//                dispatchGroup.enter()
+//                requestOrder { status in
+//                    dispatchGroup.leave()
+//                }
             }
             
             status_code = status; dispatchGroup.leave()

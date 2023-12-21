@@ -49,8 +49,8 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == collectionView1 {
             return 4
-        } else if collectionView == collectionView2, GoodsArray_realtime.count > 0 {
-            return GoodsArray_realtime.count
+        } else if collectionView == collectionView2, WhGoodsArray_realtime.count > 0 {
+            return WhGoodsArray_realtime.count
         } else {
             return .zero
         }
@@ -60,7 +60,7 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
         
         if collectionView == collectionView2 {
             
-            let data = GoodsArray_realtime[indexPath.row]
+            let data = WhGoodsArray_realtime[indexPath.row]
             guard let cell = cell as? WhHomeCC else { return }
             
             setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 7.5)
@@ -92,7 +92,7 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             
         } else if collectionView == collectionView2 {
             
-            let data = GoodsArray_realtime[indexPath.row]
+            let data = WhGoodsArray_realtime[indexPath.row]
             
             if indexPath.row == 0 {
                 cell.grade_label.textColor = .H_8CD26B
@@ -125,7 +125,7 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             
             indexpath_row = indexPath.row
             
-            GoodsArray_realtime.removeAll()
+            WhGoodsArray_realtime.removeAll()
             /// WhRealTime 요청
             requestWhRealTime(filter: ["최신순", "끌올순", "오래된순", "품절순"][indexPath.row], limit: 3) { _ in
                 collectionView.reloadData(); self.collectionView2.reloadData()
@@ -133,7 +133,7 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
         } else if collectionView == collectionView2 {
             
             let segue = WhHomeVCdelegate.storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
-            segue.GoodsObject = GoodsArray_realtime[indexPath.row]
+            segue.GoodsObject = WhGoodsArray_realtime[indexPath.row]
             WhHomeVCdelegate.navigationController?.pushViewController(segue, animated: true)
         }
     }

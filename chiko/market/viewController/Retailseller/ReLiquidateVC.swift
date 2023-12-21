@@ -272,17 +272,13 @@ extension ReLiquidateVC: UICollectionViewDelegate, UICollectionViewDataSource, U
             cell.layer.borderWidth = 0
         }
         
-        let delivery_nickname = data["nickname"] as? String ?? ""
-        let delivery_address_street = data["address"] as? String ?? ""
-        let delivery_address_detail = data["address_detail"] as? String ?? ""
-        
-        if delivery_nickname == "" {
+        if data.nickname == "" {
             cell.deliveryNick_label.text = "⭐️ 배송지 \(indexPath.row+1)"
         } else {
-            cell.deliveryNick_label.text = "⭐️ \(delivery_nickname)"
+            cell.deliveryNick_label.text = "⭐️ \(data.nickname)"
         }
-        cell.deliveryAddressStreet_label.text = delivery_address_street
-        cell.deliveryAddressDetail_label.text = delivery_address_detail
+        cell.deliveryAddressStreet_label.text = data.address
+        cell.deliveryAddressDetail_label.text = data.address_detail
         
         return cell
     }

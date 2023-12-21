@@ -27,7 +27,7 @@ class CategoryData {
 class VisitData {
     
     var StoreObject: StoreData = StoreData()
-    var GoodsArray_best: [GoodsData] = []
+    var ReGoodsArray_best: [GoodsData] = []
     var GoodsArray_full: [GoodsData] = []
     var GoodsArray_business: [GoodsData] = []
 }
@@ -111,7 +111,7 @@ class StoreData {
     var store_address_detail: String = "" // offline 일때
     var store_address_zipcode: String = "" // offline 일때
     var store_favorites: [String] = []
-    var store_delivery: Array<[String: Any]> = []
+    var store_delivery: [(address: String, address_detail: String, name: String, nickname: String, num: String)] = []
     var store_delivery_position: Int = 0
     // 도매자
     var business_reg_status: Bool = true
@@ -153,7 +153,15 @@ func setStore(storeDict: [String: Any]) -> StoreData {
     storeValue.store_address_zipcode = storeDict["store_address_zipcode"] as? String ?? ""
     storeValue.store_domain = storeDict["store_domain"] as? String ?? ""
     storeValue.store_favorites = storeDict["store_favorites"] as? [String] ?? []
-    storeValue.store_delivery = storeDict["store_delivery"] as? Array<[String: Any]> ?? []
+    (storeDict["store_delivery"] as? Array<[String: Any]> ?? []).forEach { dict in
+        storeValue.store_delivery.append((
+            address: dict["address"] as? String ?? "",
+            address_detail: dict["address_detail"] as? String ?? "",
+            name: dict["name"] as? String ?? "",
+            nickname: dict["nickname"] as? String ?? "",
+            num: dict["num"] as? String ?? ""
+        ))
+    }
     storeValue.store_delivery_position = storeDict["store_delivery_position"] as? Int ?? 0
     storeValue.store_id = storeDict["store_id"] as? String ?? ""
     storeValue.store_mainphoto_img = storeDict["store_mainphoto_img"] as? String ?? ""
@@ -261,7 +269,6 @@ func setGoods(goodsDict: [String: Any]) -> GoodsData {
         goodsOptionValue.quantity = goodsOptionDict["quantity"] as? Int ?? 0
         goodsOptionValue.size = goodsOptionDict["size"] as? String ?? ""
         goodsOptionValue.sold_out = Bool(goodsOptionDict["sold_out"] as? String ?? "false") ?? false
-        /// 데이터 추가
         goodsValue.item_option.append(goodsOptionValue)
     }
     goodsValue.item_option_type = Bool(goodsDict["item_option_type"] as? String ?? "false") ?? false
@@ -299,15 +306,13 @@ func setBasket(basketDict: [String: Any]) -> BasketData {
     basketValue.item_price = basketDict["item_price"] as? Int ?? 0
     basketValue.item_key = basketDict["item_key"] as? String ?? ""
     basketValue.item_name = basketDict["item_name"] as? String ?? ""
-    (basketDict["item_option"] as? [Any] ?? []).forEach { data in
-        let basketOptionDict = data as? [String: Any] ?? [:]
-        /// 데이터 추가
+    (basketDict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
         basketValue.item_option.append((
-            color: basketOptionDict["color"] as? String ?? "",
-            price: basketOptionDict["price"] as? Int ?? 0,
-            quantity: basketOptionDict["quantity"] as? Int ?? 0,
-            size: basketOptionDict["size"] as? String ?? "",
-            sold_out: Bool(basketOptionDict["sold_out"] as? String ?? "false") ?? false
+            color: dict["color"] as? String ?? "",
+            price: dict["price"] as? Int ?? 0,
+            quantity: dict["quantity"] as? Int ?? 0,
+            size: dict["size"] as? String ?? "",
+            sold_out: Bool(dict["sold_out"] as? String ?? "false") ?? false
         ))
     }
     basketValue.item_mainphoto_img = basketDict["item_mainphoto_img"] as? String ?? ""
@@ -322,4 +327,112 @@ func setBasket(basketDict: [String: Any]) -> BasketData {
     basketValue.user_id = basketDict["user_id"] as? String ?? ""
     /// 데이터 추가
     return basketValue
+}
+
+class ReOrderData {
+    
+    var ch_total_item_price: Int = 0
+    var kr_total_item_price: Int = 0
+    var delivery_address: String = ""
+    var delivery_address_detail: String = ""
+    var delivery_name: String = ""
+    var delivery_nickname: String = ""
+    var delivery_num: String = ""
+    var order_datetime: String = ""
+    var order_detail_key: String = ""
+    var order_id: String = ""
+    var order_item: [ReOrderItemData] = []
+    var order_key: String = ""
+    var order_memo: String = ""
+    var order_name: String = ""
+    var order_num: String = ""
+    var order_grade: String = ""
+    var order_state: String = ""
+    var order_store_id: String = ""
+    var order_store_name: String = ""
+    var order_store_eng: String = ""
+    var payment_type: String = ""
+    var receipt_key: String = ""
+    var vat_total_price: Int = 0
+}
+
+func setReOrder(orderDict: [String: Any]) -> ReOrderData {
+    
+    let orderValue = ReOrderData()
+    orderValue.ch_total_item_price = orderDict["ch_total_item_price"] as? Int ?? 0
+    orderValue.kr_total_item_price = orderDict["kr_total_item_price"] as? Int ?? 0
+    orderValue.delivery_address = orderDict["delivery_address"] as? String ?? ""
+    orderValue.delivery_address_detail = orderDict["delivery_address_detail"] as? String ?? ""
+    orderValue.delivery_name = orderDict["delivery_name"] as? String ?? ""
+    orderValue.delivery_nickname = orderDict["delivery_nickname"] as? String ?? ""
+    orderValue.delivery_num = orderDict["delivery_num"] as? String ?? ""
+    orderValue.order_datetime = orderDict["order_datetime"] as? String ?? ""
+    orderValue.order_detail_key = orderDict["order_detail_key"] as? String ?? ""
+    orderValue.order_id = orderDict["order_id"] as? String ?? ""
+    (orderDict["order_item"] as? Array<[String: Any]> ?? []).forEach { dict in
+        orderValue.order_item.append(setReOrderItem(orderItemDict: dict))
+    }
+    orderValue.order_key = orderDict["order_key"] as? String ?? ""
+    orderValue.order_memo = orderDict["order_memo"] as? String ?? ""
+    orderValue.order_name = orderDict["order_name"] as? String ?? ""
+    orderValue.order_num = orderDict["order_num"] as? String ?? ""
+    orderValue.order_grade = orderDict["order_grade"] as? String ?? ""
+    orderValue.order_state = orderDict["order_state"] as? String ?? ""
+    orderValue.order_store_id = orderDict["order_store_id"] as? String ?? ""
+    orderValue.order_store_name = orderDict["order_store_name"] as? String ?? ""
+    orderValue.order_store_eng = orderDict["order_store_eng"] as? String ?? ""
+    orderValue.payment_type = orderDict["payment_type"] as? String ?? ""
+    orderValue.receipt_key = orderDict["receipt_key"] as? String ?? ""
+    orderValue.vat_total_price = orderDict["vat_total_price"] as? Int ?? 0
+    
+    return orderValue
+}
+
+class ReOrderItemData {
+    
+    var delivery_state: String = ""
+    var item_key: String = ""
+    var item_mainphoto_img: String = ""
+    var item_name: String = ""
+    var item_option: [(color: String, price: Int, quantity: Int, size: String)] = []
+    var item_price: Int = 0
+    var item_sale: Bool = false
+    var item_sale_price: Int = 0
+    var store_id: String = ""
+    var store_name: String = ""
+    var store_name_eng: String = ""
+    var item_total_price: Int = 0
+    var item_total_quantity: Int = 0
+}
+
+func setReOrderItem(orderItemDict: [String: Any]) -> ReOrderItemData {
+    
+    let orderItemValue = ReOrderItemData()
+    orderItemValue.delivery_state = orderItemDict["item_key"] as? String ?? ""
+    orderItemValue.item_key = orderItemDict["item_key"] as? String ?? ""
+    orderItemValue.item_mainphoto_img = orderItemDict["item_mainphoto_img"] as? String ?? ""
+    orderItemValue.item_name = orderItemDict["item_name"] as? String ?? ""
+    (orderItemDict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
+        orderItemValue.item_option.append((
+            color: dict["color"] as? String ?? "",
+            price: dict["price"] as? Int ?? 0,
+            quantity: dict["quantity"] as? Int ?? 0,
+            size: dict["size"] as? String ?? ""
+        ))
+    }
+    orderItemValue.item_price = orderItemDict["item_price"] as? Int ?? 0
+    orderItemValue.item_sale = orderItemDict["item_sale"] as? Bool ?? false
+    orderItemValue.item_sale_price = orderItemDict["item_sale_price"] as? Int ?? 0
+    orderItemValue.store_id = orderItemDict["store_id"] as? String ?? ""
+    orderItemValue.store_name = orderItemDict["store_name"] as? String ?? ""
+    orderItemValue.store_name_eng = orderItemDict["store_name_eng"] as? String ?? ""
+    orderItemValue.item_total_price = orderItemDict["item_total_price"] as? Int ?? 0
+    orderItemValue.item_total_quantity = orderItemDict["item_total_quantity"] as? Int ?? 0
+    
+    return orderItemValue
+}
+
+class WhOrderData {
+    
+    
 }

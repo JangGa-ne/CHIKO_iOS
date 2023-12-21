@@ -18,19 +18,21 @@ var divice_radius: CGFloat = 0.0
 /// Register
 var MemberObject_signup: MemberData = MemberData()
 var StoreObject_signup: StoreData = StoreData()
-/// Retailseller
-var StoreArray_best: [(StoreObject: StoreData, GoodsObject: GoodsData)] = []
-var GoodsArray_best: [GoodsData] = []
-var BasketArray: [BasketData] = []
-/// Wholesales
-var GoodsArray_realtime: [GoodsData] = []
-
+/// Common
 var MemberObject: MemberData = MemberData()
 var StoreObject: StoreData = StoreData()
 var StoreArray: [StoreData] = []
 var store_index_select: Bool = false
 var store_index: Int = 0
 var CategoryObject: CategoryData = CategoryData()
+/// Retailseller
+var ReStoreArray_best: [(StoreObject: StoreData, GoodsObject: GoodsData)] = []
+var ReGoodsArray_best: [GoodsData] = []
+var ReBasketArray: [BasketData] = []
+var ReOrderArray: [ReOrderData] = []
+/// Wholesales
+var WhGoodsArray_realtime: [GoodsData] = []
+var WhOrderArray: [WhOrderData] = []
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

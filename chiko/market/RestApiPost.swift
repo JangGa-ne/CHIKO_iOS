@@ -359,7 +359,7 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
                 /// best store
                 (data["best_store"] as? Array<[String: Any]> ?? []).forEach { dict in
                     /// 데이터 추가
-                    StoreArray_best.append((
+                    ReStoreArray_best.append((
                         StoreObject: setStore(storeDict: dict),
                         GoodsObject: setGoods(goodsDict: (dict["best_item"] as? Array<[String: Any]> ?? []).first ?? [:])
                     ))
@@ -367,11 +367,11 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
                 /// best goods
                 (data["best_item"] as? Array<[String: Any]> ?? []).forEach { dict in
                     /// 데이터 추가
-                    GoodsArray_best.append(setGoods(goodsDict: dict))
+                    ReGoodsArray_best.append(setGoods(goodsDict: dict))
                 }
-                if StoreArray_best.count+GoodsArray_best.count > 0 {
-                    StoreArray_best.sort { $0.StoreObject.store_name_eng < $1.StoreObject.store_name_eng }
-                    GoodsArray_best.sort { $0.item_pullup_time > $1.item_pullup_time }
+                if ReStoreArray_best.count+ReGoodsArray_best.count > 0 {
+                    ReStoreArray_best.sort { $0.StoreObject.store_name_eng < $1.StoreObject.store_name_eng }
+                    ReGoodsArray_best.sort { $0.item_pullup_time > $1.item_pullup_time }
                     completionHandler(200)
                 } else {
                     completionHandler(204)
@@ -460,10 +460,10 @@ func requestReBasket(type: String = "get", params: [String: Any] = [:], completi
                     let array = responseJson["data"] as? Array<[String: Any]> ?? []
                     array.forEach { dict in
                         /// 데이터 추가
-                        BasketArray.append(setBasket(basketDict: dict))
+                        ReBasketArray.append(setBasket(basketDict: dict))
                     }
                     
-                    if BasketArray.count > 0 {
+                    if ReBasketArray.count > 0 {
                         completionHandler(200)
                     } else {
                         completionHandler(204)
@@ -472,25 +472,25 @@ func requestReBasket(type: String = "get", params: [String: Any] = [:], completi
                     
                     params.removeValue(forKey: "action")
                     /// 데이터 추가
-                    BasketArray.append(setBasket(basketDict: params))
+                    ReBasketArray.append(setBasket(basketDict: params))
                     
                     completionHandler(200)
                 } else if type == "edit" {
                     
                     params.removeValue(forKey: "action")
                     /// 데이터 변경
-                    BasketArray.enumerated().forEach { i, data in
+                    ReBasketArray.enumerated().forEach { i, data in
                         if data.basket_key == params["basket_key"] as? String ?? "" {
-                            BasketArray[i] = setBasket(basketDict: params)
+                            ReBasketArray[i] = setBasket(basketDict: params)
                         }
                     }
                     
                     completionHandler(200)
                 } else if type == "delete" {
                     /// 데이터 삭제
-                    BasketArray.enumerated().forEach { i, data in
+                    ReBasketArray.enumerated().forEach { i, data in
                         if data.basket_key == params["basket_key"] as? String ?? "" {
-                            BasketArray.remove(at: i)
+                            ReBasketArray.remove(at: i)
                         }
                     }
                     
@@ -552,7 +552,7 @@ func requestReStoreVisit(store_id: String, limit: Int = 99999, completionHandler
                 let visitValue = VisitData()
                 visitValue.StoreObject = setStore(storeDict: dict["store"] as? [String: Any] ?? [:])
                 (dict["toplist"] as? Array<[String: Any]>)?.forEach({ bestDict in
-                    visitValue.GoodsArray_best.append(setGoods(goodsDict: bestDict))
+                    visitValue.ReGoodsArray_best.append(setGoods(goodsDict: bestDict))
                 })
                 (dict["fulldisclosure"] as? Array<[String: Any]>)?.forEach({ fullDict in
                     visitValue.GoodsArray_full.append(setGoods(goodsDict: fullDict))
@@ -677,10 +677,10 @@ func requestWhRealTime(filter: String = "최신순", limit: Int = 99999, complet
                 let array = responseJson["data"] as? Array<[String: Any]> ?? []
                 array.forEach { dict in
                     /// 데이터 추가
-                    GoodsArray_realtime.append(setGoods(goodsDict: dict))
+                    WhGoodsArray_realtime.append(setGoods(goodsDict: dict))
                 }
                 
-                if GoodsArray_realtime.count > 0 {
+                if WhGoodsArray_realtime.count > 0 {
                     completionHandler(200)
                 } else {
                     completionHandler(204)
@@ -794,19 +794,17 @@ func requestEmployee(completionHandler: @escaping (([MemberData], Int) -> Void))
 
 func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, completionHandler: @escaping (Int) -> Void) {
     
-    let deliveryDict = StoreObject.store_delivery[StoreObject.store_delivery_position]
-    
     let timestamp: Int64 = setKoreaUnixTimestamp()
     var params: Parameters = [
         "action": "order_list",
         "ch_total_item_price": 0,
         "kr_total_item_price": 0,
         "vat_total_price": 0,
-        "delivery_nickname": deliveryDict["nickname"] as? String ?? "",
-        "delivery_address": deliveryDict["address"] as? String ?? "",
-        "delivery_address_detail": deliveryDict["address_detail"] as? String ?? "",
-        "delivery_name": deliveryDict["name"] as? String ?? "",
-        "delivery_num": deliveryDict["num"] as? String ?? "",
+        "delivery_nickname": StoreObject.store_delivery[StoreObject.store_delivery_position].nickname,
+        "delivery_address": StoreObject.store_delivery[StoreObject.store_delivery_position].address,
+        "delivery_address_detail": StoreObject.store_delivery[StoreObject.store_delivery_position].address_detail,
+        "delivery_name": StoreObject.store_delivery[StoreObject.store_delivery_position].name,
+        "delivery_num": StoreObject.store_delivery[StoreObject.store_delivery_position].num,
         "order_store_name": StoreObject.store_name,
         "order_store_id": StoreObject.store_id,
         "order_id": MemberObject.member_id,
@@ -861,6 +859,44 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
                 print(responseJson)
                 if let dict = responseJson["data"] as? [String: Any] {
+                    completionHandler(200)
+                } else {
+                    completionHandler(204)
+                }
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestOrder(completionHandler: @escaping (Int) -> Void) {
+    
+    let params: Parameters = [
+        "action": "find_order",
+        "store_id": StoreObject.store_id,
+    ]
+    
+    AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                let array = responseJson["data"] as? Array<[String: Any]> ?? []
+                array.forEach { dict in
+                    /// 데이터 추가
+                    if MemberObject.member_type == "retailseller" {
+                        ReOrderArray.append(setReOrder(orderDict: dict))
+                        ReOrderArray.sort { $0.order_datetime > $1.order_datetime }
+                    } else if MemberObject.member_type == "wholesales" {
+                        
+//                        WhOrderArray.sort { $0.order_datetime > $1.order_datetime }
+                    }
+                }
+                
+                if array.count > 0 {
                     completionHandler(200)
                 } else {
                     completionHandler(204)

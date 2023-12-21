@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9C98622429C52DED8AE83733 /* Pods_market.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F28EC4E7303736D5AA7FE6BF /* Pods_market.framework */; };
+		C20196AA2B33F74E00576CF8 /* ReOrderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20196A92B33F74E00576CF8 /* ReOrderVC.swift */; };
 		C201C72B2B293B3800C9442E /* ImageSlideVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C201C72A2B293B3800C9442E /* ImageSlideVC.swift */; };
 		C20D37C02AFB22DD00E8B7B0 /* ReGoodsTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D37BF2AFB22DD00E8B7B0 /* ReGoodsTC.swift */; };
 		C2155CD82AF0F59A008B21F2 /* ReMainTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2155CD72AF0F59A008B21F2 /* ReMainTBC.swift */; };
@@ -71,6 +72,7 @@
 
 /* Begin PBXFileReference section */
 		3B14B2DB482A80A53873B165 /* Pods-market.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-market.release.xcconfig"; path = "Target Support Files/Pods-market/Pods-market.release.xcconfig"; sourceTree = "<group>"; };
+		C20196A92B33F74E00576CF8 /* ReOrderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReOrderVC.swift; sourceTree = "<group>"; };
 		C201C72A2B293B3800C9442E /* ImageSlideVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSlideVC.swift; sourceTree = "<group>"; };
 		C20D37BF2AFB22DD00E8B7B0 /* ReGoodsTC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReGoodsTC.swift; sourceTree = "<group>"; };
 		C2155CD72AF0F59A008B21F2 /* ReMainTBC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReMainTBC.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				C278133D2B2A9556005521FD /* ReLiquidateVC.swift */,
 				C24AA5BF2B3044230061B490 /* ReLiquidateDetailVC.swift */,
 				C241796D2B0B47B5006497DF /* ReStoreVisitVC.swift */,
+				C20196A92B33F74E00576CF8 /* ReOrderVC.swift */,
 				C290705D2B05A9F60097AA74 /* ReBasketVC.swift */,
 				C22D641D2B183EF900A160F3 /* ReBookMarkVC.swift */,
 			);
@@ -438,6 +441,7 @@
 				C2764FF92B3270F3000AC23D /* SafariViewController.swift in Sources */,
 				C2C971DB2ADCD0AA00827DA0 /* s_vcDelegate.swift in Sources */,
 				C25B23692AE0D0CA00AA3A30 /* s_regularExpression.swift in Sources */,
+				C20196AA2B33F74E00576CF8 /* ReOrderVC.swift in Sources */,
 				C2155CD82AF0F59A008B21F2 /* ReMainTBC.swift in Sources */,
 				C290705B2B05A0740097AA74 /* RestApiPost.swift in Sources */,
 				C22B09482AE60875005C50A7 /* ChineseBankListVC.swift in Sources */,

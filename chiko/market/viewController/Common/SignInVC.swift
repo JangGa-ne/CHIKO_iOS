@@ -140,6 +140,11 @@ class SignInVC: UIViewController {
                             dispatchGroup.leave()
                         }
                     }
+//                    /// Order 요청
+//                    dispatchGroup.enter()
+//                    requestOrder { status in
+//                        dispatchGroup.leave()
+//                    }
                     
                     status_code = status; dispatchGroup.leave()
                 }
@@ -203,11 +208,13 @@ class SignInVC: UIViewController {
         StoreObject = StoreData()
         StoreArray.removeAll()
         /// Retailseller
-        StoreArray_best.removeAll()
-        GoodsArray_best.removeAll()
-        BasketArray.removeAll()
+        ReStoreArray_best.removeAll()
+        ReGoodsArray_best.removeAll()
+        ReBasketArray.removeAll()
+        ReOrderArray.removeAll()
         /// Wholesales
-        GoodsArray_realtime.removeAll()
+        WhGoodsArray_realtime.removeAll()
+        WhOrderArray.removeAll()
         
         UserDefaults.standard.removeObject(forKey: "store_index_select")
         UserDefaults.standard.removeObject(forKey: "store_index")

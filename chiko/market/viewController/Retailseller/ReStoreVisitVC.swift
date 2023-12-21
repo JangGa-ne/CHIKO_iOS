@@ -182,7 +182,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             
             if indexPath.row == 1 {
                 cell.tiele_label.text = "BEST"
-                cell.GoodsArray = VisitObject.GoodsArray_best
+                cell.GoodsArray = VisitObject.ReGoodsArray_best
             } else if indexPath.row == 2 {
                 cell.tiele_label.text = "전체 공개"
                 cell.GoodsArray = VisitObject.GoodsArray_full
@@ -245,7 +245,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.row == 1, VisitObject.GoodsArray_best.count == 0 {
+        if indexPath.row == 1, VisitObject.ReGoodsArray_best.count == 0 {
             return .zero
         } else {
             return UITableView.automaticDimension

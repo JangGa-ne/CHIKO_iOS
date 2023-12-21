@@ -70,7 +70,7 @@ class ReBasketVC: UIViewController {
     var sale_total: Int = 0
     var order_total: Int = 0
     
-    var BasketArray_filter: [BasketData] = []
+    var ReBasketArray_filter: [BasketData] = []
     var OrderArray: [BasketData] = []
     
     var refreshControl: UIRefreshControl = UIRefreshControl()
@@ -99,14 +99,14 @@ class ReBasketVC: UIViewController {
         refreshControl.tintColor = .lightGray
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
-        preheatImages(urls: BasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
+        preheatImages(urls: ReBasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
         
         order_btn.addTarget(self, action: #selector(order_btn(_:)), for: .touchUpInside)
     }
     
     @objc func refreshControl(_ sender: UIRefreshControl) {
         /// 데이터 삭제
-        BasketArray.removeAll(); tableView.reloadData()
+        ReBasketArray.removeAll(); tableView.reloadData()
         /// ReBasket 요청
         requestReBasket(type: "get") { _ in
             
@@ -121,7 +121,7 @@ class ReBasketVC: UIViewController {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
         sender.isSelected = !sender.isSelected
-        BasketArray.forEach { data in data.choice = sender.isSelected }
+        ReBasketArray.forEach { data in data.choice = sender.isSelected }
         
         choiceAllData()
         totalData()
@@ -131,8 +131,8 @@ class ReBasketVC: UIViewController {
     func choiceAllData() {
         
         var choice: Bool = true
-        if BasketArray.count == 0 { choice = false }
-        BasketArray.forEach { data in if !data.choice { choice = false } }
+        if ReBasketArray.count == 0 { choice = false }
+        ReBasketArray.forEach { data in if !data.choice { choice = false } }
         if choice {
             choiceAll_img.image = UIImage(named: "check_on")
         } else {
@@ -150,11 +150,11 @@ class ReBasketVC: UIViewController {
         /// 데이터 삭제
         OrderArray.removeAll()
         
-        BasketArray.enumerated().forEach { i, data in
+        ReBasketArray.enumerated().forEach { i, data in
             if data.choice {
                 choice_total += 1
                 data.item_option.forEach { data in
-                    sale_total += (BasketArray[i].item_price-BasketArray[i].item_sale_price)*data.quantity
+                    sale_total += (ReBasketArray[i].item_price-ReBasketArray[i].item_sale_price)*data.quantity
                     order_total += data.price*data.quantity
                 }
                 /// 데이터 추가
@@ -185,7 +185,7 @@ class ReBasketVC: UIViewController {
         
         setBackSwipeGesture(true)
         
-        BasketArray.sort { $0.basket_key > $1.basket_key }
+        ReBasketArray.sort { $0.basket_key > $1.basket_key }
         
         choiceAllData()
         totalData()
@@ -202,9 +202,9 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return 1
-        } else if section == 1, BasketArray.count > 0 {
-            return BasketArray.count
-        } else if section == 2, BasketArray.count > 0 {
+        } else if section == 1, ReBasketArray.count > 0 {
+            return ReBasketArray.count
+        } else if section == 2, ReBasketArray.count > 0 {
             return 1
         } else {
             return .zero
@@ -215,7 +215,7 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 1 {
             
-            let data = BasketArray[indexPath.row]
+            let data = ReBasketArray[indexPath.row]
             guard let cell = cell as? ReBasketTC else { return }
             
             setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
@@ -228,8 +228,10 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
             return tableView.dequeueReusableCell(withIdentifier: "ReBasketTC0", for: indexPath) as! ReBasketTC
         } else if indexPath.section == 1 {
             
-            let data = BasketArray[indexPath.row]
+            let data = ReBasketArray[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC1", for: indexPath) as! ReBasketTC
+            cell.BasketObject = data
+            cell.viewDidLoad()
             
             cell.storeName_btn.setTitle(data.store_name, for: .normal)
             cell.storeName_btn.tag = indexPath.row; cell.storeName_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
@@ -242,8 +244,6 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
             cell.itemName_btn.setTitle(data.item_name, for: .normal)
             cell.itemName_btn.tag = indexPath.row; cell.itemName_btn.addTarget(self, action: #selector(itemName_btn(_:)), for: .touchUpInside)
             cell.delete_btn.tag = indexPath.row; cell.delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
-            cell.BasketObject = data
-            cell.viewDidLoad()
             
             var order_total: Int = 0
             if data.choice {
@@ -266,7 +266,7 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func store_btn(_ sender: UIButton) {
         
-        let data = BasketArray[sender.tag]
+        let data = ReBasketArray[sender.tag]
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = data.wh_store_id
         navigationController?.pushViewController(segue, animated: true)
@@ -276,7 +276,7 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
         
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
-        let data = BasketArray[sender.tag]
+        let data = ReBasketArray[sender.tag]
         data.choice = !data.choice
         
         choiceAllData()
@@ -286,7 +286,7 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func itemName_btn(_ sender: UIButton) {
         
-        let data = BasketArray[sender.tag]
+        let data = ReBasketArray[sender.tag]
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
         segue.store_id = data.wh_store_id
         segue.item_key = data.item_key
@@ -295,7 +295,7 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func delete_btn(_ sender: UIButton) {
         
-        let data = BasketArray[sender.tag]
+        let data = ReBasketArray[sender.tag]
         let alert = UIAlertController(title: "", message: "상품을 삭제하시겠습니까?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
             requestReBasket(type: "delete", params: ["basket_key": data.basket_key]) { status in

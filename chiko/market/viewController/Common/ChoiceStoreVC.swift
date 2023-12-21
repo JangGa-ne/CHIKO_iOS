@@ -116,7 +116,7 @@ extension ChoiceStoreVC: UITableViewDelegate, UITableViewDataSource {
         
         if MemberObject.member_type == "retailseller" {
             /// 데이터 삭제
-            BasketArray.removeAll()
+            ReBasketArray.removeAll()
             /// ReBasket 요청
             requestReBasket(type: "get") { _ in
                 

@@ -22,6 +22,7 @@ func setTimestampToDateTime(timestamp: Int, dateformat: String = "yyyy-MM-dd HH:
     
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = dateformat
+    dateFormatter.timeZone = TimeZone.autoupdatingCurrent
     
     if (timestamp > 0) {
         return dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))

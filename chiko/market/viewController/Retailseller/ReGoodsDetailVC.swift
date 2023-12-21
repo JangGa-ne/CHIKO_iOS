@@ -167,7 +167,7 @@ class ReGoodsDetailVC: UIViewController {
         
         guard OptionArray.count != 0 else { customAlert(message: "상품을 선택해주세요.", time: 1); return }
         
-//        if BasketArray.filter({ $0.item_key == GoodsObject.item_key }).isEmpty {
+//        if ReBasketArray.filter({ $0.item_key == GoodsObject.item_key }).isEmpty {
 //            
 //        }
         
@@ -203,7 +203,7 @@ class ReGoodsDetailVC: UIViewController {
             params["basket_key"] = "ba\(timestamp)"
             
             var type: String = "set"
-            BasketArray.forEach { data in
+            ReBasketArray.forEach { data in
                 if data.item_key == self.GoodsObject.item_key { params["basket_key"] = data.basket_key; type = "edit" }
             }
             
