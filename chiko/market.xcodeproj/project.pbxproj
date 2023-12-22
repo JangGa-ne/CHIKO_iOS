@@ -66,6 +66,7 @@
 		C2C971EB2ADD1C5600827DA0 /* RestApiObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C971EA2ADD1C5600827DA0 /* RestApiObject.swift */; };
 		C2C971ED2ADD1F6600827DA0 /* s_color.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C971EC2ADD1F6600827DA0 /* s_color.swift */; };
 		C2CF3BAF2B22FDF700843DEA /* WhGoodsDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CF3BAE2B22FDF700843DEA /* WhGoodsDetailVC.swift */; };
+		C2D6215A2B352E7A002A7E78 /* ReOrderDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D621592B352E7A002A7E78 /* ReOrderDetailVC.swift */; };
 		C2DF32D62AE18422002732F0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C2DF32D52AE18422002732F0 /* GoogleService-Info.plist */; };
 		C2E547F12B1D639C00A19EAF /* WhGoodsUploadTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E547F02B1D639C00A19EAF /* WhGoodsUploadTC.swift */; };
 /* End PBXBuildFile section */
@@ -134,6 +135,7 @@
 		C2C971EA2ADD1C5600827DA0 /* RestApiObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestApiObject.swift; sourceTree = "<group>"; };
 		C2C971EC2ADD1F6600827DA0 /* s_color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = s_color.swift; sourceTree = "<group>"; };
 		C2CF3BAE2B22FDF700843DEA /* WhGoodsDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoodsDetailVC.swift; sourceTree = "<group>"; };
+		C2D621592B352E7A002A7E78 /* ReOrderDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReOrderDetailVC.swift; sourceTree = "<group>"; };
 		C2DF32D52AE18422002732F0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2E547F02B1D639C00A19EAF /* WhGoodsUploadTC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoodsUploadTC.swift; sourceTree = "<group>"; };
 		E21B292A2F387B18311F6959 /* Pods-market.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-market.debug.xcconfig"; path = "Target Support Files/Pods-market/Pods-market.debug.xcconfig"; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 				C24AA5BF2B3044230061B490 /* ReLiquidateDetailVC.swift */,
 				C241796D2B0B47B5006497DF /* ReStoreVisitVC.swift */,
 				C20196A92B33F74E00576CF8 /* ReOrderVC.swift */,
+				C2D621592B352E7A002A7E78 /* ReOrderDetailVC.swift */,
 				C290705D2B05A9F60097AA74 /* ReBasketVC.swift */,
 				C22D641D2B183EF900A160F3 /* ReBookMarkVC.swift */,
 			);
@@ -473,6 +476,7 @@
 				C268DFC82B283C08001068B3 /* AccountVC.swift in Sources */,
 				C21E2FFE2B285D5100FE2A16 /* MemberVC.swift in Sources */,
 				C241796E2B0B47B5006497DF /* ReStoreVisitVC.swift in Sources */,
+				C2D6215A2B352E7A002A7E78 /* ReOrderDetailVC.swift in Sources */,
 				C201C72B2B293B3800C9442E /* ImageSlideVC.swift in Sources */,
 				C2A0F7D82B24B649007442A3 /* WhGoodsTop30VC.swift in Sources */,
 				C2C971ED2ADD1F6600827DA0 /* s_color.swift in Sources */,

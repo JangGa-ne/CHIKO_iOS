@@ -39,7 +39,6 @@ extension UIViewController {
         backgroundView.frame = UIScreen.main.bounds
         backgroundView.backgroundColor = .black.withAlphaComponent(0.3)
         backgroundView.tag = 8597453147
-        view.addSubview(backgroundView)
         
         let loading_indicatorView: NVActivityIndicatorView = NVActivityIndicatorView(
             frame: CGRect(x: UIScreen.main.bounds.midX-25, y: UIScreen.main.bounds.midY-25, width: 50, height: 50),
@@ -58,6 +57,7 @@ extension UIViewController {
         backgroundView.addSubview(loadingTitle_label)
         
         if animated {
+            view.addSubview(backgroundView)
             UIView.animate(withDuration: 0.3) { backgroundView.alpha = 1.0 }
         } else {
             for subView in view.subviews {

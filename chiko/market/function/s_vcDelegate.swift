@@ -22,6 +22,7 @@ var ReGoodsVCdelegate: ReGoodsVC? = nil
 var ReGoodsFilterVCdelegate: ReGoodsFilterVC? = nil
 var ReGoodsDetailVCdelegate: ReGoodsDetailVC? = nil
 var ReMyPageVCdelegate: ReMyPageVC? = nil
+var ReOrderVCdelegate: ReOrderVC? = nil
 var ReBasketVCdelegate: ReBasketVC? = nil
 var ReBookMarkVCdelegate: ReBookMarkVC? = nil
 var ReStoreVisitVCdelegate: ReStoreVisitVC? = nil

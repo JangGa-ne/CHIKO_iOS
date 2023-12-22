@@ -159,6 +159,7 @@ class ReGoodsVC: UIViewController {
         setBackSwipeGesture(false)
         
         ChoiceStoreVCdelegate = nil
+        ReStoreVisitVCdelegate = nil
         ReGoodsDetailVCdelegate = nil
     }
 }

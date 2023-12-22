@@ -27,14 +27,14 @@ class ReMyPageVC: UIViewController {
     }
     
     let menus: [(title: String, content: [String])] = [
-        (title: "매장관리", content: ["직원관리"]),
-        (title: "정보관리", content: ["계좌관리", "사업자관리", "내정보관리"]),
-        (title: "고객센터", content: ["문의하기"] as [String]),
+        (title: "매장관리", content: ["직원 관리"]),
+        (title: "정보관리", content: ["계좌 관리", "사업자 수정", "내 정보 수정"]),
+        (title: "고객센터", content: [] as [String]),
     ]
     let segues: [(String, [String])] = [
         ("매장관리", ["EmployeeVC"]),
         ("정보관리", ["AccountVC", "StoreVC", "MemberVC"]),
-        ("고객센터", [""] as [String]),
+        ("고객센터", [] as [String]),
     ]
     
     @IBOutlet weak var storeMain_img: UIImageView!

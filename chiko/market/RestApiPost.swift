@@ -889,7 +889,6 @@ func requestOrder(completionHandler: @escaping (Int) -> Void) {
                     /// 데이터 추가
                     if MemberObject.member_type == "retailseller" {
                         ReOrderArray.append(setReOrder(orderDict: dict))
-                        ReOrderArray.sort { $0.order_datetime > $1.order_datetime }
                     } else if MemberObject.member_type == "wholesales" {
                         
 //                        WhOrderArray.sort { $0.order_datetime > $1.order_datetime }

@@ -250,6 +250,7 @@ class ReHomeVC: UIViewController {
         setBackSwipeGesture(false)
         
         ChoiceStoreVCdelegate = nil
+        ReStoreVisitVCdelegate = nil
         ReGoodsDetailVCdelegate = nil
     }
 }

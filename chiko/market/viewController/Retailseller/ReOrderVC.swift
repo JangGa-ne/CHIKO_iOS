@@ -24,6 +24,8 @@ class ReOrderItemOptionTC: UITableViewCell {
     
     func viewDidLoad() {
         
+        tableView.delegate = nil; tableView.dataSource = nil
+        
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
@@ -56,6 +58,8 @@ extension ReOrderItemOptionTC: UITableViewDelegate, UITableViewDataSource {
     
 class ReOrderTC: UITableViewCell {
     
+    var ReOrderVCdelegate: ReOrderVC = ReOrderVC()
+    
     var OrderItemArray: [ReOrderItemData] = []
     
     @IBOutlet weak var datetime_label: UILabel!
@@ -65,6 +69,8 @@ class ReOrderTC: UITableViewCell {
     @IBOutlet weak var tableView_heignt: NSLayoutConstraint!
     
     func viewDidLoad() {
+        
+        tableView.delegate = nil; tableView.dataSource = nil
         
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
@@ -111,6 +117,11 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func itemName_btn(_ sender: UIButton) {
         
+        let data = OrderItemArray[sender.tag]
+        let segue = ReOrderVCdelegate.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
+        segue.store_id = data.store_id
+        segue.item_key = data.item_key
+        ReOrderVCdelegate.navigationController?.pushViewController(segue, animated: true)
     }
 }
 
@@ -126,16 +137,21 @@ class ReOrderVC: UIViewController {
     
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet var navi_btns: [UIButton]!
+    @IBOutlet weak var all_btn_width: NSLayoutConstraint!
+    @IBOutlet weak var orderDelivery_btn_width: NSLayoutConstraint!
+    @IBOutlet weak var changeReturnCancel_btn_width: NSLayoutConstraint!
     
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navi_btns.enumerated().forEach { i, btn in
-            if btn.tag == i { btn.frame.size.width = stringWidth(text: btn.titleLabel!.text!)+15 }
+        ReOrderVCdelegate = self
+        
+        navi_btns.forEach { btn in
             btn.addTarget(self, action: #selector(navi_btn(_:)), for: .touchUpInside)
         }
+        all_btn_width.constant = stringWidth(text: "전체", fontSize: 12, fontWeight: .medium)+30
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
@@ -155,18 +171,10 @@ class ReOrderVC: UIViewController {
         /// Order 요청
         requestOrder { status in
             
-            self.customLoadingIndicator(animated: false); self.tableView.reloadData()
+            self.customLoadingIndicator(animated: false)
             
-            switch status {
-            case 200:
-                break
-            case 204:
-                self.customAlert(message: "No data", time: 1)
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
-            default:
-                self.customAlert(message: "Internal server error", time: 1)
-            }
+            ReOrderArray.sort { $0.order_datetime > $1.order_datetime }
+            self.tableView.reloadData()
         }
     }
     
@@ -175,14 +183,12 @@ class ReOrderVC: UIViewController {
         navi_btns.forEach { btn in
             if btn.tag == sender.tag {
                 btn.backgroundColor = .H_8CD26B
-                btn.layer.borderColor = UIColor.clear.cgColor
-                btn.layer.borderWidth = .zero
                 btn.setTitleColor(.white, for: .normal)
+                ([all_btn_width, orderDelivery_btn_width, changeReturnCancel_btn_width] as [NSLayoutConstraint])[sender.tag].constant = stringWidth(text: sender.titleLabel!.text!, fontSize: 12, fontWeight: .medium)+30
             } else {
                 btn.backgroundColor = .white
-                btn.layer.borderColor = UIColor.black.withAlphaComponent(0.3).cgColor
-                btn.layer.borderWidth = 1
                 btn.setTitleColor(.black.withAlphaComponent(0.3), for: .normal)
+                ([all_btn_width, orderDelivery_btn_width, changeReturnCancel_btn_width] as [NSLayoutConstraint])[btn.tag].constant = stringWidth(text: btn.titleLabel!.text!, fontSize: 12, fontWeight: .medium)
             }
         }
         
@@ -212,6 +218,7 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         
         let data = ReOrderArray[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderTC", for: indexPath) as! ReOrderTC
+        cell.ReOrderVCdelegate = self
         cell.OrderItemArray = data.order_item
         cell.viewDidLoad()
         

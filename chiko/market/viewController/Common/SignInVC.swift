@@ -140,11 +140,6 @@ class SignInVC: UIViewController {
                             dispatchGroup.leave()
                         }
                     }
-//                    /// Order 요청
-//                    dispatchGroup.enter()
-//                    requestOrder { status in
-//                        dispatchGroup.leave()
-//                    }
                     
                     status_code = status; dispatchGroup.leave()
                 }

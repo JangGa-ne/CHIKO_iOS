@@ -34,7 +34,7 @@ class ReLiquidateVC: UIViewController {
     
     var order_total: Int = 0
     var total_price: Int = 0
-    var total_vat: Int = 0
+    var total_vat: Int = 3
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
@@ -133,11 +133,11 @@ class ReLiquidateVC: UIViewController {
         reStoreCash_btn.clipsToBounds = true
         
         LiquidateArray.forEach { data in data.item_option.forEach { data in total_price += data.price*data.quantity } }
-        order_total = total_price-total_vat
+        order_total = total_price+Int(Double(total_price)*(Double(total_vat)/100.0))
         
         totalPrice1_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
         totalPrice2_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
-        totalPrice3_label.text = "₩ \(priceFormatter.string(from: total_vat as NSNumber) ?? "0")"
+        totalPrice3_label.text = "\(total_vat)% (₩ \(priceFormatter.string(from: Int(Double(total_price)*(Double(total_vat)/100.0)) as NSNumber) ?? "0"))"
         
         ([agreement1_btn, agreement2_btn, agreement3_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.tag = i; btn.addTarget(self, action: #selector(agreement_btn(_:)), for: .touchUpInside)
@@ -213,7 +213,13 @@ class ReLiquidateVC: UIViewController {
                 
                 switch status {
                 case 200:
-                    self.customAlert(message: "주문완료", time: 1)
+                    let alert = UIAlertController(title: "", message: "주문/결제가\n정상적으로 완료되었습니다.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                        self.navigationController?.popViewController(animated: true, completion: {
+                            self.segueViewController(identifier: "ReOrderVC")
+                        })
+                    }))
+                    self.present(alert, animated: true)
                 case 600:
                     self.customAlert(message: "Error occurred during data conversion", time: 1)
                 default:

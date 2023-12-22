@@ -248,6 +248,7 @@ class ReGoodsDetailVC: UIViewController {
         
         setBackSwipeGesture(true)
         
+        ReOrderVCdelegate = nil
         ReBasketVCdelegate = nil
     }
 }

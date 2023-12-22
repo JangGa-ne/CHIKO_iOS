@@ -33,9 +33,9 @@ class ReMainTBC: UITabBarController {
         if #available(iOS 13.0, *) {
             let appearance = UITabBarAppearance()
             appearance.backgroundEffect = .none
-            appearance.stackedLayoutAppearance.normal.iconColor = .clear
-            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.black.withAlphaComponent(0.1), .font: UIFont.boldSystemFont(ofSize: 10)]
-            appearance.stackedLayoutAppearance.selected.iconColor = .clear
+            appearance.stackedLayoutAppearance.normal.iconColor = .black.withAlphaComponent(0.3)
+            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.black.withAlphaComponent(0.3), .font: UIFont.boldSystemFont(ofSize: 10)]
+            appearance.stackedLayoutAppearance.selected.iconColor = .H_8CD26B
             appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.H_8CD26B, .font: UIFont.boldSystemFont(ofSize: 10)]
             tabBar.standardAppearance = appearance
         }
@@ -50,6 +50,8 @@ class ReMainTBC: UITabBarController {
         tabBar.insertSubview(lineView, at: 1)
         
         tabBar.items!.enumerated().forEach { i, tabBarItem in
+            tabBarItem.selectedImage = UIImage(named: ["tab0_on", "tab1_on", "tab2_on"][i])
+            tabBarItem.image = UIImage(named: ["tab0_off", "tab1_off", "tab2_off"][i])
             tabBarItem.title = ["홈", "상품리스트", "마이페이지"][i]
         }
     }

@@ -99,21 +99,32 @@ class ReBasketVC: UIViewController {
         refreshControl.tintColor = .lightGray
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
+        customLoadingIndicator(animated: true)
+        
+        loadingData()
+        
         preheatImages(urls: ReBasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
         
         order_btn.addTarget(self, action: #selector(order_btn(_:)), for: .touchUpInside)
     }
     
     @objc func refreshControl(_ sender: UIRefreshControl) {
+        loadingData(); sender.endRefreshing()
+    }
+    
+    func loadingData() {
         /// 데이터 삭제
         ReBasketArray.removeAll(); tableView.reloadData()
         /// ReBasket 요청
         requestReBasket(type: "get") { _ in
             
+            self.customLoadingIndicator(animated: false)
+            
+            ReBasketArray.sort { $0.basket_key > $1.basket_key }
             self.choiceAllData()
             self.totalData()
             self.tableView.reloadData()
-        }; sender.endRefreshing()
+        }
     }
     
     @objc func choiceAll_btn(_ sender: UIButton) {
@@ -185,8 +196,11 @@ class ReBasketVC: UIViewController {
         
         setBackSwipeGesture(true)
         
-        ReBasketArray.sort { $0.basket_key > $1.basket_key }
+        ReStoreVisitVCdelegate = nil
+        ReGoodsDetailVCdelegate = nil
+        ReOrderVCdelegate = nil
         
+        ReBasketArray.sort { $0.basket_key > $1.basket_key }
         choiceAllData()
         totalData()
         tableView.reloadData()
@@ -303,6 +317,8 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
                     self.choiceAllData()
                     self.totalData()
                     self.tableView.reloadData()
+//                    self.customLoadingIndicator(animated: true)
+//                    self.loadingData()
                 } else if status == 600 {
                     self.customAlert(message: "Error occurred during data conversion", time: 1)
                 } else {
