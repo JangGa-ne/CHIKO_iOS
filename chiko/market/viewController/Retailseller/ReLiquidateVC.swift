@@ -137,7 +137,7 @@ class ReLiquidateVC: UIViewController {
         
         totalPrice1_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
         totalPrice2_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
-        totalPrice3_label.text = "\(total_vat)% (₩ \(priceFormatter.string(from: Int(Double(total_price)*(Double(total_vat)/100.0)) as NSNumber) ?? "0"))"
+        totalPrice3_label.text = "₩ \(priceFormatter.string(from: Int(Double(total_price)*(Double(total_vat)/100.0)) as NSNumber) ?? "0")"
         
         ([agreement1_btn, agreement2_btn, agreement3_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.tag = i; btn.addTarget(self, action: #selector(agreement_btn(_:)), for: .touchUpInside)
@@ -248,9 +248,9 @@ extension ReLiquidateVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateTC", for: indexPath) as! ReLiquidateTC
         
         if (data.price-LiquidateArray[0].item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩ \(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
         }
         cell.optionQuantity_label.text = "수량. \(data.quantity)개"
         cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"

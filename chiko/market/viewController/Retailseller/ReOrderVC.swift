@@ -42,12 +42,12 @@ extension ReOrderItemOptionTC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let data = OrderItemObject.item_option[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderItemOptionTC2", for: indexPath) as! ReOrderItemOptionTC
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderItemOptionTC", for: indexPath) as! ReOrderItemOptionTC
         
         if (data.price-OrderItemObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩ \(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         }
         cell.optionQuantity_label.text = "수량. \(data.quantity)개"
         cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
@@ -99,7 +99,7 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let data = OrderItemArray[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderItemOptionTC1", for: indexPath) as! ReOrderItemOptionTC
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderTC2", for: indexPath) as! ReOrderItemOptionTC
         cell.OrderItemObject = data
         cell.viewDidLoad()
         
@@ -217,7 +217,7 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let data = ReOrderArray[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderTC", for: indexPath) as! ReOrderTC
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderTC1", for: indexPath) as! ReOrderTC
         cell.ReOrderVCdelegate = self
         cell.OrderItemArray = data.order_item
         cell.viewDidLoad()
@@ -231,6 +231,9 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func detail_btn(_ sender: UIButton) {
         
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+        segue.OrderObject = ReOrderArray[sender.tag]
+        navigationController?.pushViewController(segue, animated: true)
     }
     
     @objc func delete_btn(_ sender: UIButton) {

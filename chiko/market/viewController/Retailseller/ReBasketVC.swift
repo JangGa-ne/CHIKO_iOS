@@ -49,9 +49,9 @@ extension ReBasketTC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC2", for: indexPath) as! ReBasketTC
         
         if (data.price-BasketObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩ \(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
         }
         cell.optionQuantity_label.text = "수량. \(data.quantity)개"
         cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"

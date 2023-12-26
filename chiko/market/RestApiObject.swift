@@ -331,7 +331,7 @@ func setBasket(basketDict: [String: Any]) -> BasketData {
 
 class ReOrderData {
     
-    var ch_total_item_price: Int = 0
+    var cn_total_item_price: Int = 0
     var kr_total_item_price: Int = 0
     var delivery_address: String = ""
     var delivery_address_detail: String = ""
@@ -359,7 +359,7 @@ class ReOrderData {
 func setReOrder(orderDict: [String: Any]) -> ReOrderData {
     
     let orderValue = ReOrderData()
-    orderValue.ch_total_item_price = orderDict["ch_total_item_price"] as? Int ?? 0
+    orderValue.cn_total_item_price = orderDict["cn_total_item_price"] as? Int ?? 0
     orderValue.kr_total_item_price = orderDict["kr_total_item_price"] as? Int ?? 0
     orderValue.delivery_address = orderDict["delivery_address"] as? String ?? ""
     orderValue.delivery_address_detail = orderDict["delivery_address_detail"] as? String ?? ""

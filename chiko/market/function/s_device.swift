@@ -8,6 +8,7 @@
 import UIKit
 
 func deviceIdentifier() -> String {
+    
     var systemInfo = utsname(); uname(&systemInfo)
     let machineMirror = Mirror(reflecting: systemInfo.machine)
     let identifier = machineMirror.children.reduce("") { identifier, element in

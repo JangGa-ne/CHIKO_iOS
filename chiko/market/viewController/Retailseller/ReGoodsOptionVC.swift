@@ -51,9 +51,9 @@ extension ReGoodsOptionVC: UITableViewDelegate, UITableViewDataSource {
         cell.optionColor_view.backgroundColor = .init(hex: "#\(ColorArray[data.color] ?? "ffffff")")
         cell.optionSequence_label.text = "상품 \(indexPath.row+1)."
         if (data.price-GoodsObject.item_sale_price) < 0 {
-            cell.optionNamePrice_label.text = "옵션. \(data.color) + \(data.size) (\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))\n가격. ₩ \(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
+            cell.optionNamePrice_label.text = "옵션. \(data.color) + \(data.size) (₩ \(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))\n가격. ₩ \(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
         } else {
-            cell.optionNamePrice_label.text = "옵션. \(data.color) + \(data.size) (+\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))\n가격. ₩ \(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
+            cell.optionNamePrice_label.text = "옵션. \(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))\n가격. ₩ \(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
         }
         cell.optionSoldOut_label.isHidden = !data.sold_out
         cell.optionSelect_btn.tag = indexPath.row; cell.optionSelect_btn.addTarget(self, action: #selector(optionSelect_btn(_:)), for: .touchUpInside)

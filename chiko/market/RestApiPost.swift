@@ -797,7 +797,7 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
     let timestamp: Int64 = setKoreaUnixTimestamp()
     var params: Parameters = [
         "action": "order_list",
-        "ch_total_item_price": 0,
+        "cn_total_item_price": 0,
         "kr_total_item_price": 0,
         "vat_total_price": 0,
         "delivery_nickname": StoreObject.store_delivery[StoreObject.store_delivery_position].nickname,
