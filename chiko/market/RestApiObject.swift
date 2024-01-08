@@ -339,7 +339,6 @@ class ReOrderData {
     var delivery_nickname: String = ""
     var delivery_num: String = ""
     var order_datetime: String = ""
-    var order_detail_key: String = ""
     var order_id: String = ""
     var order_item: [ReOrderItemData] = []
     var order_key: String = ""
@@ -367,7 +366,6 @@ func setReOrder(orderDict: [String: Any]) -> ReOrderData {
     orderValue.delivery_nickname = orderDict["delivery_nickname"] as? String ?? ""
     orderValue.delivery_num = orderDict["delivery_num"] as? String ?? ""
     orderValue.order_datetime = orderDict["order_datetime"] as? String ?? ""
-    orderValue.order_detail_key = orderDict["order_detail_key"] as? String ?? ""
     orderValue.order_id = orderDict["order_id"] as? String ?? ""
     (orderDict["order_item"] as? Array<[String: Any]> ?? []).forEach { dict in
         orderValue.order_item.append(setReOrderItem(orderItemDict: dict))
@@ -408,7 +406,7 @@ class ReOrderItemData {
 func setReOrderItem(orderItemDict: [String: Any]) -> ReOrderItemData {
     
     let orderItemValue = ReOrderItemData()
-    orderItemValue.delivery_state = orderItemDict["item_key"] as? String ?? ""
+    orderItemValue.delivery_state = orderItemDict["delivery_state"] as? String ?? ""
     orderItemValue.item_key = orderItemDict["item_key"] as? String ?? ""
     orderItemValue.item_mainphoto_img = orderItemDict["item_mainphoto_img"] as? String ?? ""
     orderItemValue.item_name = orderItemDict["item_name"] as? String ?? ""
@@ -430,6 +428,31 @@ func setReOrderItem(orderItemDict: [String: Any]) -> ReOrderItemData {
     orderItemValue.item_total_quantity = orderItemDict["item_total_quantity"] as? Int ?? 0
     
     return orderItemValue
+}
+
+class WhCountingData {
+    
+    var before_payment: Int = 0
+    var in_stock: Int = 0
+    var inspecting: Int = 0
+    var pending: Int = 0
+    var preparing: Int = 0
+    var complete: Int = 0
+    var cancel: Int = 0
+}
+
+func setWhCounting(countingDict: [String: Any]) -> WhCountingData {
+    
+    let countingValue = WhCountingData()
+    countingValue.before_payment = countingDict["before_payment"] as? Int ?? 0
+    countingValue.in_stock = countingDict["in_stock"] as? Int ?? 0
+    countingValue.inspecting = countingDict["inspecting"] as? Int ?? 0
+    countingValue.pending = countingDict["pending"] as? Int ?? 0
+    countingValue.preparing = countingDict["preparing"] as? Int ?? 0
+    countingValue.complete = countingDict["complete"] as? Int ?? 0
+    countingValue.cancel = countingDict["cancel"] as? Int ?? 0
+    
+    return countingValue
 }
 
 class WhOrderData {

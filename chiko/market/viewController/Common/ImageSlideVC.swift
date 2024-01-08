@@ -25,7 +25,6 @@ class ImageSlideVC: UIViewController {
         
         setImageSlideShew(imageView: item_img, imageUrls: imageUrls, contentMode: .scaleAspectFit)
         item_img.pageIndicator?.view.tintColor = .white
-        item_img.slideshowInterval = 3
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -1,5 +1,10 @@
 <h1>dkshop_ios</h1>
 
+<h3>240108</h3>
+<p>1. Wh 메뉴설정: 레이아웃 및 데이터 작업, Figma 작업</p>
+<p>2. Wh 상품등록/ 매입전잔: 서버 order_detail_key 처리</p>
+<p>3. Wh 상품목록: 서버 item_disclosure 처리</p>
+
 <h3>231226</h3>
 <p>1. Re 주문내역 상세보기: 데이터 작업</p>
 <p>2. Re 배송조회: Figma 작업</p>

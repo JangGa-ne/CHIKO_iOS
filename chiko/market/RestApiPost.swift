@@ -695,6 +695,30 @@ func requestWhRealTime(filter: String = "최신순", limit: Int = 99999, complet
     }
 }
 
+func requestWhCounting(completionHandler: @escaping ((Int) -> Void)) {
+    
+    let params: Parameters = [
+        "action": "get_counting",
+        "store_id": StoreObject.store_id,
+    ]
+    
+    AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                /// 데이터 추가
+                WhCountingObject = setWhCounting(countingDict: responseJson["data"] as? [String: Any] ?? [:])
+                completionHandler(200)
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}
+
 func requestWhGoodsUpload(GoodsObject: GoodsData, timestamp: Int64, completionHandler: @escaping ((Int) -> Void)) {
     
     let data = GoodsObject
@@ -812,7 +836,6 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
         "order_position": MemberObject.member_grade,
         "order_num": MemberObject.member_num,
         "order_key": "or\(timestamp)",
-        "order_detail_key": "or\(timestamp)",
         "order_datetime": String(timestamp),
         "order_memo": "",
         "order_state": "결제완료",
@@ -821,7 +844,7 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
     ]
     
     var order_item: Array<[String: Any]> = []
-    LiquidateArray.forEach { data in
+    LiquidateArray.enumerated().forEach { i, data in
         
         var item_option: Array<[String: Any]> = []
         data.item_option.forEach { data in
@@ -848,6 +871,7 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
             "store_name": data.store_name,
             "store_name_eng": data.store_name_eng,
             "delivery_state": "상품준비중",
+            "order_detail_key": "or\(timestamp)_\(i)",
         ])
     }
     params["order_item"] = order_item
@@ -857,7 +881,7 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
     AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
-                print(responseJson)
+//                print(responseJson)
                 if let dict = responseJson["data"] as? [String: Any] {
                     completionHandler(200)
                 } else {
@@ -873,7 +897,7 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
     }
 }
 
-func requestOrder(completionHandler: @escaping (Int) -> Void) {
+func requestOrder(action: String, completionHandler: @escaping (Int) -> Void) {
     
     let params: Parameters = [
         "action": "find_order",
@@ -890,7 +914,7 @@ func requestOrder(completionHandler: @escaping (Int) -> Void) {
                     if MemberObject.member_type == "retailseller" {
                         ReOrderArray.append(setReOrder(orderDict: dict))
                     } else if MemberObject.member_type == "wholesales" {
-                        
+//                        WhOrderArray.append()
 //                        WhOrderArray.sort { $0.order_datetime > $1.order_datetime }
                     }
                 }
@@ -906,6 +930,39 @@ func requestOrder(completionHandler: @escaping (Int) -> Void) {
         } catch {
             print(response.error as Any)
             completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestWhGoods(completionHandler: @escaping ([GoodsData], Int) -> Void) {
+    
+    let params: Parameters = [
+        "action": "find_goods",
+        
+    ]
+    
+    var GoodsArray: [GoodsData] = []
+    
+    AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                if let data = responseJson["data"] as? Array<Any> {
+                    /// goods
+                    data.forEach { data in
+                        /// 데이터 추가
+                        GoodsArray.append(setGoods(goodsDict: data as? [String: Any] ?? [:]))
+                    }
+                    completionHandler(GoodsArray, 200)
+                } else {
+                    completionHandler([], 204)
+                }
+            } else {
+                completionHandler([], 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler([], response.error?.responseCode ?? 500)
         }
     }
 }

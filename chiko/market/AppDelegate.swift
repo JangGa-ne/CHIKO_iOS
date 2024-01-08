@@ -32,6 +32,7 @@ var ReBasketArray: [BasketData] = []
 var ReOrderArray: [ReOrderData] = []
 /// Wholesales
 var WhGoodsArray_realtime: [GoodsData] = []
+var WhCountingObject: WhCountingData = WhCountingData()
 var WhOrderArray: [WhOrderData] = []
 
 @main

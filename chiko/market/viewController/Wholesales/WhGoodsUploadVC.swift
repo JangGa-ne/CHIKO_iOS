@@ -155,6 +155,7 @@ class WhGoodsUploadVC: UIViewController {
             requestWhGoodsUpload(GoodsObject: GoodsObject, timestamp: timestamp) { status in
                 if status == 200, data.upload_files.count > 0 {
                     /// File Upload 요청
+                    dispatchGroup.enter()
                     requestFileUpload(collection_id: "goods", document_id: "\(StoreObject.store_id)_\(timestamp)", file_data: data.upload_files) { status in
                         status_code = status; dispatchGroup.leave()
                     }
@@ -171,7 +172,14 @@ class WhGoodsUploadVC: UIViewController {
                 case 200:
                     let alert = UIAlertController(title: "", message: "상품등록 완료!", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: { _ in
-                        self.navigationController?.popViewController(animated: true)
+                        self.navigationController?.popViewController(animated: true, completion: {
+                            /// WhRealTime 요청
+                            requestWhRealTime(filter: ["최신순"][0], limit: 3) { _ in
+                                if let delegate = WhHomeVCdelegate {
+                                    delegate.tableView.reloadData()
+                                }
+                            }
+                        })
                     }))
                     self.present(alert, animated: true, completion: nil)
                 case 600:

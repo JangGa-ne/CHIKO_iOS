@@ -196,6 +196,7 @@ class ReGoodsDetailVC: UIViewController {
             "item_total_quantity": total_quantity,
             "wh_store_id": data.store_id,
             "store_name": data.store_name,
+            "store_name_eng": data.store_name_eng,
         ]
         
         if sender.tag == 0 {

@@ -11,6 +11,7 @@ class ReOrderItemOptionTC: UITableViewCell {
     
     var OrderItemObject: ReOrderItemData = ReOrderItemData()
     
+    @IBOutlet weak var deliveryState_btn: UIButton!
     @IBOutlet weak var item_img: UIImageView!
     @IBOutlet weak var itemName_btn: UIButton!
     @IBOutlet weak var tableView: UITableView!
@@ -103,6 +104,8 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
         cell.OrderItemObject = data
         cell.viewDidLoad()
         
+        cell.deliveryState_btn.setTitle(data.delivery_state, for: .normal)
+        cell.deliveryState_btn.tag = indexPath.row; cell.deliveryState_btn.addTarget(self, action: #selector(deliveryState_btn(_:)), for: .touchUpInside)
         cell.itemName_btn.setTitle(data.item_name, for: .normal)
         cell.itemName_btn.tag = indexPath.row; cell.itemName_btn.addTarget(self, action: #selector(itemName_btn(_:)), for: .touchUpInside)
         
@@ -113,6 +116,15 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
         cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
         
         return cell
+    }
+    
+    @objc func deliveryState_btn(_ sender: UIButton) {
+        
+//        let data = OrderItemArray[sender.tag]
+//        let segue = ReOrderVCdelegate.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
+//        segue.store_id = data.store_id
+//        segue.item_key = data.item_key
+//        ReOrderVCdelegate.navigationController?.pushViewController(segue, animated: true)
     }
     
     @objc func itemName_btn(_ sender: UIButton) {
@@ -131,6 +143,7 @@ class ReOrderVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
+    var action: String = "전체"
     let refreshControl: UIRefreshControl = UIRefreshControl()
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
@@ -169,7 +182,7 @@ class ReOrderVC: UIViewController {
         /// 데이터 삭제
         ReOrderArray.removeAll(); tableView.reloadData()
         /// Order 요청
-        requestOrder { status in
+        requestOrder(action: action) { status in
             
             self.customLoadingIndicator(animated: false)
             
@@ -190,6 +203,14 @@ class ReOrderVC: UIViewController {
                 btn.setTitleColor(.black.withAlphaComponent(0.3), for: .normal)
                 ([all_btn_width, orderDelivery_btn_width, changeReturnCancel_btn_width] as [NSLayoutConstraint])[btn.tag].constant = stringWidth(text: btn.titleLabel!.text!, fontSize: 12, fontWeight: .medium)
             }
+        }
+        
+        if sender.tag == 0 {
+            action = "전체"
+        } else if sender.tag == 1 {
+            action = "주문배송"
+        } else if sender.tag == 2 {
+            action = "교환/반품/취소"
         }
         
         customLoadingIndicator(animated: true)

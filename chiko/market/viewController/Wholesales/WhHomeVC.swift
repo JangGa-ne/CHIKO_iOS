@@ -9,6 +9,7 @@ import UIKit
 
 class WhHomeCC: UICollectionViewCell {
     
+    @IBOutlet weak var counting_label: UILabel!
     @IBOutlet weak var title_label: UILabel!
     
     @IBOutlet weak var grade_label: UILabel!
@@ -21,25 +22,38 @@ class WhHomeCC: UICollectionViewCell {
 class WhHomeTC: UITableViewCell {
     
     var WhHomeVCdelegate: WhHomeVC = WhHomeVC()
+    var indexpath_section: Int = 0
     var indexpath_row: Int = 0
     
     @IBOutlet weak var title_label: UILabel!
     @IBOutlet weak var collectionView1: UICollectionView!
     @IBOutlet weak var collectionView2: UICollectionView!
+    @IBOutlet weak var collectionView3: UICollectionView!
     
     func viewDidLoad() {
         
-        ([collectionView1, collectionView2] as [UICollectionView]).enumerated().forEach { i, collectionView in
+        if indexpath_section == 1 {
             
-            collectionView.delegate = nil; collectionView.dataSource = nil
+            ([collectionView1, collectionView2] as [UICollectionView]).enumerated().forEach { i, collectionView in
+                
+                collectionView.delegate = nil; collectionView.dataSource = nil
+                
+                let layout = UICollectionViewFlowLayout()
+                if i == 0 {
+                    layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
+                    layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+                }
+                collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+                collectionView.delegate = self; collectionView.dataSource = self
+            }
+        } else if indexpath_section == 3 {
+            
+            collectionView3.delegate = nil; collectionView3.dataSource = nil
             
             let layout = UICollectionViewFlowLayout()
-            if i == 0 {
-                layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
-                layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
-            }
-            collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
-            collectionView.delegate = self; collectionView.dataSource = self
+            layout.minimumLineSpacing = 1; layout.minimumInteritemSpacing = 1
+            collectionView3.setCollectionViewLayout(layout, animated: true, completion: nil)
+            collectionView3.delegate = self; collectionView3.dataSource = self
         }
     }
 }
@@ -51,6 +65,8 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             return 4
         } else if collectionView == collectionView2, WhGoodsArray_realtime.count > 0 {
             return WhGoodsArray_realtime.count
+        } else if collectionView == collectionView3 {
+            return 7
         } else {
             return .zero
         }
@@ -104,6 +120,21 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             cell.itemName_label.text = data.item_name
             cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
             cell.orderCount_label.text = "\(priceFormatter.string(from: data.item_order_count as NSNumber) ?? "0")건"
+            
+        } else if collectionView == collectionView3 {
+            
+            let data = [
+                (title: "입금전", counting: WhCountingObject.before_payment),
+                (title: "상품입고중", counting: WhCountingObject.in_stock),
+                (title: "상품검품중", counting: WhCountingObject.inspecting),
+                (title: "배송보류중", counting: WhCountingObject.pending),
+                (title: "배송준비중", counting: WhCountingObject.preparing),
+                (title: "배송완료", counting: WhCountingObject.complete),
+                (title: "취소신청", counting: WhCountingObject.cancel),
+            ][indexPath.row]
+            
+            cell.counting_label.text = priceFormatter.string(from: data.counting as NSNumber) ?? "0"
+            cell.title_label.text = data.title
         }
         
         return cell
@@ -114,6 +145,8 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             return CGSize(width: stringWidth(text: ["최신순", "끌올순", "오래된순", "품절순"][indexPath.row])+30, height: collectionView.frame.height)
         } else if collectionView == collectionView2 {
             return CGSize(width: UIScreen.main.bounds.width-70, height: 60)
+        } else if collectionView == collectionView3 {
+            return CGSize(width: UIScreen.main.bounds.width/4-18.25, height: collectionView.frame.height/2-0.5)
         } else {
             return .zero
         }
@@ -135,6 +168,9 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             let segue = WhHomeVCdelegate.storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
             segue.GoodsObject = WhGoodsArray_realtime[indexPath.row]
             WhHomeVCdelegate.navigationController?.pushViewController(segue, animated: true)
+        } else if collectionView == collectionView3 {
+            
+            
         }
     }
 }
@@ -145,8 +181,8 @@ class WhHomeVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    @IBAction func logout(_ sender: UIButton) { segueViewController(identifier: "SignInVC") }
-     
+    @IBOutlet weak var myPage_btn: UIButton!
+    
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tableView: UITableView!
     
@@ -157,11 +193,17 @@ class WhHomeVC: UIViewController {
         
         WhHomeVCdelegate = self
         
+        myPage_btn.addTarget(self, action: #selector(myPage_btn(_:)), for: .touchUpInside)
+        
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
         
         goodsUpload_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(goodsUpload_view(_:))))
+    }
+    
+    @objc func myPage_btn(_ sender: UIButton) {
+        segueViewController(identifier: "WhMyPageVC")
     }
     
     @objc func goodsUpload_view(_ sender: UITapGestureRecognizer) {
@@ -181,13 +223,15 @@ class WhHomeVC: UIViewController {
 extension WhHomeVC: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return 1
         } else if section == 1 {
+            return 1
+        } else if section == 2 {
             return 1
         } else {
             return .zero
@@ -202,12 +246,26 @@ extension WhHomeVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "WhHomeTC1", for: indexPath) as! WhHomeTC
             cell.WhHomeVCdelegate = self
+            cell.indexpath_section = indexPath.section
             cell.viewDidLoad()
             
-            cell.title_label.text = ["실시간 도매 리스트"][indexPath.row]
+            return cell
+        } else if indexPath.section == 2 {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "WhHomeTC2", for: indexPath) as! WhHomeTC
+            cell.WhHomeVCdelegate = self
+            cell.indexpath_section = indexPath.section
             
             return cell
             
+//        } else if indexPath.section == 3 {
+//            
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "WhHomeTC3", for: indexPath) as! WhHomeTC
+//            cell.WhHomeVCdelegate = self
+//            cell.indexpath_section = indexPath.section
+//            cell.viewDidLoad()
+//            
+//            return cell
         } else {
             return UITableViewCell()
         }

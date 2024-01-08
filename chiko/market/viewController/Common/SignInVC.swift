@@ -94,7 +94,7 @@ class SignInVC: UIViewController {
             retailseller_btn.isSelected = false; wholesales_btn.isSelected = true
             retailseller_btn.backgroundColor = .H_F2F2F7; wholesales_btn.backgroundColor = .H_8CD26B
             
-            memberId_tf.text = "testnike"; memberPw_tf.text = "qqq111---"
+            memberId_tf.text = "fmf7778"; memberPw_tf.text = "1q2w3e4r!"
         }
     }
     
@@ -209,6 +209,7 @@ class SignInVC: UIViewController {
         ReOrderArray.removeAll()
         /// Wholesales
         WhGoodsArray_realtime.removeAll()
+        WhCountingObject = WhCountingData()
         WhOrderArray.removeAll()
         
         UserDefaults.standard.removeObject(forKey: "store_index_select")
