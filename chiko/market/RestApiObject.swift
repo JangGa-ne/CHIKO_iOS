@@ -177,7 +177,7 @@ func setStore(storeDict: [String: Any]) -> StoreData {
     return storeValue
 }
 
-class GoodsData {
+struct GoodsData {
     
     var load: Bool = false
     var user_id: String = ""
@@ -230,7 +230,7 @@ class GoodsOptionData {
 
 func setGoods(goodsDict: [String: Any]) -> GoodsData {
     
-    let goodsValue = GoodsData()
+    var goodsValue = GoodsData()
     goodsValue.user_id = goodsDict["user_id"] as? String ?? ""
     goodsValue.item_key = goodsDict["item_key"] as? String ?? ""
     goodsValue.item_mainphoto_img = goodsDict["item_mainphoto_img"] as? String ?? ""

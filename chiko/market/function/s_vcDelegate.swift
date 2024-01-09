@@ -8,7 +8,7 @@
 import UIKit
     
 var appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
-
+/// Common
 var SplashVCdelegate: SplashVC? = nil
 var SignInVCdelegate: SignInVC? = nil
 var ChoiceStoreVCdelegate: ChoiceStoreVC? = nil
@@ -16,7 +16,8 @@ var SearchStoreVCdelegate: SearchStoreVC? = nil
 var SignUpMemberVCdelegate: SignUpMemberVC? = nil
 var SignUpStoreVCdelegate: SignUpStoreVC? = nil
 var ChineseBankListVCdelegate: ChineseBankListVC? = nil
-
+var MPayVCdelegate: MPayVC? = nil
+// Retailseller
 var ReHomeVCdelegate: ReHomeVC? = nil
 var ReGoodsVCdelegate: ReGoodsVC? = nil
 var ReGoodsFilterVCdelegate: ReGoodsFilterVC? = nil
@@ -26,7 +27,9 @@ var ReOrderVCdelegate: ReOrderVC? = nil
 var ReBasketVCdelegate: ReBasketVC? = nil
 var ReBookMarkVCdelegate: ReBookMarkVC? = nil
 var ReStoreVisitVCdelegate: ReStoreVisitVC? = nil
-
+/// Wholesales
 var WhHomeVCdelegate: WhHomeVC? = nil
+var WhMyPageVCdelegate: WhMyPageVC? = nil
 var WhGoodsUploadVCdelegate: WhGoodsUploadVC? = nil
 var WhGoodsDetailVCdelegate: WhGoodsDetailVC? = nil
+var WhGoodsTop30VCdelegate: WhGoodsTop30VC? = nil

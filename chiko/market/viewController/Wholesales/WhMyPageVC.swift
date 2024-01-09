@@ -35,22 +35,20 @@ class WhMyPageVC: UIViewController {
     }
     
     let menus: [(title: String, content: [String])] = [
-        (title: "", content: [] as [String]),
-        (title: "고객센터", content: ["문의하기"]),
-        (title: "상품관리", content: ["조회/수정", "상품 등록", "우리매장 TOP30"]),
+        (title: "상품관리", content: ["조회/수정", "상품 등록"]),
         (title: "주문관리", content: ["매장 주문", "배송 관리"]),
         (title: "정산관리", content: ["매입 전잔"]),
         (title: "매장관리", content: ["태그 관리", "직원 관리"]),
         (title: "정보관리", content: ["계좌 관리", "사업자 수정", "내 정보 수정"]),
+        (title: "고객센터", content: [] as [String]),
     ]
     let segues: [(String, [String])] = [
-        ("", [] as [String]),
-        ("고객센터", [""]),
-        ("상품관리", ["WhGoodsVC", "WhGoodsUploadVC", "WhGoodsTop30VC"]),
+        ("상품관리", ["WhGoodsVC", "WhGoodsUploadVC"]),
         ("주문관리", ["", ""]),
         ("정산관리", [""]),
         ("매장관리", ["", "EmployeeVC"]),
         ("정보관리", ["AccountVC", "StoreVC", "MemberVC"]),
+        ("고객센터", [] as [String]),
     ]
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
@@ -60,6 +58,8 @@ class WhMyPageVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        WhMyPageVCdelegate = self
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
@@ -83,19 +83,24 @@ class WhMyPageVC: UIViewController {
         super.viewWillAppear(animated)
         
         setBackSwipeGesture(true)
+        
+        MPayVCdelegate = nil
+        WhGoodsUploadVCdelegate = nil
+        WhGoodsDetailVCdelegate = nil
+        WhGoodsTop30VCdelegate = nil
     }
 }
 
 extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return menus.count
+        return menus.count+1
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "WhMyPageTCT") as! WhMyPageTC
-        cell.title_label.text = menus[section].title
+        cell.title_label.text = menus[section-1].title
         return cell
     }
     
@@ -106,8 +111,8 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return 1
-        } else if menus[section].content.count > 0 {
-            return menus[section].content.count
+        } else if menus[section-1].content.count > 0 {
+            return menus[section-1].content.count
         } else {
             return .zero
         }
@@ -125,6 +130,11 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
             cell.memberName_label.text = MemberObject.member_name
             cell.memberGrade_label.text = MemberObject.member_grade
             setNuke(imageView: cell.memberProfile_img, imageUrl: MemberObject.profile_img, cornerRadius: 10)
+            
+            ([cell.accountCounting_v, cell.itemFullCounting_v, cell.itemAccountCounting_v] as [UIView]).enumerated().forEach { i, view in
+                view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(select_v(_:))))
+            }
+            
             cell.accountCounting_label.text = priceFormatter.string(from: StoreObject.account_counting as NSNumber) ?? "0"
             cell.itemFullCounting_label.text = priceFormatter.string(from: StoreObject.item_full_counting as NSNumber) ?? "0"
             cell.itemAccountCounting_label.text = priceFormatter.string(from: StoreObject.item_account_counting as NSNumber) ?? "0"
@@ -133,12 +143,34 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
         } else {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "WhMyPageTC2", for: indexPath) as! WhMyPageTC
-            cell.title_label.text = menus[indexPath.section].content[indexPath.row]
+            cell.title_label.text = menus[indexPath.section-1].content[indexPath.row]
             return cell
+        }
+    }
+    
+    @objc func select_v(_ sender: UITapGestureRecognizer) {
+        
+        guard let sender = sender.view else { return }
+        
+        if sender.tag == 0 {
+            
+        } else if sender.tag == 1 {
+            let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsVC") as! WhGoodsVC
+            segue.indexpath_row = 0
+            navigationController?.pushViewController(segue, animated: true)
+        } else if sender.tag == 2 {
+            let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsVC") as! WhGoodsVC
+            segue.indexpath_row = 1
+            navigationController?.pushViewController(segue, animated: true)
+        } else if sender.tag == 3 {
+            
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        if indexPath.section != 0, segues[indexPath.section-1].1[indexPath.row] != "" {
+            segueViewController(identifier: segues[indexPath.section-1].1[indexPath.row])
+        }
     }
 }

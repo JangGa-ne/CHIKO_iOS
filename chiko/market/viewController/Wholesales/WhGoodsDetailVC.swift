@@ -52,6 +52,8 @@ class WhGoodsDetailVC: UIViewController {
     
     @IBOutlet var itemMaterialWasingInfo_labels: [UILabel]!
     
+    @IBOutlet weak var edit_btn: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -95,6 +97,8 @@ class WhGoodsDetailVC: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         optionPriceCollectionView.setCollectionViewLayout(layout, animated: true)
         optionPriceCollectionView.delegate = self; optionPriceCollectionView.dataSource = self
+        
+        edit_btn.addTarget(self, action: #selector(edit_btn(_:)), for: .touchUpInside)
     }
                                     
     @objc func item_img(_ sender: UITapGestureRecognizer) {
@@ -104,10 +108,26 @@ class WhGoodsDetailVC: UIViewController {
         navigationController?.pushViewController(segue, animated: true)
     }
     
+    @objc func edit_btn(_ sender: UIButton) {
+        
+        let data = GoodsObject
+        let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsUploadVC") as! WhGoodsUploadVC
+        segue.GoodsObject = data
+        segue.edit = true
+        if data.item_category_name.count > 0 { segue.option_key = data.item_category_name[0] }
+        data.item_colors.forEach { color in
+            segue.ColorArray.append((option_name: color, option_color: ColorArray[color] ?? "ffffff"))
+        }
+        segue.item_sale = data.item_sale
+        navigationController?.pushViewController(segue, animated: true)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         setBackSwipeGesture(true)
+        
+        WhGoodsUploadVCdelegate = nil
     }
 }
 

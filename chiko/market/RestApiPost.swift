@@ -934,11 +934,15 @@ func requestOrder(action: String, completionHandler: @escaping (Int) -> Void) {
     }
 }
 
-func requestWhGoods(completionHandler: @escaping ([GoodsData], Int) -> Void) {
+func requestWhGoods(item_disclosure: String, item_key: String = "0", limit: Int = 99999, completionHandler: @escaping ([GoodsData], Int) -> Void) {
     
     let params: Parameters = [
-        "action": "find_goods",
-        
+        "action": "mylist",
+        "store_id": StoreObject.store_id,
+        "filter": "최신순",
+        "item_disclosure": item_disclosure,
+        "item_key": item_key,
+        "limit": limit,
     ]
     
     var GoodsArray: [GoodsData] = []

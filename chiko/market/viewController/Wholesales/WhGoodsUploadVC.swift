@@ -14,15 +14,16 @@ class WhGoodsUploadVC: UIViewController {
     }
     
     var GoodsObject: GoodsData = GoodsData()
+    var edit: Bool = false
     
     var ItemArray: [(file_name: String, file_data: Data, file_size: Int)] = []
     
     var option_key: String = ""
+    var item_sale: Bool = false
     var notice_sale_price: Bool = true
     var ColorArray: [(option_name: String, option_color: String)] = []
     var SizeArray: [(option_name: String, option_select: Bool)] = []
     var MaterialArray: [(option_name: String, option_percent: String)] = []
-    var item_sale: Bool = false
     
     var OptionPriceArray: [(color_name: String, size_price: [(size: String, price: Int)])] = []
     var item_option_type: Bool = false
@@ -48,9 +49,8 @@ class WhGoodsUploadVC: UIViewController {
         WhGoodsUploadVCdelegate = self
         
         setKeyboard()
-        
         /// Option Key
-        if CategoryObject.CategoryArray.count > 0 {
+        if !edit, CategoryObject.CategoryArray.count > 0 {
             option_key = CategoryObject.CategoryArray[0].keys.first ?? ""
         }
         
@@ -65,11 +65,10 @@ class WhGoodsUploadVC: UIViewController {
     
     func loadingData(all: Bool = false, index: Int = 0) {
         
-        let data = GoodsObject
+        var data = GoodsObject
         
         if all || index == 0 {
             SizeArray.removeAll()
-            data.item_sizes.removeAll()
             CategoryObject.SizeArray.forEach { data in
                 (data[option_key] as? [String: [String]] ?? [:]).forEach { (key: String, value: [String]) in
                     value.forEach { option_name in
@@ -96,7 +95,6 @@ class WhGoodsUploadVC: UIViewController {
         }
         if all || index == 2 {
             StyleArray.removeAll()
-            data.item_style.removeAll()
             CategoryObject.StyleArray.forEach { data in
                 (data[option_key] as? [String: [String]] ?? [:]).forEach { (key: String, value: [String]) in
                     value.forEach { option_name in
@@ -105,13 +103,53 @@ class WhGoodsUploadVC: UIViewController {
                 }
             }
         }
+        
+        if edit { edit = false
+            
+//            data.item_colors.forEach { color in
+//                segue.ColorArray.append((option_name: color, option_color: ColorArray[color] ?? "ffffff"))
+//            }
+//            SizeArray = SizeArray.map { (option_name: String, option_select: Bool) in
+//                var option_select: Bool = option_select
+//                if data.item_sizes.contains(option_name) { option_select = true }
+//                return (option_name, option_select)
+//            }
+            SizeArray.enumerated().forEach { i, size in
+                if data.item_sizes.contains(size.option_name) { SizeArray[i].option_select = true }
+            }
+            
+            customLoadingIndicator(animated: true)
+            
+            dispatchGroup.enter()
+            data.item_photo_imgs.enumerated().forEach { i, imgUrl in
+                dispatchGroup.enter()
+                imageUrlStringToData(from: imgUrl) { imgData in
+                    self.ItemArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
+                }
+            }
+            dispatchGroup.leave()
+            
+            dispatchGroup.enter()
+            data.item_content_imgs.enumerated().forEach { i, imgUrl in
+                dispatchGroup.enter()
+                imageUrlStringToData(from: imgUrl) { imgData in
+                    self.ContentsArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
+                }
+            }
+            dispatchGroup.leave()
+            
+            dispatchGroup.notify(queue: .main) {
+                self.customLoadingIndicator(animated: false)
+                self.tableView.reloadData()
+            }
+        }
     }
     
     @objc func upload_btn(_ sender: UIButton) {
         
         view.endEditing(true)
         
-        let data = GoodsObject
+        var data = GoodsObject
         
         data.upload_files.removeAll()
         ItemArray.enumerated().forEach { i, data in
@@ -155,7 +193,6 @@ class WhGoodsUploadVC: UIViewController {
             requestWhGoodsUpload(GoodsObject: GoodsObject, timestamp: timestamp) { status in
                 if status == 200, data.upload_files.count > 0 {
                     /// File Upload 요청
-                    dispatchGroup.enter()
                     requestFileUpload(collection_id: "goods", document_id: "\(StoreObject.store_id)_\(timestamp)", file_data: data.upload_files) { status in
                         status_code = status; dispatchGroup.leave()
                     }
@@ -173,12 +210,8 @@ class WhGoodsUploadVC: UIViewController {
                     let alert = UIAlertController(title: "", message: "상품등록 완료!", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: { _ in
                         self.navigationController?.popViewController(animated: true, completion: {
-                            /// WhRealTime 요청
-                            requestWhRealTime(filter: ["최신순"][0], limit: 3) { _ in
-                                if let delegate = WhHomeVCdelegate {
-                                    delegate.tableView.reloadData()
-                                }
-                            }
+                            guard let delegate = WhHomeVCdelegate else { return }
+                            delegate.segueViewController(identifier: "WhGoodsVC")
                         })
                     }))
                     self.present(alert, animated: true, completion: nil)
@@ -252,7 +285,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             
         } else if indexPath.section == 1 {
             
-            let data = GoodsObject
+            var data = GoodsObject
             let cell = tableView.dequeueReusableCell(withIdentifier: "WhGoodsUploadTC1", for: indexPath) as! WhGoodsUploadTC
             cell.WhGoodsUploadVCdelegate = self
             cell.indexpath_section = indexPath.section
@@ -290,10 +323,16 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             }
             cell.itemPrice_view.isHidden = !item_sale
             cell.itemPrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .lightGray)
+            if data.item_price != 0 {
+                cell.itemPrice_tf.text = priceFormatter.string(from: data.item_price as NSNumber) ?? ""
+            }
             if item_sale {
                 cell.itemSalePrice_tf.placeholder(text: "할인된 가격을 입력해 주세요.", color: .lightGray)
             } else {
                 cell.itemSalePrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .lightGray)
+            }
+            if data.item_sale_price != 0 {
+                cell.itemSalePrice_tf.text = priceFormatter.string(from: data.item_sale_price as NSNumber) ?? ""
             }
             cell.noticeItemSalePrice_label.isHidden = notice_sale_price
             cell.sale_btn.isSelected = item_sale
@@ -338,6 +377,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.content_tv.contentInset = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
             cell.content_tv.backgroundColor = .white
             cell.content_tv.delegate = cell
+            cell.content_tv.text = GoodsObject.item_content
             cell.content_btn.addTarget(cell, action: #selector(cell.content_btn(_:)), for: .touchUpInside)
             cell.content_view.isHidden = (ContentsArray.count == 0)
             

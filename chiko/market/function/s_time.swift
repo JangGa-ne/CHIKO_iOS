@@ -15,10 +15,15 @@ func setKoreaUnixTimestamp() -> Int64 {
     return unixTimestamp_kor
 }
 
-func setTimestampToDateTime(timestamp: Int, dateformat: String = "yyyy-MM-dd HH:mm:ss") -> String {
+func setTimestampToDateTime(timestamp: Int, dateformat: String = "yyyy.MM.dd HH:mm:ss") -> String {
     
+    let timestamp = timestamp-32400000
     var timeInterval = TimeInterval()
-    if ("\(timestamp)".count == 13) { timeInterval = TimeInterval(timestamp/1000) } else { timeInterval = TimeInterval(timestamp) }
+    if (String(timestamp).count == 13) { 
+        timeInterval = TimeInterval(timestamp/1000)
+    } else {
+        timeInterval = TimeInterval(timestamp)
+    }
     
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = dateformat

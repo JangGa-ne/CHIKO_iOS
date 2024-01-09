@@ -67,6 +67,7 @@
 		C2C971EB2ADD1C5600827DA0 /* RestApiObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C971EA2ADD1C5600827DA0 /* RestApiObject.swift */; };
 		C2C971ED2ADD1F6600827DA0 /* s_color.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C971EC2ADD1F6600827DA0 /* s_color.swift */; };
 		C2CA5DF02B4549500078CF34 /* WhGoodsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CA5DEF2B4549500078CF34 /* WhGoodsVC.swift */; };
+		C2CBD4A72B4D0F28005ED22D /* MPayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CBD4A62B4D0F27005ED22D /* MPayVC.swift */; };
 		C2CF3BAF2B22FDF700843DEA /* WhGoodsDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CF3BAE2B22FDF700843DEA /* WhGoodsDetailVC.swift */; };
 		C2D6215A2B352E7A002A7E78 /* ReOrderDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D621592B352E7A002A7E78 /* ReOrderDetailVC.swift */; };
 		C2DF32D62AE18422002732F0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C2DF32D52AE18422002732F0 /* GoogleService-Info.plist */; };
@@ -138,6 +139,8 @@
 		C2C971EA2ADD1C5600827DA0 /* RestApiObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestApiObject.swift; sourceTree = "<group>"; };
 		C2C971EC2ADD1F6600827DA0 /* s_color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = s_color.swift; sourceTree = "<group>"; };
 		C2CA5DEF2B4549500078CF34 /* WhGoodsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoodsVC.swift; sourceTree = "<group>"; };
+		C2CBD4A62B4D0F27005ED22D /* MPayVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPayVC.swift; sourceTree = "<group>"; };
+		C2CBD4A82B4D10B0005ED22D /* market.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = market.entitlements; sourceTree = "<group>"; };
 		C2CF3BAE2B22FDF700843DEA /* WhGoodsDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoodsDetailVC.swift; sourceTree = "<group>"; };
 		C2D621592B352E7A002A7E78 /* ReOrderDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReOrderDetailVC.swift; sourceTree = "<group>"; };
 		C2DF32D52AE18422002732F0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -238,6 +241,7 @@
 				C268DFC72B283C08001068B3 /* AccountVC.swift */,
 				C268DFC92B283CE3001068B3 /* StoreVC.swift */,
 				C21E2FFD2B285D5100FE2A16 /* MemberVC.swift */,
+				C2CBD4A62B4D0F27005ED22D /* MPayVC.swift */,
 				C2764FF82B3270F3000AC23D /* SafariViewController.swift */,
 			);
 			path = Common;
@@ -264,6 +268,7 @@
 		C2682EC82AD77C5000FC6099 /* market */ = {
 			isa = PBXGroup;
 			children = (
+				C2CBD4A82B4D10B0005ED22D /* market.entitlements */,
 				C2DF32D52AE18422002732F0 /* GoogleService-Info.plist */,
 				C226F3472AF3360E004DA6C8 /* font */,
 				C2C971D72ADCD06500827DA0 /* customView */,
@@ -459,6 +464,7 @@
 				C2C971DD2ADCD0E100827DA0 /* s_noticeAlert.swift in Sources */,
 				C22A0E1D2AE7A89D00F73F7A /* s_time.swift in Sources */,
 				C2C971E22ADD067200827DA0 /* UICustomSegmentedControl.swift in Sources */,
+				C2CBD4A72B4D0F28005ED22D /* MPayVC.swift in Sources */,
 				C268DFCA2B283CE3001068B3 /* StoreVC.swift in Sources */,
 				C22A0E212AE7BA9300F73F7A /* s_mimetype.swift in Sources */,
 				C22A0E1F2AE7AEB900F73F7A /* SignUpRegisterVC.swift in Sources */,
@@ -651,6 +657,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = market/market.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KBW62JWGK2;
@@ -689,6 +696,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = market/market.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KBW62JWGK2;

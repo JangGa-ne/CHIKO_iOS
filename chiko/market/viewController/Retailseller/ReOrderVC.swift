@@ -243,7 +243,7 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         cell.OrderItemArray = data.order_item
         cell.viewDidLoad()
         
-        cell.datetime_label.text = setTimestampToDateTime(timestamp: (Int(data.order_datetime) ?? 0)-32400000, dateformat: "yyyy. MM. dd.")
+        cell.datetime_label.text = setTimestampToDateTime(timestamp: Int(data.order_datetime) ?? 0, dateformat: "yyyy. MM. dd.")
         cell.detail_btn.tag = indexPath.row; cell.detail_btn.addTarget(self, action: #selector(detail_btn(_:)), for: .touchUpInside)
         cell.delete_btn.tag = indexPath.row; cell.delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
         

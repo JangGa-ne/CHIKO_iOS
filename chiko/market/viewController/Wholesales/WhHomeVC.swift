@@ -215,6 +215,7 @@ class WhHomeVC: UIViewController {
         
         setBackSwipeGesture(false)
         
+        WhMyPageVCdelegate = nil
         WhGoodsUploadVCdelegate = nil
         WhGoodsDetailVCdelegate = nil
     }

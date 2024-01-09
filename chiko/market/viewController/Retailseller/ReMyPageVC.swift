@@ -28,12 +28,12 @@ class ReMyPageVC: UIViewController {
     
     let menus: [(title: String, content: [String])] = [
         (title: "매장관리", content: ["직원 관리"]),
-        (title: "정보관리", content: ["계좌 관리", "사업자 수정", "내 정보 수정"]),
+        (title: "정보관리", content: ["사업자 수정", "내 정보 수정"]),
         (title: "고객센터", content: [] as [String]),
     ]
     let segues: [(String, [String])] = [
         ("매장관리", ["EmployeeVC"]),
-        ("정보관리", ["AccountVC", "StoreVC", "MemberVC"]),
+        ("정보관리", ["StoreVC", "MemberVC"]),
         ("고객센터", [] as [String]),
     ]
     
@@ -143,7 +143,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if indexPath.section != 0 {
+        if indexPath.section != 0, segues[indexPath.section-1].1[indexPath.row] != "" {
             segueViewController(identifier: segues[indexPath.section-1].1[indexPath.row])
         }
     }

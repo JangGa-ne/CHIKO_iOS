@@ -103,6 +103,16 @@ func imageUrlHeight(imageUrl: String, completionHandler: ((CGFloat) -> Void)? = 
     }.resume()
 }
 
+func imageUrlStringToData(from urlString: String, completion: @escaping (Data?) -> Void) {
+    
+    guard let url = URL(string: urlString) else { completion(nil); return }
+
+    URLSession.shared.dataTask(with: url) { data, _, error in
+        guard let imageData = data, error == nil else { completion(nil); return }
+        completion(imageData)
+    }.resume()
+}
+
 extension UIViewController {
     
     func setPhoto(max: Int?, completionHandler: @escaping (([(file_name: String, file_data: Data, file_size: Int)]) -> Void)) {
