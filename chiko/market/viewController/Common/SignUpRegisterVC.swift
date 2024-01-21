@@ -37,25 +37,25 @@ class SignUpRegisterVC: UIViewController {
         MemberObject_signup.upload_files.removeAll()
         StoreObject_signup.upload_files.removeAll()
         // init
-        /// member id card
+        /// 신분증
         MemberObject_signup.upload_member_idcard_img.forEach { (file_name: String, file_data: Data, file_size: Int) in
             MemberObject_signup.upload_files.append((field_name: "user_idcard_img", file_name: file_name, file_data: file_data, file_size: file_size))
         }
-        /// store main photo
+        /// 매장 대표사진
         StoreObject_signup.upload_store_mainphoto_img.forEach { (file_name: String, file_data: Data, file_size: Int) in
             StoreObject_signup.upload_files.append((field_name: "store_mainphoto_img", file_name: file_name, file_data: file_data, file_size: file_size))
         }
-        /// store passbook
+        /// 통장 사본
         StoreObject_signup.upload_passbook_img.forEach { (file_name: String, file_data: Data, file_size: Int) in
             StoreObject_signup.upload_files.append((field_name: "passbook_img", file_name: file_name, file_data: file_data, file_size: file_size))
         }
-        /// store business register number
+        /// 사업자 등록증
         StoreObject_signup.upload_business_reg_img.forEach { (file_name: String, file_data: Data, file_size: Int) in
             StoreObject_signup.upload_files.append((field_name: "business_reg_img", file_name: file_name, file_data: file_data, file_size: file_size))
         }
-        /// store building contract
-        StoreObject_signup.upload_building_contract_img.forEach { (file_name: String, file_data: Data, file_size: Int) in
-            StoreObject_signup.upload_files.append((field_name: "building_contract_img", file_name: file_name, file_data: file_data, file_size: file_size))
+        /// 건물 계약서
+        StoreObject_signup.upload_building_contract_imgs.enumerated().forEach { i, data in
+            StoreObject_signup.upload_files.append((field_name: "building_contract_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
         }
         /// agreement
         agree_btn_s.forEach { btn in btn.addTarget(self, action: #selector(normal_agree_btn(_:)), for: .touchUpInside) }
@@ -135,20 +135,21 @@ class SignUpRegisterVC: UIViewController {
         /// SignUp 요청
         dispatchGroup.enter()
         requestSignUp { status in
-            status_code = status; dispatchGroup.leave()
             
             if status == 200 {
                 /// Member FileUpload 요청
                 dispatchGroup.enter()
-                requestFileUpload(collection_id: "member", document_id: MemberObject_signup.member_id, file_data: MemberObject_signup.upload_files) { status in
-                    status_code = status; dispatchGroup.leave()
+                requestFileUpload(action: "add", collection_id: "member", document_id: MemberObject_signup.member_id, file_data: MemberObject_signup.upload_files) { status in
+                    dispatchGroup.leave()
                 }
                 /// Store FileUpload 요청
                 dispatchGroup.enter()
-                requestFileUpload(collection_id: "store", document_id: StoreObject_signup.store_id, file_data: StoreObject_signup.upload_files) { status in
-                    status_code = status; dispatchGroup.leave()
+                requestFileUpload(action: "add", collection_id: "store", document_id: StoreObject_signup.store_id, file_data: StoreObject_signup.upload_files) { status in
+                    dispatchGroup.leave()
                 }
             }
+            
+            status_code = status; dispatchGroup.leave()
         }
         
         dispatchGroup.notify(queue: .main) {

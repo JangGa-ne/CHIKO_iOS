@@ -106,7 +106,7 @@ class StoreVC: UIViewController {
         
         switch sender {
         case businessRegNum_tf:
-            if isChineseBusinessRegNumValid(sender.text!) { check.isHidden = false }; break
+            if isChineseBusinessRegNumValid(sender.text!) { check.isHidden = false }
         case storeNameChi_tf:
             filterContains = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()-+="
             
@@ -115,19 +115,19 @@ class StoreVC: UIViewController {
             if let characterSetFromRange = NSCharacterSet(range: NSRange(location: chineseRange.lowerBound, length: chineseRange.upperBound-chineseRange.lowerBound+1)) as CharacterSet? {
                 allowedCharacters.formUnion(with: characterSetFromRange)
             }
-            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: allowedCharacters.inverted) == nil { check.isHidden = false }; break
+            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: allowedCharacters.inverted) == nil { check.isHidden = false }
         case storeNameEng_tf:
             filterContains = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()-+="
             
-            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) == nil { check.isHidden = false }; break
+            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) == nil { check.isHidden = false }
         case storeTel_tf:
-            if isChineseTelNumValid(sender.text!) { check.isHidden = false }; break
+            if isChineseTelNumValid(sender.text!) { check.isHidden = false }
         case storeAddressStreet_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         case storeAddressDetail_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         case storeAddressZipCode_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         default:
             break
         }

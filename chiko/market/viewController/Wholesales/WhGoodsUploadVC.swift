@@ -54,6 +54,10 @@ class WhGoodsUploadVC: UIViewController {
             option_key = CategoryObject.CategoryArray[0].keys.first ?? ""
         }
         
+        if edit { 
+            upload_btn.setTitle("상품 수정하기", for: .normal)
+        }
+        
         loadingData(all: true)
         
         tableView.separatorStyle = .none
@@ -65,8 +69,6 @@ class WhGoodsUploadVC: UIViewController {
     
     func loadingData(all: Bool = false, index: Int = 0) {
         
-        var data = GoodsObject
-        
         if all || index == 0 {
             SizeArray.removeAll()
             CategoryObject.SizeArray.forEach { data in
@@ -77,22 +79,19 @@ class WhGoodsUploadVC: UIViewController {
                 }
             }
         }
+        
         if all || index == 1 {
             OptionPriceArray.removeAll()
-            data.item_option.removeAll()
-            if GoodsObject.item_colors.count > 0, GoodsObject.item_sizes.count > 0 {
-                OptionPriceArray = ColorArray.map { data in
-                    var size_price: [(size: String, price: Int)] = []
-                    SizeArray.filter { $0.option_select }.forEach { 
-                        size_price.append((size: $0.option_name, price: GoodsObject.item_sale_price))
-                    }
-                    return (color_name: data.option_name, size_price: size_price)
+            guard GoodsObject.item_colors.count > 0, GoodsObject.item_sizes.count > 0 else { item_option_type = false; GoodsObject.item_option_type = false; return }
+            OptionPriceArray = ColorArray.map { colorData in
+                let size_price = SizeArray.filter { $0.option_select }.compactMap { sizeData in
+                    let price = GoodsObject.item_option.isEmpty ? GoodsObject.item_sale_price : GoodsObject.item_option.filter { $0.color == colorData.option_name && $0.size == sizeData.option_name }.map { $0.price <= GoodsObject.item_sale_price ? GoodsObject.item_sale_price : $0.price }.first ?? GoodsObject.item_sale_price
+                    return (size: sizeData.option_name, price: price)
                 }
-            } else {
-                item_option_type = false
-                data.item_option_type = false
+                return (color_name: colorData.option_name, size_price: size_price)
             }
         }
+
         if all || index == 2 {
             StyleArray.removeAll()
             CategoryObject.StyleArray.forEach { data in
@@ -106,41 +105,57 @@ class WhGoodsUploadVC: UIViewController {
         
         if edit { edit = false
             
-//            data.item_colors.forEach { color in
-//                segue.ColorArray.append((option_name: color, option_color: ColorArray[color] ?? "ffffff"))
-//            }
-//            SizeArray = SizeArray.map { (option_name: String, option_select: Bool) in
-//                var option_select: Bool = option_select
-//                if data.item_sizes.contains(option_name) { option_select = true }
-//                return (option_name, option_select)
-//            }
-            SizeArray.enumerated().forEach { i, size in
-                if data.item_sizes.contains(size.option_name) { SizeArray[i].option_select = true }
-            }
+            let data = GoodsObject
             
             customLoadingIndicator(animated: true)
-            
-            dispatchGroup.enter()
+            /// 상품 대표 이미지
             data.item_photo_imgs.enumerated().forEach { i, imgUrl in
                 dispatchGroup.enter()
                 imageUrlStringToData(from: imgUrl) { imgData in
                     self.ItemArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
                 }
             }
-            dispatchGroup.leave()
-            
-            dispatchGroup.enter()
+            /// 사이즈
+            SizeArray.enumerated().forEach { i, size in
+                if data.item_sizes.contains(size.option_name) { SizeArray[i].option_select = true }
+            }
+            /// 옵션 단가
+            item_option_type = data.item_option_type
+            /// 스타일
+            StyleArray.enumerated().forEach { i, style in
+                if data.item_style.contains(style) { style_row = i }
+            }
+            /// 상품 상세 이미지
             data.item_content_imgs.enumerated().forEach { i, imgUrl in
                 dispatchGroup.enter()
                 imageUrlStringToData(from: imgUrl) { imgData in
                     self.ContentsArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
                 }
             }
-            dispatchGroup.leave()
+            /// 소재정보 및 세탁법
+            data.item_material_washing.forEach { (key: String, value: Any) in
+                if key != "washing" {
+                    MaterialInfoArray[key] = value as? String ?? ""
+                } else {
+                    WashingInfoArray = value as? [String] ?? []
+                }
+            }
+            /// 제직 방식 설정
+            OtherTypeArray["build"] = data.item_build
+            /// 제조국 표기
+            OtherTypeArray["manufacture_country"] = data.item_manufacture_country
+            /// 공개 방식 설정
+            OtherTypeArray["disclosure"] = data.item_disclosure
             
             dispatchGroup.notify(queue: .main) {
+                
                 self.customLoadingIndicator(animated: false)
+                
+                self.ItemArray.sort { Int($0.file_name) ?? 0 < Int($1.file_name) ?? 0 }
+                self.ContentsArray.sort { Int($0.file_name) ?? 0 < Int($1.file_name) ?? 0 }
+                
                 self.tableView.reloadData()
+                self.loadingData(index: 1)
             }
         }
     }
@@ -149,9 +164,7 @@ class WhGoodsUploadVC: UIViewController {
         
         view.endEditing(true)
         
-        var data = GoodsObject
-        
-        data.upload_files.removeAll()
+        GoodsObject.upload_files.removeAll()
         ItemArray.enumerated().forEach { i, data in
             GoodsObject.upload_files.append((field_name: "item_photo_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
         }
@@ -159,7 +172,7 @@ class WhGoodsUploadVC: UIViewController {
             GoodsObject.upload_files.append((field_name: "item_content_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
         }
         
-        data.item_option.removeAll()
+        GoodsObject.item_option.removeAll()
         OptionPriceArray.forEach { (color_name: String, size_price: [(size: String, price: Int)]) in
             size_price.forEach { (size: String, price: Int) in
                 let itemOptionValue = GoodsOptionData()
@@ -167,23 +180,24 @@ class WhGoodsUploadVC: UIViewController {
                 itemOptionValue.price = price
                 itemOptionValue.size = size
                 itemOptionValue.sold_out = false
-                data.item_option.append(itemOptionValue)
+                GoodsObject.item_option.append(itemOptionValue)
             }
         }
         
         if ItemArray.count == 0 {
             customAlert(message: "상품 이미지를 첨부해 주세요.", time: 1)
-        } else if data.item_category_name.count == 0 {
+        } else if GoodsObject.item_category_name.count == 0 {
             customAlert(message: "카테고리를 선택해 주세요.", time: 1)
-        } else if data.item_name == "" {
+        } else if GoodsObject.item_name == "" {
             customAlert(message: "상품명을 입력해 주세요.", time: 1)
-        } else if data.item_price == 0 && data.item_sale_price == 0 || !notice_sale_price {
+        } else if GoodsObject.item_price == 0 && GoodsObject.item_sale_price == 0 || !notice_sale_price {
             customAlert(message: "단가를 입력해 주세요.", time: 1)
-        } else if data.item_option.count == 0 {
+        } else if GoodsObject.item_option.count == 0 {
             customAlert(message: "색상∙사이즈를 설정해 주세요.", time: 1)
         } else {
             
-            let timestamp: Int64 = setKoreaUnixTimestamp()
+            var timestamp: Int64 = setKoreaUnixTimestamp()
+            if GoodsObject.item_key != "" { timestamp = Int64(GoodsObject.item_key) ?? setKoreaUnixTimestamp() }
             
             customLoadingIndicator(text: "상품 등록중...", animated: true)
             
@@ -191,14 +205,18 @@ class WhGoodsUploadVC: UIViewController {
             /// WhGoods Upload 요청
             dispatchGroup.enter()
             requestWhGoodsUpload(GoodsObject: GoodsObject, timestamp: timestamp) { status in
-                if status == 200, data.upload_files.count > 0 {
+                
+                if status == 200, self.GoodsObject.upload_files.count > 0 {
+                    var action = "add"
+                    if self.GoodsObject.item_key != "" { action = "edit" }
                     /// File Upload 요청
-                    requestFileUpload(collection_id: "goods", document_id: "\(StoreObject.store_id)_\(timestamp)", file_data: data.upload_files) { status in
+                    dispatchGroup.enter()
+                    requestFileUpload(action: action, collection_id: "goods", document_id: "\(StoreObject.store_id)_\(timestamp)", file_data: self.GoodsObject.upload_files) { status in
                         status_code = status; dispatchGroup.leave()
                     }
-                } else {
-                    status_code = status; dispatchGroup.leave()
                 }
+                
+                status_code = status; dispatchGroup.leave()
             }
             
             dispatchGroup.notify(queue: .main) {
@@ -207,11 +225,18 @@ class WhGoodsUploadVC: UIViewController {
                 
                 switch status_code {
                 case 200:
-                    let alert = UIAlertController(title: "", message: "상품등록 완료!", preferredStyle: .alert)
+                    
+                    var message: String = ""
+                    if self.edit { message = "상품수정 완료!" } else { message = "상품등록 완료!" }
+                    
+                    let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: { _ in
                         self.navigationController?.popViewController(animated: true, completion: {
-                            guard let delegate = WhHomeVCdelegate else { return }
-                            delegate.segueViewController(identifier: "WhGoodsVC")
+                            if let delegate = WhGoodsDetailVCdelegate {
+                                delegate.GoodsObject = self.GoodsObject
+                                delegate.item_img.delegate = nil
+                                delegate.viewDidLoad()
+                            }
                         })
                     }))
                     self.present(alert, animated: true, completion: nil)
@@ -225,11 +250,13 @@ class WhGoodsUploadVC: UIViewController {
     }
      
     override func viewWillAppear(_ animated: Bool) {
-        super .viewWillAppear(animated)
+        super.viewWillAppear(animated)
         
         setBackSwipeGesture(false)
     }
 }
+
+import Nuke
 
 extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
     
@@ -285,7 +312,6 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             
         } else if indexPath.section == 1 {
             
-            var data = GoodsObject
             let cell = tableView.dequeueReusableCell(withIdentifier: "WhGoodsUploadTC1", for: indexPath) as! WhGoodsUploadTC
             cell.WhGoodsUploadVCdelegate = self
             cell.indexpath_section = indexPath.section
@@ -299,8 +325,8 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             }
             
             var category_name: String = ""
-            data.item_category_name.enumerated().forEach { i, category in
-                if i < data.item_category_name.count-1 { category_name.append("\(category) > ") } else { category_name.append(category) }
+            GoodsObject.item_category_name.enumerated().forEach { i, category in
+                if i < GoodsObject.item_category_name.count-1 { category_name.append("\(category) > ") } else { category_name.append(category) }
             }
             cell.itemCategory_btn.setTitle(category_name, for: .normal)
             
@@ -311,9 +337,9 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             }
             
             cell.itemName_tf.placeholder(text: "소매에게 노출할 상품명을 입력해 주세요.", color: .lightGray)
-            cell.itemName_tf.text = data.item_name
+            cell.itemName_tf.text = GoodsObject.item_name
             
-            data.item_sale = item_sale
+            GoodsObject.item_sale = item_sale
             if item_sale {
                 cell.sale_img.image = UIImage(named: "check_on")
                 cell.sale_label.textColor = .black
@@ -323,22 +349,22 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             }
             cell.itemPrice_view.isHidden = !item_sale
             cell.itemPrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .lightGray)
-            if data.item_price != 0 {
-                cell.itemPrice_tf.text = priceFormatter.string(from: data.item_price as NSNumber) ?? ""
+            if GoodsObject.item_price != 0 {
+                cell.itemPrice_tf.text = priceFormatter.string(from: GoodsObject.item_price as NSNumber) ?? ""
             }
             if item_sale {
                 cell.itemSalePrice_tf.placeholder(text: "할인된 가격을 입력해 주세요.", color: .lightGray)
             } else {
                 cell.itemSalePrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .lightGray)
             }
-            if data.item_sale_price != 0 {
-                cell.itemSalePrice_tf.text = priceFormatter.string(from: data.item_sale_price as NSNumber) ?? ""
+            if GoodsObject.item_sale_price != 0 {
+                cell.itemSalePrice_tf.text = priceFormatter.string(from: GoodsObject.item_sale_price as NSNumber) ?? ""
             }
             cell.noticeItemSalePrice_label.isHidden = notice_sale_price
             cell.sale_btn.isSelected = item_sale
             cell.sale_btn.tag = 0; cell.sale_btn.addTarget(cell, action: #selector(cell.select_btn(_:)), for: .touchUpInside)
             
-            data.item_option_type = item_option_type
+            GoodsObject.item_option_type = item_option_type
             if item_option_type {
                 cell.optionPrice_img.image = UIImage(named: "check_on")
                 cell.optionPrice_label.textColor = .black
@@ -358,7 +384,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.indexpath_section = indexPath.section
             cell.indexpath_row = indexPath.row
             cell.viewDidLoad()
-            
+            /// 색상
             cell.optionColor_view.backgroundColor = UIColor(hex: "#"+(CategoryObject.ColorArray_all[data.color_name] as? String ?? "ffffff"))
             cell.optionColor_label.text = data.color_name
             cell.optionPriceCollectionView_height.constant = CGFloat(data.size_price.count)*44
@@ -371,20 +397,20 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.indexpath_section = indexPath.section
             cell.indexpath_row = indexPath.row
             cell.viewDidLoad()
-            
+            /// 스타일
             cell.style_sv.isHidden = !option_key.contains("의류")
-            
+            /// 상세내용
             cell.content_tv.contentInset = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
             cell.content_tv.backgroundColor = .white
             cell.content_tv.delegate = cell
             cell.content_tv.text = GoodsObject.item_content
             cell.content_btn.addTarget(cell, action: #selector(cell.content_btn(_:)), for: .touchUpInside)
             cell.content_view.isHidden = (ContentsArray.count == 0)
-            
-            cell.materialCollectionView.isHidden = (MaterialArray.count == 0)
+            /// 혼용률
+            cell.materialCollectionView.isHidden = (MaterialArray.count == 0 && GoodsObject.item_materials.count == 0)
             cell.materialCollectionView.contentOffset.x = max(cell.materialCollectionView.contentSize.width - cell.materialCollectionView.bounds.width, 0)
             cell.material_btn.tag = 2; cell.material_btn.addTarget(cell, action: #selector(cell.category_btn(_:)), for: .touchUpInside)
-            
+            /// 소재정보 및 세탁법
             cell.materialInfo_sv.isHidden = !option_key.contains("의류")
             cell.materialWashing_imgs.forEach { img in img.image = UIImage(named: "check_off") }
             cell.materialWashing_labels.forEach { label in label.textColor = .black.withAlphaComponent(0.3) }

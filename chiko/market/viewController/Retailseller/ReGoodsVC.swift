@@ -36,6 +36,9 @@ class ReGoodsVC: UIViewController {
     @IBOutlet weak var categoryFilter_view: UIView!
     @IBOutlet weak var categoryName_label_width: NSLayoutConstraint!
     @IBOutlet weak var search_tf: UITextField!
+    @IBOutlet weak var delete_img: UIImageView!
+    @IBOutlet weak var delete_btn: UIButton!
+    @IBOutlet weak var search_btn: UIButton!
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -57,8 +60,14 @@ class ReGoodsVC: UIViewController {
         categoryName_view.isHidden = true
         categoryName_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(categoryName_view(_:))))
         categoryName_label_width.constant = stringWidth(text: categoryName_label.text!, fontSize: 12)+20
+        categoryFilter_view.isHidden = true
         categoryFilter_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(categoryFilter_view(_:))))
         search_tf.placeholder(text: "상품명을 입력하세요.", color: .lightGray)
+        search_tf.addTarget(self, action: #selector(edit_search_tf(_:)), for: .editingChanged)
+        delete_img.isHidden = true
+        delete_btn.isHidden = true
+        delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
+        search_btn.addTarget(self, action: #selector(search_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 22, left: 0, bottom: 20, right: 0)
@@ -112,11 +121,11 @@ class ReGoodsVC: UIViewController {
 //            view.addSubview(delegate.view)
 //            delegate.didMove(toParent: self)
 //        }
-//        
+//
 //        let ReGoodsFilterVCwidth = delegate.view.frame.width
 //        let ReGoodsFilterVCtransform = CGAffineTransform(translationX: !isMenuOpen ? -ReGoodsFilterVCwidth+100 : 0, y: 0)
 //        let scaleTransform = CGAffineTransform(scaleX: !isMenuOpen ? 0.8 : 1.0, y: !isMenuOpen ? 0.8 : 1.0)
-//        
+//
 //        UIView.animate(withDuration: 0.3) {
 //            self.view.transform = ReGoodsFilterVCtransform
 //            delegate.view.transform = scaleTransform
@@ -126,19 +135,38 @@ class ReGoodsVC: UIViewController {
 //                delegate.removeFromParent()
 //            }
 //        }
-//        
+//
 //        isMenuOpen = !isMenuOpen
     }
     
-    @objc func refreshControl(_ sender: UIRefreshControl) {
-        startIndexChange = false; loadingData(first: true)
+    @objc func edit_search_tf(_ sender: UITextField) {
+        delete_img.isHidden = (sender.text!.count == 0)
+        delete_btn.isHidden = (sender.text!.count == 0)
     }
     
-    func loadingData(first: Bool = false, item_pullup_time: String = "0", item_key: String = "0") {
+    @objc func delete_btn(_ sender: UIButton) {
+        search_tf.text!.removeAll(); delete_img.isHidden = true; sender.isHidden = true; loadingData(first: true)
+    }
+     
+    @objc func search_btn(_ sender: UIButton) {
+        search_tf.resignFirstResponder()
+        if search_tf.text! == "" {
+            customAlert(message: "상품명을 입력하세요.", time: 1)
+            loadingData(first: true)
+        } else {
+            loadingData(first: true, search: search_tf.text!)
+        }
+    }
+    
+    @objc func refreshControl(_ sender: UIRefreshControl) {
+        startIndexChange = false; search_tf.text!.removeAll(); loadingData(first: true)
+    }
+    
+    func loadingData(first: Bool = false, search: String = "", item_pullup_time: String = "0", item_key: String = "0") {
         /// 데이터 삭제
         if first { GoodsArray.removeAll() }
         /// ReGoods 요청
-        requestReGoods(item_category_name: item_category_name, item_pullup_time: item_pullup_time, item_key: item_key, limit: 10) { array, status in
+        requestReGoods(search: search,item_category_name: item_category_name, item_pullup_time: item_pullup_time, item_key: item_key, limit: 10) { array, status in
             
             if status == 200 {
                 self.GoodsArray += array
@@ -251,8 +279,11 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
         
         view.endEditing(true)
         
-        let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
-        segue.GoodsObject = GoodsArray[indexPath.row]
-        navigationController?.pushViewController(segue, animated: true)
+        if indexPath.section == 0 {
+            
+            let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
+            segue.GoodsObject = GoodsArray[indexPath.row]
+            navigationController?.pushViewController(segue, animated: true)
+        }
     }
 }

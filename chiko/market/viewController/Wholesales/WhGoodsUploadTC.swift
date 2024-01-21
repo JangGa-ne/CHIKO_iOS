@@ -38,8 +38,6 @@ class WhGoodsUploadCC: UICollectionViewCell {
     
     @objc func end_optionPrice_tf(_ sender: UITextField) {
         
-        var data = WhGoodsUploadVCdelegate.GoodsObject
-        
         var price: Int = 0
         
         if sender.text! == "0" || sender.text! == "" {
@@ -210,8 +208,6 @@ class WhGoodsUploadTC: UITableViewCell {
     
     @objc func edit_textfield(_ sender: UITextField) {
         
-        var data = WhGoodsUploadVCdelegate.GoodsObject
-        
         if sender.keyboardType == .numberPad {
             sender.text! = priceFormatter.string(from: (Int(sender.text!.replacingOccurrences(of: ",", with: "")) ?? 0) as NSNumber) ?? ""
         }
@@ -224,7 +220,7 @@ class WhGoodsUploadTC: UITableViewCell {
             
             WhGoodsUploadVCdelegate.GoodsObject.item_price = item_price
             
-            if (3000000 < item_price) {
+            if (3000000 < item_price && WhGoodsUploadVCdelegate.item_sale) {
                 WhGoodsUploadVCdelegate.GoodsObject.item_price = 3000000
                 sender.text = "3,000,000"
                 sender.resignFirstResponder()
@@ -272,7 +268,6 @@ class WhGoodsUploadTC: UITableViewCell {
             } else {
                 WhGoodsUploadVCdelegate.notice_sale_price = true
             }
-            
         } else if sender == itemSalePrice_tf {
             
             if 100 > item_sale_price {
@@ -294,14 +289,14 @@ class WhGoodsUploadTC: UITableViewCell {
         WhGoodsUploadVCdelegate.view.endEditing(true)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
-        var data = WhGoodsUploadVCdelegate.GoodsObject
-        
         if sender.tag == 0 {
             
             WhGoodsUploadVCdelegate.item_sale = !WhGoodsUploadVCdelegate.item_sale
             WhGoodsUploadVCdelegate.GoodsObject.item_sale = !WhGoodsUploadVCdelegate.GoodsObject.item_sale
             if !WhGoodsUploadVCdelegate.item_sale {
-                WhGoodsUploadVCdelegate.GoodsObject.item_price = WhGoodsUploadVCdelegate.GoodsObject.item_sale_price; itemPrice_tf.text!.removeAll()
+                WhGoodsUploadVCdelegate.GoodsObject.item_price = WhGoodsUploadVCdelegate.GoodsObject.item_sale_price
+                itemPrice_tf.text!.removeAll()
+                WhGoodsUploadVCdelegate.notice_sale_price = true
             }
         } else if sender.tag == 1 {
             
@@ -314,7 +309,13 @@ class WhGoodsUploadTC: UITableViewCell {
             } else {
                 WhGoodsUploadVCdelegate.item_option_type = !WhGoodsUploadVCdelegate.item_option_type
                 WhGoodsUploadVCdelegate.GoodsObject.item_option_type = !WhGoodsUploadVCdelegate.GoodsObject.item_option_type
-                WhGoodsUploadVCdelegate.loadingData(index: 1)
+                WhGoodsUploadVCdelegate.OptionPriceArray = WhGoodsUploadVCdelegate.OptionPriceArray.map({ (color_name: String, size_price: [(size: String, price: Int)]) in
+                    var new_size_price: [(size: String, price: Int)] = []
+                    size_price.forEach { (size: String, price: Int) in
+                        new_size_price.append((size: size, price: WhGoodsUploadVCdelegate.GoodsObject.item_sale_price))
+                    }
+                    return (color_name: color_name, size_price: new_size_price)
+                })
             }
         }
         
@@ -348,8 +349,6 @@ class WhGoodsUploadTC: UITableViewCell {
             WhGoodsUploadVCdelegate.view.endEditing(true)
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
-        
-        var data = WhGoodsUploadVCdelegate.GoodsObject
         
         if WhGoodsUploadVCdelegate.GoodsObject.item_category_name.count == 0 {
             WhGoodsUploadVCdelegate.customAlert(message: "카테고리를 선택해 주세요.", time: 1); return
@@ -396,15 +395,14 @@ class WhGoodsUploadTC: UITableViewCell {
                 WhGoodsUploadVCdelegate.MaterialInfoArray["lining"] = material_washing
                 WhGoodsUploadVCdelegate.GoodsObject.item_material_washing["lining"] = material_washing
             case (12...19, true):
-                if sender.frame != .zero {
-                    btn.isSelected = !btn.isSelected
-                    if btn.isSelected {
-                        WhGoodsUploadVCdelegate.WashingInfoArray.append(material_washing)
-                    } else if let index = WhGoodsUploadVCdelegate.WashingInfoArray.firstIndex(of: material_washing) {
-                        WhGoodsUploadVCdelegate.WashingInfoArray.remove(at: index)
-                    }
-                    WhGoodsUploadVCdelegate.GoodsObject.item_material_washing["washing"] = WhGoodsUploadVCdelegate.WashingInfoArray
+                if sender.frame == .zero { return }
+                btn.isSelected = !btn.isSelected
+                if WhGoodsUploadVCdelegate.WashingInfoArray.contains(material_washing) {
+                    WhGoodsUploadVCdelegate.WashingInfoArray = WhGoodsUploadVCdelegate.WashingInfoArray.filter { $0 != material_washing }
+                } else {
+                    WhGoodsUploadVCdelegate.WashingInfoArray.append(material_washing)
                 }
+                WhGoodsUploadVCdelegate.GoodsObject.item_material_washing["washing"] = WhGoodsUploadVCdelegate.WashingInfoArray
             default:
                 break
             }
@@ -417,8 +415,6 @@ class WhGoodsUploadTC: UITableViewCell {
             WhGoodsUploadVCdelegate.view.endEditing(true)
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
-        
-        var data = WhGoodsUploadVCdelegate.GoodsObject
         
         otherType_imgs.forEach { img in
             
@@ -477,8 +473,6 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        var data = WhGoodsUploadVCdelegate.GoodsObject
-        
         if collectionView == itemCollectionView {
             if section == 0, WhGoodsUploadVCdelegate.ItemArray.count < 20 {
                 return 1
@@ -511,19 +505,19 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
             let data = WhGoodsUploadVCdelegate.ItemArray[indexPath.row]
             guard let cell = cell as? WhGoodsUploadCC else { return }
             
-            cell.item_img.image = UIImage(data: data.file_data)
+            cell.item_img.image = UIImage(data: data.file_data)?.resize(to: cell.item_img.frame.size)
         } else if indexPath.section == 0, collectionView == contentCollectionView {
             
             let data = WhGoodsUploadVCdelegate.ContentsArray[indexPath.row]
             guard let cell = cell as? WhGoodsUploadCC else { return }
             
-            cell.content_img.image = UIImage(data: data.file_data)
+            cell.content_img.image = UIImage(data: data.file_data)?.resize(to: cell.content_img.frame.size)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        var data = WhGoodsUploadVCdelegate.GoodsObject
+        let data = WhGoodsUploadVCdelegate.GoodsObject
         
         if indexPath.section == 0 {
             
@@ -533,8 +527,8 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
             
             if collectionView == colorCollectionView {
                 
-                cell.colorName_label.text = WhGoodsUploadVCdelegate.GoodsObject.item_colors[indexPath.row]
-                cell.color_view.backgroundColor = UIColor(hex: "#"+(CategoryObject.ColorArray_all[WhGoodsUploadVCdelegate.GoodsObject.item_colors[indexPath.row]] as? String ?? "ffffff"))
+                cell.colorName_label.text = data.item_colors[indexPath.row]
+                cell.color_view.backgroundColor = UIColor(hex: "#"+(CategoryObject.ColorArray_all[data.item_colors[indexPath.row]] as? String ?? "ffffff"))
                 
             } else if collectionView == sizeCollectionView {
                 
@@ -556,7 +550,11 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
                 
                 cell.optionSize_label.text = data.size
                 cell.optionPrice_tf.placeholder(text: priceFormatter.string(from: WhGoodsUploadVCdelegate.GoodsObject.item_sale_price as NSNumber) ?? "0", color: .lightGray)
-                cell.optionPrice_tf.text!.removeAll()
+                if data.price <= WhGoodsUploadVCdelegate.GoodsObject.item_sale_price {
+                    cell.optionPrice_tf.text!.removeAll()
+                } else {
+                    cell.optionPrice_tf.text = priceFormatter.string(from: data.price as NSNumber) ?? "0"
+                }
                 cell.optionPrice_tf.tag = indexPath.row
                 cell.optionPrice_tf.addTarget(cell, action: #selector(cell.edit_optionPrice_tf(_:)), for: .editingChanged)
                 cell.optionPrice_tf.addTarget(cell, action: #selector(cell.end_optionPrice_tf(_:)), for: .editingDidEnd)
@@ -576,7 +574,7 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
             } else if collectionView == contentCollectionView {
                 cell.contentRow_label.text = " "+String(format: "%02d", indexPath.row+1)
             } else if collectionView == materialCollectionView {
-                cell.materialName_label.text = WhGoodsUploadVCdelegate.GoodsObject.item_materials[indexPath.row]
+                cell.materialName_label.text = data.item_materials[indexPath.row]
             }
             
             return cell
@@ -600,12 +598,12 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        var data = WhGoodsUploadVCdelegate.GoodsObject
+        let data = WhGoodsUploadVCdelegate.GoodsObject
         
         if collectionView == itemCollectionView {
             return CGSize(width: collectionView.frame.height, height: collectionView.frame.height)
         } else if collectionView == colorCollectionView {
-            return CGSize(width: stringWidth(text: WhGoodsUploadVCdelegate.GoodsObject.item_colors[indexPath.row], fontSize: 14)+64, height: collectionView.frame.height-10)
+            return CGSize(width: stringWidth(text: data.item_colors[indexPath.row], fontSize: 14)+64, height: collectionView.frame.height-10)
         } else if collectionView == sizeCollectionView {
             return CGSize(width: collectionView.frame.height, height: collectionView.frame.height)
         } else if collectionView == optionPriceCollectionView {
@@ -615,7 +613,7 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
         } else if collectionView == contentCollectionView {
             return CGSize(width: collectionView.frame.height, height: collectionView.frame.height)
         } else if collectionView == materialCollectionView {
-            return CGSize(width: stringWidth(text: WhGoodsUploadVCdelegate.GoodsObject.item_materials[indexPath.row], fontSize: 14)+35, height: collectionView.frame.height-10)
+            return CGSize(width: stringWidth(text: data.item_materials[indexPath.row], fontSize: 14)+35, height: collectionView.frame.height-10)
         } else {
             return .zero
         }

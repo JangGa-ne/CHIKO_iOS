@@ -14,6 +14,7 @@
 		C2155CD82AF0F59A008B21F2 /* ReMainTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2155CD72AF0F59A008B21F2 /* ReMainTBC.swift */; };
 		C2155CDA2AF0F612008B21F2 /* ReHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2155CD92AF0F612008B21F2 /* ReHomeVC.swift */; };
 		C21E2FFE2B285D5100FE2A16 /* MemberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21E2FFD2B285D5100FE2A16 /* MemberVC.swift */; };
+		C225015C2B57B43C00637983 /* BuildingListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C225015B2B57B43C00637983 /* BuildingListVC.swift */; };
 		C226F3462AF33453004DA6C8 /* UIGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C226F3452AF33452004DA6C8 /* UIGradientView.swift */; };
 		C226F34A2AF3361A004DA6C8 /* Cafe24SsurroundBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C226F3482AF3361A004DA6C8 /* Cafe24SsurroundBold.otf */; };
 		C226F34B2AF3361A004DA6C8 /* Cafe24SsurroundMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = C226F3492AF3361A004DA6C8 /* Cafe24SsurroundMedium.otf */; };
@@ -34,6 +35,7 @@
 		C2682ECA2AD77C5000FC6099 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2682EC92AD77C5000FC6099 /* AppDelegate.swift */; };
 		C2682ED12AD77C5000FC6099 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2682ECF2AD77C5000FC6099 /* Main.storyboard */; };
 		C2682ED32AD77C5100FC6099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2682ED22AD77C5100FC6099 /* Assets.xcassets */; };
+		C268B9172B590441000F77F0 /* s_push.swift in Sources */ = {isa = PBXBuildFile; fileRef = C268B9162B590441000F77F0 /* s_push.swift */; };
 		C268DFC82B283C08001068B3 /* AccountVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C268DFC72B283C08001068B3 /* AccountVC.swift */; };
 		C268DFCA2B283CE3001068B3 /* StoreVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C268DFC92B283CE3001068B3 /* StoreVC.swift */; };
 		C2764FF92B3270F3000AC23D /* SafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2764FF82B3270F3000AC23D /* SafariViewController.swift */; };
@@ -82,6 +84,7 @@
 		C2155CD72AF0F59A008B21F2 /* ReMainTBC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReMainTBC.swift; sourceTree = "<group>"; };
 		C2155CD92AF0F612008B21F2 /* ReHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReHomeVC.swift; sourceTree = "<group>"; };
 		C21E2FFD2B285D5100FE2A16 /* MemberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberVC.swift; sourceTree = "<group>"; };
+		C225015B2B57B43C00637983 /* BuildingListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingListVC.swift; sourceTree = "<group>"; };
 		C226F3452AF33452004DA6C8 /* UIGradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIGradientView.swift; sourceTree = "<group>"; };
 		C226F3482AF3361A004DA6C8 /* Cafe24SsurroundBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cafe24SsurroundBold.otf; sourceTree = "<group>"; };
 		C226F3492AF3361A004DA6C8 /* Cafe24SsurroundMedium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cafe24SsurroundMedium.otf; sourceTree = "<group>"; };
@@ -106,6 +109,7 @@
 		C2682ED02AD77C5000FC6099 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C2682ED22AD77C5100FC6099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C2682ED72AD77C5100FC6099 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C268B9162B590441000F77F0 /* s_push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = s_push.swift; sourceTree = "<group>"; };
 		C268DFC72B283C08001068B3 /* AccountVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountVC.swift; sourceTree = "<group>"; };
 		C268DFC92B283CE3001068B3 /* StoreVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreVC.swift; sourceTree = "<group>"; };
 		C2764FF82B3270F3000AC23D /* SafariViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariViewController.swift; sourceTree = "<group>"; };
@@ -234,6 +238,7 @@
 				C2BF864D2ADFA3C400A858A4 /* SignUpMemberVC.swift */,
 				C22A0E1E2AE7AEB900F73F7A /* SignUpRegisterVC.swift */,
 				C2BF864F2ADFA3CE00A858A4 /* SignUpStoreVC.swift */,
+				C225015B2B57B43C00637983 /* BuildingListVC.swift */,
 				C22B09472AE60875005C50A7 /* ChineseBankListVC.swift */,
 				C24E443A2AFC64D500885BBB /* CategoryVC.swift */,
 				C201C72A2B293B3800C9442E /* ImageSlideVC.swift */,
@@ -300,6 +305,7 @@
 				C22A0E1C2AE7A89D00F73F7A /* s_time.swift */,
 				C2C971DA2ADCD0AA00827DA0 /* s_vcDelegate.swift */,
 				C2C971D82ADCD09600827DA0 /* s_vcNavigate.swift */,
+				C268B9162B590441000F77F0 /* s_push.swift */,
 			);
 			path = function;
 			sourceTree = "<group>";
@@ -458,6 +464,7 @@
 				C20196AA2B33F74E00576CF8 /* ReOrderVC.swift in Sources */,
 				C2155CD82AF0F59A008B21F2 /* ReMainTBC.swift in Sources */,
 				C290705B2B05A0740097AA74 /* RestApiPost.swift in Sources */,
+				C225015C2B57B43C00637983 /* BuildingListVC.swift in Sources */,
 				C22B09482AE60875005C50A7 /* ChineseBankListVC.swift in Sources */,
 				C2BB21802B24C72900DE99ED /* EmployeeVC.swift in Sources */,
 				C2BF864E2ADFA3C500A858A4 /* SignUpMemberVC.swift in Sources */,
@@ -485,6 +492,7 @@
 				C29292C22B2754CF00DBC9D3 /* ReGoodsFilterVC.swift in Sources */,
 				C2682ECA2AD77C5000FC6099 /* AppDelegate.swift in Sources */,
 				C25FF24F2AFFD2F20026BB82 /* ReGoodsOptionVC.swift in Sources */,
+				C268B9172B590441000F77F0 /* s_push.swift in Sources */,
 				C268DFC82B283C08001068B3 /* AccountVC.swift in Sources */,
 				C21E2FFE2B285D5100FE2A16 /* MemberVC.swift in Sources */,
 				C241796E2B0B47B5006497DF /* ReStoreVisitVC.swift in Sources */,

@@ -6,10 +6,14 @@
 //
 
 import UIKit
+import Nuke
 import FirebaseCore
+import FirebaseMessaging
 
 var priceFormatter: NumberFormatter = NumberFormatter()
 var back_btn_hidden: Bool = false
+
+var fcm_id: String = ""
 
 var platform_type: String = ""
 var device_info: String = ""
@@ -18,6 +22,8 @@ var divice_radius: CGFloat = 0.0
 /// Register
 var MemberObject_signup: MemberData = MemberData()
 var StoreObject_signup: StoreData = StoreData()
+var BuildingObject: BuildingData = BuildingData()
+var BuildingArray: [String: [String: [String]]] = [:]
 /// Common
 var MemberObject: MemberData = MemberData()
 var StoreObject: StoreData = StoreData()
@@ -51,7 +57,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // init
         priceFormatter.numberStyle = .decimal
         deviceInfo { ratio, device in
-            print(device)
             platform_type = UIDevice.current.systemName
             device_info = device
             device_ratio = ratio
@@ -64,10 +69,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             divice_radius = 50
         }
         
+//        ImagePipeline.shared = ImagePipeline { $0.imageCache = ImageCache(costLimit: 100 * 1024 * 1024, countLimit: 500 * 1024 * 1024) }
+        
         store_index_select = Bool(UserDefaults.standard.string(forKey: "store_index_select") ?? "false") ?? false
         store_index = UserDefaults.standard.integer(forKey: "store_index")
-        
+        /// Firebase init
         FirebaseApp.configure()
+        Messaging.messaging().delegate = self
+        Messaging.messaging().isAutoInitEnabled = false
+        /// Notification Push init
+        UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge], completionHandler: { didAllow, Error in })
+        application.registerForRemoteNotifications()
         /// Category 요청
         requestCategory(action: ["color_category", "item_category", "size_category", "style_category", "material_category"]) { _ in }
         /// first segue

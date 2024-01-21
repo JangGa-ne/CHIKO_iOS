@@ -96,7 +96,12 @@ class MemberVC: UIViewController {
             noticePhoneNumCheck_label.isHidden = true
             checkPhoneNumCheck_img.isHidden = true
             
-            if isChinesePhoneNumValid(sender.text!) || sender.text! == "01031870005" { check.isHidden = false }; break
+            if MemberObject_signup.member_type == "retailseller" {
+                
+            } else if MemberObject_signup.member_type == "wholesales" {
+                
+            }
+            if isChinesePhoneNumValid(sender.text!) || sender.text! == "01031870005" { check.isHidden = false }
         case phoneNumCheck_tf:
             
             sender.text! = String(sender.text!.prefix(6))
@@ -146,9 +151,9 @@ class MemberVC: UIViewController {
             }
             break
         case memberName_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         case memberEmail_tf:
-            if isEmailValid(sender.text!) { check.isHidden = false }; break
+            if isEmailValid(sender.text!) { check.isHidden = false }
         default:
             break
         }

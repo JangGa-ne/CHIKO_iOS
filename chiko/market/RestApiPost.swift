@@ -8,6 +8,7 @@
 import UIKit
 import Alamofire
 import FirebaseAuth
+import FirebaseFirestore
 
 let requestUrl: String = "https://dk-sto-yy2mch6sra-du.a.run.app"
 let dispatchGroup = DispatchGroup()
@@ -97,6 +98,7 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
             params["store_address"] = StoreObject_signup.store_address_street
             params["store_address_detail"] = StoreObject_signup.store_address_detail
             params["store_address_zipcode"] = StoreObject_signup.store_address_zipcode
+            params["wechat_id"] = StoreObject.wechat_id
         } else if MemberObject_signup.member_type == "wholesales" {
             StoreObject_signup.store_id = "wh"+String(timestamp)
             params["business_reg_status"] = String(StoreObject_signup.business_reg_status)
@@ -134,7 +136,7 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
     }
 }
 
-func requestFileUpload(collection_id: String, document_id: String, file_data: [(field_name: String, file_name: String, file_data: Data, file_size: Int)], file_index: Int = 0, completionHandler: @escaping ((Int) -> Void)) {
+func requestFileUpload(action: String, collection_id: String, document_id: String, file_data: [(field_name: String, file_name: String, file_data: Data, file_size: Int)], file_index: Int = 0, first: Bool = true, completionHandler: @escaping ((Int) -> Void)) {
     /// limit upload data
     var upload_size: Int = 0
     var upload_index: Int = file_index
@@ -144,10 +146,15 @@ func requestFileUpload(collection_id: String, document_id: String, file_data: [(
     }
     
     let params: Parameters = [
-        "action": "add",
+        "action": action,
         "collection_id": collection_id,
         "document_id": document_id,
+        "first": String(first),
     ]
+    
+    params.forEach { data in print(data) }
+    
+    var fileUrls: Array<[String: Any]> = []
     /// multipart/form-data
     AF.upload(multipartFormData: { formData in
         /// string
@@ -180,7 +187,7 @@ func requestFileUpload(collection_id: String, document_id: String, file_data: [(
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
                 print(responseJson)
                 if (file_data.count > upload_index+1) {
-                    requestFileUpload(collection_id: collection_id, document_id: document_id, file_data: file_data, file_index: upload_index) { status in
+                    requestFileUpload(action: action, collection_id: collection_id, document_id: document_id, file_data: file_data, file_index: upload_index, first: false) { status in
                         completionHandler(status)
                     }
                 } else {
@@ -203,7 +210,10 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
         "user_type": appDelegate.member_type,
         "user_id": appDelegate.member_id,
         "user_pw": appDelegate.member_pw,
+        "device_info": device_info,
+        "fcm_id": fcm_id,
     ]
+    params.forEach { dict in print(dict) }
     /// x-www-form-urlencoded
     AF.request(requestUrl+"/dk_sto", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
@@ -227,6 +237,7 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
 //                        /// 데이터 추가
 //                        StoreArray.append(setStore(storeDict: storeDict))
 //                    }
+                    
                     completionHandler(200)
                 } else {
                     completionHandler(204)
@@ -350,7 +361,7 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
     let params: Parameters = [
         "action": "get",
     ]
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/main", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -386,7 +397,7 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
     }
 }
 
-func requestReGoods(item_category_name: [String] = [], item_pullup_time: String = "0", item_key: String = "0", limit: Int = 99999, completionHandler: @escaping (([GoodsData], Int) -> Void)) {
+func requestReGoods(search: String, item_category_name: [String] = [], item_pullup_time: String = "0", item_key: String = "0", limit: Int = 99999, completionHandler: @escaping (([GoodsData], Int) -> Void)) {
     
     var params: Parameters = [
         "action": "search",
@@ -395,6 +406,7 @@ func requestReGoods(item_category_name: [String] = [], item_pullup_time: String 
 //        "styleFilter": "",                                    // 스타일
 //        "priceRangeFilter": ["minPrice", "maxPrice"],         // 가격범위(원가)
 //        "salePriceRangeFilter": ["minPrice", "maxPrice"],     // 가격범위(할인가)
+        "search": search,
         "item_pullup_time": item_pullup_time,
         "item_key": item_key,
         "limit": limit,
@@ -412,7 +424,7 @@ func requestReGoods(item_category_name: [String] = [], item_pullup_time: String 
     print(params)
     
     var GoodsArray: [GoodsData] = []
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -450,7 +462,7 @@ func requestReBasket(type: String = "get", params: [String: Any] = [:], completi
         params["action"] = "basket_delete"
     }
     params["re_store_id"] = StoreObject.store_id
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -515,7 +527,7 @@ func requestFindReGoods(store_id: String, item_key: String, completionHandler: @
     ]
     
     var GoodsObject: GoodsData = GoodsData()
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             guard let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] else { completionHandler(GoodsObject, 600); return }
@@ -542,7 +554,7 @@ func requestReStoreVisit(store_id: String, limit: Int = 99999, completionHandler
     ]
     
     var VisitObject: VisitData = VisitData()
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             guard let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] else { completionHandler(VisitObject, 600); return }
@@ -581,7 +593,7 @@ func requestReStoreAdd(store_id: String, store_pw: String, completionHandler: @e
         "store_id": store_id,
         "store_pw": store_pw,
     ]
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/dk_sto", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -611,7 +623,7 @@ func requestReBookMark(action: String, re_store_id: String, wh_store_id: String,
         "re_store_id": re_store_id,
         "wh_store_id": wh_store_id,
     ]
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -669,7 +681,7 @@ func requestWhRealTime(filter: String = "최신순", limit: Int = 99999, complet
         "filter": filter,
         "limit": limit,
     ]
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -701,7 +713,7 @@ func requestWhCounting(completionHandler: @escaping ((Int) -> Void)) {
         "action": "get_counting",
         "store_id": StoreObject.store_id,
     ]
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -753,17 +765,18 @@ func requestWhGoodsUpload(GoodsObject: GoodsData, timestamp: Int64, completionHa
         "item_build": data.item_build,
         "item_manufacture_country": data.item_manufacture_country,
         "item_disclosure": data.item_disclosure,
+        "item_pullup_time": data.item_pullup_time,
         "store_id": StoreObject.store_id,
         "store_name": StoreObject.store_name,
         "store_name_eng": StoreObject.store_name_eng,
         "store_mainphoto_img": StoreObject.store_mainphoto_img
     ]
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
-                print(responseJson)
-                if let dict = responseJson["data"] as? [String: Any] {
+//                print(responseJson)
+                if responseJson["data"] as? [String: Any] != nil {
                     completionHandler(200)
                 } else {
                     completionHandler(204)
@@ -786,7 +799,7 @@ func requestEmployee(completionHandler: @escaping (([MemberData], Int) -> Void))
     ]
     
     var EmployeeArray: [MemberData] = []
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/dk_sto", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -875,9 +888,7 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
         ])
     }
     params["order_item"] = order_item
-    
-    var OrderArray: [BasketData] = []
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -903,7 +914,7 @@ func requestOrder(action: String, completionHandler: @escaping (Int) -> Void) {
         "action": "find_order",
         "store_id": StoreObject.store_id,
     ]
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -946,7 +957,7 @@ func requestWhGoods(item_disclosure: String, item_key: String = "0", limit: Int 
     ]
     
     var GoodsArray: [GoodsData] = []
-    
+    /// x-www-form-urlencoded
     AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
@@ -967,6 +978,60 @@ func requestWhGoods(item_disclosure: String, item_key: String = "0", limit: Int 
         } catch {
             print(response.error as Any)
             completionHandler([], response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestBuildingInfo(completionHandler: @escaping (Int) -> Void) {
+    
+    let params: Parameters = [
+        "action": "get_building",
+    ]
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/building_info", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                let array = responseJson["data"] as? Array<[String: Any]> ?? []
+                
+                let buildingValue = BuildingData()
+                array.forEach { dict in
+                    
+                    let building_name = dict["building_name"] as? String ?? ""
+                    buildingValue.building_name.append(building_name)
+                    
+                    (dict["building_info"] as? [String: Any] ?? [:]).forEach { dict in
+                        
+                        let building_floor = dict.key
+                        buildingValue.building_floor.append("\(building_name)/\(building_floor)")
+                        
+                        (dict.value as? Array<[String: Any]> ?? []).forEach { dict in
+                            if dict["store_name"] as? String ?? "" == "" {
+                                
+                                let building_room = dict["building_num"] as? String ?? ""
+                                buildingValue.building_room.append("\(building_name)/\(building_floor)/\(building_room)")
+                            }
+                        }
+                    }
+                }
+                /// 데이터 추가
+                BuildingObject = buildingValue
+                
+                BuildingObject.building_name.sort()
+                BuildingObject.building_floor.sort()
+                BuildingObject.building_room.sort()
+                
+                if array.count > 0 {
+                    completionHandler(200)
+                } else {
+                    completionHandler(204)
+                }
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
         }
     }
 }

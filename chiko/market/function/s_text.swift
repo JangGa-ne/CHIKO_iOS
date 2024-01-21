@@ -7,6 +7,25 @@
 
 import UIKit
 
+extension UILabel {
+    
+    func padding(_ insets: UIEdgeInsets) {
+        
+        let paddingView = UIView()
+        paddingView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(paddingView)
+        
+        NSLayoutConstraint.activate([
+            paddingView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: insets.left),
+            paddingView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -insets.right),
+            paddingView.topAnchor.constraint(equalTo: topAnchor, constant: insets.top),
+            paddingView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom)
+        ])
+        
+        sendSubviewToBack(paddingView)
+    }
+}
+
 func stringWidth(text: String, fontName: String = "", fontSize: CGFloat = 14, fontWeight: UIFont.Weight = .regular) -> CGFloat {
     if fontName == "" {
         return NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: fontSize, weight: fontWeight)]).size().width

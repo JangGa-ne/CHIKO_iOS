@@ -8,6 +8,12 @@
 import UIKit
 import PanModal
 
+class SignUpStoreCC: UICollectionViewCell {
+    
+    @IBOutlet weak var item_img: UIImageView!
+    @IBOutlet weak var itemRow_label: UILabel!
+}
+
 class SignUpStoreVC: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -21,26 +27,30 @@ class SignUpStoreVC: UIViewController {
     @IBOutlet weak var navi_lineView: UIView!
     
     @IBOutlet weak var scrollView: UIScrollView!
-    // store type
+    /// 쇼핑몰 종류
     @IBOutlet weak var storeType_sv: UIStackView!
     @IBOutlet weak var online_btn: UIButton!
     @IBOutlet weak var offline_btn: UIButton!
     @IBOutlet weak var onoffline_btn: UIButton!
     @IBOutlet weak var storeType_lineView: UIView!
-    
+    /// 사업자 등록번호
     @IBOutlet weak var businessRegNum_sv: UIStackView!
     @IBOutlet weak var businessRegNum_tf: UITextField!
     @IBOutlet weak var checkBusinessRegNum_img: UIImageView!
     @IBOutlet weak var noticeBusinessRegNum_label: UILabel!
+    /// 매장명
     @IBOutlet weak var storeNameChi_tf: UITextField!
     @IBOutlet weak var checkStoreNameChi_img: UIImageView!
     @IBOutlet weak var noticeStoreNameChi_label: UILabel!
+    /// 매장명 (영어)
     @IBOutlet weak var storeNameEng_tf: UITextField!
     @IBOutlet weak var checkStoreNameEng_img: UIImageView!
     @IBOutlet weak var noticeStoreNameEng_label: UILabel!
+    /// 매장 전화번호
     @IBOutlet weak var storeTel_tf: UITextField!
     @IBOutlet weak var checkStoreTel_img: UIImageView!
     @IBOutlet weak var noticeStoreTel_label: UILabel!
+    /// 매장 주소
     @IBOutlet weak var storeAddress_sv: UIStackView!
     @IBOutlet weak var storeAddressStreet_tf: UITextField!
     @IBOutlet weak var checkStoreAddressStreet_img: UIImageView!
@@ -48,10 +58,17 @@ class SignUpStoreVC: UIViewController {
     @IBOutlet weak var checkStoreAddressDetail_img: UIImageView!
     @IBOutlet weak var storeAddressZipCode_tf: UITextField!
     @IBOutlet weak var checkStoreAddressZipCode_img: UIImageView!
+    /// 건물/층/호수
+    @IBOutlet weak var buildingAddressDetail_sv: UIStackView!
+    @IBOutlet weak var buildingAddressDetail_tf: UITextField!
+    @IBOutlet weak var buildingAddressDetail_btn: UIButton!
+    /// 도메인 주소
     @IBOutlet weak var domainAddress_sv: UIStackView!
     @IBOutlet weak var domainAddress_tf: UITextField!
     @IBOutlet weak var checkDomainAddress_img: UIImageView!
     @IBOutlet weak var noticeDomainAddress_label: UILabel!
+    /// 계좌 등록
+    @IBOutlet weak var account_sv: UIStackView!
     @IBOutlet weak var bankName_view: UIView!
     @IBOutlet weak var bankName_tf: UITextField!
     @IBOutlet weak var checkBankName_img: UIImageView!
@@ -60,23 +77,29 @@ class SignUpStoreVC: UIViewController {
     @IBOutlet weak var accountNum_tf: UITextField!
     @IBOutlet weak var checkAccountNum_img: UIImageView!
     @IBOutlet weak var noticeAccountNum_label: UILabel!
-    
+    /// Wechat 아이디
+    @IBOutlet weak var wechatId_sv: UIStackView!
+    @IBOutlet weak var wechatId_tf: UITextField!
+    @IBOutlet weak var checkWechatId_img: UIImageView!
+    // 증명 서류 제출
+    /// 매장 대표사진
     @IBOutlet weak var storeMainPhoto_sv: UIStackView!
     @IBOutlet weak var storeMainPhoto_view: UIView!
     @IBOutlet weak var storeMainPhoto_img: UIImageView!
     @IBOutlet weak var checkStoreMainPhoto_img: UIImageView!
+    /// 통장 사본
     @IBOutlet weak var passbook_sv: UIStackView!
     @IBOutlet weak var passbook_view: UIView!
     @IBOutlet weak var passbook_img: UIImageView!
     @IBOutlet weak var checkpassbook_img: UIImageView!
+    /// 사업자 등록증
     @IBOutlet weak var businessReg_sv: UIStackView!
     @IBOutlet weak var businessReg_view: UIView!
     @IBOutlet weak var businessReg_img: UIImageView!
     @IBOutlet weak var checkBusinessReg_img: UIImageView!
+    /// 건물 계약서
     @IBOutlet weak var buildingContract_sv: UIStackView!
-    @IBOutlet weak var buildingContract_view: UIView!
-    @IBOutlet weak var buildingContract_img: UIImageView!
-    @IBOutlet weak var checkBuildingContract_img: UIImageView!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     @IBOutlet weak var complete_btn: UIButton!
     
@@ -92,8 +115,8 @@ class SignUpStoreVC: UIViewController {
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
         /// placeholder, delegate, edti, return next/done
-        ([businessRegNum_tf, storeNameChi_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, domainAddress_tf, bankName_tf, depositorName_tf, accountNum_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. https://www.example.com", "", "", "", ""][i], color: .black.withAlphaComponent(0.3))
+        ([businessRegNum_tf, storeNameChi_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, domainAddress_tf, bankName_tf, depositorName_tf, accountNum_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
+            tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. www.example.com", "", "", "", "", ""][i], color: .black.withAlphaComponent(0.3))
             tf.delegate = self
             tf.tag = i
             tf.addTarget(self, action: #selector(changedEditStoreInfo_if(_:)), for: .editingChanged)
@@ -101,7 +124,7 @@ class SignUpStoreVC: UIViewController {
             if tf != domainAddress_tf && tf != accountNum_tf { tf.returnKeyType = .next } else { tf.returnKeyType = .done }
         }
         /// check
-        ([checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img, checkBuildingContract_img] as [UIImageView]).forEach { img in
+        ([checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img] as [UIImageView]).forEach { img in
             img.isHidden = true
         }
         /// notice
@@ -119,21 +142,38 @@ class SignUpStoreVC: UIViewController {
         if StoreObject.store_type == "retailseller" {
             businessRegNum_sv.isHidden = true
             storeAddress_sv.isHidden = true
+            buildingAddressDetail_sv.isHidden = true
+            account_sv.isHidden = true
+            passbook_sv.isHidden = true
             businessReg_sv.isHidden = true
             buildingContract_sv.isHidden = true
         } else if StoreObject.store_type == "wholesales" {
             storeType_sv.isHidden = true
             storeType_lineView.isHidden = true
             storeAddress_sv.isHidden = true
+            buildingAddressDetail_sv.isHidden = false
             domainAddress_sv.isHidden = true
+            wechatId_sv.isHidden = true
+            /// Building Info 요청
+            if BuildingArray.count == 0 { requestBuildingInfo { status in } }
         }
+        /// building address detail
+        buildingAddressDetail_tf.isEnabled = false
+        buildingAddressDetail_btn.addTarget(self, action: #selector(buildingAddressDetail_btn(_:)), for: .touchUpInside)
         /// bank info
         bankName_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(bankName_view(_:))))
         bankName_tf.isEnabled = false
         /// submit document
-        for (i, view) in ([storeMainPhoto_view, passbook_view, businessReg_view, buildingContract_view] as [UIView]).enumerated() {
+        ([storeMainPhoto_view, passbook_view, businessReg_view] as [UIView]).enumerated().forEach { i, view in
             view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(submitDocu_view(_:))))
         }
+        /// building contract
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
+        collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 10)
+        collectionView.delegate = self; collectionView.dataSource = self
         /// back submit store
         complete_btn.addTarget(self, action: #selector(complete_btn(_:)), for: .touchUpInside)
     }
@@ -142,16 +182,18 @@ class SignUpStoreVC: UIViewController {
         
         var filterContains: String = ""
         let chineseRange = 0x4E00...0x9FFF
+        let koreanRange = 0xAC00...0xD7AF
         
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img, checkBuildingContract_img][sender.tag]
-        let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label,  UILabel(), UILabel(), noticeAccountNum_label][sender.tag]
+        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
+        let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), noticeAccountNum_label, UILabel()][sender.tag]
         // init
         check.isHidden = true
         notice.isHidden = true
         
         switch sender {
         case businessRegNum_tf:
-            if isChineseBusinessRegNumValid(sender.text!) { check.isHidden = false }; break
+//            if isChineseBusinessRegNumValid(sender.text!) { check.isHidden = false }
+            if sender.text!.count == 10 { check.isHidden = false }
         case storeNameChi_tf:
             filterContains = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()-+="
             
@@ -160,25 +202,36 @@ class SignUpStoreVC: UIViewController {
             if let characterSetFromRange = NSCharacterSet(range: NSRange(location: chineseRange.lowerBound, length: chineseRange.upperBound-chineseRange.lowerBound+1)) as CharacterSet? {
                 allowedCharacters.formUnion(with: characterSetFromRange)
             }
-            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: allowedCharacters.inverted) == nil { check.isHidden = false }; break
+            if let characterSetFromRange = NSCharacterSet(range: NSRange(location: koreanRange.lowerBound, length: koreanRange.upperBound-koreanRange.lowerBound+1)) as CharacterSet? {
+                allowedCharacters.formUnion(with: characterSetFromRange)
+            }
+            
+            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: allowedCharacters.inverted) == nil { check.isHidden = false }
         case storeNameEng_tf:
             filterContains = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()-+="
             
-            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) == nil { check.isHidden = false }; break
+            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) == nil { check.isHidden = false }
         case storeTel_tf:
-            if isChineseTelNumValid(sender.text!) { check.isHidden = false }; break
+//            if isChineseTelNumValid(sender.text!) { check.isHidden = false }
+            if StoreObject.store_type == "retailseller" {
+                check.isHidden = !(sender.text!.count > 0)
+            } else if StoreObject.store_type == "wholesales" {
+                check.isHidden = !(sender.text!.count >= 8 && sender.text!.count <= 12)
+            }
         case storeAddressStreet_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         case storeAddressDetail_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         case storeAddressZipCode_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         case domainAddress_tf:
-            if isUrlValid(sender.text!) { check.isHidden = false }; break
+            if isUrlValid(sender.text!) { check.isHidden = false }
         case depositorName_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         case accountNum_tf:
-            if isChineseAccountNumValid(sender.text!) { check.isHidden = false }; break
+            if isChineseAccountNumValid(sender.text!) { check.isHidden = false }
+        case wechatId_tf:
+            if sender.text!.count > 0 { check.isHidden = false }
         default:
             break
         }
@@ -186,8 +239,8 @@ class SignUpStoreVC: UIViewController {
     
     @objc func endEditStoreInfo_if(_ sender: UITextField) {
         
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img, checkBuildingContract_img][sender.tag]
-        let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label,  UILabel(), UILabel(), noticeAccountNum_label][sender.tag]
+        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
+        let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), noticeAccountNum_label, UILabel()][sender.tag]
         
         notice.isHidden = !check.isHidden
     }
@@ -225,6 +278,10 @@ class SignUpStoreVC: UIViewController {
         }
     }
     
+    @objc func buildingAddressDetail_btn(_ sender: UIButton) {
+        segueViewController(identifier: "BuildingListVC")
+    }
+    
     @objc func bankName_view(_ sender: UITapGestureRecognizer) {
         /// hidden keyboard
         view.endEditing(true)
@@ -251,10 +308,6 @@ class SignUpStoreVC: UIViewController {
                 self.StoreObject.upload_business_reg_img = photo
                 self.businessReg_img.image = UIImage(data: photo[0].file_data)
                 self.checkBusinessReg_img.isHidden = false
-            } else if sender.tag == 3 {
-                self.StoreObject.upload_building_contract_img = photo
-                self.buildingContract_img.image = UIImage(data: photo[0].file_data)
-                self.checkBuildingContract_img.isHidden = false
             }
         }
     }
@@ -264,21 +317,27 @@ class SignUpStoreVC: UIViewController {
         view.endEditing(true)
         
         var final_check: Bool = true
-        var check_img: [UIImageView] = [checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkStoreMainPhoto_img, checkpassbook_img]
+        var check_img: [UIImageView] = [checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreMainPhoto_img]
         
         if StoreObject.store_type == "retailseller" {
             if StoreObject.onoff_type == "online" {
-                check_img = check_img+[checkDomainAddress_img]
+                check_img += [checkDomainAddress_img]
             } else if StoreObject.onoff_type == "offline" {
-                check_img = check_img+[checkStoreAddressStreet_img]
+                check_img += [checkStoreAddressStreet_img]
             } else if StoreObject.onoff_type == "onoffline" {
-                check_img = check_img+[checkStoreAddressStreet_img, checkDomainAddress_img]
+                check_img += [checkStoreAddressStreet_img, checkDomainAddress_img]
             }
+            check_img += [checkWechatId_img]
         } else if StoreObject.store_type == "wholesales" {
-            check_img = check_img+[checkBusinessRegNum_img, checkBusinessReg_img, checkBuildingContract_img]
+            check_img += [checkBusinessRegNum_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkBusinessReg_img, checkpassbook_img]
         }
         check_img.forEach { img in
-            if img.isHidden { customAlert(message: "미입력된 항목이 있거나\n확인되지 않은 항목이 있습니다.", time: 1); final_check = false }
+            if img.isHidden {
+                customAlert(message: "미입력된 항목이 있거나\n확인되지 않은 항목이 있습니다.", time: 1); final_check = false
+            }
+        }
+        if StoreObject.store_type == "wholesales" && !buildingAddressDetail_btn.isSelected {
+            customAlert(message: "미입력된 항목이 있거나\n확인되지 않은 항목이 있습니다.", time: 1); final_check = false
         }
         
         if !final_check { return }
@@ -298,6 +357,7 @@ class SignUpStoreVC: UIViewController {
                     self.StoreObject.store_address_street = self.storeAddressStreet_tf.text!
                     self.StoreObject.store_address_detail = self.storeAddressDetail_tf.text!
                     self.StoreObject.store_address_zipcode = self.storeAddressZipCode_tf.text!
+                    self.StoreObject.wechat_id = self.wechatId_tf.text!
                 } else if self.StoreObject.store_type == "wholesales" {
                     self.StoreObject.business_reg_num = self.businessRegNum_tf.text!
                 }
@@ -356,5 +416,70 @@ extension SignUpStoreVC {
             }
         }
         return true
+    }
+}
+
+extension SignUpStoreVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if section == 0, StoreObject.upload_building_contract_imgs.count < 50 {
+            return 1
+        } else if section == 1, StoreObject.upload_building_contract_imgs.count > 0 {
+            return StoreObject.upload_building_contract_imgs.count
+        } else {
+            return .zero
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if indexPath.section == 1 {
+            
+            let data = StoreObject.upload_building_contract_imgs[indexPath.row]
+            guard let cell = cell as? SignUpStoreCC else { return }
+            
+            cell.item_img.image = UIImage(data: data.file_data)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        if indexPath.section == 0 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SignUpStoreCC0", for: indexPath) as! SignUpStoreCC
+            cell.tag = -1; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectItemAt(_:))))
+            return cell
+        } else if indexPath.section == 1 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SignUpStoreCC1", for: indexPath) as! SignUpStoreCC
+            cell.tag = indexPath.row; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectItemAt(_:))))
+            cell.itemRow_label.text = "  "+String(format: "%02d", indexPath.row+1)
+            return cell
+        } else {
+            return UICollectionViewCell()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.frame.height, height: collectionView.frame.height)
+    }
+    
+    @objc func didSelectItemAt(_ sender: UITapGestureRecognizer) {
+        
+        guard let sender = sender.view else { return }
+        
+        if sender.tag == -1 {
+            setPhoto(max: 50-StoreObject.upload_building_contract_imgs.count) { photos in
+                photos.forEach { photo in
+                    self.StoreObject.upload_building_contract_imgs.append(photo)
+                    self.collectionView.reloadData()
+                }
+            }
+        } else {
+            StoreObject.upload_building_contract_imgs.remove(at: sender.tag)
+            collectionView.reloadData()
+        }
     }
 }

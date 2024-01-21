@@ -11,6 +11,14 @@ import NVActivityIndicatorView
 
 extension UIViewController {
     
+    func progressAlert(title: String?, message: String?, style: UIAlertController.Style, time: CGFloat, completion: (() -> Void)? = nil) {
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: style)
+        let progressBar = UIProgressView(progressViewStyle: .default)
+        var progressTimer: Timer!
+        
+    }
+    
     func alert(title: String?, message: String?, style: UIAlertController.Style, time: CGFloat, completion: (() -> Void)? = nil) {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)

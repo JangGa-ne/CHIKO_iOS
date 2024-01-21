@@ -92,11 +92,24 @@ class WhGoodsDetailVC: UIViewController {
         itemMaterial_label.text = "\(data.item_materials)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
         itemKey_label.text = data.item_key
         
+        optionPriceCollectionView.delegate = nil; optionPriceCollectionView.dataSource = nil
+        
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         optionPriceCollectionView.setCollectionViewLayout(layout, animated: true)
         optionPriceCollectionView.delegate = self; optionPriceCollectionView.dataSource = self
+        
+        itemMaterialWasingInfo_labels.forEach { label in label.textColor = .black.withAlphaComponent(0.3) }
+        data.item_material_washing.forEach { (key: String, value: Any) in
+            
+            guard let map = material_washing[key] else { return }
+            let tags: [Int] = (key != "washing") ? [map[value as? String ?? ""]].compactMap { $0 } : (value as? [String] ?? []).compactMap { map[$0] }
+
+            itemMaterialWasingInfo_labels.forEach { label in
+                if tags.contains(label.tag) { label.textColor = .black }
+            }
+        }
         
         edit_btn.addTarget(self, action: #selector(edit_btn(_:)), for: .touchUpInside)
     }
@@ -115,10 +128,10 @@ class WhGoodsDetailVC: UIViewController {
         segue.GoodsObject = data
         segue.edit = true
         if data.item_category_name.count > 0 { segue.option_key = data.item_category_name[0] }
+        segue.item_sale = data.item_sale
         data.item_colors.forEach { color in
             segue.ColorArray.append((option_name: color, option_color: ColorArray[color] ?? "ffffff"))
         }
-        segue.item_sale = data.item_sale
         navigationController?.pushViewController(segue, animated: true)
     }
     

@@ -19,39 +19,45 @@ class SignUpMemberVC: UIViewController {
     @IBOutlet weak var navi_lineView: UIView!
     
     @IBOutlet weak var scrollView: UIScrollView!
-    /// member type
+    /// 회원 유형
     @IBOutlet weak var ceo_btn: UIButton!
     @IBOutlet weak var employee_btn: UIButton!
-    
+    /// 휴대 전화번호
     @IBOutlet weak var phoneNum_tf: UITextField!
+    @IBOutlet weak var checkPhoneNum_img: UIImageView!
     @IBOutlet weak var phoneNum_btn: UIButton!
     @IBOutlet weak var noticePhoneNum_label: UILabel!
     @IBOutlet weak var phoneNumCheck_view: UIView!
     @IBOutlet weak var phoneNumCheck_tf: UITextField!
     @IBOutlet weak var checkPhoneNumCheck_img: UIImageView!
     @IBOutlet weak var noticePhoneNumCheck_label: UILabel!
-    
+    /// 아이디
     @IBOutlet weak var memberId_tf: UITextField!
     @IBOutlet weak var memberId_btn: UIButton!
     @IBOutlet weak var noticeMemberId_label: UILabel!
+    /// 비밀번호
     @IBOutlet weak var memberPw_tf: UITextField!
     @IBOutlet weak var checkMemberPw_Img: UIImageView!
     @IBOutlet weak var noticeMemberPw_label: UILabel!
+    /// 비밀번호 확인
     @IBOutlet weak var memberPwCheck_tf: UITextField!
     @IBOutlet weak var checkMemberPwCheck_Img: UIImageView!
     @IBOutlet weak var noticeMemberPwCheck_label: UILabel!
+    /// 가입자 이름
     @IBOutlet weak var memberName_tf: UITextField!
     @IBOutlet weak var checkMemberName_img: UIImageView!
+    /// 이메일
     @IBOutlet weak var memberEmail_tf: UITextField!
     @IBOutlet weak var checkMemberEmail_img: UIImageView!
     @IBOutlet weak var noticeMemberEmail_label: UILabel!
-    
+    // 증명 서류 제출
+    /// 신분증
     @IBOutlet weak var submitDocu_sv: UIStackView!
     @IBOutlet weak var memberIdCard_view: UIView!
     @IBOutlet weak var memberIdCard_img: UIImageView!
     @IBOutlet weak var memberIdCard_label: UILabel!
     @IBOutlet weak var checkMemberIdCard_img: UIImageView!
-    
+    /// 매장 등록/찾기
     @IBOutlet weak var registerSearchStoreTitle_label: UILabel!
     @IBOutlet weak var new_label: UILabel!
     @IBOutlet weak var registerSearchStoreName_label: UILabel!
@@ -86,7 +92,7 @@ class SignUpMemberVC: UIViewController {
             label.isHidden = true
         }
         /// check
-        ([checkPhoneNumCheck_img, checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img, checkMemberIdCard_img] as [UIImageView]).forEach { img in
+        ([checkPhoneNum_img, checkPhoneNumCheck_img, checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img, checkMemberIdCard_img] as [UIImageView]).forEach { img in
             img.isHidden = true
         }
         
@@ -106,8 +112,10 @@ class SignUpMemberVC: UIViewController {
         memberIdCard_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(memberIdCard_view(_:))))
         /// submit document
         if MemberObject_signup.member_type == "retailseller" {
+            phoneNum_btn.isHidden = true
             submitDocu_sv.isHidden = false
         } else if MemberObject_signup.member_type == "wholesales" {
+            phoneNum_btn.isHidden = false
             submitDocu_sv.isHidden = true
         }
         /// register or search store
@@ -122,6 +130,7 @@ class SignUpMemberVC: UIViewController {
         
         var filterContains: String = ""
         
+        let member_type: String = MemberObject_signup.member_type
         let check: UIImageView = [UIImageView(), checkPhoneNumCheck_img, UIImageView(), checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img][sender.tag]
         let notice: UILabel = [noticePhoneNum_label, noticePhoneNumCheck_label, noticeMemberId_label, noticeMemberPw_label, noticeMemberPwCheck_label, UILabel(), noticeMemberEmail_label][sender.tag]
         // init
@@ -138,7 +147,12 @@ class SignUpMemberVC: UIViewController {
             noticePhoneNumCheck_label.isHidden = true
             checkPhoneNumCheck_img.isHidden = true
             
-            if isChinesePhoneNumValid(sender.text!) || sender.text! == "01031870005" { check.isHidden = false }; break
+            if member_type == "retailseller" {
+                check.isHidden = !(isChinesePhoneNumValid(sender.text!) || sender.text! == "01031870005")
+                checkPhoneNum_img.isHidden = check.isHidden
+            } else if member_type == "wholesales" {
+                check.isHidden = !(sender.text!.count == 11 || sender.text! == "01031870005")
+            }
         case phoneNumCheck_tf:
             
             sender.text! = String(sender.text!.prefix(6))
@@ -207,9 +221,9 @@ class SignUpMemberVC: UIViewController {
             }
             break
         case memberName_tf:
-            if sender.text!.count > 0 { check.isHidden = false }; break
+            if sender.text!.count > 0 { check.isHidden = false }
         case memberEmail_tf:
-            if isEmailValid(sender.text!) { check.isHidden = false }; break
+            if isEmailValid(sender.text!) { check.isHidden = false }
         default:
             break
         }
@@ -342,11 +356,15 @@ class SignUpMemberVC: UIViewController {
     @objc func signUp_btn(_ senser: UIButton) {
         
         var final_check: Bool = true
-        let check_btn: [UIButton] = [phoneNum_btn, memberId_btn, registerSearchStore_btn]
-        var check_img: [UIImageView] = [checkPhoneNumCheck_img, checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img]
+        var check_btn: [UIButton] = [memberId_btn, registerSearchStore_btn]
+        var check_img: [UIImageView] = [checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img]
         
         if MemberObject_signup.member_type == "retailseller" {
-            check_img = check_img+[checkMemberIdCard_img]
+            check_img += [checkPhoneNum_img, checkMemberIdCard_img]
+        }
+        if MemberObject_signup.member_type == "wholesales" {
+            check_btn += [phoneNum_btn]
+            check_img += [checkPhoneNumCheck_img]
         }
         check_btn.forEach { btn in
             if !btn.isSelected { customAlert(message: "미입력된 항목이 있거나\n확인되지 않은 항목이 있습니다.", time: 1); final_check = false }

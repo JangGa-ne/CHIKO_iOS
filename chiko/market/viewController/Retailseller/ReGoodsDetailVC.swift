@@ -352,28 +352,15 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.itemMaterial_label.text = "\(data.item_materials)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
             cell.itemKey_label.text = data.item_key
             
-            let material_washing = ["thickness": ["두꺼움": 0, "보통": 1, "얇음": 2], "see_through": ["있음": 3, "보통": 4, "없음": 5], "flexibility": ["좋음": 6, "보통": 7, "없음": 8], "lining": ["있음": 9, "없음": 10, "기모안감": 11], "washing": ["손세탁": 12, "드라이클리닝": 13, "물세탁": 14, "단독세탁": 15, "울세탁": 16, "표백제사용금지": 17, "다림질금지": 18, "세탁기금지": 19]]
             data.item_material_washing.forEach { (key: String, value: Any) in
                 
-                let materialValue = value as? String ?? ""
-                let washingValue = value as? [String] ?? []
-                print(washingValue)
-                if let map = material_washing[key], let tag = map[materialValue] {
-                    
-                    cell.itemMaterialWasingInfo_labels.forEach { label in
-                        
-                        switch (label.tag, tag) {
-                        case (0...2, 0...2), (3...5, 3...5), (6...8, 6...8), (9...11, 9...11), (12...19, 12...19):
-                            label.textColor = (label.tag == tag) ? .black : .black.withAlphaComponent(0.3)
-                        case (12...19, 12...19):
-                            label.textColor = (label.tag == tag) ? (label.textColor != .black) ? .black : .black.withAlphaComponent(0.3) : label.textColor
-                        default:
-                            break
-                        }
-                    }
+                guard let map = material_washing[key] else { return }
+                let tags: [Int] = (key != "washing") ? [map[value as? String ?? ""]].compactMap { $0 } : (value as? [String] ?? []).compactMap { map[$0] }
+
+                cell.itemMaterialWasingInfo_labels.forEach { label in
+                    if tags.contains(label.tag) { label.textColor = .black }
                 }
             }
-            
             
 //            if data.item_material_washing.count > 0 {
 //                

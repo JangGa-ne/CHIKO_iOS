@@ -6,12 +6,25 @@
 //
 
 import UIKit
-import ImageSlideshow
 import Nuke
+import SDWebImage
+import ImageSlideshow
 import BSImagePicker
 import Photos
 
+extension UIImage {
+    
+    func resize(to targetSize: CGSize) -> UIImage {
+        UIGraphicsImageRenderer(size: targetSize).image { _ in
+            self.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
+}
+
 func setImageSlideShew(imageView: ImageSlideshow, imageUrls: [String], cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
+    
+    SDImageCache.shared.clearMemory()
+    SDImageCache.shared.clearDisk()
     
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true
@@ -30,6 +43,8 @@ func preheatImages(urls: [URL]) {
 
 func setNuke(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UIImage(), cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
     
+    ImageCache.shared.removeAll()
+    
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true
     imageView.contentMode = contentMode
@@ -40,6 +55,28 @@ func setNuke(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UI
         Nuke.loadImage(with: request, options: options, into: imageView) { response, result, error in
             if let image = response?.image { imageView.image = image } else { imageView.image = UIImage() }
         }
+    } else {
+        imageView.image = UIImage()
+    }
+}
+
+func setDownsampledImage(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UIImage(), cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
+    
+    imageView.layer.cornerRadius = cornerRadius
+    imageView.clipsToBounds = true
+    imageView.contentMode = contentMode
+    
+    if let imageUrl = URL(string: imageUrl) {
+        
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let imageSource = CGImageSourceCreateWithURL(imageUrl as CFURL, imageSourceOptions) else { imageView.image = UIImage(); return }
+
+//        let maxDimensionInPixels = 200 * 8
+        let downsampleOptions = [kCGImageSourceCreateThumbnailFromImageAlways: true, kCGImageSourceShouldCacheImmediately: true, kCGImageSourceCreateThumbnailWithTransform: true, kCGImageSourceThumbnailMaxPixelSize: imageView.frame.size] as CFDictionary
+     
+        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else { imageView.image = UIImage(); return }
+        
+        imageView.image = UIImage(cgImage: downsampledImage)
     } else {
         imageView.image = UIImage()
     }
@@ -106,7 +143,7 @@ func imageUrlHeight(imageUrl: String, completionHandler: ((CGFloat) -> Void)? = 
 func imageUrlStringToData(from urlString: String, completion: @escaping (Data?) -> Void) {
     
     guard let url = URL(string: urlString) else { completion(nil); return }
-
+    
     URLSession.shared.dataTask(with: url) { data, _, error in
         guard let imageData = data, error == nil else { completion(nil); return }
         completion(imageData)
@@ -132,13 +169,22 @@ extension UIViewController {
                 imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
                 if #available(iOS 13.0, *) { imagePicker.settings.theme.backgroundColor = .systemBackground } else { imagePicker.settings.theme.backgroundColor = .white }
                 imagePicker.settings.list.cellsPerRow = { (verticalSize: UIUserInterfaceSizeClass, horizontalSize: UIUserInterfaceSizeClass) -> Int in return 4 }
-                self.presentImagePicker(imagePicker, select: nil, deselect: nil, cancel: nil) { assets in
+                self.presentImagePicker(imagePicker, select: { asset in
+                    
+                    let options = PHImageRequestOptions()
+                    options.isSynchronous = true
+                    PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: 1024, height: 1024), contentMode: .aspectFill, options: options) { image, _ in
+                        if let img = image, (img.pngData() ?? Data()).count > 26214400 {
+                            self.customAlert(message: "이미지 최대 크기 25MB를 넘을 수 없습니다.", time: 1)
+                        }
+                    }
+                }, deselect: nil, cancel: nil) { assets in
                     assets.forEach { asset in
                         
                         let options = PHImageRequestOptions()
                         options.isSynchronous = true
                         PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: 1024, height: 1024), contentMode: .aspectFill, options: options) { image, _ in
-                            if let img = image {
+                            if let img = image, (img.pngData() ?? Data()).count <= 26214400 {
                                 photos.append((
                                     file_name: (PHAssetResource.assetResources(for: asset).first?.originalFilename ?? "").lowercased(),
                                     file_data: img.pngData() ?? Data(),

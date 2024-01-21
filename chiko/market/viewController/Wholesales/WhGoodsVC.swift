@@ -140,7 +140,9 @@ extension WhGoodsVC: UITableViewDelegate, UITableViewDataSource {
             let data = GoodsArray[indexPath.row]
             guard let cell = cell as? WhGoodsTC else { return }
             
-            setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+            DispatchQueue.main.async {
+                setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+            }
         }
     }
     
@@ -173,8 +175,11 @@ extension WhGoodsVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
-        segue.GoodsObject = GoodsArray[indexPath.row]
-        navigationController?.pushViewController(segue, animated: true)
+        if indexPath.section == 0 {
+            
+            let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
+            segue.GoodsObject = GoodsArray[indexPath.row]
+            navigationController?.pushViewController(segue, animated: true)
+        }
     }
 }

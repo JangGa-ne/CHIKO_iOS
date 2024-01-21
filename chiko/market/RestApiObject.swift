@@ -7,6 +7,14 @@
 
 import UIKit
 
+let material_washing = [
+    "thickness": ["두꺼움": 0, "보통": 1, "얇음": 2],
+    "see_through": ["있음": 3, "보통": 4, "없음": 5],
+    "flexibility": ["좋음": 6, "보통": 7, "없음": 8],
+    "lining": ["있음": 9, "없음": 10, "기모안감": 11],
+    "washing": ["손세탁": 12, "드라이클리닝": 13, "물세탁": 14, "단독세탁": 15, "울세탁": 16, "표백제사용금지": 17, "다림질금지": 18, "세탁기금지": 19]
+]
+
 class CategoryData {
     
     var ColorArray_all: [String: Any] = [:]
@@ -22,6 +30,13 @@ class CategoryData {
     var MaterialArray: Array<[String: Any]> = []
     // 주요소재및세탁법(의류/소재+세탁법,나머지/세탁법)
     var MaterialWashingInfoArray: Array<[String: Any]> = []
+}
+
+class BuildingData {
+    
+    var building_name: [String] = []
+    var building_floor: [String] = []
+    var building_room: [String] = []
 }
 
 class VisitData {
@@ -113,6 +128,7 @@ class StoreData {
     var store_favorites: [String] = []
     var store_delivery: [(address: String, address_detail: String, name: String, nickname: String, num: String)] = []
     var store_delivery_position: Int = 0
+    var wechat_id: String = ""
     // 도매자
     var business_reg_status: Bool = true
     var business_reg_num: String = ""
@@ -126,7 +142,7 @@ class StoreData {
     var upload_store_mainphoto_img: [(file_name: String, file_data: Data, file_size: Int)] = []
     var upload_passbook_img: [(file_name: String, file_data: Data, file_size: Int)] = []
     var upload_business_reg_img: [(file_name: String, file_data: Data, file_size: Int)] = []
-    var upload_building_contract_img: [(file_name: String, file_data: Data, file_size: Int)] = []
+    var upload_building_contract_imgs: [(file_name: String, file_data: Data, file_size: Int)] = []
     
     var upload_files: [(field_name: String, file_name: String, file_data: Data, file_size: Int)] = []
     var load_img: Bool = false
@@ -250,7 +266,7 @@ func setGoods(goodsDict: [String: Any]) -> GoodsData {
     goodsValue.item_content_imgs = goodsDict["item_content_imgs"] as? [String] ?? []
     goodsValue.item_build = goodsDict["item_build"] as? String ?? ""
     goodsValue.item_sheet = goodsDict["item_sheet"] as? String ?? ""
-    goodsValue.item_manufacture_country = goodsDict["item_sheet"] as? String ?? ""
+    goodsValue.item_manufacture_country = goodsDict["item_manufacture_country"] as? String ?? ""
     goodsValue.item_disclosure = goodsDict["item_disclosure"] as? String ?? ""
     goodsValue.item_soldout = Bool(goodsDict["item_soldout"] as? String ?? "") ?? false
     goodsValue.item_soldout_time = goodsDict["item_soldout_time"] as? String ?? ""
