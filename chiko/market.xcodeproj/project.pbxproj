@@ -22,7 +22,7 @@
 		C22A0E1D2AE7A89D00F73F7A /* s_time.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22A0E1C2AE7A89D00F73F7A /* s_time.swift */; };
 		C22A0E1F2AE7AEB900F73F7A /* SignUpRegisterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22A0E1E2AE7AEB900F73F7A /* SignUpRegisterVC.swift */; };
 		C22A0E212AE7BA9300F73F7A /* s_mimetype.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22A0E202AE7BA9300F73F7A /* s_mimetype.swift */; };
-		C22B09482AE60875005C50A7 /* ChineseBankListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22B09472AE60875005C50A7 /* ChineseBankListVC.swift */; };
+		C22B09482AE60875005C50A7 /* BankListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22B09472AE60875005C50A7 /* BankListVC.swift */; };
 		C22B91FA2AFF586B0092ACD0 /* ReGoodsDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22B91F92AFF586B0092ACD0 /* ReGoodsDetailVC.swift */; };
 		C22D641E2B183EF900A160F3 /* ReBookMarkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22D641D2B183EF900A160F3 /* ReBookMarkVC.swift */; };
 		C241796E2B0B47B5006497DF /* ReStoreVisitVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241796D2B0B47B5006497DF /* ReStoreVisitVC.swift */; };
@@ -92,7 +92,7 @@
 		C22A0E1C2AE7A89D00F73F7A /* s_time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = s_time.swift; sourceTree = "<group>"; };
 		C22A0E1E2AE7AEB900F73F7A /* SignUpRegisterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpRegisterVC.swift; sourceTree = "<group>"; };
 		C22A0E202AE7BA9300F73F7A /* s_mimetype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = s_mimetype.swift; sourceTree = "<group>"; };
-		C22B09472AE60875005C50A7 /* ChineseBankListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChineseBankListVC.swift; sourceTree = "<group>"; };
+		C22B09472AE60875005C50A7 /* BankListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankListVC.swift; sourceTree = "<group>"; };
 		C22B91F92AFF586B0092ACD0 /* ReGoodsDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsDetailVC.swift; sourceTree = "<group>"; };
 		C22D641D2B183EF900A160F3 /* ReBookMarkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReBookMarkVC.swift; sourceTree = "<group>"; };
 		C241796D2B0B47B5006497DF /* ReStoreVisitVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReStoreVisitVC.swift; sourceTree = "<group>"; };
@@ -239,7 +239,7 @@
 				C22A0E1E2AE7AEB900F73F7A /* SignUpRegisterVC.swift */,
 				C2BF864F2ADFA3CE00A858A4 /* SignUpStoreVC.swift */,
 				C225015B2B57B43C00637983 /* BuildingListVC.swift */,
-				C22B09472AE60875005C50A7 /* ChineseBankListVC.swift */,
+				C22B09472AE60875005C50A7 /* BankListVC.swift */,
 				C24E443A2AFC64D500885BBB /* CategoryVC.swift */,
 				C201C72A2B293B3800C9442E /* ImageSlideVC.swift */,
 				C2BB217F2B24C72900DE99ED /* EmployeeVC.swift */,
@@ -465,7 +465,7 @@
 				C2155CD82AF0F59A008B21F2 /* ReMainTBC.swift in Sources */,
 				C290705B2B05A0740097AA74 /* RestApiPost.swift in Sources */,
 				C225015C2B57B43C00637983 /* BuildingListVC.swift in Sources */,
-				C22B09482AE60875005C50A7 /* ChineseBankListVC.swift in Sources */,
+				C22B09482AE60875005C50A7 /* BankListVC.swift in Sources */,
 				C2BB21802B24C72900DE99ED /* EmployeeVC.swift in Sources */,
 				C2BF864E2ADFA3C500A858A4 /* SignUpMemberVC.swift in Sources */,
 				C2C971DD2ADCD0E100827DA0 /* s_noticeAlert.swift in Sources */,

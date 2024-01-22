@@ -69,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             divice_radius = 50
         }
         
-//        ImagePipeline.shared = ImagePipeline { $0.imageCache = ImageCache(costLimit: 100 * 1024 * 1024, countLimit: 500 * 1024 * 1024) }
+//        ImagePipeline.shared = ImagePipeline { $0.imageCache = ImageCache(costLimit: 100 * 1024 * 1024, countLimit: 200 * 1024 * 1024) }
         
         store_index_select = Bool(UserDefaults.standard.string(forKey: "store_index_select") ?? "false") ?? false
         store_index = UserDefaults.standard.integer(forKey: "store_index")

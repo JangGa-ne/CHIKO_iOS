@@ -58,11 +58,11 @@ class WhGoodsUploadVC: UIViewController {
             upload_btn.setTitle("상품 수정하기", for: .normal)
         }
         
-        loadingData(all: true)
-        
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
+        
+        loadingData(all: true)
         
         upload_btn.addTarget(self, action: #selector(upload_btn(_:)), for: .touchUpInside)
     }
@@ -113,6 +113,9 @@ class WhGoodsUploadVC: UIViewController {
                 dispatchGroup.enter()
                 imageUrlStringToData(from: imgUrl) { imgData in
                     self.ItemArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
+                    DispatchQueue.main.async {
+                        UIView.setAnimationsEnabled(false); self.tableView.reloadSections(IndexSet(integer: 0), with: .none); UIView.setAnimationsEnabled(true)
+                    }
                 }
             }
             /// 사이즈
@@ -129,7 +132,7 @@ class WhGoodsUploadVC: UIViewController {
             data.item_content_imgs.enumerated().forEach { i, imgUrl in
                 dispatchGroup.enter()
                 imageUrlStringToData(from: imgUrl) { imgData in
-                    self.ContentsArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
+                    self.ContentsArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); self.tableView.reloadData(); dispatchGroup.leave()
                 }
             }
             /// 소재정보 및 세탁법

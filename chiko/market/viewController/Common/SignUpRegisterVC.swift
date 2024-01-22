@@ -17,6 +17,7 @@ class SignUpRegisterVC: UIViewController {
     var sms: Bool = false
     var email: Bool = false
     
+    @IBOutlet weak var alert_v: UIView!
     @IBOutlet var agree_sv_s: [UIStackView]!
     @IBOutlet var agree_img_s: [UIImageView]!
     @IBOutlet var agree_label_s: [UILabel]!
@@ -33,10 +34,8 @@ class SignUpRegisterVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        /// 데이터 삭제
-        MemberObject_signup.upload_files.removeAll()
-        StoreObject_signup.upload_files.removeAll()
         // init
+        alert_v.layer.cornerRadius = divice_radius
         /// 신분증
         MemberObject_signup.upload_member_idcard_img.forEach { (file_name: String, file_data: Data, file_size: Int) in
             MemberObject_signup.upload_files.append((field_name: "user_idcard_img", file_name: file_name, file_data: file_data, file_size: file_size))
@@ -120,6 +119,9 @@ class SignUpRegisterVC: UIViewController {
     }
     
     @objc func register_btn(_ sender: UIButton) {
+        /// 데이터 삭제
+        MemberObject_signup.upload_files.removeAll()
+        StoreObject_signup.upload_files.removeAll()
         
         var final_check: Bool = true
         

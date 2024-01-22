@@ -505,13 +505,17 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
             let data = WhGoodsUploadVCdelegate.ItemArray[indexPath.row]
             guard let cell = cell as? WhGoodsUploadCC else { return }
             
-            cell.item_img.image = UIImage(data: data.file_data)?.resize(to: cell.item_img.frame.size)
+            DispatchQueue.main.async {
+                cell.item_img.image = resizeImage(UIImage(data: data.file_data)!, targetSize: cell.item_img.frame.size)
+            }
         } else if indexPath.section == 0, collectionView == contentCollectionView {
             
             let data = WhGoodsUploadVCdelegate.ContentsArray[indexPath.row]
             guard let cell = cell as? WhGoodsUploadCC else { return }
             
-            cell.content_img.image = UIImage(data: data.file_data)?.resize(to: cell.content_img.frame.size)
+            DispatchQueue.main.async {
+                cell.content_img.image = UIImage(data: data.file_data)//?.resize(to: cell.content_img.frame.size)
+            }
         }
     }
     
@@ -640,7 +644,8 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
             WhGoodsUploadVCdelegate.GoodsObject.item_colors.remove(at: indexPath.row)
             WhGoodsUploadVCdelegate.loadingData(index: 1)
             colorCollectionView.isHidden = (WhGoodsUploadVCdelegate.GoodsObject.item_colors.count == 0)
-            UIView.setAnimationsEnabled(false); WhGoodsUploadVCdelegate.tableView.reloadSections(IndexSet(integer: 2), with: .none); UIView.setAnimationsEnabled(true)
+//            UIView.setAnimationsEnabled(false); WhGoodsUploadVCdelegate.tableView.reloadSections(IndexSet(integer: 2), with: .none); UIView.setAnimationsEnabled(true)
+            WhGoodsUploadVCdelegate.tableView.reloadData()
         } else if collectionView == sizeCollectionView {
             if WhGoodsUploadVCdelegate.GoodsObject.item_category_name.count == 0 {
                 WhGoodsUploadVCdelegate.customAlert(message: "카테고리를 선택해 주세요.", time: 1); return
@@ -648,7 +653,8 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
             WhGoodsUploadVCdelegate.SizeArray[indexPath.row].option_select = !WhGoodsUploadVCdelegate.SizeArray[indexPath.row].option_select
             WhGoodsUploadVCdelegate.GoodsObject.item_sizes = WhGoodsUploadVCdelegate.SizeArray.flatMap { data in data.option_select ? [data.option_name] : [] }
             WhGoodsUploadVCdelegate.loadingData(index: 1)
-            UIView.setAnimationsEnabled(false); WhGoodsUploadVCdelegate.tableView.reloadSections(IndexSet(integer: 2), with: .none); UIView.setAnimationsEnabled(true)
+//            UIView.setAnimationsEnabled(false); WhGoodsUploadVCdelegate.tableView.reloadSections(IndexSet(integer: 2), with: .none); UIView.setAnimationsEnabled(true)
+            WhGoodsUploadVCdelegate.tableView.reloadData()
         } else if collectionView == optionPriceCollectionView {
             
         } else if collectionView == styleCollectionView {

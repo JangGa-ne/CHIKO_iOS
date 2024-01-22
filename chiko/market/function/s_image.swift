@@ -21,19 +21,44 @@ extension UIImage {
     }
 }
 
+func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
+    let size = image.size
+
+    let widthRatio  = targetSize.width  / size.width
+    let heightRatio = targetSize.height / size.height
+
+    let newSize: CGSize
+    if widthRatio > heightRatio {
+        newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+    } else {
+        newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+    }
+
+    let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+
+    UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+    image.draw(in: rect)
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+    return newImage ?? image
+}
+
 func setImageSlideShew(imageView: ImageSlideshow, imageUrls: [String], cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
-    
-    SDImageCache.shared.clearMemory()
-    SDImageCache.shared.clearDisk()
     
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true
     imageView.contentScaleMode = contentMode
     
     var images: [SDWebImageSource] = []
-    for imageUrl in imageUrls { images.append(SDWebImageSource(urlString: imageUrl)!) }
     
-    imageView.setImageInputs(images)
+    imageUrls.forEach { imageUrl in
+        guard let url = URL(string: imageUrl) else { return }
+        images.append(SDWebImageSource(url: url))
+        if images.count == imageUrls.count {
+            imageView.setImageInputs(images)
+        }
+    }
 }
 
 func preheatImages(urls: [URL]) {
@@ -42,8 +67,6 @@ func preheatImages(urls: [URL]) {
 }
 
 func setNuke(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UIImage(), cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
-    
-    ImageCache.shared.removeAll()
     
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true

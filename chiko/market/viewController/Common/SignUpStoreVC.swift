@@ -20,8 +20,6 @@ class SignUpStoreVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    var StoreObject: StoreData = StoreData()
-    
     @IBAction func back_btn(_ sender: UIButton) { view.endEditing(true); navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
     @IBOutlet weak var navi_lineView: UIView!
@@ -110,7 +108,7 @@ class SignUpStoreVC: UIViewController {
         
         setKeyboard()
         // init
-        StoreObject.store_type = MemberObject_signup.member_type
+        StoreObject_signup.store_type = MemberObject_signup.member_type
         /// navi
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
@@ -134,12 +132,12 @@ class SignUpStoreVC: UIViewController {
         
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(scrollView(_:))))
         /// store type
-        StoreObject.onoff_type = "online"
+        StoreObject_signup.onoff_type = "online"
         ([online_btn, offline_btn, onoffline_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.tag = i; btn.addTarget(self, action: #selector(storeType_btn(_:)), for: .touchUpInside)
             if btn.tag == 0 { btn.isSelected = true } else { btn.isSelected = false }
         }
-        if StoreObject.store_type == "retailseller" {
+        if StoreObject_signup.store_type == "retailseller" {
             businessRegNum_sv.isHidden = true
             storeAddress_sv.isHidden = true
             buildingAddressDetail_sv.isHidden = true
@@ -147,15 +145,13 @@ class SignUpStoreVC: UIViewController {
             passbook_sv.isHidden = true
             businessReg_sv.isHidden = true
             buildingContract_sv.isHidden = true
-        } else if StoreObject.store_type == "wholesales" {
+        } else if StoreObject_signup.store_type == "wholesales" {
             storeType_sv.isHidden = true
             storeType_lineView.isHidden = true
             storeAddress_sv.isHidden = true
             buildingAddressDetail_sv.isHidden = false
             domainAddress_sv.isHidden = true
             wechatId_sv.isHidden = true
-            /// Building Info 요청
-            if BuildingArray.count == 0 { requestBuildingInfo { status in } }
         }
         /// building address detail
         buildingAddressDetail_tf.isEnabled = false
@@ -181,6 +177,7 @@ class SignUpStoreVC: UIViewController {
     @objc func changedEditStoreInfo_if(_ sender: UITextField) {
         
         var filterContains: String = ""
+        let member_type = MemberObject_signup.member_type
         let chineseRange = 0x4E00...0x9FFF
         let koreanRange = 0xAC00...0xD7AF
         
@@ -213,9 +210,9 @@ class SignUpStoreVC: UIViewController {
             if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) == nil { check.isHidden = false }
         case storeTel_tf:
 //            if isChineseTelNumValid(sender.text!) { check.isHidden = false }
-            if StoreObject.store_type == "retailseller" {
+            if StoreObject_signup.store_type == "retailseller" {
                 check.isHidden = !(sender.text!.count > 0)
-            } else if StoreObject.store_type == "wholesales" {
+            } else if StoreObject_signup.store_type == "wholesales" {
                 check.isHidden = !(sender.text!.count >= 8 && sender.text!.count <= 12)
             }
         case storeAddressStreet_tf:
@@ -229,7 +226,11 @@ class SignUpStoreVC: UIViewController {
         case depositorName_tf:
             if sender.text!.count > 0 { check.isHidden = false }
         case accountNum_tf:
-            if isChineseAccountNumValid(sender.text!) { check.isHidden = false }
+            if member_type == "retailseller" {
+                if isChineseAccountNumValid(sender.text!) { check.isHidden = false }
+            } else if member_type == "wholesales" {
+                if sender.text!.count >= 10 && sender.text!.count <= 14 { check.isHidden = false }
+            }
         case wechatId_tf:
             if sender.text!.count > 0 { check.isHidden = false }
         default:
@@ -251,7 +252,7 @@ class SignUpStoreVC: UIViewController {
         
         if sender.tag == 0 {
             /// online
-            StoreObject.onoff_type = "online"
+            StoreObject_signup.onoff_type = "online"
             online_btn.isSelected = true; offline_btn.isSelected = false; onoffline_btn.isSelected = false
             online_btn.backgroundColor = .H_8CD26B; offline_btn.backgroundColor = .white; onoffline_btn.backgroundColor = .white
             storeAddress_sv.isHidden = true
@@ -260,7 +261,7 @@ class SignUpStoreVC: UIViewController {
             domainAddress_sv.isHidden = false
         } else if sender.tag == 1 {
             /// offline
-            StoreObject.onoff_type = "offline"
+            StoreObject_signup.onoff_type = "offline"
             online_btn.isSelected = false; offline_btn.isSelected = true; onoffline_btn.isSelected = false
             online_btn.backgroundColor = .white; offline_btn.backgroundColor = .H_8CD26B; onoffline_btn.backgroundColor = .white
             storeAddress_sv.isHidden = false
@@ -270,7 +271,7 @@ class SignUpStoreVC: UIViewController {
             noticeDomainAddress_label.isHidden = true
         } else if sender.tag == 2 {
             /// offline
-            StoreObject.onoff_type = "onoffline"
+            StoreObject_signup.onoff_type = "onoffline"
             online_btn.isSelected = false; offline_btn.isSelected = false; onoffline_btn.isSelected = true
             online_btn.backgroundColor = .white; offline_btn.backgroundColor = .white; onoffline_btn.backgroundColor = .H_8CD26B
             storeAddress_sv.isHidden = false
@@ -286,7 +287,7 @@ class SignUpStoreVC: UIViewController {
         /// hidden keyboard
         view.endEditing(true)
         
-        let segue = storyboard?.instantiateViewController(withIdentifier: "ChineseBankListVC") as! ChineseBankListVC
+        let segue = storyboard?.instantiateViewController(withIdentifier: "BankListVC") as! BankListVC
         presentPanModal(segue)
     }
     
@@ -297,15 +298,15 @@ class SignUpStoreVC: UIViewController {
         guard let sender = sender.view else { return }
         setPhoto(max: 1) { photo in
             if sender.tag == 0 {
-                self.StoreObject.upload_store_mainphoto_img = photo
+                StoreObject_signup.upload_store_mainphoto_img = photo
                 self.storeMainPhoto_img.image = UIImage(data: photo[0].file_data)
                 self.checkStoreMainPhoto_img.isHidden = false
             } else if sender.tag == 1 {
-                self.StoreObject.upload_passbook_img = photo
+                StoreObject_signup.upload_passbook_img = photo
                 self.passbook_img.image = UIImage(data: photo[0].file_data)
                 self.checkpassbook_img.isHidden = false
             } else if sender.tag == 2 {
-                self.StoreObject.upload_business_reg_img = photo
+                StoreObject_signup.upload_business_reg_img = photo
                 self.businessReg_img.image = UIImage(data: photo[0].file_data)
                 self.checkBusinessReg_img.isHidden = false
             }
@@ -319,16 +320,16 @@ class SignUpStoreVC: UIViewController {
         var final_check: Bool = true
         var check_img: [UIImageView] = [checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreMainPhoto_img]
         
-        if StoreObject.store_type == "retailseller" {
-            if StoreObject.onoff_type == "online" {
+        if StoreObject_signup.store_type == "retailseller" {
+            if StoreObject_signup.onoff_type == "online" {
                 check_img += [checkDomainAddress_img]
-            } else if StoreObject.onoff_type == "offline" {
+            } else if StoreObject_signup.onoff_type == "offline" {
                 check_img += [checkStoreAddressStreet_img]
-            } else if StoreObject.onoff_type == "onoffline" {
+            } else if StoreObject_signup.onoff_type == "onoffline" {
                 check_img += [checkStoreAddressStreet_img, checkDomainAddress_img]
             }
             check_img += [checkWechatId_img]
-        } else if StoreObject.store_type == "wholesales" {
+        } else if StoreObject_signup.store_type == "wholesales" {
             check_img += [checkBusinessRegNum_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkBusinessReg_img, checkpassbook_img]
         }
         check_img.forEach { img in
@@ -336,7 +337,7 @@ class SignUpStoreVC: UIViewController {
                 customAlert(message: "미입력된 항목이 있거나\n확인되지 않은 항목이 있습니다.", time: 1); final_check = false
             }
         }
-        if StoreObject.store_type == "wholesales" && !buildingAddressDetail_btn.isSelected {
+        if StoreObject_signup.store_type == "wholesales" && !buildingAddressDetail_btn.isSelected {
             customAlert(message: "미입력된 항목이 있거나\n확인되지 않은 항목이 있습니다.", time: 1); final_check = false
         }
         
@@ -345,25 +346,21 @@ class SignUpStoreVC: UIViewController {
         let alert = UIAlertController(title: "매장 등록", message: "기입한 내용이 맞는지 확인바랍니다.\n작성완료 후 수정이 불가하며, 신규작성해야 합니다.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
             if let delegate = SignUpMemberVCdelegate {
-                /// 데이터 삭제
-                StoreObject_signup = StoreData()
-                
-                self.StoreObject.store_name = self.storeNameChi_tf.text!
-                self.StoreObject.store_name_eng = self.storeNameEng_tf.text!
-                self.StoreObject.store_tel = self.storeTel_tf.text!
-                self.StoreObject.account = ["account_bank": self.bankName_tf.text!, "account_name": self.depositorName_tf.text!, "account_num": self.accountNum_tf.text!]
-                if self.StoreObject.store_type == "retailseller" {
-                    self.StoreObject.store_domain = self.domainAddress_tf.text!
-                    self.StoreObject.store_address_street = self.storeAddressStreet_tf.text!
-                    self.StoreObject.store_address_detail = self.storeAddressDetail_tf.text!
-                    self.StoreObject.store_address_zipcode = self.storeAddressZipCode_tf.text!
-                    self.StoreObject.wechat_id = self.wechatId_tf.text!
-                } else if self.StoreObject.store_type == "wholesales" {
-                    self.StoreObject.business_reg_num = self.businessRegNum_tf.text!
+                StoreObject_signup.store_name = self.storeNameChi_tf.text!
+                StoreObject_signup.store_name_eng = self.storeNameEng_tf.text!
+                StoreObject_signup.store_tel = self.storeTel_tf.text!
+                StoreObject_signup.account = ["account_bank": self.bankName_tf.text!, "account_name": self.depositorName_tf.text!, "account_num": self.accountNum_tf.text!]
+                if StoreObject_signup.store_type == "retailseller" {
+                    StoreObject_signup.store_domain = self.domainAddress_tf.text!
+                    StoreObject_signup.store_address_street = self.storeAddressStreet_tf.text!
+                    StoreObject_signup.store_address_detail = self.storeAddressDetail_tf.text!
+                    StoreObject_signup.store_address_zipcode = self.storeAddressZipCode_tf.text!
+                    StoreObject_signup.wechat_id = self.wechatId_tf.text!
+                } else if StoreObject_signup.store_type == "wholesales" {
+                    StoreObject_signup.business_reg_num = self.businessRegNum_tf.text!
                 }
-                StoreObject_signup = self.StoreObject
                 delegate.new_label.isHidden = false
-                delegate.registerSearchStoreName_label.text = "\(self.StoreObject.store_name)(\(self.StoreObject.store_name_eng))"
+                delegate.registerSearchStoreName_label.text = "\(StoreObject_signup.store_name)(\(StoreObject_signup.store_name_eng))"
                 delegate.registerSearchStore_btn.isSelected = true
                 delegate.registerSearchStore_btn.backgroundColor = .H_8CD26B
             }
@@ -378,7 +375,8 @@ class SignUpStoreVC: UIViewController {
         
         setBackSwipeGesture(false)
         
-        ChineseBankListVCdelegate = nil
+        BuildingListVCdelegate = nil
+        BankListVCdelegate = nil
     }
 }
 
@@ -392,21 +390,21 @@ extension SignUpStoreVC {
             storeNameEng_tf.becomeFirstResponder()
         }
         
-        if StoreObject.store_type == "retailseller" {
-            if StoreObject.onoff_type == "online" && textField == storeTel_tf {
+        if StoreObject_signup.store_type == "retailseller" {
+            if StoreObject_signup.onoff_type == "online" && textField == storeTel_tf {
                 if textField == storeTel_tf {
                     domainAddress_tf.becomeFirstResponder()
                 } else if textField == domainAddress_tf {
                     domainAddress_tf.resignFirstResponder()
                 }
-            } else if StoreObject.onoff_type == "offline" && textField == storeAddressZipCode_tf {
+            } else if StoreObject_signup.onoff_type == "offline" && textField == storeAddressZipCode_tf {
                 storeAddressZipCode_tf.resignFirstResponder()
             } else if textField.returnKeyType == .done {
                 textField.resignFirstResponder()
             } else if let nextTextField = view.viewWithTag(textField.tag+1) as? UITextField {
                 nextTextField.becomeFirstResponder()
             }
-        } else if StoreObject.store_type == "wholesales" {
+        } else if StoreObject_signup.store_type == "wholesales" {
             if textField == storeTel_tf {
                 storeTel_tf.resignFirstResponder()
             } else if textField.returnKeyType == .done {
@@ -426,10 +424,10 @@ extension SignUpStoreVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 0, StoreObject.upload_building_contract_imgs.count < 50 {
+        if section == 0, StoreObject_signup.upload_building_contract_imgs.count < 50 {
             return 1
-        } else if section == 1, StoreObject.upload_building_contract_imgs.count > 0 {
-            return StoreObject.upload_building_contract_imgs.count
+        } else if section == 1, StoreObject_signup.upload_building_contract_imgs.count > 0 {
+            return StoreObject_signup.upload_building_contract_imgs.count
         } else {
             return .zero
         }
@@ -439,7 +437,7 @@ extension SignUpStoreVC: UICollectionViewDelegate, UICollectionViewDataSource, U
         
         if indexPath.section == 1 {
             
-            let data = StoreObject.upload_building_contract_imgs[indexPath.row]
+            let data = StoreObject_signup.upload_building_contract_imgs[indexPath.row]
             guard let cell = cell as? SignUpStoreCC else { return }
             
             cell.item_img.image = UIImage(data: data.file_data)
@@ -468,17 +466,19 @@ extension SignUpStoreVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     
     @objc func didSelectItemAt(_ sender: UITapGestureRecognizer) {
         
+        view.endEditing(true)
+        
         guard let sender = sender.view else { return }
         
         if sender.tag == -1 {
-            setPhoto(max: 50-StoreObject.upload_building_contract_imgs.count) { photos in
+            setPhoto(max: 50-StoreObject_signup.upload_building_contract_imgs.count) { photos in
                 photos.forEach { photo in
-                    self.StoreObject.upload_building_contract_imgs.append(photo)
+                    StoreObject_signup.upload_building_contract_imgs.append(photo)
                     self.collectionView.reloadData()
                 }
             }
         } else {
-            StoreObject.upload_building_contract_imgs.remove(at: sender.tag)
+            StoreObject_signup.upload_building_contract_imgs.remove(at: sender.tag)
             collectionView.reloadData()
         }
     }

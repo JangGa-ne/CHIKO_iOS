@@ -153,6 +153,7 @@ func requestFileUpload(action: String, collection_id: String, document_id: Strin
     ]
     
     params.forEach { data in print(data) }
+    file_data.forEach { data in print(data) }
     
     var fileUrls: Array<[String: Any]> = []
     /// multipart/form-data
@@ -1016,10 +1017,6 @@ func requestBuildingInfo(completionHandler: @escaping (Int) -> Void) {
                 }
                 /// 데이터 추가
                 BuildingObject = buildingValue
-                
-                BuildingObject.building_name.sort()
-                BuildingObject.building_floor.sort()
-                BuildingObject.building_room.sort()
                 
                 if array.count > 0 {
                     completionHandler(200)

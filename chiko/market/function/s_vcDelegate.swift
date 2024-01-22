@@ -15,7 +15,8 @@ var ChoiceStoreVCdelegate: ChoiceStoreVC? = nil
 var SearchStoreVCdelegate: SearchStoreVC? = nil
 var SignUpMemberVCdelegate: SignUpMemberVC? = nil
 var SignUpStoreVCdelegate: SignUpStoreVC? = nil
-var ChineseBankListVCdelegate: ChineseBankListVC? = nil
+var BuildingListVCdelegate: BuildingListVC? = nil
+var BankListVCdelegate: BankListVC? = nil
 var MPayVCdelegate: MPayVC? = nil
 // Retailseller
 var ReHomeVCdelegate: ReHomeVC? = nil

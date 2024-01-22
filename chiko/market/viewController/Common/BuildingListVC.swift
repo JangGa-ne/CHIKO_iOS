@@ -22,42 +22,69 @@ class BuildingListVC: UIViewController {
     var building_floor: [String] = []
     var building_room: [String] = []
     
+    var building_row: Int = 0
+    var floor_row: Int = 0
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
+    @IBOutlet weak var navi_label: UILabel!
+    @IBOutlet weak var navi_lineView: UIView!
     
     @IBOutlet weak var building_tableView: UITableView!
     @IBOutlet weak var floor_tableView: UITableView!
-    @IBOutlet weak var class_tableView: UITableView!
+    @IBOutlet weak var room_tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if BuildingObject.building_name.count > 0 {
-            click(name: BuildingObject.building_name[0])
-        }
+        BuildingListVCdelegate = self
+        /// navi
+        navi_label.alpha = 0.0
+        navi_lineView.alpha = 0.0
         
-        ([building_tableView, floor_tableView, class_tableView] as [UITableView]).forEach { tableView in
+        ([building_tableView, floor_tableView, room_tableView] as [UITableView]).forEach { tableView in
             
             tableView.separatorStyle = .none
-            tableView.contentInset = .zero
+            tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
             tableView.delegate = self; tableView.dataSource = self
+        }
+        
+        if BuildingObject.building_name.count == 0 {
+            customLoadingIndicator(animated: true)
+            /// Building Info 요청
+            requestBuildingInfo { status in
+                self.customLoadingIndicator(animated: false)
+                self.loadingData()
+            }
+        } else {
+            loadingData()
         }
     }
     
-    func click(name: String) {
+    func loadingData(building: String = "", floor: String = "") {
+        
+        var building: String = building
+        var floor: String = floor
+        
+        customLoadingIndicator(animated: false)
+        /// 데이터 삭제
+        building_floor.removeAll()
+        building_room.removeAll()
         
         building_name = BuildingObject.building_name
         BuildingObject.building_floor.forEach { floor in
-            if floor.contains(name) { building_room.append(floor.replacingOccurrences(of: "\(name)/", with: "")) }
-            BuildingObject.building_room.forEach { room in
-                if room.contains(floor) { building_room.append(room.replacingOccurrences(of: "\(floor)/", with: "")) }
-            }
+            if building == "" { building = building_name[building_row]+"/" }
+            if floor.contains(building) { building_floor.append(floor.replacingOccurrences(of: building, with: "")) }
         }
-        
+        BuildingObject.building_room.forEach { room in
+            if floor == "" { floor = building_name[building_row]+"/"+building_floor[floor_row]+"/" }
+            if room.contains(floor) { building_room.append(room.replacingOccurrences(of: floor, with: "")) }
+        }
+        /// 
         building_name.sort()
-        building_floor.sort()
+        building_floor = building_floor.sorted { if $0.contains("B") != $1.contains("B") { return $0.contains("B") }; return $0 < $1 }
         building_room.sort()
         
-        ([building_tableView, floor_tableView, class_tableView] as [UITableView]).forEach { tableView in
+        ([building_tableView, floor_tableView, room_tableView] as [UITableView]).forEach { tableView in
             tableView.reloadData()
         }
     }
@@ -72,11 +99,11 @@ class BuildingListVC: UIViewController {
 extension BuildingListVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == building_tableView, BuildingObject.building_name.count > 0 {
-            return BuildingObject.building_name.count
+        if tableView == building_tableView, building_name.count > 0 {
+            return building_name.count
         } else if tableView == floor_tableView, building_floor.count > 0 {
             return building_floor.count
-        } else if tableView == class_tableView, building_room.count > 0 {
+        } else if tableView == room_tableView, building_room.count > 0 {
             return building_room.count
         } else {
             return .zero
@@ -86,27 +113,40 @@ extension BuildingListVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingListTC", for: indexPath) as! BuildingListTC
-        cell.title_label.padding(UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15))
+        cell.layer.cornerRadius = 7.5
         
         if tableView == building_tableView {
+            cell.backgroundColor = building_row == indexPath.row ? .white : .clear
+            cell.title_label.font = building_row == indexPath.row ? .boldSystemFont(ofSize: 14.0) : .systemFont(ofSize: 14.0)
+            cell.title_label.textColor = building_row == indexPath.row ? .black : .black.withAlphaComponent(0.3)
             cell.title_label.text = building_name[indexPath.row]
         } else if tableView == floor_tableView {
-            cell.title_label.text = building_name[indexPath.row]
-        } else if tableView == class_tableView {
-            cell.title_label.text = building_name[indexPath.row]
+            cell.backgroundColor = floor_row == indexPath.row ? .white : .clear
+            cell.title_label.font = floor_row == indexPath.row ? .boldSystemFont(ofSize: 14.0) : .systemFont(ofSize: 14.0)
+            cell.title_label.textColor = floor_row == indexPath.row ? .black : .black.withAlphaComponent(0.3)
+            cell.title_label.text = building_floor[indexPath.row]
+        } else if tableView == room_tableView {
+            cell.title_label.text = building_room[indexPath.row]
         }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         if tableView == building_tableView {
-            
+            building_row = indexPath.row; floor_row = 0
         } else if tableView == floor_tableView {
-            
-        } else if tableView == class_tableView {
-            
+            floor_row = indexPath.row
+        } else if tableView == room_tableView, let delegate = SignUpStoreVCdelegate {
+            delegate.storeAddressDetail_tf.text = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
+            delegate.buildingAddressDetail_tf.text = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
+            delegate.buildingAddressDetail_btn.backgroundColor = .H_8CD26B
+            delegate.buildingAddressDetail_btn.isSelected = true
+            navigationController?.popViewController(animated: true)
+        }
+        
+        if tableView != room_tableView {
+            loadingData(building: building_name[building_row]+"/", floor: building_name[building_row]+"/"+building_floor[floor_row]+"/")
         }
     }
 }
