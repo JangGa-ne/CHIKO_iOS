@@ -32,6 +32,9 @@ target 'market' do
 
   # slide side menu
   pod 'SideMenu', '6.0'
+  
+  # calendar
+  pod 'CVCalendar'
 end
 
 post_install do |installer|

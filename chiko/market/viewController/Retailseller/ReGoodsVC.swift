@@ -19,6 +19,7 @@ class ReGoodsVC: UIViewController {
     var isMenuOpen: Bool = false
     
     var item_category_name: [String] = []
+    var search: String = ""
     
     var GoodsArray: [GoodsData] = []
     var fetchingMore: Bool = false
@@ -142,31 +143,34 @@ class ReGoodsVC: UIViewController {
     @objc func edit_search_tf(_ sender: UITextField) {
         delete_img.isHidden = (sender.text!.count == 0)
         delete_btn.isHidden = (sender.text!.count == 0)
+        tableView.refreshControl = (sender.text!.count == 0) ? refreshControl : nil
     }
     
     @objc func delete_btn(_ sender: UIButton) {
-        search_tf.text!.removeAll(); delete_img.isHidden = true; sender.isHidden = true; loadingData(first: true)
+        search.removeAll(); search_tf.text!.removeAll(); delete_img.isHidden = true; sender.isHidden = true; loadingData(first: true)
     }
      
     @objc func search_btn(_ sender: UIButton) {
         search_tf.resignFirstResponder()
         if search_tf.text! == "" {
             customAlert(message: "상품명을 입력하세요.", time: 1)
-            loadingData(first: true)
+            search.removeAll()
         } else {
-            loadingData(first: true, search: search_tf.text!)
-        }
+            search = search_tf.text!
+        }; loadingData(first: true)
     }
     
     @objc func refreshControl(_ sender: UIRefreshControl) {
-        startIndexChange = false; search_tf.text!.removeAll(); loadingData(first: true)
+        if tableView.refreshControl == nil { return }
+        search.removeAll(); search_tf.text!.removeAll(); GoodsArray.removeAll(); tableView.reloadData()
+        startIndexChange = false; delete_img.isHidden = true; loadingData(first: true)
     }
     
-    func loadingData(first: Bool = false, search: String = "", item_pullup_time: String = "0", item_key: String = "0") {
+    func loadingData(first: Bool = false, item_name: String = "", item_pullup_time: String = "0", item_key: String = "0") {
         /// 데이터 삭제
         if first { GoodsArray.removeAll() }
         /// ReGoods 요청
-        requestReGoods(search: search,item_category_name: item_category_name, item_pullup_time: item_pullup_time, item_key: item_key, limit: 10) { array, status in
+        requestReGoods(search: search, item_category_name: item_category_name, item_name: item_name, item_pullup_time: item_pullup_time, item_key: item_key, limit: 10) { array, status in
             
             if status == 200 {
                 self.GoodsArray += array
@@ -203,7 +207,8 @@ extension ReGoodsVC: UIScrollViewDelegate {
         if contentOffsetY > contentHeight-frameHeight && contentOffsetY > 0 && !fetchingMore {
             fetchingMore = true; startIndexChange = true; tableView.reloadData()
             DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
-                self.loadingData(item_pullup_time: self.GoodsArray[self.GoodsArray.count-1].item_pullup_time, item_key: self.GoodsArray[self.GoodsArray.count-1].item_key)
+                let data = self.GoodsArray[self.GoodsArray.count-1]
+                self.loadingData(item_name: data.item_name, item_pullup_time: data.item_pullup_time, item_key: data.item_key)
             }
         }
     }

@@ -505,16 +505,20 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
             let data = WhGoodsUploadVCdelegate.ItemArray[indexPath.row]
             guard let cell = cell as? WhGoodsUploadCC else { return }
             
-            DispatchQueue.main.async {
-                cell.item_img.image = resizeImage(UIImage(data: data.file_data)!, targetSize: cell.item_img.frame.size)
+            if let imgData = UIImage(data: data.file_data) {
+                cell.item_img.image = resizeImage(imgData, targetSize: cell.item_img.frame.size)
+            } else {
+                cell.item_img.image = UIImage()
             }
         } else if indexPath.section == 0, collectionView == contentCollectionView {
             
             let data = WhGoodsUploadVCdelegate.ContentsArray[indexPath.row]
             guard let cell = cell as? WhGoodsUploadCC else { return }
             
-            DispatchQueue.main.async {
-                cell.content_img.image = UIImage(data: data.file_data)//?.resize(to: cell.content_img.frame.size)
+            if let imgData = UIImage(data: data.file_data) {
+                cell.content_img.image = resizeImage(imgData, targetSize: cell.content_img.frame.size)
+            } else {
+                cell.content_img.image = UIImage()
             }
         }
     }
@@ -538,8 +542,8 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
                 
                 let data = WhGoodsUploadVCdelegate.SizeArray[indexPath.row]
                 
-                cell.sizeName_label.text = data.option_name
                 cell.layer.borderWidth = 1
+                cell.sizeName_label.text = data.option_name
                 if data.option_select {
                     cell.layer.borderColor = UIColor.H_8CD26B.cgColor
                     cell.sizeName_label.textColor = .H_8CD26B
@@ -565,8 +569,8 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
                 
             } else if collectionView == styleCollectionView {
                 
-                cell.styleName_label.text = WhGoodsUploadVCdelegate.StyleArray[indexPath.row]
                 cell.layer.borderWidth = 1
+                cell.styleName_label.text = WhGoodsUploadVCdelegate.StyleArray[indexPath.row]
                 if WhGoodsUploadVCdelegate.style_row != nil && WhGoodsUploadVCdelegate.style_row ?? 0 == indexPath.row {
                     cell.layer.borderColor = UIColor.H_8CD26B.cgColor
                     cell.styleName_label.textColor = .H_8CD26B

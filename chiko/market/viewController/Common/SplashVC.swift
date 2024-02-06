@@ -77,6 +77,7 @@ class SplashVC: UIViewController {
                     self.segueTabBarController(identifier: "ReMainTBC", idx: 0)
                 } else if MemberObject.member_type == "wholesales" {
                     if StoreObject.waiting_step == 0 || StoreObject.waiting_step == 1 {
+                        back_btn_hidden = true
                         self.segueViewController(identifier: "WhWaitingVC")
                     } else if StoreObject.waiting_step == 2 {
                         self.segueViewController(identifier: "WhHomeVC")

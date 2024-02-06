@@ -14,6 +14,8 @@ class BankListVC: UIViewController {
         return .lightContent
     }
     
+    var member_type: String = ""
+    
     let chinaBank: [String] = [
         "中国工商银行 (Industrial and Commercial Bank of China)",
         "中国建设银行 (China Construction Bank)",
@@ -34,7 +36,8 @@ class BankListVC: UIViewController {
     var chinaBank_row: Int = 0
     
     let koreaBank: [String] = [
-        "농협은행",
+        "NH농협중앙회",
+        "NH지역농협",
         "국민은행",
         "신한은행",
         "우리은행",
@@ -80,12 +83,12 @@ class BankListVC: UIViewController {
     @objc func choice_btn(_ sender: UIButton) {
         
         if let delegate = SignUpStoreVCdelegate {
-            if MemberObject_signup.member_type == "retailseller" {
-                delegate.bankName_tf.text! = chinaBank[chinaBank_row]
-            } else if MemberObject_signup.member_type == "wholesales" {
-                delegate.bankName_tf.text! = koreaBank[koreaBank_row]
+            if member_type == "retailseller" {
+                delegate.accountBank_tf.text! = chinaBank[chinaBank_row]
+            } else if member_type == "wholesales" {
+                delegate.accountBank_tf.text! = koreaBank[koreaBank_row]
             }
-            delegate.checkBankName_img.isHidden = false
+            delegate.checkAccountBank_img.isHidden = false
         }
         dismiss(animated: true, completion: nil)
     }
@@ -98,9 +101,9 @@ extension BankListVC: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if MemberObject_signup.member_type == "retailseller", chinaBank.count > 0 {
+        if member_type == "retailseller", chinaBank.count > 0 {
             return chinaBank.count
-        } else if MemberObject_signup.member_type == "wholesales", koreaBank.count > 0 {
+        } else if member_type == "wholesales", koreaBank.count > 0 {
             return koreaBank.count
         } else {
             return .zero
@@ -112,10 +115,10 @@ extension BankListVC: UIPickerViewDelegate, UIPickerViewDataSource {
         let title_label = UILabel()
         title_label.textColor = .black
         title_label.textAlignment = .center
-        if MemberObject_signup.member_type == "retailseller" {
+        if member_type == "retailseller" {
             title_label.font = UIFont.systemFont(ofSize: 14.0)
             title_label.text = chinaBank[row]
-        } else if MemberObject_signup.member_type == "wholesales" {
+        } else if member_type == "wholesales" {
             title_label.font = UIFont.systemFont(ofSize: 16.0)
             title_label.text = koreaBank[row]
         }
@@ -123,9 +126,9 @@ extension BankListVC: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        if MemberObject_signup.member_type == "retailseller" {
+        if member_type == "retailseller" {
             chinaBank_row = row
-        } else if MemberObject_signup.member_type == "wholesales" {
+        } else if member_type == "wholesales" {
             koreaBank_row = row
         }
     }

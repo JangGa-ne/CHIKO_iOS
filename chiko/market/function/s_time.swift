@@ -15,9 +15,16 @@ func setKoreaUnixTimestamp() -> Int64 {
     return unixTimestamp_kor
 }
 
-func setTimestampToDateTime(timestamp: Int, dateformat: String = "yyyy.MM.dd HH:mm:ss") -> String {
+func setTimestampToDateTime(region: String = "kor", timestamp: Int, dateformat: String = "yyyy.MM.dd HH:mm:ss") -> String {
     
-    let timestamp = timestamp-32400000
+    var timestamp: Int = timestamp
+    switch region {
+    case "kor": timestamp -= 32400000
+    case "chi": timestamp -= 34000000
+    default:
+        timestamp -= 32400000
+    }
+    
     var timeInterval = TimeInterval()
     if (String(timestamp).count == 13) { 
         timeInterval = TimeInterval(timestamp/1000)

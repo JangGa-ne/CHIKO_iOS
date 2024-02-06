@@ -26,10 +26,16 @@ class EmployeeVC: UIViewController {
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
+    @IBOutlet weak var storePw_tf: UITextField!
+    @IBOutlet weak var storePw_btn: UIButton!
+    
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        storePw_tf.text = StoreObject.store_pw
+        storePw_btn.addTarget(self, action: #selector(storePw_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
@@ -39,6 +45,15 @@ class EmployeeVC: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         loadingData()
+    }
+    
+    @objc func storePw_btn(_ sender: UIButton) {
+        if storePw_tf.text!.count < 4 {
+            customAlert(message: "4자리 이상 입력해 주세요.", time: 1)
+        } else {
+            storePw_tf.resignFirstResponder()
+            
+        }
     }
     
     @objc func refreshControl(_ sender: UIRefreshControl) {

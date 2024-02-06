@@ -9,6 +9,8 @@ import UIKit
 import Alamofire
 import FirebaseAuth
 import FirebaseFirestore
+import Nuke
+import SDWebImage
 
 let requestUrl: String = "https://dk-sto-yy2mch6sra-du.a.run.app"
 let dispatchGroup = DispatchGroup()
@@ -112,6 +114,7 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
         params["store_name"] = StoreObject_signup.store_name
         params["store_name_eng"] = StoreObject_signup.store_name_eng
         params["store_tel"] = StoreObject_signup.store_tel
+        params["summary_address"] = StoreObject_signup.summary_address
         params["account"] = StoreObject_signup.account
         /// member
         params["my_store"] = StoreObject_signup.store_id
@@ -136,7 +139,7 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
     }
 }
 
-func requestFileUpload(action: String, collection_id: String, document_id: String, file_data: [(field_name: String, file_name: String, file_data: Data, file_size: Int)], file_index: Int = 0, first: Bool = true, completionHandler: @escaping ((Int) -> Void)) {
+func requestFileUpload(action: String, collection_id: String, document_id: String, file_data: [(field_name: String, file_name: String, file_data: Data, file_size: Int)], file_index: Int = 0, first: Bool = true, completionHandler: @escaping (([String: Any]?, Int) -> Void)) {
     /// limit upload data
     var upload_size: Int = 0
     var upload_index: Int = file_index
@@ -155,7 +158,7 @@ func requestFileUpload(action: String, collection_id: String, document_id: Strin
     params.forEach { data in print(data) }
     file_data.forEach { data in print(data) }
     
-    var fileUrls: Array<[String: Any]> = []
+    var fileUrls: [String: Any] = [:]
     /// multipart/form-data
     AF.upload(multipartFormData: { formData in
         /// string
@@ -170,7 +173,9 @@ func requestFileUpload(action: String, collection_id: String, document_id: Strin
                 
                 let index: String = field_name.components(separatedBy: "_imgs")[1]
                 
-                if (field_name.contains("item_content_imgs")) {
+                if (field_name.contains("building_contract_imgs")) {
+                    formData.append(file_data, withName: field_name, fileName: field_name, mimeType: file_name.mimeType())
+                } else if (field_name.contains("item_content_imgs")) {
                     formData.append(file_data, withName: field_name, fileName: "detail\(index)", mimeType: file_name.mimeType())
                 } else if (field_name == "item_photo_imgs0") {
                     formData.append(file_data, withName: "item_mainphoto_img", fileName: "main", mimeType: file_name.mimeType())
@@ -187,19 +192,27 @@ func requestFileUpload(action: String, collection_id: String, document_id: Strin
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
                 print(responseJson)
-                if (file_data.count > upload_index+1) {
-                    requestFileUpload(action: action, collection_id: collection_id, document_id: document_id, file_data: file_data, file_index: upload_index, first: false) { status in
-                        completionHandler(status)
+                if responseJson["data"] as? [String: Any] != nil {
+                    if (file_data.count > upload_index+1) {
+                        requestFileUpload(action: action, collection_id: collection_id, document_id: document_id, file_data: file_data, file_index: upload_index, first: false) { _, status in
+                            completionHandler(nil, status)
+                        }
+                    } else {
+                        /// 이미지 캐시 삭제
+                        ImageCache.shared.removeAll(); SDImageCache.shared.clearMemory(); SDImageCache.shared.clearDisk()
+                        /// 데이터 추가
+                        fileUrls = responseJson["data"] as? [String: Any] ?? [:]
+                        completionHandler(fileUrls, 200)
                     }
                 } else {
-                    completionHandler(200)
+                    completionHandler(nil, 204)
                 }
             } else {
-                completionHandler(600)
+                completionHandler(nil, 600)
             }
         } catch {
             print(response.error as Any)
-            completionHandler(response.error?.responseCode ?? 500)
+            completionHandler(nil, response.error?.responseCode ?? 500)
         }
     }
 }
@@ -398,7 +411,7 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
     }
 }
 
-func requestReGoods(search: String, item_category_name: [String] = [], item_pullup_time: String = "0", item_key: String = "0", limit: Int = 99999, completionHandler: @escaping (([GoodsData], Int) -> Void)) {
+func requestReGoods(search: String, item_category_name: [String] = [], item_name: String = "", item_pullup_time: String = "0", item_key: String = "0", limit: Int = 99999, completionHandler: @escaping (([GoodsData], Int) -> Void)) {
     
     var params: Parameters = [
         "action": "search",
@@ -408,6 +421,7 @@ func requestReGoods(search: String, item_category_name: [String] = [], item_pull
 //        "priceRangeFilter": ["minPrice", "maxPrice"],         // 가격범위(원가)
 //        "salePriceRangeFilter": ["minPrice", "maxPrice"],     // 가격범위(할인가)
         "search": search,
+        "item_name": item_name,
         "item_pullup_time": item_pullup_time,
         "item_key": item_key,
         "limit": limit,
@@ -468,46 +482,59 @@ func requestReBasket(type: String = "get", params: [String: Any] = [:], completi
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
 //                print(responseJson)
-                if type == "get" {
-                    
-                    let array = responseJson["data"] as? Array<[String: Any]> ?? []
-                    array.forEach { dict in
-                        /// 데이터 추가
-                        ReBasketArray.append(setBasket(basketDict: dict))
-                    }
-                    
-                    if ReBasketArray.count > 0 {
-                        completionHandler(200)
-                    } else {
-                        completionHandler(204)
-                    }
-                } else if type == "set" {
-                    
-                    params.removeValue(forKey: "action")
+//                if type == "get" {
+//                    
+//                    let array = responseJson["data"] as? Array<[String: Any]> ?? []
+//                    array.forEach { dict in
+//                        /// 데이터 추가
+//                        ReBasketArray.append(setBasket(basketDict: dict))
+//                    }
+//                    
+//                    if ReBasketArray.count > 0 {
+//                        completionHandler(200)
+//                    } else {
+//                        completionHandler(204)
+//                    }
+//                } else if type == "set" {
+//                    
+//                    params.removeValue(forKey: "action")
+//                    /// 데이터 추가
+//                    ReBasketArray.append(setBasket(basketDict: params))
+//                    
+//                    completionHandler(200)
+//                } else if type == "edit" {
+//                    
+//                    params.removeValue(forKey: "action")
+//                    /// 데이터 변경
+//                    ReBasketArray.enumerated().forEach { i, data in
+//                        if data.basket_key == params["basket_key"] as? String ?? "" {
+//                            ReBasketArray[i] = setBasket(basketDict: params)
+//                        }
+//                    }
+//                    
+//                    completionHandler(200)
+//                } else if type == "delete" {
+//                    /// 데이터 삭제
+//                    ReBasketArray.enumerated().forEach { i, data in
+//                        if data.basket_key == params["basket_key"] as? String ?? "" {
+//                            ReBasketArray.remove(at: i)
+//                        }
+//                    }
+//                    
+//                    completionHandler(200)
+//                }
+                
+                let array = responseJson["data"] as? Array<[String: Any]> ?? []
+                array.forEach { dict in
                     /// 데이터 추가
-                    ReBasketArray.append(setBasket(basketDict: params))
-                    
+                    ReBasketArray.append(setBasket(basketDict: dict))
+                }
+                
+                if ReBasketArray.count > 0 {
+                    ReBasketArray.sort { $0.basket_key > $1.basket_key }
                     completionHandler(200)
-                } else if type == "edit" {
-                    
-                    params.removeValue(forKey: "action")
-                    /// 데이터 변경
-                    ReBasketArray.enumerated().forEach { i, data in
-                        if data.basket_key == params["basket_key"] as? String ?? "" {
-                            ReBasketArray[i] = setBasket(basketDict: params)
-                        }
-                    }
-                    
-                    completionHandler(200)
-                } else if type == "delete" {
-                    /// 데이터 삭제
-                    ReBasketArray.enumerated().forEach { i, data in
-                        if data.basket_key == params["basket_key"] as? String ?? "" {
-                            ReBasketArray.remove(at: i)
-                        }
-                    }
-                    
-                    completionHandler(200)
+                } else {
+                    completionHandler(204)
                 }
             } else {
                 completionHandler(600)
@@ -1029,6 +1056,83 @@ func requestBuildingInfo(completionHandler: @escaping (Int) -> Void) {
         } catch {
             print(response.error as Any)
             completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestWhOrder(completionHandler: @escaping ([WhOrderData], Int) -> Void) {
+    
+    let params: Parameters = [
+        "action": "get",
+        "store_id": "wh1699740024000"//StoreObject.store_id,
+    ]
+    
+    var WhOrderArray: [WhOrderData] = []
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/order_batch_processing", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                let array = responseJson["data"] as? Array<[[String: Any]]> ?? []
+                array.forEach { array in
+                    array.forEach { dict in
+                        /// 데이터 추가
+                        WhOrderArray.append(setWhOrder(orderDict: dict))
+                    }
+                }
+                
+                if WhOrderArray.count > 0 {
+                    completionHandler(WhOrderArray, 200)
+                } else {
+                    completionHandler([], 204)
+                }
+            } else {
+                completionHandler([], 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler([], response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestWhNotDelivery(parameters: [String: Any]? = nil, completionHandler: @escaping ([WhNotDeliveryData], Int) -> Void) {
+    
+    var params: Parameters = [
+        "store_id": StoreObject.store_id,
+    ]
+    if parameters == nil {
+        params["action"] = "get"
+    } else {
+        params["action"] = "set"
+        params = parameters ?? [:]
+    }
+    
+    var WhNotDeliveryArray: [WhNotDeliveryData] = []
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/not_delivery", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                let array = responseJson["data"] as? Array<[[String: Any]]> ?? []
+                array.forEach { array in
+                    array.forEach { dict in
+                        /// 데이터 추가
+                        WhNotDeliveryArray.append(setWhNotDelivery(notDeliveryDict: dict))
+                    }
+                }
+                
+                if WhNotDeliveryArray.count > 0 {
+                    completionHandler(WhNotDeliveryArray, 200)
+                } else {
+                    completionHandler([], 204)
+                }
+            } else {
+                completionHandler([], 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler([], response.error?.responseCode ?? 500)
         }
     }
 }

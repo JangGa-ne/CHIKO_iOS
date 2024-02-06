@@ -230,14 +230,14 @@ class ReHomeVC: UIViewController {
 //        setNuke(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
+        preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.StoreObject.store_mainphoto_img) })
+        preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.GoodsObject.item_mainphoto_img) })
+        preheatImages(urls: ReGoodsArray_best.compactMap { URL(string: $0.item_mainphoto_img) })
+        
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         if #available(iOS 15.0, *) { tableView.sectionHeaderTopPadding = .zero }
         tableView.delegate = self; tableView.dataSource = self
-        
-        preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.StoreObject.store_mainphoto_img) })
-        preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.GoodsObject.item_mainphoto_img) })
-        preheatImages(urls: ReGoodsArray_best.compactMap { URL(string: $0.item_mainphoto_img) })
     }
     
     @objc func choiceStore_btn(_ sender: UIButton) {

@@ -369,7 +369,7 @@ extension CategoryVC: PanModalPresentable {
     }
     
     var shortFormHeight: PanModalHeight {
-        return .contentHeight(360)
+        return .contentHeight(UIScreen.main.bounds.height/1.5)
     }
     
     var longFormHeight: PanModalHeight {

@@ -25,6 +25,8 @@ class BuildingListVC: UIViewController {
     var building_row: Int = 0
     var floor_row: Int = 0
     
+    var loading: Bool = true
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
     @IBOutlet weak var navi_lineView: UIView!
@@ -42,7 +44,6 @@ class BuildingListVC: UIViewController {
         navi_lineView.alpha = 0.0
         
         ([building_tableView, floor_tableView, room_tableView] as [UITableView]).forEach { tableView in
-            
             tableView.separatorStyle = .none
             tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
             tableView.delegate = self; tableView.dataSource = self
@@ -62,11 +63,14 @@ class BuildingListVC: UIViewController {
     
     func loadingData(building: String = "", floor: String = "") {
         
+        print(building, floor)
+        
         var building: String = building
         var floor: String = floor
         
         customLoadingIndicator(animated: false)
         /// 데이터 삭제
+        building_name.removeAll()
         building_floor.removeAll()
         building_room.removeAll()
         
@@ -79,7 +83,7 @@ class BuildingListVC: UIViewController {
             if floor == "" { floor = building_name[building_row]+"/"+building_floor[floor_row]+"/" }
             if room.contains(floor) { building_room.append(room.replacingOccurrences(of: floor, with: "")) }
         }
-        /// 
+        
         building_name.sort()
         building_floor = building_floor.sorted { if $0.contains("B") != $1.contains("B") { return $0.contains("B") }; return $0 < $1 }
         building_room.sort()
@@ -125,6 +129,7 @@ extension BuildingListVC: UITableViewDelegate, UITableViewDataSource {
             cell.title_label.font = floor_row == indexPath.row ? .boldSystemFont(ofSize: 14.0) : .systemFont(ofSize: 14.0)
             cell.title_label.textColor = floor_row == indexPath.row ? .black : .black.withAlphaComponent(0.3)
             cell.title_label.text = building_floor[indexPath.row]
+            if loading { loading = !loading; loadingData(building: building_name[building_row]+"/", floor: building_name[building_row]+"/"+building_floor[floor_row]+"/") }
         } else if tableView == room_tableView {
             cell.title_label.text = building_room[indexPath.row]
         }
@@ -134,19 +139,14 @@ extension BuildingListVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == building_tableView {
-            building_row = indexPath.row; floor_row = 0
+            building_row = indexPath.row; floor_row = 0; loading = true; loadingData(building: building_name[building_row]+"/")
         } else if tableView == floor_tableView {
-            floor_row = indexPath.row
+            floor_row = indexPath.row; loading = true; tableView.reloadData()
         } else if tableView == room_tableView, let delegate = SignUpStoreVCdelegate {
-            delegate.storeAddressDetail_tf.text = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
             delegate.buildingAddressDetail_tf.text = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
             delegate.buildingAddressDetail_btn.backgroundColor = .H_8CD26B
             delegate.buildingAddressDetail_btn.isSelected = true
             navigationController?.popViewController(animated: true)
-        }
-        
-        if tableView != room_tableView {
-            loadingData(building: building_name[building_row]+"/", floor: building_name[building_row]+"/"+building_floor[floor_row]+"/")
         }
     }
 }

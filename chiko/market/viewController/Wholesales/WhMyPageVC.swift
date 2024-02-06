@@ -35,18 +35,18 @@ class WhMyPageVC: UIViewController {
     }
     
     let menus: [(title: String, content: [String])] = [
-        (title: "상품관리", content: ["조회/수정", "상품 등록"]),
-        (title: "주문관리", content: ["매장 주문", "배송 관리"]),
-        (title: "정산관리", content: ["매입 전잔"]),
-        (title: "매장관리", content: ["태그 관리", "직원 관리"]),
-        (title: "정보관리", content: ["계좌 관리", "사업자 수정", "내 정보 수정"]),
+        (title: "상품관리", content: ["조회/수정", "상품등록"]),
+        (title: "주문관리", content: ["오늘의주문", "배송관리"]),
+        (title: "정산관리", content: ["매입전잔"]),
+        (title: "매장관리", content: ["매장태그관리", "직원관리"]),
+        (title: "정보관리", content: ["계좌관리", "사업자 수정", "내정보 수정"]),
         (title: "고객센터", content: [] as [String]),
     ]
     let segues: [(String, [String])] = [
         ("상품관리", ["WhGoodsVC", "WhGoodsUploadVC"]),
-        ("주문관리", ["", ""]),
+        ("주문관리", ["WhOrderVC", ""]),
         ("정산관리", [""]),
-        ("매장관리", ["", "EmployeeVC"]),
+        ("매장관리", ["TagVC", "EmployeeVC"]),
         ("정보관리", ["AccountVC", "StoreVC", "MemberVC"]),
         ("고객센터", [] as [String]),
     ]
@@ -85,9 +85,15 @@ class WhMyPageVC: UIViewController {
         setBackSwipeGesture(true)
         
         MPayVCdelegate = nil
+        
         WhGoodsUploadVCdelegate = nil
         WhGoodsDetailVCdelegate = nil
         WhGoodsTop30VCdelegate = nil
+        
+        WhOrderVCdelegate = nil
+        
+        AccountVCdelegate = nil
+        TagVCdelegate = nil
     }
 }
 
@@ -131,7 +137,7 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
             cell.memberGrade_label.text = MemberObject.member_grade
             setNuke(imageView: cell.memberProfile_img, imageUrl: MemberObject.profile_img, cornerRadius: 10)
             
-            ([cell.accountCounting_v, cell.itemFullCounting_v, cell.itemAccountCounting_v] as [UIView]).enumerated().forEach { i, view in
+            ([cell.store_v, cell.member_v, cell.accountCounting_v, cell.itemFullCounting_v, cell.itemAccountCounting_v, cell.mPay_v] as [UIView]).enumerated().forEach { i, view in
                 view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(select_v(_:))))
             }
             
@@ -151,19 +157,25 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
     @objc func select_v(_ sender: UITapGestureRecognizer) {
         
         guard let sender = sender.view else { return }
-        
-        if sender.tag == 0 {
-            
-        } else if sender.tag == 1 {
+        switch sender.tag {
+        case 0:
+            break
+        case 1:
+            break
+        case 2:
+            break
+        case 3:
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsVC") as! WhGoodsVC
             segue.indexpath_row = 0
             navigationController?.pushViewController(segue, animated: true)
-        } else if sender.tag == 2 {
+        case 4:
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsVC") as! WhGoodsVC
             segue.indexpath_row = 1
             navigationController?.pushViewController(segue, animated: true)
-        } else if sender.tag == 3 {
-            
+        case 5:
+            segueViewController(identifier: "MPayVC")
+        default:
+            break
         }
     }
     

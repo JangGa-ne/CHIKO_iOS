@@ -636,6 +636,7 @@ PODS:
     - BoringSSL-GRPC/Interface (= 0.0.24)
   - BoringSSL-GRPC/Interface (0.0.24)
   - BSImagePicker (3.3.1)
+  - CVCalendar (1.7.0)
   - FirebaseAppCheckInterop (10.19.0)
   - FirebaseAuth (10.19.0):
     - FirebaseAppCheckInterop (~> 10.17)
@@ -794,6 +795,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire (= 5.1)
   - BSImagePicker
+  - CVCalendar
   - FirebaseAuth
   - FirebaseFirestore
   - FirebaseMessaging
@@ -809,6 +811,7 @@ SPEC REPOS:
     - Alamofire
     - BoringSSL-GRPC
     - BSImagePicker
+    - CVCalendar
     - FirebaseAppCheckInterop
     - FirebaseAuth
     - FirebaseCore
@@ -840,6 +843,7 @@ SPEC CHECKSUMS:
   Alamofire: 9d5c5f602928e512395b30950c5984eca840093c
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   BSImagePicker: 0fe04b574d4d6b81093785d2af6c26227efc8428
+  CVCalendar: 1174c1b43c1a258970e14c1e8b19ef4106c5900b
   FirebaseAppCheckInterop: 37884781f3e16a1ba47e7ec80a1e805f987788e3
   FirebaseAuth: 2492acdcd1245d841fabdf58a050d6aa07dfce3f
   FirebaseCore: dc5c7badf99d47613c52b2e3a57a64cd187f8554
@@ -866,6 +870,6 @@ SPEC CHECKSUMS:
   SDWebImage: f9258c58221ed854cfa0e2b80ee4033710b1c6d3
   SideMenu: 1b826b95cc7db1a3c7d164f8a6e6e92506ffb0f5
 
-PODFILE CHECKSUM: 40cf4431bd0271cb27189e95615933c4b03c7715
+PODFILE CHECKSUM: ae56e5bc185fd114c5f52fc8309493a897717d97
 
 COCOAPODS: 1.11.3

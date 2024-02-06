@@ -131,7 +131,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         guard let sender = sender.view else { return }
         
         switch sender.tag {
-        case 0: break
+        case 0: segueViewController(identifier: "MPayVC")
         case 1: segueViewController(identifier: "ReOrderVC")
         case 2: segueViewController(identifier: "ReBasketVC")
         case 3: segueViewController(identifier: "ReBookMarkVC")

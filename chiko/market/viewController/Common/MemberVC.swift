@@ -72,6 +72,7 @@ class MemberVC: UIViewController {
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(scrollView(_:))))
         
         memberId_tf.isEnabled = false
+        submitDocu_sv.isHidden = !(data.member_type == "retailseller")
         
         edit_btn.addTarget(self, action: #selector(edit_btn(_:)), for: .touchUpInside)
     }

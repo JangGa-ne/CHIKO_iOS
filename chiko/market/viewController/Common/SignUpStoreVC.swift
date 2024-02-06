@@ -67,9 +67,9 @@ class SignUpStoreVC: UIViewController {
     @IBOutlet weak var noticeDomainAddress_label: UILabel!
     /// 계좌 등록
     @IBOutlet weak var account_sv: UIStackView!
-    @IBOutlet weak var bankName_view: UIView!
-    @IBOutlet weak var bankName_tf: UITextField!
-    @IBOutlet weak var checkBankName_img: UIImageView!
+    @IBOutlet weak var accountBank_view: UIView!
+    @IBOutlet weak var accountBank_tf: UITextField!
+    @IBOutlet weak var checkAccountBank_img: UIImageView!
     @IBOutlet weak var depositorName_tf: UITextField!
     @IBOutlet weak var checkDepositorName_img: UIImageView!
     @IBOutlet weak var accountNum_tf: UITextField!
@@ -113,8 +113,8 @@ class SignUpStoreVC: UIViewController {
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
         /// placeholder, delegate, edti, return next/done
-        ([businessRegNum_tf, storeNameChi_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, domainAddress_tf, bankName_tf, depositorName_tf, accountNum_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. www.example.com", "", "", "", "", ""][i], color: .black.withAlphaComponent(0.3))
+        ([businessRegNum_tf, storeNameChi_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, domainAddress_tf, accountBank_tf, depositorName_tf, accountNum_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
+            tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. www.example.com", "은행명을 입력하세요.", "예금주명을 입력하세요.", "-를 빼고 입력하세요.", "", ""][i], color: .black.withAlphaComponent(0.3))
             tf.delegate = self
             tf.tag = i
             tf.addTarget(self, action: #selector(changedEditStoreInfo_if(_:)), for: .editingChanged)
@@ -122,7 +122,7 @@ class SignUpStoreVC: UIViewController {
             if tf != domainAddress_tf && tf != accountNum_tf { tf.returnKeyType = .next } else { tf.returnKeyType = .done }
         }
         /// check
-        ([checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img] as [UIImageView]).forEach { img in
+        ([checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img] as [UIImageView]).forEach { img in
             img.isHidden = true
         }
         /// notice
@@ -157,8 +157,8 @@ class SignUpStoreVC: UIViewController {
         buildingAddressDetail_tf.isEnabled = false
         buildingAddressDetail_btn.addTarget(self, action: #selector(buildingAddressDetail_btn(_:)), for: .touchUpInside)
         /// bank info
-        bankName_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(bankName_view(_:))))
-        bankName_tf.isEnabled = false
+        accountBank_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(accountBank_view(_:))))
+        accountBank_tf.isEnabled = false
         /// submit document
         ([storeMainPhoto_view, passbook_view, businessReg_view] as [UIView]).enumerated().forEach { i, view in
             view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(submitDocu_view(_:))))
@@ -181,7 +181,7 @@ class SignUpStoreVC: UIViewController {
         let chineseRange = 0x4E00...0x9FFF
         let koreanRange = 0xAC00...0xD7AF
         
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
+        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
         let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), noticeAccountNum_label, UILabel()][sender.tag]
         // init
         check.isHidden = true
@@ -240,7 +240,7 @@ class SignUpStoreVC: UIViewController {
     
     @objc func endEditStoreInfo_if(_ sender: UITextField) {
         
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
+        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
         let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), noticeAccountNum_label, UILabel()][sender.tag]
         
         notice.isHidden = !check.isHidden
@@ -283,11 +283,12 @@ class SignUpStoreVC: UIViewController {
         segueViewController(identifier: "BuildingListVC")
     }
     
-    @objc func bankName_view(_ sender: UITapGestureRecognizer) {
+    @objc func accountBank_view(_ sender: UITapGestureRecognizer) {
         /// hidden keyboard
         view.endEditing(true)
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "BankListVC") as! BankListVC
+        segue.member_type = MemberObject_signup.member_type
         presentPanModal(segue)
     }
     
@@ -318,7 +319,7 @@ class SignUpStoreVC: UIViewController {
         view.endEditing(true)
         
         var final_check: Bool = true
-        var check_img: [UIImageView] = [checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreMainPhoto_img]
+        var check_img: [UIImageView] = [checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img]
         
         if StoreObject_signup.store_type == "retailseller" {
             if StoreObject_signup.onoff_type == "online" {
@@ -330,7 +331,7 @@ class SignUpStoreVC: UIViewController {
             }
             check_img += [checkWechatId_img]
         } else if StoreObject_signup.store_type == "wholesales" {
-            check_img += [checkBusinessRegNum_img, checkBankName_img, checkDepositorName_img, checkAccountNum_img, checkBusinessReg_img, checkpassbook_img]
+            check_img += [checkBusinessRegNum_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkBusinessReg_img, checkStoreMainPhoto_img, checkpassbook_img]
         }
         check_img.forEach { img in
             if img.isHidden {
@@ -349,7 +350,7 @@ class SignUpStoreVC: UIViewController {
                 StoreObject_signup.store_name = self.storeNameChi_tf.text!
                 StoreObject_signup.store_name_eng = self.storeNameEng_tf.text!
                 StoreObject_signup.store_tel = self.storeTel_tf.text!
-                StoreObject_signup.account = ["account_bank": self.bankName_tf.text!, "account_name": self.depositorName_tf.text!, "account_num": self.accountNum_tf.text!]
+                StoreObject_signup.account = ["account_bank": self.accountBank_tf.text!, "account_name": self.depositorName_tf.text!, "account_num": self.accountNum_tf.text!]
                 if StoreObject_signup.store_type == "retailseller" {
                     StoreObject_signup.store_domain = self.domainAddress_tf.text!
                     StoreObject_signup.store_address_street = self.storeAddressStreet_tf.text!
@@ -357,6 +358,7 @@ class SignUpStoreVC: UIViewController {
                     StoreObject_signup.store_address_zipcode = self.storeAddressZipCode_tf.text!
                     StoreObject_signup.wechat_id = self.wechatId_tf.text!
                 } else if StoreObject_signup.store_type == "wholesales" {
+                    StoreObject_signup.summary_address = self.buildingAddressDetail_tf.text!
                     StoreObject_signup.business_reg_num = self.businessRegNum_tf.text!
                 }
                 delegate.new_label.isHidden = false

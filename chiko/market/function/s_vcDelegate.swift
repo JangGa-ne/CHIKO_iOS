@@ -17,7 +17,10 @@ var SignUpMemberVCdelegate: SignUpMemberVC? = nil
 var SignUpStoreVCdelegate: SignUpStoreVC? = nil
 var BuildingListVCdelegate: BuildingListVC? = nil
 var BankListVCdelegate: BankListVC? = nil
+var AccountVCdelegate: AccountVC? = nil
+var TagVCdelegate: TagVC? = nil
 var MPayVCdelegate: MPayVC? = nil
+var CalendarVCdelegate: CalendarVC? = nil
 // Retailseller
 var ReHomeVCdelegate: ReHomeVC? = nil
 var ReGoodsVCdelegate: ReGoodsVC? = nil
@@ -34,3 +37,6 @@ var WhMyPageVCdelegate: WhMyPageVC? = nil
 var WhGoodsUploadVCdelegate: WhGoodsUploadVC? = nil
 var WhGoodsDetailVCdelegate: WhGoodsDetailVC? = nil
 var WhGoodsTop30VCdelegate: WhGoodsTop30VC? = nil
+var WhOrderVCdelegate: WhOrderVC? = nil
+var WhNotDeliveryAddVCdelegate: WhNotDeliveryAddVC? = nil
+var WhNotDeliveryAddTCdelegate: WhNotDeliveryAddTC? = nil

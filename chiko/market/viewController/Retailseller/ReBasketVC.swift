@@ -99,31 +99,29 @@ class ReBasketVC: UIViewController {
         refreshControl.tintColor = .lightGray
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
-        customLoadingIndicator(animated: true)
-        
-        loadingData()
-        
-        preheatImages(urls: ReBasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
-        
         order_btn.addTarget(self, action: #selector(order_btn(_:)), for: .touchUpInside)
     }
     
     @objc func refreshControl(_ sender: UIRefreshControl) {
-        loadingData(); sender.endRefreshing()
-    }
-    
-    func loadingData() {
         /// 데이터 삭제
         ReBasketArray.removeAll(); tableView.reloadData()
         /// ReBasket 요청
-        requestReBasket(type: "get") { _ in
+        requestReBasket(type: "get") { status in
             
-            self.customLoadingIndicator(animated: false)
+            switch status {
+            case 200:
+                self.choiceAllData()
+                self.totalData()
+                preheatImages(urls: ReBasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
+            case 204:
+                print("No data")
+            case 600:
+                self.customAlert(message: "Error occurred during data conversion", time: 1)
+            default:
+                self.customAlert(message: "Internal server error", time: 1)
+            }
             
-            ReBasketArray.sort { $0.basket_key > $1.basket_key }
-            self.choiceAllData()
-            self.totalData()
-            self.tableView.reloadData()
+            self.tableView.reloadData(); sender.endRefreshing()
         }
     }
     
@@ -312,18 +310,23 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
         let data = ReBasketArray[sender.tag]
         let alert = UIAlertController(title: "", message: "상품을 삭제하시겠습니까?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
+            /// ReBasket 요청
             requestReBasket(type: "delete", params: ["basket_key": data.basket_key]) { status in
-                if status == 200 {
+                
+                switch status {
+                case 200:
                     self.choiceAllData()
                     self.totalData()
-                    self.tableView.reloadData()
-//                    self.customLoadingIndicator(animated: true)
-//                    self.loadingData()
-                } else if status == 600 {
+                    preheatImages(urls: ReBasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
+                case 204:
+                    print("No data")
+                case 600:
                     self.customAlert(message: "Error occurred during data conversion", time: 1)
-                } else {
+                default:
                     self.customAlert(message: "Internal server error", time: 1)
                 }
+                
+                self.tableView.reloadData()
             }
         }))
         alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))

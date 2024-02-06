@@ -113,7 +113,7 @@ class SignUpMemberVC: UIViewController {
         /// submit document
         if MemberObject_signup.member_type == "retailseller" {
             phoneNum_btn.isHidden = true
-            submitDocu_sv.isHidden = false
+            submitDocu_sv.isHidden = true
         } else if MemberObject_signup.member_type == "wholesales" {
             phoneNum_btn.isHidden = false
             submitDocu_sv.isHidden = true
@@ -360,7 +360,7 @@ class SignUpMemberVC: UIViewController {
         var check_img: [UIImageView] = [checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img]
         
         if MemberObject_signup.member_type == "retailseller" {
-            check_img += [checkPhoneNum_img, checkMemberIdCard_img]
+            check_img += [checkPhoneNum_img]
         }
         if MemberObject_signup.member_type == "wholesales" {
             check_btn += [phoneNum_btn]

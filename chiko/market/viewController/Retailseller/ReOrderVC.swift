@@ -250,6 +250,13 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+        segue.OrderObject = ReOrderArray[indexPath.row]
+        navigationController?.pushViewController(segue, animated: true)
+    }
+    
     @objc func detail_btn(_ sender: UIButton) {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC

@@ -63,18 +63,18 @@ extension ReGoodsOptionVC: UITableViewDelegate, UITableViewDataSource {
     @objc func optionSelect_btn(_ sender: UIButton) {
         
         var exist: Bool = false
-        ReGoodsDetailVCdelegate?.OptionArray.forEach { data in if data.sequence == sender.tag+1 { exist = true; return } }
+        ReGoodsDetailVCdelegate?.ItemOptionArray.forEach { data in if data.sequence == sender.tag+1 { exist = true; return } }
         if exist { customAlert(message: "이미 선택한 상품입니다.", time: 1) { self.dismiss(animated: true, completion: nil) }; return }
         if GoodsObject.item_option[sender.tag].sold_out { return }
         
         let data = GoodsObject.item_option[sender.tag]
-        let optionValue = GoodsOptionData()
+        let optionValue = ItemOptionData()
         optionValue.color = data.color
         optionValue.price = data.price
         optionValue.quantity = 1
         optionValue.sequence = sender.tag+1
         optionValue.size = data.size
-        ReGoodsDetailVCdelegate?.OptionArray.insert(optionValue, at: 0)
+        ReGoodsDetailVCdelegate?.ItemOptionArray.insert(optionValue, at: 0)
         UIView.setAnimationsEnabled(false)
         ReGoodsDetailVCdelegate?.tableView.reloadSections(IndexSet(integer: 1), with: .none)
         UIView.setAnimationsEnabled(true)

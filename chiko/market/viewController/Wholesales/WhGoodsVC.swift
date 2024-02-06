@@ -69,6 +69,7 @@ class WhGoodsVC: UIViewController {
     }
     
     @objc func refreshControl(_ sender: UIRefreshControl) {
+        GoodsArray.removeAll(); tableView.reloadData()
         startIndexChange = false; loadingData(first: true)
     }
     

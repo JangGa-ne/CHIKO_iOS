@@ -50,10 +50,6 @@ class StoreVC: UIViewController {
     @IBOutlet weak var businessReg_view: UIView!
     @IBOutlet weak var businessReg_img: UIImageView!
     @IBOutlet weak var checkBusinessReg_img: UIImageView!
-    @IBOutlet weak var buildingContract_sv: UIStackView!
-    @IBOutlet weak var buildingContract_view: UIView!
-    @IBOutlet weak var buildingContract_img: UIImageView!
-    @IBOutlet weak var checkBuildingContract_img: UIImageView!
     
     @IBOutlet weak var edit_btn: UIButton!
     
@@ -71,7 +67,7 @@ class StoreVC: UIViewController {
             tf.addTarget(self, action: #selector(endEditStoreInfo_if(_:)), for: .editingDidEnd)
         }
         /// check
-        ([checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img, checkBuildingContract_img] as [UIImageView]).enumerated().forEach { i, img in
+        ([checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img] as [UIImageView]).enumerated().forEach { i, img in
             img.isHidden = true
         }
         /// notice
@@ -85,7 +81,6 @@ class StoreVC: UIViewController {
             businessRegNum_sv.isHidden = true
             storeAddress_sv.isHidden = true
             businessReg_sv.isHidden = true
-            buildingContract_sv.isHidden = true
         } else if StoreObject.store_type == "wholesales" {
             storeAddress_sv.isHidden = true
         }
@@ -99,7 +94,7 @@ class StoreVC: UIViewController {
         let chineseRange = 0x4E00...0x9FFF
         
         let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label][sender.tag]
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img, checkBuildingContract_img][sender.tag]
+        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
         
         notice.isHidden = true
         check.isHidden = true
@@ -136,7 +131,7 @@ class StoreVC: UIViewController {
     @objc func endEditStoreInfo_if(_ sender: UITextField) {
         
         let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label][sender.tag]
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img, checkBuildingContract_img][sender.tag]
+        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
         
         notice.isHidden = !check.isHidden
     }

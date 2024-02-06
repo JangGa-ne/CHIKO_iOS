@@ -46,6 +46,10 @@ class WhHomeTC: UITableViewCell {
                 collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
                 collectionView.delegate = self; collectionView.dataSource = self
             }
+        } else if indexpath_section == 2 {
+            
+            preheatImages(urls: WhGoodsArray_realtime.compactMap { URL(string: $0.item_mainphoto_img) })
+            
         } else if indexpath_section == 3 {
             
             collectionView3.delegate = nil; collectionView3.dataSource = nil
@@ -165,6 +169,8 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             }
         } else if collectionView == collectionView2 {
             
+            WhHomeVCdelegate.WhGoodsArray_realtime_row = indexPath.row
+            
             let segue = WhHomeVCdelegate.storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
             segue.GoodsObject = WhGoodsArray_realtime[indexPath.row]
             WhHomeVCdelegate.navigationController?.pushViewController(segue, animated: true)
@@ -180,6 +186,8 @@ class WhHomeVC: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
+    
+    var WhGoodsArray_realtime_row: Int = 0
     
     @IBOutlet weak var myPage_btn: UIButton!
     

@@ -12,7 +12,7 @@ import PanModal
 
 class ReGoodsDetailTC: UITableViewCell {
     
-    var OptionArray: [(color: String, price: Int, quantity: Int, sequence: Int, size: String)] = []
+    var ItemOptionArray: [(color: String, price: Int, quantity: Int, sequence: Int, size: String)] = []
     
     @IBOutlet weak var store_img: UIImageView!
     @IBOutlet weak var storeName_label: UILabel!
@@ -56,7 +56,7 @@ class ReGoodsDetailTC: UITableViewCell {
     
     @objc func optionMinus_btn(_ sender: UIButton) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        guard let data = ReGoodsDetailVCdelegate?.OptionArray[sender.tag] else { return }
+        guard let data = ReGoodsDetailVCdelegate?.ItemOptionArray[sender.tag] else { return }
         if data.quantity > 1 { data.quantity -= 1; optionQuantity_label.text = "\(data.quantity)" }
         optionPrice_label.text = "₩ \(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
         ReGoodsDetailVCdelegate?.setTotalPrice()
@@ -64,7 +64,7 @@ class ReGoodsDetailTC: UITableViewCell {
     
     @objc func optionPlus_btn(_ sender: UIButton) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        guard let data = ReGoodsDetailVCdelegate?.OptionArray[sender.tag] else { return }
+        guard let data = ReGoodsDetailVCdelegate?.ItemOptionArray[sender.tag] else { return }
         data.quantity += 1; optionQuantity_label.text = "\(data.quantity)"
         optionPrice_label.text = "₩ \(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
         ReGoodsDetailVCdelegate?.setTotalPrice()
@@ -90,7 +90,7 @@ class ReGoodsDetailVC: UIViewController {
     var store_mainphoto_img: String = ""
     
     var GoodsObject: GoodsData = GoodsData()
-    var OptionArray: [GoodsOptionData] = []
+    var ItemOptionArray: [ItemOptionData] = []
     
     var itemContent_img_height: [Int: CGFloat] = [:]
     
@@ -133,20 +133,18 @@ class ReGoodsDetailVC: UIViewController {
         
         ReGoodsDetailVCdelegate = self
         
+        preheatImages(urls: GoodsObject.item_content_imgs.compactMap { URL(string: $0) })
+        
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         if #available(iOS 15.0, *) { tableView.sectionHeaderTopPadding = .zero }
         tableView.delegate = self; tableView.dataSource = self
         
-        preheatImages(urls: GoodsObject.item_content_imgs.compactMap { URL(string: $0) })
-        
         GoodsObject.item_content_imgs.enumerated().forEach { i, imageUrl in
             imageUrlHeight(imageUrl: imageUrl) { height in
                 DispatchQueue.main.async {
                     self.itemContent_img_height[i] = height+20
-                    UIView.setAnimationsEnabled(false)
-                    self.tableView.reloadRows(at: [IndexPath(row: i, section: 2)], with: .none)
-                    UIView.setAnimationsEnabled(true)
+                    UIView.setAnimationsEnabled(false); self.tableView.reloadRows(at: [IndexPath(row: i, section: 2)], with: .none); UIView.setAnimationsEnabled(true)
                 }
             }
         }
@@ -165,14 +163,14 @@ class ReGoodsDetailVC: UIViewController {
     
     @objc func basket_order_btn(_ sender: UIButton) {
         
-        guard OptionArray.count != 0 else { customAlert(message: "상품을 선택해주세요.", time: 1); return }
+        guard ItemOptionArray.count != 0 else { customAlert(message: "상품을 선택해주세요.", time: 1); return }
         
 //        if ReBasketArray.filter({ $0.item_key == GoodsObject.item_key }).isEmpty {
 //            
 //        }
         
         var item_option: Array<[String: Any]> = []
-        OptionArray.forEach { data in
+        ItemOptionArray.forEach { data in
             item_option.append([
                 "color": data.color,
                 "price": data.price,
@@ -237,7 +235,7 @@ class ReGoodsDetailVC: UIViewController {
     func setTotalPrice() {
         total_price = 0
         total_quantity = 0
-        OptionArray.forEach { data in 
+        ItemOptionArray.forEach { data in 
             total_price += (data.price*data.quantity)
             total_quantity += data.quantity
         }
@@ -263,8 +261,8 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return 1
-        } else if section == 1, OptionArray.count > 0 {
-            return OptionArray.count
+        } else if section == 1, ItemOptionArray.count > 0 {
+            return ItemOptionArray.count
         } else if section == 2, GoodsObject.item_content_imgs.count > 0 {
             return GoodsObject.item_content_imgs.count
         } else if section == 3 {
@@ -319,7 +317,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             return cell
         } else if indexPath.section == 1 {
             
-            let data = OptionArray[indexPath.row]
+            let data = ItemOptionArray[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsDetailTC1", for: indexPath) as! ReGoodsDetailTC
             
             cell.optionColor_view.backgroundColor = .init(hex: "#\(ColorArray[data.color] ?? "ffffff")")
@@ -403,7 +401,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func optionDelete_btn(_ sender: UIButton) {
-        OptionArray.remove(at: sender.tag)
+        ItemOptionArray.remove(at: sender.tag)
         UIView.setAnimationsEnabled(false)
         tableView.reloadSections(IndexSet(integer: 1), with: .none)
         UIView.setAnimationsEnabled(true)

@@ -82,13 +82,16 @@ class WhGoodsUploadVC: UIViewController {
         
         if all || index == 1 {
             OptionPriceArray.removeAll()
-            guard GoodsObject.item_colors.count > 0, GoodsObject.item_sizes.count > 0 else { item_option_type = false; GoodsObject.item_option_type = false; return }
-            OptionPriceArray = ColorArray.map { colorData in
-                let size_price = SizeArray.filter { $0.option_select }.compactMap { sizeData in
-                    let price = GoodsObject.item_option.isEmpty ? GoodsObject.item_sale_price : GoodsObject.item_option.filter { $0.color == colorData.option_name && $0.size == sizeData.option_name }.map { $0.price <= GoodsObject.item_sale_price ? GoodsObject.item_sale_price : $0.price }.first ?? GoodsObject.item_sale_price
-                    return (size: sizeData.option_name, price: price)
+            if GoodsObject.item_colors.count > 0, GoodsObject.item_sizes.count > 0 {
+                OptionPriceArray = ColorArray.map { colorData in
+                    let size_price = SizeArray.filter { $0.option_select }.compactMap { sizeData in
+                        let price = GoodsObject.item_option.isEmpty ? GoodsObject.item_sale_price : GoodsObject.item_option.filter { $0.color == colorData.option_name && $0.size == sizeData.option_name }.map { $0.price <= GoodsObject.item_sale_price ? GoodsObject.item_sale_price : $0.price }.first ?? GoodsObject.item_sale_price
+                        return (size: sizeData.option_name, price: price)
+                    }
+                    return (color_name: colorData.option_name, size_price: size_price)
                 }
-                return (color_name: colorData.option_name, size_price: size_price)
+            } else {
+                item_option_type = false; GoodsObject.item_option_type = false
             }
         }
 
@@ -107,13 +110,13 @@ class WhGoodsUploadVC: UIViewController {
             
             let data = GoodsObject
             
-            customLoadingIndicator(animated: true)
+            customLoadingIndicator(text: "데이터 불러오는중...", animated: true)
             /// 상품 대표 이미지
             data.item_photo_imgs.enumerated().forEach { i, imgUrl in
                 dispatchGroup.enter()
                 imageUrlStringToData(from: imgUrl) { imgData in
-                    self.ItemArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
                     DispatchQueue.main.async {
+                        self.ItemArray.append((file_name: String(i)+getFileExtension(from: imgData ?? Data()), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
                         UIView.setAnimationsEnabled(false); self.tableView.reloadSections(IndexSet(integer: 0), with: .none); UIView.setAnimationsEnabled(true)
                     }
                 }
@@ -132,7 +135,10 @@ class WhGoodsUploadVC: UIViewController {
             data.item_content_imgs.enumerated().forEach { i, imgUrl in
                 dispatchGroup.enter()
                 imageUrlStringToData(from: imgUrl) { imgData in
-                    self.ContentsArray.append((file_name: String(i), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); self.tableView.reloadData(); dispatchGroup.leave()
+                    DispatchQueue.main.async {
+                        self.ContentsArray.append((file_name: String(i)+getFileExtension(from: imgData ?? Data()), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); self.tableView.reloadData(); dispatchGroup.leave()
+                        UIView.setAnimationsEnabled(false); self.tableView.reloadSections(IndexSet(integer: 3), with: .none); UIView.setAnimationsEnabled(true)
+                    }
                 }
             }
             /// 소재정보 및 세탁법
@@ -178,7 +184,7 @@ class WhGoodsUploadVC: UIViewController {
         GoodsObject.item_option.removeAll()
         OptionPriceArray.forEach { (color_name: String, size_price: [(size: String, price: Int)]) in
             size_price.forEach { (size: String, price: Int) in
-                let itemOptionValue = GoodsOptionData()
+                let itemOptionValue = ItemOptionData()
                 itemOptionValue.color = color_name
                 itemOptionValue.price = price
                 itemOptionValue.size = size
@@ -209,12 +215,22 @@ class WhGoodsUploadVC: UIViewController {
             dispatchGroup.enter()
             requestWhGoodsUpload(GoodsObject: GoodsObject, timestamp: timestamp) { status in
                 
-                if status == 200, self.GoodsObject.upload_files.count > 0 {
+                if self.GoodsObject.upload_files.count > 0, status == 200 {
                     var action = "add"
                     if self.GoodsObject.item_key != "" { action = "edit" }
                     /// File Upload 요청
                     dispatchGroup.enter()
-                    requestFileUpload(action: action, collection_id: "goods", document_id: "\(StoreObject.store_id)_\(timestamp)", file_data: self.GoodsObject.upload_files) { status in
+                    requestFileUpload(action: action, collection_id: "goods", document_id: "\(StoreObject.store_id)_\(timestamp)", file_data: self.GoodsObject.upload_files) { fileUrls, status in
+                        
+                        let dict = fileUrls ?? [:]
+                        self.GoodsObject.item_mainphoto_img = dict["item_mainphoto_img"] as? String ?? ""
+                        if dict["item_mainphoto_img"] as? String ?? "" != "" {
+                            self.GoodsObject.item_photo_imgs = [dict["item_mainphoto_img"] as? String ?? ""]+(dict["item_photo_imgs"] as? [String] ?? [])
+                        } else {
+                            self.GoodsObject.item_photo_imgs = dict["item_photo_imgs"] as? [String] ?? []
+                        }
+                        self.GoodsObject.item_content_imgs = dict["item_content_imgs"] as? [String] ?? []
+                        
                         status_code = status; dispatchGroup.leave()
                     }
                 }
@@ -228,21 +244,41 @@ class WhGoodsUploadVC: UIViewController {
                 
                 switch status_code {
                 case 200:
+                    /// 데이터 삭제
+                    self.GoodsObject.upload_files.removeAll()
                     
                     var message: String = ""
-                    if self.edit { message = "상품수정 완료!" } else { message = "상품등록 완료!" }
+                    if self.GoodsObject.item_key != "" { message = "상품수정 완료!" } else { message = "상품등록 완료!" }
                     
                     let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: { _ in
                         self.navigationController?.popViewController(animated: true, completion: {
-                            if let delegate = WhGoodsDetailVCdelegate {
-                                delegate.GoodsObject = self.GoodsObject
-                                delegate.item_img.delegate = nil
-                                delegate.viewDidLoad()
+                            if self.GoodsObject.item_key != "" {
+                                if let delegate = WhHomeVCdelegate {
+                                    WhGoodsArray_realtime[delegate.WhGoodsArray_realtime_row] = self.GoodsObject
+                                    UIView.setAnimationsEnabled(false); delegate.tableView.reloadSections(IndexSet(integer: 1), with: .none); UIView.setAnimationsEnabled(true)
+                                }
+                                if let delegate = WhGoodsDetailVCdelegate {
+                                    delegate.GoodsObject = self.GoodsObject
+                                    delegate.item_img.delegate = nil
+                                    delegate.viewDidLoad()
+                                }
+                            } else if let delegate = WhHomeVCdelegate {
+                                // 데이터 삭제
+                                WhGoodsArray_realtime.removeAll()
+                                
+                                delegate.customLoadingIndicator(animated: true)
+                                /// WhRealTime 요청
+                                requestWhRealTime(filter: "최신순", limit: 3) { _ in
+                                    delegate.customLoadingIndicator(animated: false)
+                                    delegate.tableView.reloadData()
+                                }
                             }
                         })
                     }))
                     self.present(alert, animated: true, completion: nil)
+                case 204:
+                    self.customAlert(message: "Upload failure", time: 1)
                 case 600:
                     self.customAlert(message: "Error occurred during data conversion", time: 1)
                 default:

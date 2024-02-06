@@ -12,15 +12,6 @@ import ImageSlideshow
 import BSImagePicker
 import Photos
 
-extension UIImage {
-    
-    func resize(to targetSize: CGSize) -> UIImage {
-        UIGraphicsImageRenderer(size: targetSize).image { _ in
-            self.draw(in: CGRect(origin: .zero, size: targetSize))
-        }
-    }
-}
-
 func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
     let size = image.size
 
@@ -45,6 +36,11 @@ func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
 }
 
 func setImageSlideShew(imageView: ImageSlideshow, imageUrls: [String], cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
+    
+    SDImageCache.shared.clearMemory()
+    SDImageCache.shared.clearDisk()
+    
+    SDWebImagePrefetcher.shared.prefetchURLs(imageUrls.compactMap { URL(string: $0) })
     
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true

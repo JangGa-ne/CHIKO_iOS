@@ -63,16 +63,16 @@ extension ReMainTBC: UITabBarControllerDelegate {
         
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
+        setKoreaUnixTimestamp()
+        
         if let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) {
             
             if selectedIndex == lastSelectedIndex, selectedIndex == 1, let delegate = ReGoodsVCdelegate, delegate.GoodsArray.count > 0 {
             
-                if delegate.tableView.contentOffset.y <= .zero {
+                if delegate.tableView.contentOffset.y <= .zero && delegate.tableView.refreshControl != nil {
+                    delegate.tableView.setContentOffset(CGPoint(x: 0, y: -100), animated: true)
                     delegate.refreshControl.beginRefreshing()
-                    delegate.tableView.setContentOffset(CGPoint(x: 0, y: -120), animated: true)
-                    DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
-                        delegate.refreshControl(delegate.refreshControl)
-                    }
+                    delegate.refreshControl(delegate.refreshControl)
                 } else {
                     delegate.tableView.setContentOffset(CGPoint(x: 0, y: -delegate.tableView.contentInset.top), animated: true)
                 }

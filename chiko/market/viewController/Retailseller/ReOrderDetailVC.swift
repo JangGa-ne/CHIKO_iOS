@@ -136,7 +136,7 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
             order_total = total_price+Int(Double(total_price)*(Double(total_vat)/100.0))
             
             cell.orderId_label.text = data.order_key
-            cell.orderDatetime_label.text = setTimestampToDateTime(timestamp: Int(data.order_datetime) ?? 0, dateformat: "yyyy. MM. dd.")
+            cell.orderDatetime_label.text = setTimestampToDateTime(timestamp: Int(data.order_datetime) ?? 0)
             cell.KrTotalPrice_label.text = "₩ \(priceFormatter.string(from: data.kr_total_item_price as NSNumber) ?? "0")"
             cell.CnTotalPrice_label.text = "¥ \(data.cn_total_item_price)"
             

@@ -36,6 +36,9 @@ class SignUpRegisterVC: UIViewController {
         super.viewDidLoad()
         // init
         alert_v.layer.cornerRadius = divice_radius
+        /// 데이터 삭제
+        MemberObject_signup.upload_files.removeAll()
+        StoreObject_signup.upload_files.removeAll()
         /// 신분증
         MemberObject_signup.upload_member_idcard_img.forEach { (file_name: String, file_data: Data, file_size: Int) in
             MemberObject_signup.upload_files.append((field_name: "user_idcard_img", file_name: file_name, file_data: file_data, file_size: file_size))
@@ -56,6 +59,7 @@ class SignUpRegisterVC: UIViewController {
         StoreObject_signup.upload_building_contract_imgs.enumerated().forEach { i, data in
             StoreObject_signup.upload_files.append((field_name: "building_contract_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
         }
+        print(StoreObject_signup.upload_files)
         /// agreement
         agree_btn_s.forEach { btn in btn.addTarget(self, action: #selector(normal_agree_btn(_:)), for: .touchUpInside) }
         sms_btn.addTarget(self, action: #selector(marketing_agree_btn(_:)), for: .touchUpInside)
@@ -119,9 +123,6 @@ class SignUpRegisterVC: UIViewController {
     }
     
     @objc func register_btn(_ sender: UIButton) {
-        /// 데이터 삭제
-        MemberObject_signup.upload_files.removeAll()
-        StoreObject_signup.upload_files.removeAll()
         
         var final_check: Bool = true
         
@@ -141,12 +142,12 @@ class SignUpRegisterVC: UIViewController {
             if status == 200 {
                 /// Member FileUpload 요청
                 dispatchGroup.enter()
-                requestFileUpload(action: "add", collection_id: "member", document_id: MemberObject_signup.member_id, file_data: MemberObject_signup.upload_files) { status in
+                requestFileUpload(action: "add", collection_id: "member", document_id: MemberObject_signup.member_id, file_data: MemberObject_signup.upload_files) { _, status in
                     dispatchGroup.leave()
                 }
                 /// Store FileUpload 요청
                 dispatchGroup.enter()
-                requestFileUpload(action: "add", collection_id: "store", document_id: StoreObject_signup.store_id, file_data: StoreObject_signup.upload_files) { status in
+                requestFileUpload(action: "add", collection_id: "store", document_id: StoreObject_signup.store_id, file_data: StoreObject_signup.upload_files) { _, status in
                     dispatchGroup.leave()
                 }
             }

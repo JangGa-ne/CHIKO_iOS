@@ -15,6 +15,18 @@ func stringWidth(text: String, fontName: String = "", fontSize: CGFloat = 14, fo
     }
 }
 
+extension UIButton {
+    
+    func padding(_ padding: UIEdgeInsets) {
+        contentEdgeInsets = UIEdgeInsets(
+            top: contentEdgeInsets.top + padding.top,
+            left: contentEdgeInsets.left + padding.left,
+            bottom: contentEdgeInsets.bottom + padding.bottom,
+            right: contentEdgeInsets.right + padding.right
+        )
+    }
+}
+
 extension UITextField {
     
     func paddingLeft(_ x: CGFloat) {
