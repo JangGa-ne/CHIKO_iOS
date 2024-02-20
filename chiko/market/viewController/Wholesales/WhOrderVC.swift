@@ -61,6 +61,7 @@ class WhOrderVC: UIViewController {
     var WhOrderArray_all: [WhOrderData] = []
     var WhOrderArray: [WhOrderData] = []
     var WhNotDeliveryArray: [WhNotDeliveryData] = []
+    var WhNotDeliveryArray_all: [WhNotDeliveryData] = []
     
     var refreshControl: UIRefreshControl = UIRefreshControl()
     
@@ -68,8 +69,8 @@ class WhOrderVC: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var totalPrice_label: UILabel!
-    @IBOutlet weak var UndeliveryAdd_btn: UIButton!
-    @IBOutlet weak var Undelivery_btn: UIButton!
+    @IBOutlet weak var notDeliveryAdd_btn: UIButton!
+    @IBOutlet weak var notDelivery_btn: UIButton!
     @IBOutlet weak var date_btn: UIButton!
     
     override func viewDidLoad() {
@@ -89,8 +90,8 @@ class WhOrderVC: UIViewController {
         date_btn.setTitle(dateFormatter.string(from: Date()), for: .normal)
         date_btn.addTarget(self, action: #selector(date_btn(_:)), for: .touchUpInside)
         
-        ([UndeliveryAdd_btn, Undelivery_btn] as [UIButton]).enumerated().forEach { i, btn in
-            btn.tag = i; btn.addTarget(self, action: #selector(Undelivery_btn(_:)), for: .touchUpInside)
+        ([notDeliveryAdd_btn, notDelivery_btn] as [UIButton]).enumerated().forEach { i, btn in
+            btn.tag = i; btn.addTarget(self, action: #selector(notDelivery_btn(_:)), for: .touchUpInside)
         }
         
         loadingData()
@@ -103,25 +104,27 @@ class WhOrderVC: UIViewController {
     @objc func date_btn(_ sender: UIButton) {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "CalendarVC") as! CalendarVC
+        segue.WhOrderVCdelegate = self
         segue.present_date = date_btn.titleLabel!.text!
         presentPanModal(segue)
     }
     
-    @objc func Undelivery_btn(_ sender: UIButton) {
+    @objc func notDelivery_btn(_ sender: UIButton) {
         
         if sender.tag == 0 {
             if WhOrderArray.count > 0 {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 let segue = storyboard?.instantiateViewController(withIdentifier: "WhNotDeliveryAddVC") as! WhNotDeliveryAddVC
-                if #available(iOS 13.0, *) { segue.isModalInPresentation = true }
+                segue.modalPresentationStyle = .overCurrentContext; segue.transitioningDelegate = self
                 segue.present_date = date_btn.titleLabel!.text!
                 segue.WhOrderArray = WhOrderArray
-//                presentPanModal(segue)
+                segue.WhNotDeliveryArray = WhNotDeliveryArray
                 present(segue, animated: true, completion: nil)
             } else {
                 customAlert(message: "해당 날짜에 주문상품이 없어\n미송상품을 추가 할 수 없습니다.", time: 2)
             }
         } else if sender.tag == 1 {
-//            segueViewController(identifier: "WhUndeliveryVC")
+//            segueViewController(identifier: "WhNotDeliveryVC")
         }
     }
     
@@ -134,10 +137,10 @@ class WhOrderVC: UIViewController {
         requestWhOrder { array, _ in
             self.WhOrderArray_all = array; dispatchGroup.leave()
         }
-        /// WhUndelivery 요청
+        /// WhNotDelivery 요청
         dispatchGroup.enter()
-        requestWhNotDelivery { array, _ in
-            self.WhNotDeliveryArray = array; dispatchGroup.leave()
+        requestWhNotDelivery(type: "date") { array, _ in
+            self.WhNotDeliveryArray_all = array; dispatchGroup.leave()
         }
         
         dispatchGroup.notify(queue: .main) {
@@ -147,6 +150,7 @@ class WhOrderVC: UIViewController {
             self.customLoadingIndicator(animated: false)
             /// 데이터 삭제
             self.WhOrderArray.removeAll()
+            self.WhNotDeliveryArray.removeAll()
             
             self.WhOrderArray_all.filter { data in
                 return data.order_date.contains(self.date_btn.titleLabel?.text!.replacingOccurrences(of: ".", with: "") ?? "") && self.date_btn.titleLabel?.text! != ""
@@ -154,6 +158,13 @@ class WhOrderVC: UIViewController {
                 data.item_option.forEach { data in total_price += (data.price*data.quantity) }
                 /// 데이터 추가
                 self.WhOrderArray.append(data)
+            }
+            
+            self.WhNotDeliveryArray_all.filter { data in
+                return data.order_date.contains(self.date_btn.titleLabel?.text!.replacingOccurrences(of: ".", with: "") ?? "") && self.date_btn.titleLabel?.text! != ""
+            }.forEach { data in
+                /// 데이터 추가
+                self.WhNotDeliveryArray.append(data)
             }
             
             self.totalPrice_label.text = "₩\(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
@@ -188,7 +199,7 @@ extension WhOrderVC: UITableViewDelegate, UITableViewDataSource {
         cell.WhOrderObject = data
         cell.viewDidLoad()
         
-        cell.notDelivery_sv.isHidden = false
+        cell.notDelivery_sv.isHidden = !(WhNotDeliveryArray_all.contains { $0.item_key == data.item_key })
         cell.itemName_label.text = data.item_name
         data.item_option.forEach { data in price += (data.price*data.quantity); quantity += data.quantity }
         cell.tableView_height.constant = CGFloat(data.item_option.count*30)

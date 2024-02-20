@@ -26,6 +26,7 @@ class WhMyPageTC: UITableViewCell {
     @IBOutlet weak var mPay_v: UIView!
     
     @IBOutlet weak var title_label: UILabel!
+    @IBOutlet weak var title_bottom: NSLayoutConstraint!
 }
 
 class WhMyPageVC: UIViewController {
@@ -39,8 +40,8 @@ class WhMyPageVC: UIViewController {
         (title: "주문관리", content: ["오늘의주문", "배송관리"]),
         (title: "정산관리", content: ["매입전잔"]),
         (title: "매장관리", content: ["매장태그관리", "직원관리"]),
-        (title: "정보관리", content: ["계좌관리", "사업자 수정", "내정보 수정"]),
-        (title: "고객센터", content: [] as [String]),
+        (title: "정보관리", content: ["계좌관리", "사업자수정", "내정보수정"]),
+        (title: "고객센터", content: ["자주묻는질문"]),
     ]
     let segues: [(String, [String])] = [
         ("상품관리", ["WhGoodsVC", "WhGoodsUploadVC"]),
@@ -48,7 +49,7 @@ class WhMyPageVC: UIViewController {
         ("정산관리", [""]),
         ("매장관리", ["TagVC", "EmployeeVC"]),
         ("정보관리", ["AccountVC", "StoreVC", "MemberVC"]),
-        ("고객센터", [] as [String]),
+        ("고객센터", [""]),
     ]
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
@@ -111,7 +112,7 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 { return .zero } else { return 50 }
+        if section == 0 { return .zero } else { return 54 }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -150,6 +151,7 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "WhMyPageTC2", for: indexPath) as! WhMyPageTC
             cell.title_label.text = menus[indexPath.section-1].content[indexPath.row]
+            cell.title_bottom.constant = menus[indexPath.section-1].content.count-1 == indexPath.row ? 10 : 0
             return cell
         }
     }

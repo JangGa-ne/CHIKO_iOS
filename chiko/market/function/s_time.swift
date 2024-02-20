@@ -7,23 +7,11 @@
 
 import UIKit
 
-func setKoreaUnixTimestamp() -> Int64 {
-    
-    let unixTimestamp = Int64(Date().timeIntervalSince1970 * 1000) % 10000000000000
-    let unixTimestamp_kor = unixTimestamp+32400000
-    
-    return unixTimestamp_kor
+func setGMTUnixTimestamp() -> Int64 {
+    return Int64(Date().timeIntervalSince1970 * 1000) % 10000000000000
 }
 
-func setTimestampToDateTime(region: String = "kor", timestamp: Int, dateformat: String = "yyyy.MM.dd HH:mm:ss") -> String {
-    
-    var timestamp: Int = timestamp
-    switch region {
-    case "kor": timestamp -= 32400000
-    case "chi": timestamp -= 34000000
-    default:
-        timestamp -= 32400000
-    }
+func setTimestampToDateTime(timestamp: Int, dateformat: String = "yyyy.MM.dd HH:mm:ss") -> String {
     
     var timeInterval = TimeInterval()
     if (String(timestamp).count == 13) { 

@@ -142,10 +142,16 @@ extension BuildingListVC: UITableViewDelegate, UITableViewDataSource {
             building_row = indexPath.row; floor_row = 0; loading = true; loadingData(building: building_name[building_row]+"/")
         } else if tableView == floor_tableView {
             floor_row = indexPath.row; loading = true; tableView.reloadData()
-        } else if tableView == room_tableView, let delegate = SignUpStoreVCdelegate {
-            delegate.buildingAddressDetail_tf.text = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
-            delegate.buildingAddressDetail_btn.backgroundColor = .H_8CD26B
-            delegate.buildingAddressDetail_btn.isSelected = true
+        } else if tableView == room_tableView {
+            if let delegate = SignUpStoreVCdelegate {
+                delegate.buildingAddressDetail_tf.text = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
+                delegate.buildingAddressDetail_btn.backgroundColor = .H_8CD26B
+                delegate.buildingAddressDetail_btn.isSelected = true
+            }
+            if let delegate = ReReceiptUploadVCdelegate {
+                delegate.ReReceiptChatObject.summary_address = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
+                UIView.setAnimationsEnabled(false); delegate.tableView.reloadSections(IndexSet(integer: 0), with: .none); UIView.setAnimationsEnabled(true)
+            }
             navigationController?.popViewController(animated: true)
         }
     }

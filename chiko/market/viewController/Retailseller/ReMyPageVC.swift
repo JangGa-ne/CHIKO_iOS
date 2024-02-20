@@ -16,8 +16,10 @@ class ReMyPageTC: UITableViewCell {
     @IBOutlet weak var basket_noticeView: UIView!
     @IBOutlet weak var scrap_view: UIView!
     @IBOutlet weak var setting_view: UIView!
+    @IBOutlet weak var receiptChat_view: UIView!
     
     @IBOutlet weak var title_label: UILabel!
+    @IBOutlet weak var title_bottom: NSLayoutConstraint!
 }
 
 class ReMyPageVC: UIViewController {
@@ -27,14 +29,14 @@ class ReMyPageVC: UIViewController {
     }
     
     let menus: [(title: String, content: [String])] = [
-        (title: "매장관리", content: ["직원 관리"]),
-        (title: "정보관리", content: ["사업자 수정", "내 정보 수정"]),
-        (title: "고객센터", content: [] as [String]),
+        (title: "매장관리", content: ["직원관리"]),
+        (title: "정보관리", content: ["사업자수정", "내정보수정", "배송지관리"]),
+        (title: "고객센터", content: ["자주묻는질문"]),
     ]
     let segues: [(String, [String])] = [
         ("매장관리", ["EmployeeVC"]),
-        ("정보관리", ["StoreVC", "MemberVC"]),
-        ("고객센터", [] as [String]),
+        ("정보관리", ["StoreVC", "MemberVC", "ReDeliveryVC"]),
+        ("고객센터", [""]),
     ]
     
     @IBOutlet weak var storeMain_img: UIImageView!
@@ -52,7 +54,7 @@ class ReMyPageVC: UIViewController {
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
-        tableView.contentInset = .zero
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         if #available(iOS 15.0, *) { tableView.sectionHeaderTopPadding = .zero }
         tableView.delegate = self; tableView.dataSource = self
         
@@ -113,7 +115,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTC0", for: indexPath) as! ReMyPageTC
             cell.basket_noticeView.isHidden = (ReBasketArray.count == 0)
-            ([cell.mPay_view, cell.order_view, cell.basket_view, cell.scrap_view, cell.setting_view] as [UIView]).enumerated().forEach { i, view in
+            ([cell.mPay_view, cell.order_view, cell.basket_view, cell.scrap_view, cell.setting_view, cell.receiptChat_view] as [UIView]).enumerated().forEach { i, view in
                 view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(segue_view(_:))))
             }
             cell.mPay_label.text = priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0"
@@ -122,6 +124,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTC1", for: indexPath) as! ReMyPageTC
             cell.title_label.text = menus[indexPath.section-1].content[indexPath.row]
+            cell.title_bottom.constant = menus[indexPath.section-1].content.count-1 == indexPath.row ? 10 : 0
             return cell
         }
     }
@@ -136,6 +139,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         case 2: segueViewController(identifier: "ReBasketVC")
         case 3: segueViewController(identifier: "ReBookMarkVC")
         case 4: break
+        case 5: segueViewController(identifier: "ReReceiptChatVC")
         default:
             break
         }

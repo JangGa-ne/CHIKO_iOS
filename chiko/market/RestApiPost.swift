@@ -72,7 +72,7 @@ func requestCategory(action: [String], index: Int = 0, completionHandler: @escap
 
 func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
     
-    let timestamp: Int64 = setKoreaUnixTimestamp()
+    let timestamp: Int64 = setGMTUnixTimestamp()
     var params: Parameters = [
         "action": "register"
     ]
@@ -465,6 +465,8 @@ func requestReGoods(search: String, item_category_name: [String] = [], item_name
 }
 
 func requestReBasket(type: String = "get", params: [String: Any] = [:], completionHandler: @escaping ((Int) -> Void)) {
+    /// 데이터 삭제
+    ReBasketArray.removeAll()
     
     var params: Parameters = params
     if type == "get" {
@@ -859,7 +861,7 @@ func requestEmployee(completionHandler: @escaping (([MemberData], Int) -> Void))
 
 func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, completionHandler: @escaping (Int) -> Void) {
     
-    let timestamp: Int64 = setKoreaUnixTimestamp()
+    let timestamp: Int64 = setGMTUnixTimestamp()
     var params: Parameters = [
         "action": "order_list",
         "cn_total_item_price": 0,
@@ -1064,7 +1066,7 @@ func requestWhOrder(completionHandler: @escaping ([WhOrderData], Int) -> Void) {
     
     let params: Parameters = [
         "action": "get",
-        "store_id": "wh1699740024000"//StoreObject.store_id,
+        "store_id": StoreObject.store_id,
     ]
     
     var WhOrderArray: [WhOrderData] = []
@@ -1096,17 +1098,22 @@ func requestWhOrder(completionHandler: @escaping ([WhOrderData], Int) -> Void) {
     }
 }
 
-func requestWhNotDelivery(parameters: [String: Any]? = nil, completionHandler: @escaping ([WhNotDeliveryData], Int) -> Void) {
+func requestWhNotDelivery(type: String = "date", parameters: [String: Any]? = nil, completionHandler: @escaping ([WhNotDeliveryData], Int) -> Void) {
     
     var params: Parameters = [
         "store_id": StoreObject.store_id,
     ]
     if parameters == nil {
         params["action"] = "get"
+        params["store_id"] = StoreObject.store_id
+        params["type"] = type
     } else {
-        params["action"] = "set"
         params = parameters ?? [:]
+        params["action"] = "set"
+        params["store_id"] = StoreObject.store_id
     }
+    
+    params.forEach { dict in print(dict) }
     
     var WhNotDeliveryArray: [WhNotDeliveryData] = []
     /// x-www-form-urlencoded
@@ -1114,8 +1121,16 @@ func requestWhNotDelivery(parameters: [String: Any]? = nil, completionHandler: @
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
 //                print(responseJson)
-                let array = responseJson["data"] as? Array<[[String: Any]]> ?? []
-                array.forEach { array in
+                if parameters == nil {
+                    let array = responseJson["data"] as? Array<[[String: Any]]> ?? []
+                    array.forEach { array in
+                        array.forEach { dict in
+                            /// 데이터 추가
+                            WhNotDeliveryArray.append(setWhNotDelivery(notDeliveryDict: dict))
+                        }
+                    }
+                } else {
+                    let array = responseJson["data"] as? Array<[String: Any]> ?? []
                     array.forEach { dict in
                         /// 데이터 추가
                         WhNotDeliveryArray.append(setWhNotDelivery(notDeliveryDict: dict))
@@ -1133,6 +1148,81 @@ func requestWhNotDelivery(parameters: [String: Any]? = nil, completionHandler: @
         } catch {
             print(response.error as Any)
             completionHandler([], response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestReReceiptChat(parameters: [String: Any]? = nil, completionHandler: @escaping ([(store_name: String, summary_address: String, timestamp: String, data: [ReReceiptChatData])], Int) -> Void) {
+    
+    var params: Parameters = [:]
+    
+    if parameters == nil {
+        params["action"] = "get"
+        params["store_id"] = StoreObject.store_id
+    } else {
+        params = parameters ?? [:]
+        params["action"] = "set"
+        params["store_id"] = StoreObject.store_id
+    }
+    
+    var ReReceiptChatArray: [(store_name: String, summary_address: String, timestamp: String, data: [ReReceiptChatData])] = []
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/enquiry", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                
+                let array = responseJson["data"] as? Array<[[String: Any]]> ?? []
+                array.forEach { array in
+                    
+                    var store_name: String = ""
+                    var summary_address: String = ""
+                    var timestamp: String = ""
+                    var ReceiptChatArray: [ReReceiptChatData] = []
+                    
+                    array.enumerated().forEach { i, dict in
+                        
+                        if i == 0 {
+                            store_name = dict["requested_store_name"] as? String ?? ""
+                            summary_address = dict["summary_address"] as? String ?? ""
+                            timestamp = dict["time"] as? String ?? ""
+                        }
+                        ReceiptChatArray.append(setReReceiptChat(receiptChatDict: dict))
+                    }
+                    /// 데이터 추가
+                    ReReceiptChatArray.append((store_name: store_name, summary_address: summary_address, timestamp: timestamp, data: ReceiptChatArray))
+                }
+                
+                if ReReceiptChatArray.count > 0 {
+                    completionHandler(ReReceiptChatArray, 200)
+                } else {
+                    completionHandler([], 204)
+                }
+            } else {
+                completionHandler([], 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler([], response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestEditDB(params: [String: Any]? = nil, completionHandler: @escaping (Int) -> Void) {
+    
+    params?.forEach { dict in print(dict) }
+    
+    AF.request(requestUrl+"/edit_db", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+                print(responseJson)
+                completionHandler(200)
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
         }
     }
 }

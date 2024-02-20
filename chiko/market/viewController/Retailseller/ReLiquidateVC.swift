@@ -86,6 +86,8 @@ class ReLiquidateVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        ReLiquidateVCdelegate = self
         /// 주문상품
         let data = LiquidateArray[0]
         

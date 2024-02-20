@@ -127,7 +127,7 @@ class StoreData {
     var store_address_zipcode: String = "" // offline 일때
     var summary_address: String = ""
     var store_favorites: [String] = []
-    var store_delivery: [(address: String, address_detail: String, name: String, nickname: String, num: String)] = []
+    var store_delivery: [(address: String, address_detail: String, address_zipcode: String, name: String, nickname: String, num: String)] = []
     var store_delivery_position: Int = 0
     var wechat_id: String = ""
     // 도매자
@@ -175,6 +175,7 @@ func setStore(storeDict: [String: Any]) -> StoreData {
         storeValue.store_delivery.append((
             address: dict["address"] as? String ?? "",
             address_detail: dict["address_detail"] as? String ?? "",
+            address_zipcode: dict["address_zipcode"] as? String ?? "",
             name: dict["name"] as? String ?? "",
             nickname: dict["nickname"] as? String ?? "",
             num: dict["num"] as? String ?? ""
@@ -554,4 +555,51 @@ func setWhNotDelivery(notDeliveryDict: [String: Any]) -> WhNotDeliveryData {
     notDeliveryValue.processing_key = notDeliveryDict["processing_key"] as? String ?? ""
     
     return notDeliveryValue
+}
+
+class ReReceiptChatData {
+    
+    var attached_imgs: [String] = []
+    var content: String = ""
+    var direction: String = ""
+    var my_store_id: String = ""
+    var my_store_name: String = ""
+    var read_or_not: Bool = false
+    var requested_store_name: String = ""
+    var summary_address: String = ""
+    var time: String = ""
+    
+    var order_item: [(item_name: String, item_option: [(color: String, size: String, quantity: Int)])] = []
+    var upload_attached_imgs: [(file_name: String, file_data: Data, file_size: Int)] = []
+    
+}
+
+func setReReceiptChat(receiptChatDict: [String: Any]) -> ReReceiptChatData {
+    
+    let receiptChatValue = ReReceiptChatData()
+    receiptChatValue.attached_imgs = receiptChatDict["attached_imgs"] as? [String] ?? []
+    receiptChatValue.content = receiptChatDict["content"] as? String ?? ""
+    receiptChatValue.direction = receiptChatDict["direction"] as? String ?? ""
+    receiptChatValue.my_store_id = receiptChatDict["my_store_id"] as? String ?? ""
+    receiptChatValue.my_store_name = receiptChatDict["my_store_name"] as? String ?? ""
+    receiptChatValue.read_or_not = receiptChatDict["read_or_not"] as? Bool ?? false
+    receiptChatValue.requested_store_name = receiptChatDict["requested_store_name"] as? String ?? ""
+    receiptChatValue.summary_address = receiptChatDict["summary_address"] as? String ?? ""
+    receiptChatValue.time = receiptChatDict["time"] as? String ?? ""
+    (receiptChatDict["order_item"] as? Array<[String: Any]> ?? []).forEach { dict in
+        var item_option: [(color: String, size: String, quantity: Int)] = []
+        (dict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
+            item_option.append((
+                color: dict["color"] as? String ?? "",
+                size: dict["size"] as? String ?? "",
+                quantity: dict["quantity"] as? Int ?? 0
+            ))
+        }
+        receiptChatValue.order_item.append((
+            item_name: dict["item_name"] as? String ?? "",
+            item_option: item_option
+        ))
+    }
+    
+    return receiptChatValue
 }

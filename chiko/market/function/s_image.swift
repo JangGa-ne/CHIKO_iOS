@@ -15,7 +15,7 @@ import Photos
 func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
     let size = image.size
 
-    let widthRatio  = targetSize.width  / size.width
+    let widthRatio  = targetSize.width / size.width
     let heightRatio = targetSize.height / size.height
 
     let newSize: CGSize
@@ -37,22 +37,34 @@ func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
 
 func setImageSlideShew(imageView: ImageSlideshow, imageUrls: [String], cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
     
-    SDImageCache.shared.clearMemory()
-    SDImageCache.shared.clearDisk()
-    
+    SDImageCache.shared.config.maxMemoryCost = 50 * 1024 * 1024
     SDWebImagePrefetcher.shared.prefetchURLs(imageUrls.compactMap { URL(string: $0) })
     
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true
     imageView.contentScaleMode = contentMode
     
-    var images: [SDWebImageSource] = []
-    
+    var resizeImage: CGSize = CGSize(width: imageView.frame.size.width+100, height: imageView.frame.size.height+100)
+    var scaleMode: SDImageScaleMode = .fill
+    if contentMode == .scaleToFill {
+        scaleMode = .fill
+    } else if contentMode == .scaleAspectFit {
+        scaleMode = .aspectFit
+    } else if contentMode == .scaleAspectFill {
+        scaleMode = .aspectFill
+    }
+
+    var inputs: [ImageSource] = []
     imageUrls.forEach { imageUrl in
         guard let url = URL(string: imageUrl) else { return }
-        images.append(SDWebImageSource(url: url))
-        if images.count == imageUrls.count {
-            imageView.setImageInputs(images)
+        let transformer = SDImageResizingTransformer(size: resizeImage, scaleMode: scaleMode)
+        SDWebImageManager.shared.loadImage(with: url, options: [], context: [.imageTransformer: transformer], progress: nil) { (image, _, _, _, _, _) in
+            if let image = image {
+                inputs.append(ImageSource(image: image))
+            }
+            if inputs.count == imageUrls.count {
+                imageView.setImageInputs(inputs)
+            }
         }
     }
 }
@@ -67,10 +79,19 @@ func setNuke(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UI
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true
     imageView.contentMode = contentMode
+
+    let pipeline = ImagePipeline {
+        $0.dataCache = dataCache
+        $0.imageCache = ImageCache(costLimit: 1024 * 1024 * 50)
+    }
+    
+    var config = pipeline.configuration
+    config.dataLoadingQueue.maxConcurrentOperationCount = 10
+    config.isProgressiveDecodingEnabled = true
     
     if let imageUrl = URL(string: imageUrl) {
         let request = ImageRequest(url: imageUrl, processors: [ImageProcessors.Resize(size: imageView.frame.size)])
-        let options = ImageLoadingOptions(placeholder: placeholder, transition: .fadeIn(duration: 0.1), contentModes: .init(success: contentMode, failure: contentMode, placeholder: contentMode))
+        let options = ImageLoadingOptions(placeholder: UIImage(named: "chiko"), transition: .fadeIn(duration: 0.1), contentModes: .init(success: contentMode, failure: contentMode, placeholder: .scaleAspectFit))
         Nuke.loadImage(with: request, options: options, into: imageView) { response, result, error in
             if let image = response?.image { imageView.image = image } else { imageView.image = UIImage() }
         }

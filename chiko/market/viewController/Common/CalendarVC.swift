@@ -15,6 +15,11 @@ class CalendarVC: UIViewController {
         return .lightContent
     }
     
+    var WhOrderVCdelegate: WhOrderVC? = nil
+    var WhNotDeliveryAddVCdelegate: WhNotDeliveryAddVC? = nil
+    var WhNotDeliveryAddTCdelegate: WhNotDeliveryAddTC? = nil
+    
+    var start_date: String = ""
     var present_date: String = ""
     /// 미송상품 등록
     var indexpath_row: Int = 0
@@ -40,6 +45,7 @@ class CalendarVC: UIViewController {
         
         let dateFormatter2 = DateFormatter()
         dateFormatter2.dateFormat = "yy-MM-dd"
+        if present_date == "" { present_date = dateFormatter2.string(from: Date()).replacingOccurrences(of: "-", with: ".") }
         calendarView.presentedDate = CVDate(date: dateFormatter2.date(from: present_date.replacingOccurrences(of: ".", with: "-")) ?? Date())
 
         calendarView.calendarAppearanceDelegate = self
@@ -58,7 +64,8 @@ class CalendarVC: UIViewController {
             delegate.date_btn.setTitle(present_date, for: .normal)
             /// 데이터 삭제
             delegate.WhOrderArray.removeAll()
-            
+            delegate.WhNotDeliveryArray.removeAll()
+            /// 오늘의주문
             delegate.WhOrderArray_all.filter { data in
                 return data.order_date.contains(present_date.replacingOccurrences(of: ".", with: ""))
             }.forEach { data in
@@ -66,15 +73,27 @@ class CalendarVC: UIViewController {
                 /// 데이터 추가
                 delegate.WhOrderArray.append(data)
             }
+            /// 미송상품
+            delegate.WhNotDeliveryArray_all.filter { data in
+                return data.order_date.contains(present_date.replacingOccurrences(of: ".", with: ""))
+            }.forEach { data in
+                /// 데이터 추가
+                delegate.WhNotDeliveryArray.append(data)
+            }
             
             delegate.totalPrice_label.text = "₩\(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
             delegate.tableView.reloadData()
         }
         
         if let VCdelegate = WhNotDeliveryAddVCdelegate, let TCdelegate = WhNotDeliveryAddTCdelegate {
-            VCdelegate.WhNotDeliveryArray[TCdelegate.indexpath_row].item_option[indexpath_row].not_delivery_memo = present_date
-            present_btn.setTitle(present_date, for: .normal)
-            present_btn.setTitleColor(.black, for: .normal)
+            
+            if Int(start_date.replacingOccurrences(of: ".", with: "")) ?? 0 >= Int(present_date.replacingOccurrences(of: ".", with: "")) ?? 0 {
+                customAlert(message: "등록된 날짜 보다 선택한 날짜가 같거나 작을 수 없습니다.", time: 2); return
+            } else {
+                VCdelegate.WhNotDeliveryArray_new[TCdelegate.indexpath_row].item_option[indexpath_row].not_delivery_memo = present_date
+                present_btn.setTitle(present_date, for: .normal)
+                present_btn.setTitleColor(.black, for: .normal)
+            }
         }
         
         dismiss(animated: true, completion: nil)

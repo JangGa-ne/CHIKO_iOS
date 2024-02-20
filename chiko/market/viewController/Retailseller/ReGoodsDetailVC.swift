@@ -87,6 +87,7 @@ class ReGoodsDetailVC: UIViewController {
     var store_id: String = ""
     var item_key: String = ""
     
+    var load_img: Bool = false
     var store_mainphoto_img: String = ""
     
     var GoodsObject: GoodsData = GoodsData()
@@ -180,7 +181,7 @@ class ReGoodsDetailVC: UIViewController {
             ])
         }
         
-        let timestamp = setKoreaUnixTimestamp()
+        let timestamp = setGMTUnixTimestamp()
         let data = GoodsObject
         var params: [String: Any] = [
             "item_price": data.item_price,
@@ -277,7 +278,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
         let data = GoodsObject
         guard let cell = cell as? ReGoodsDetailTC else { return }
         
-        if indexPath.section == 0 {
+        if indexPath.section == 0 && !load_img { load_img = true
             setNuke(imageView: cell.store_img, imageUrl: store_mainphoto_img, cornerRadius: 18)
             setImageSlideShew(imageView: cell.item_img, imageUrls: data.item_photo_imgs)
             cell.item_img.pageIndicator = .none

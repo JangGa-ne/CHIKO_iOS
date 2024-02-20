@@ -63,7 +63,8 @@ extension ReMainTBC: UITabBarControllerDelegate {
         
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
-        setKoreaUnixTimestamp()
+        let timestamp = setGMTUnixTimestamp()
+        print(timestamp, setTimestampToDateTime(timestamp: Int(timestamp)))
         
         if let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) {
             

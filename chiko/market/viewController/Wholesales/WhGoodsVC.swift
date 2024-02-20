@@ -112,7 +112,9 @@ extension WhGoodsVC: UIScrollViewDelegate {
         if contentOffsetY > contentHeight-frameHeight && contentOffsetY > 0 && !fetchingMore {
             fetchingMore = true; startIndexChange = true; tableView.reloadData()
             DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
-                self.loadingData(item_key: self.GoodsArray[self.GoodsArray.count-1].item_key)
+                if self.GoodsArray.count > 0 {
+                    self.loadingData(item_key: self.GoodsArray[self.GoodsArray.count-1].item_key)
+                }
             }
         }
     }

@@ -205,8 +205,8 @@ class WhGoodsUploadVC: UIViewController {
             customAlert(message: "색상∙사이즈를 설정해 주세요.", time: 1)
         } else {
             
-            var timestamp: Int64 = setKoreaUnixTimestamp()
-            if GoodsObject.item_key != "" { timestamp = Int64(GoodsObject.item_key) ?? setKoreaUnixTimestamp() }
+            var timestamp: Int64 = setGMTUnixTimestamp()
+            if GoodsObject.item_key != "" { timestamp = Int64(GoodsObject.item_key) ?? setGMTUnixTimestamp() }
             
             customLoadingIndicator(text: "상품 등록중...", animated: true)
             

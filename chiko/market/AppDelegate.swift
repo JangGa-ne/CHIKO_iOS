@@ -10,6 +10,8 @@ import Nuke
 import FirebaseCore
 import FirebaseMessaging
 
+let dataCache = try? DataCache(name: "com.blink.dk.market2")
+
 var priceFormatter: NumberFormatter = NumberFormatter()
 var back_btn_hidden: Bool = false
 
@@ -54,6 +56,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var member_pw: String = ""
        
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        dataCache?.sizeLimit = 50 * 1024 * 1024
         // init
         priceFormatter.numberStyle = .decimal
         deviceInfo { ratio, device in
@@ -68,8 +72,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else if device_ratio == "19:9" {
             divice_radius = 50
         }
-        
-//        ImagePipeline.shared = ImagePipeline { $0.imageCache = ImageCache(costLimit: 100 * 1024 * 1024, countLimit: 200 * 1024 * 1024) }
         
         store_index_select = Bool(UserDefaults.standard.string(forKey: "store_index_select") ?? "false") ?? false
         store_index = UserDefaults.standard.integer(forKey: "store_index")

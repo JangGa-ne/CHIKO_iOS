@@ -103,8 +103,6 @@ class ReBasketVC: UIViewController {
     }
     
     @objc func refreshControl(_ sender: UIRefreshControl) {
-        /// 데이터 삭제
-        ReBasketArray.removeAll(); tableView.reloadData()
         /// ReBasket 요청
         requestReBasket(type: "get") { status in
             

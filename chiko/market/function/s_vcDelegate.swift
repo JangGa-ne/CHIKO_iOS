@@ -27,10 +27,13 @@ var ReGoodsVCdelegate: ReGoodsVC? = nil
 var ReGoodsFilterVCdelegate: ReGoodsFilterVC? = nil
 var ReGoodsDetailVCdelegate: ReGoodsDetailVC? = nil
 var ReMyPageVCdelegate: ReMyPageVC? = nil
+var ReLiquidateVCdelegate: ReLiquidateVC? = nil
 var ReOrderVCdelegate: ReOrderVC? = nil
 var ReBasketVCdelegate: ReBasketVC? = nil
 var ReBookMarkVCdelegate: ReBookMarkVC? = nil
 var ReStoreVisitVCdelegate: ReStoreVisitVC? = nil
+var ReReceiptUploadVCdelegate: ReReceiptUploadVC? = nil
+var ReReceiptUploadTCdelegate: ReReceiptUploadTC? = nil
 /// Wholesales
 var WhHomeVCdelegate: WhHomeVC? = nil
 var WhMyPageVCdelegate: WhMyPageVC? = nil

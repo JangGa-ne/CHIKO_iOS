@@ -25,8 +25,11 @@ class CategoryVC: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
-    
+    /// 소매자
     var ReGoodsVCdelegate: ReGoodsVC? = nil
+    var ReReceiptUploadVCdelegate: ReReceiptUploadVC? = nil
+    var ReReceiptUploadTCdelegate: ReReceiptUploadTC? = nil
+    /// 도매자
     var WhGoodsUploadVCdelegate: WhGoodsUploadVC? = nil
     
     var option_type: String = ""
@@ -116,6 +119,15 @@ class CategoryVC: UIViewController {
             if delegate.option_key.contains("의류") { indexpath_section = 0 } else { indexpath_section = 1 }
             
             CategoryObject.MaterialArray.forEach { document in
+                document.forEach { (key: String, value: Any) in option_title.append(key)
+                    (value as? [String: [String]] ?? [:]).forEach { (key: String, value: [String]) in
+                        option_content.append((option1: value, option2: []))
+                    }
+                }
+            }
+        } else if option_type == "size" {
+            
+            CategoryObject.SizeArray.forEach { document in
                 document.forEach { (key: String, value: Any) in option_title.append(key)
                     (value as? [String: [String]] ?? [:]).forEach { (key: String, value: [String]) in
                         option_content.append((option1: value, option2: []))
@@ -255,8 +267,27 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
             
             dismiss(animated: true) { delegate.loadingData(first: true) }
         }
+        /// 소매자(영수증 주문요청)
+        if let VCdelegate = ReReceiptUploadVCdelegate, let TCdelegate = ReReceiptUploadTCdelegate {
+            
+            let optionSub_name = option_content[indexpath_section].option1[indexPath.row]
+            
+            if option_type == "color" {
+                TCdelegate.option_color = optionSub_name
+                dismiss(animated: true) {
+                    let segue = VCdelegate.storyboard?.instantiateViewController(withIdentifier: "CategoryVC") as! CategoryVC
+                    segue.ReReceiptUploadVCdelegate = VCdelegate
+                    segue.ReReceiptUploadTCdelegate = TCdelegate
+                    segue.option_type = "size"
+                    VCdelegate.presentPanModal(segue)
+                }; return
+            } else if option_type == "size" {
+                TCdelegate.option_size = optionSub_name
+                dismiss(animated: true) { TCdelegate.setQuantity() }; return
+            }
+        }
         /// 도매자(상품등록)
-        if let VCdelegate = WhGoodsUploadVCdelegate {
+        if let delegate = WhGoodsUploadVCdelegate {
             
             if option_key != "여성의류" {
                 
@@ -265,30 +296,30 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                 
                 if option_type == "category" {
                     
-                    if VCdelegate.GoodsObject.item_category_name.count == 0 {
+                    if delegate.GoodsObject.item_category_name.count == 0 {
                         
-                        VCdelegate.option_key = optionMain_name
-                        VCdelegate.GoodsObject.item_category_name = [optionMain_name, optionSub_name]
+                        delegate.option_key = optionMain_name
+                        delegate.GoodsObject.item_category_name = [optionMain_name, optionSub_name]
                         
-                        VCdelegate.loadingData(all: true); dismiss(animated: true) { VCdelegate.tableView.reloadData() }; return
+                        delegate.loadingData(all: true); dismiss(animated: true) { delegate.tableView.reloadData() }; return
                     } else {
                         
-                        VCdelegate.option_key = optionMain_name
-                        VCdelegate.GoodsObject.item_category_name = [optionMain_name, optionSub_name]
+                        delegate.option_key = optionMain_name
+                        delegate.GoodsObject.item_category_name = [optionMain_name, optionSub_name]
                     }
                     
                 } else if option_type == "color" {
                     
-                    if VCdelegate.GoodsObject.item_colors.contains(optionSub_name) { customAlert(message: "이미 선택한 색상입니다.", time: 1); return }
+                    if delegate.GoodsObject.item_colors.contains(optionSub_name) { customAlert(message: "이미 선택한 색상입니다.", time: 1); return }
                     
-                    VCdelegate.ColorArray.append((option_name: optionSub_name, option_color: option_content[indexpath_section].option2[indexPath.row]))
-                    VCdelegate.GoodsObject.item_colors.append(optionSub_name)
+                    delegate.ColorArray.append((option_name: optionSub_name, option_color: option_content[indexpath_section].option2[indexPath.row]))
+                    delegate.GoodsObject.item_colors.append(optionSub_name)
                     
-                    VCdelegate.loadingData(index: 1); dismiss(animated: true) { VCdelegate.tableView.reloadData() }; return
+                    delegate.loadingData(index: 1); dismiss(animated: true) { delegate.tableView.reloadData() }; return
                     
                 } else if option_type == "material" {
                     
-                    if VCdelegate.GoodsObject.item_materials.contains(optionSub_name) { customAlert(message: "이미 선택한 소재입니다.", time: 1); return }
+                    if delegate.GoodsObject.item_materials.contains(optionSub_name) { customAlert(message: "이미 선택한 소재입니다.", time: 1); return }
                     
                     let alert = UIAlertController(title: "", message: "\(optionMain_name) > \(optionSub_name)\n혼용률을 입력해 주세요.", preferredStyle: .alert)
                     alert.addTextField()
@@ -298,13 +329,13 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                     sheet_tf.addTarget(self, action: #selector(textfield(_:)), for: .editingChanged)
                     alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
                         if alert.textFields?[0].text ?? "" == "" {
-                            VCdelegate.MaterialArray.append((option_name: optionSub_name, option_percent: ""))
-                            VCdelegate.GoodsObject.item_materials.append(optionSub_name)
+                            delegate.MaterialArray.append((option_name: optionSub_name, option_percent: ""))
+                            delegate.GoodsObject.item_materials.append(optionSub_name)
                         } else {
-                            VCdelegate.MaterialArray.append((option_name: optionSub_name, option_percent: "\(alert.textFields?[0].text ?? "0")%"))
-                            VCdelegate.GoodsObject.item_materials.append("\(optionSub_name) \(alert.textFields?[0].text ?? "0")%")
+                            delegate.MaterialArray.append((option_name: optionSub_name, option_percent: "\(alert.textFields?[0].text ?? "0")%"))
+                            delegate.GoodsObject.item_materials.append("\(optionSub_name) \(alert.textFields?[0].text ?? "0")%")
                         }
-                        self.dismiss(animated: true) { VCdelegate.tableView.reloadData() }
+                        self.dismiss(animated: true) { delegate.tableView.reloadData() }
                     }))
                     alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
                     present(alert, animated: true, completion: nil); return
@@ -317,38 +348,38 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                 
                 if option_type == "category" {
                     
-                    if VCdelegate.GoodsObject.item_category_name.count == 0 {
+                    if delegate.GoodsObject.item_category_name.count == 0 {
                         
-                        VCdelegate.option_key = option_title[indexpath_section]
-                        VCdelegate.GoodsObject.item_category_name = ["여성의류", optionMain_name, optionSub_name]
+                        delegate.option_key = option_title[indexpath_section]
+                        delegate.GoodsObject.item_category_name = ["여성의류", optionMain_name, optionSub_name]
                         
-                        VCdelegate.loadingData(all: true); dismiss(animated: true) { VCdelegate.tableView.reloadData() }; return
+                        delegate.loadingData(all: true); dismiss(animated: true) { delegate.tableView.reloadData() }; return
                     } else {
-                        VCdelegate.option_key = option_title[indexpath_section]
-                        VCdelegate.GoodsObject.item_category_name = ["여성의류", optionMain_name, optionSub_name]
+                        delegate.option_key = option_title[indexpath_section]
+                        delegate.GoodsObject.item_category_name = ["여성의류", optionMain_name, optionSub_name]
                     }
                 }
             }
             
             customAlert(message: "카테고리 변경으로 일부 옵션 설정값이 초기화 됩니다.", time: 1) {
                 /// 데이터 삭제
-                VCdelegate.item_option_type = false
-                VCdelegate.style_row = nil
-                VCdelegate.ColorArray.removeAll()
-                VCdelegate.SizeArray.removeAll()
-                VCdelegate.MaterialArray.removeAll()
-                VCdelegate.OptionPriceArray.removeAll()
-                VCdelegate.StyleArray.removeAll()
-                VCdelegate.MaterialInfoArray.removeAll()
-                VCdelegate.WashingInfoArray.removeAll()
-                VCdelegate.GoodsObject.item_colors.removeAll()
-                VCdelegate.GoodsObject.item_sizes.removeAll()
-                VCdelegate.GoodsObject.item_materials.removeAll()
-                VCdelegate.GoodsObject.item_option.removeAll()
-                VCdelegate.GoodsObject.item_style.removeAll()
-                VCdelegate.GoodsObject.item_material_washing.removeAll()
+                delegate.item_option_type = false
+                delegate.style_row = nil
+                delegate.ColorArray.removeAll()
+                delegate.SizeArray.removeAll()
+                delegate.MaterialArray.removeAll()
+                delegate.OptionPriceArray.removeAll()
+                delegate.StyleArray.removeAll()
+                delegate.MaterialInfoArray.removeAll()
+                delegate.WashingInfoArray.removeAll()
+                delegate.GoodsObject.item_colors.removeAll()
+                delegate.GoodsObject.item_sizes.removeAll()
+                delegate.GoodsObject.item_materials.removeAll()
+                delegate.GoodsObject.item_option.removeAll()
+                delegate.GoodsObject.item_style.removeAll()
+                delegate.GoodsObject.item_material_washing.removeAll()
                 
-                VCdelegate.loadingData(all: true); self.dismiss(animated: true) { VCdelegate.tableView.reloadData() }
+                delegate.loadingData(all: true); self.dismiss(animated: true) { delegate.tableView.reloadData() }
             }
         }
     }
