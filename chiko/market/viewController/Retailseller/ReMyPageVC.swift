@@ -16,7 +16,7 @@ class ReMyPageTC: UITableViewCell {
     @IBOutlet weak var basket_noticeView: UIView!
     @IBOutlet weak var scrap_view: UIView!
     @IBOutlet weak var setting_view: UIView!
-    @IBOutlet weak var receiptChat_view: UIView!
+    @IBOutlet weak var enquiryReceipt_view: UIView!
     
     @IBOutlet weak var title_label: UILabel!
     @IBOutlet weak var title_bottom: NSLayoutConstraint!
@@ -115,7 +115,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTC0", for: indexPath) as! ReMyPageTC
             cell.basket_noticeView.isHidden = (ReBasketArray.count == 0)
-            ([cell.mPay_view, cell.order_view, cell.basket_view, cell.scrap_view, cell.setting_view, cell.receiptChat_view] as [UIView]).enumerated().forEach { i, view in
+            ([cell.mPay_view, cell.order_view, cell.basket_view, cell.scrap_view, cell.setting_view, cell.enquiryReceipt_view] as [UIView]).enumerated().forEach { i, view in
                 view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(segue_view(_:))))
             }
             cell.mPay_label.text = priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0"
@@ -139,7 +139,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         case 2: segueViewController(identifier: "ReBasketVC")
         case 3: segueViewController(identifier: "ReBookMarkVC")
         case 4: break
-        case 5: segueViewController(identifier: "ReReceiptChatVC")
+        case 5: segueViewController(identifier: "ReEnquiryReceiptVC")
         default:
             break
         }

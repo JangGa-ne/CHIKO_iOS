@@ -49,7 +49,7 @@ class ReDeliveryDetailVC: UIViewController {
         setKeyboard()
         
         ([nickName_tf, address_tf, addressDetail_tf, addressZipcode_tf, name_tf, num_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["배송지명", "주소", "상세주소", "우편번호", "받는사람", "휴대전화"][i], color: .lightGray)
+            tf.placeholder(text: ["배송지명", "주소", "상세주소", "우편번호", "받는사람", "휴대전화"][i], color: .black.withAlphaComponent(0.3))
         }
         
         ([checkNickName_img, checkAddress_img, checkAddressDetail_img, checkAddressZipcode_img, checkName_img, checkNum_img] as [UIImageView]).forEach { img in

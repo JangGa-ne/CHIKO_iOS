@@ -10,6 +10,15 @@
 		9C98622429C52DED8AE83733 /* Pods_market.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F28EC4E7303736D5AA7FE6BF /* Pods_market.framework */; };
 		C20196AA2B33F74E00576CF8 /* ReOrderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20196A92B33F74E00576CF8 /* ReOrderVC.swift */; };
 		C201C72B2B293B3800C9442E /* ImageSlideVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C201C72A2B293B3800C9442E /* ImageSlideVC.swift */; };
+		C20905C82B85957200DEB5E5 /* ReEnquiryReceipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905C72B85957200DEB5E5 /* ReEnquiryReceipt.swift */; };
+		C20905CA2B8595C300DEB5E5 /* WhNotDelivery.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905C92B8595C300DEB5E5 /* WhNotDelivery.swift */; };
+		C20905CC2B85966E00DEB5E5 /* EditDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905CB2B85966E00DEB5E5 /* EditDB.swift */; };
+		C20905CE2B85969900DEB5E5 /* WhOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905CD2B85969900DEB5E5 /* WhOrder.swift */; };
+		C20905D02B8596BD00DEB5E5 /* BuildingInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905CF2B8596BD00DEB5E5 /* BuildingInfo.swift */; };
+		C20905D22B8596E300DEB5E5 /* WhGoods.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905D12B8596E300DEB5E5 /* WhGoods.swift */; };
+		C20905D42B85972300DEB5E5 /* ReOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905D32B85972300DEB5E5 /* ReOrder.swift */; };
+		C20905D62B85973900DEB5E5 /* ReLiquidate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905D52B85973900DEB5E5 /* ReLiquidate.swift */; };
+		C20905D82B85A3EF00DEB5E5 /* ReEnquiryReceiptDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20905D72B85A3EF00DEB5E5 /* ReEnquiryReceiptDetailVC.swift */; };
 		C20D37C02AFB22DD00E8B7B0 /* ReGoodsTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D37BF2AFB22DD00E8B7B0 /* ReGoodsTC.swift */; };
 		C2155CD82AF0F59A008B21F2 /* ReMainTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2155CD72AF0F59A008B21F2 /* ReMainTBC.swift */; };
 		C2155CDA2AF0F612008B21F2 /* ReHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2155CD92AF0F612008B21F2 /* ReHomeVC.swift */; };
@@ -36,7 +45,7 @@
 		C24AF1582B200A710032EC04 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C24AF15A2B200A710032EC04 /* Localizable.strings */; };
 		C24E443B2AFC64D500885BBB /* CategoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24E443A2AFC64D500885BBB /* CategoryVC.swift */; };
 		C25249F62B43AA8200E882D8 /* WhMyPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25249F52B43AA8200E882D8 /* WhMyPageVC.swift */; };
-		C2562F3C2B7F351E00C00C9D /* ReReceiptChatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2562F3B2B7F351E00C00C9D /* ReReceiptChatVC.swift */; };
+		C2562F3C2B7F351E00C00C9D /* ReEnquiryReceiptVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2562F3B2B7F351E00C00C9D /* ReEnquiryReceiptVC.swift */; };
 		C25B23692AE0D0CA00AA3A30 /* s_regularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25B23682AE0D0CA00AA3A30 /* s_regularExpression.swift */; };
 		C25C87BC2B843D3D0091C18F /* ReReceiptUploadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25C87BB2B843D3D0091C18F /* ReReceiptUploadVC.swift */; };
 		C25FF24F2AFFD2F20026BB82 /* ReGoodsOptionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25FF24E2AFFD2F20026BB82 /* ReGoodsOptionVC.swift */; };
@@ -90,6 +99,15 @@
 		3B14B2DB482A80A53873B165 /* Pods-market.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-market.release.xcconfig"; path = "Target Support Files/Pods-market/Pods-market.release.xcconfig"; sourceTree = "<group>"; };
 		C20196A92B33F74E00576CF8 /* ReOrderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReOrderVC.swift; sourceTree = "<group>"; };
 		C201C72A2B293B3800C9442E /* ImageSlideVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSlideVC.swift; sourceTree = "<group>"; };
+		C20905C72B85957200DEB5E5 /* ReEnquiryReceipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReEnquiryReceipt.swift; sourceTree = "<group>"; };
+		C20905C92B8595C300DEB5E5 /* WhNotDelivery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhNotDelivery.swift; sourceTree = "<group>"; };
+		C20905CB2B85966E00DEB5E5 /* EditDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDB.swift; sourceTree = "<group>"; };
+		C20905CD2B85969900DEB5E5 /* WhOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhOrder.swift; sourceTree = "<group>"; };
+		C20905CF2B8596BD00DEB5E5 /* BuildingInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingInfo.swift; sourceTree = "<group>"; };
+		C20905D12B8596E300DEB5E5 /* WhGoods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoods.swift; sourceTree = "<group>"; };
+		C20905D32B85972300DEB5E5 /* ReOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReOrder.swift; sourceTree = "<group>"; };
+		C20905D52B85973900DEB5E5 /* ReLiquidate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReLiquidate.swift; sourceTree = "<group>"; };
+		C20905D72B85A3EF00DEB5E5 /* ReEnquiryReceiptDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReEnquiryReceiptDetailVC.swift; sourceTree = "<group>"; };
 		C20D37BF2AFB22DD00E8B7B0 /* ReGoodsTC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReGoodsTC.swift; sourceTree = "<group>"; };
 		C2155CD72AF0F59A008B21F2 /* ReMainTBC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReMainTBC.swift; sourceTree = "<group>"; };
 		C2155CD92AF0F612008B21F2 /* ReHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReHomeVC.swift; sourceTree = "<group>"; };
@@ -118,7 +136,7 @@
 		C24AF15C2B200BD30032EC04 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C24E443A2AFC64D500885BBB /* CategoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryVC.swift; sourceTree = "<group>"; };
 		C25249F52B43AA8200E882D8 /* WhMyPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhMyPageVC.swift; sourceTree = "<group>"; };
-		C2562F3B2B7F351E00C00C9D /* ReReceiptChatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReReceiptChatVC.swift; sourceTree = "<group>"; };
+		C2562F3B2B7F351E00C00C9D /* ReEnquiryReceiptVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReEnquiryReceiptVC.swift; sourceTree = "<group>"; };
 		C25B23682AE0D0CA00AA3A30 /* s_regularExpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = s_regularExpression.swift; sourceTree = "<group>"; };
 		C25C87BB2B843D3D0091C18F /* ReReceiptUploadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReReceiptUploadVC.swift; sourceTree = "<group>"; };
 		C25FF24E2AFFD2F20026BB82 /* ReGoodsOptionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsOptionVC.swift; sourceTree = "<group>"; };
@@ -202,6 +220,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C20905C62B85954C00DEB5E5 /* RequestPost */ = {
+			isa = PBXGroup;
+			children = (
+				C20905CF2B8596BD00DEB5E5 /* BuildingInfo.swift */,
+				C20905CB2B85966E00DEB5E5 /* EditDB.swift */,
+				C20905D52B85973900DEB5E5 /* ReLiquidate.swift */,
+				C20905D32B85972300DEB5E5 /* ReOrder.swift */,
+				C20905C72B85957200DEB5E5 /* ReEnquiryReceipt.swift */,
+				C20905D12B8596E300DEB5E5 /* WhGoods.swift */,
+				C20905CD2B85969900DEB5E5 /* WhOrder.swift */,
+				C20905C92B8595C300DEB5E5 /* WhNotDelivery.swift */,
+			);
+			path = RequestPost;
+			sourceTree = "<group>";
+		};
 		C218741C2B18766F0062CA4D /* Retailseller */ = {
 			isa = PBXGroup;
 			children = (
@@ -222,7 +255,8 @@
 				C22D641D2B183EF900A160F3 /* ReBookMarkVC.swift */,
 				C22BD6CA2B7CBEA700436B9D /* ReDeliveryVC.swift */,
 				C22BD6CC2B7CC72400436B9D /* ReDeliveryDetailVC.swift */,
-				C2562F3B2B7F351E00C00C9D /* ReReceiptChatVC.swift */,
+				C2562F3B2B7F351E00C00C9D /* ReEnquiryReceiptVC.swift */,
+				C20905D72B85A3EF00DEB5E5 /* ReEnquiryReceiptDetailVC.swift */,
 				C25C87BB2B843D3D0091C18F /* ReReceiptUploadVC.swift */,
 			);
 			path = Retailseller;
@@ -310,6 +344,7 @@
 				C2C971D42ADCD03E00827DA0 /* viewController */,
 				C2C971EA2ADD1C5600827DA0 /* RestApiObject.swift */,
 				C290705A2B05A0740097AA74 /* RestApiPost.swift */,
+				C20905C62B85954C00DEB5E5 /* RequestPost */,
 				C2682EC92AD77C5000FC6099 /* AppDelegate.swift */,
 				C2682ECF2AD77C5000FC6099 /* Main.storyboard */,
 				C2682ED22AD77C5100FC6099 /* Assets.xcassets */,
@@ -486,6 +521,7 @@
 				C2C971D92ADCD09600827DA0 /* s_vcNavigate.swift in Sources */,
 				C2C971E42ADD067200827DA0 /* UISegmentedControlView.swift in Sources */,
 				C2262EC52B730DDC0059B8B5 /* s_animation.swift in Sources */,
+				C20905D82B85A3EF00DEB5E5 /* ReEnquiryReceiptDetailVC.swift in Sources */,
 				C2C971E62ADD1B3000827DA0 /* SignInVC.swift in Sources */,
 				C2A654122AFB1E16009BE424 /* ReGoodsVC.swift in Sources */,
 				C20D37C02AFB22DD00E8B7B0 /* ReGoodsTC.swift in Sources */,
@@ -494,8 +530,9 @@
 				C25B23692AE0D0CA00AA3A30 /* s_regularExpression.swift in Sources */,
 				C20196AA2B33F74E00576CF8 /* ReOrderVC.swift in Sources */,
 				C2155CD82AF0F59A008B21F2 /* ReMainTBC.swift in Sources */,
+				C20905D62B85973900DEB5E5 /* ReLiquidate.swift in Sources */,
 				C290705B2B05A0740097AA74 /* RestApiPost.swift in Sources */,
-				C2562F3C2B7F351E00C00C9D /* ReReceiptChatVC.swift in Sources */,
+				C2562F3C2B7F351E00C00C9D /* ReEnquiryReceiptVC.swift in Sources */,
 				C225015C2B57B43C00637983 /* BuildingListVC.swift in Sources */,
 				C22B09482AE60875005C50A7 /* BankListVC.swift in Sources */,
 				C2BB21802B24C72900DE99ED /* EmployeeVC.swift in Sources */,
@@ -507,19 +544,24 @@
 				C268DFCA2B283CE3001068B3 /* StoreVC.swift in Sources */,
 				C22A0E212AE7BA9300F73F7A /* s_mimetype.swift in Sources */,
 				C22A0E1F2AE7AEB900F73F7A /* SignUpRegisterVC.swift in Sources */,
+				C20905CA2B8595C300DEB5E5 /* WhNotDelivery.swift in Sources */,
 				C22A0E1B2AE75DE100F73F7A /* s_device.swift in Sources */,
+				C20905CC2B85966E00DEB5E5 /* EditDB.swift in Sources */,
+				C20905D42B85972300DEB5E5 /* ReOrder.swift in Sources */,
 				C2CF3BAF2B22FDF700843DEA /* WhGoodsDetailVC.swift in Sources */,
 				C2AFF0062B0DA3270014C209 /* WhGoodsUploadVC.swift in Sources */,
 				C299D3562B01FC3B006FAD09 /* ReMyPageVC.swift in Sources */,
 				C27DD9DC2ADE2CDE00997D7D /* s_keyboard.swift in Sources */,
 				C2B8A8DE2ADF725300BDD470 /* SplashVC.swift in Sources */,
 				C278133E2B2A9556005521FD /* ReLiquidateVC.swift in Sources */,
+				C20905C82B85957200DEB5E5 /* ReEnquiryReceipt.swift in Sources */,
 				C2BF864A2ADF970100A858A4 /* ChoiceStoreVC.swift in Sources */,
 				C21BB6B32B69F08200A38CFC /* CalendarVC.swift in Sources */,
 				C22BD6CD2B7CC72400436B9D /* ReDeliveryDetailVC.swift in Sources */,
 				C2E547F12B1D639C00A19EAF /* WhGoodsUploadTC.swift in Sources */,
 				C2C338CF2B61FC570064A545 /* TagVC.swift in Sources */,
 				C2B2895F2B1735C90078EC6E /* WhWaitingVC.swift in Sources */,
+				C20905D02B8596BD00DEB5E5 /* BuildingInfo.swift in Sources */,
 				C22D641E2B183EF900A160F3 /* ReBookMarkVC.swift in Sources */,
 				C2C971E82ADD1B9400827DA0 /* s_base.swift in Sources */,
 				C25C87BC2B843D3D0091C18F /* ReReceiptUploadVC.swift in Sources */,
@@ -528,6 +570,7 @@
 				C2155CDA2AF0F612008B21F2 /* ReHomeVC.swift in Sources */,
 				C29292C22B2754CF00DBC9D3 /* ReGoodsFilterVC.swift in Sources */,
 				C2682ECA2AD77C5000FC6099 /* AppDelegate.swift in Sources */,
+				C20905D22B8596E300DEB5E5 /* WhGoods.swift in Sources */,
 				C25FF24F2AFFD2F20026BB82 /* ReGoodsOptionVC.swift in Sources */,
 				C268B9172B590441000F77F0 /* s_push.swift in Sources */,
 				C268DFC82B283C08001068B3 /* AccountVC.swift in Sources */,
@@ -541,6 +584,7 @@
 				C2CA5DF02B4549500078CF34 /* WhGoodsVC.swift in Sources */,
 				C2C971E32ADD067200827DA0 /* UIBaseView.swift in Sources */,
 				C226F3462AF33453004DA6C8 /* UIGradientView.swift in Sources */,
+				C20905CE2B85969900DEB5E5 /* WhOrder.swift in Sources */,
 				C2BF864C2ADFA25E00A858A4 /* s_image.swift in Sources */,
 				C27DD9DA2ADE149400997D7D /* s_text.swift in Sources */,
 				C25249F62B43AA8200E882D8 /* WhMyPageVC.swift in Sources */,

@@ -251,7 +251,7 @@ class WhGoodsUploadVC: UIViewController {
                     if self.GoodsObject.item_key != "" { message = "상품수정 완료!" } else { message = "상품등록 완료!" }
                     
                     let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: { _ in
+                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
                         self.navigationController?.popViewController(animated: true, completion: {
                             if self.GoodsObject.item_key != "" {
                                 if let delegate = WhHomeVCdelegate {
@@ -375,7 +375,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
                 tf.addTarget(cell, action: #selector(cell.end_textfield(_:)), for: .editingDidEnd)
             }
             
-            cell.itemName_tf.placeholder(text: "소매에게 노출할 상품명을 입력해 주세요.", color: .lightGray)
+            cell.itemName_tf.placeholder(text: "소매에게 노출할 상품명을 입력해 주세요.", color: .black.withAlphaComponent(0.3))
             cell.itemName_tf.text = GoodsObject.item_name
             
             GoodsObject.item_sale = item_sale
@@ -387,14 +387,14 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
                 cell.sale_label.textColor = .black.withAlphaComponent(0.3)
             }
             cell.itemPrice_view.isHidden = !item_sale
-            cell.itemPrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .lightGray)
+            cell.itemPrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .black.withAlphaComponent(0.3))
             if GoodsObject.item_price != 0 {
                 cell.itemPrice_tf.text = priceFormatter.string(from: GoodsObject.item_price as NSNumber) ?? ""
             }
             if item_sale {
-                cell.itemSalePrice_tf.placeholder(text: "할인된 가격을 입력해 주세요.", color: .lightGray)
+                cell.itemSalePrice_tf.placeholder(text: "할인된 가격을 입력해 주세요.", color: .black.withAlphaComponent(0.3))
             } else {
-                cell.itemSalePrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .lightGray)
+                cell.itemSalePrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .black.withAlphaComponent(0.3))
             }
             if GoodsObject.item_sale_price != 0 {
                 cell.itemSalePrice_tf.text = priceFormatter.string(from: GoodsObject.item_sale_price as NSNumber) ?? ""

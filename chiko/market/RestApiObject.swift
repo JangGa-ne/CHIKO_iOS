@@ -557,49 +557,52 @@ func setWhNotDelivery(notDeliveryDict: [String: Any]) -> WhNotDeliveryData {
     return notDeliveryValue
 }
 
-class ReReceiptChatData {
+class ReEnquiryReceiptData {
     
     var attached_imgs: [String] = []
     var content: String = ""
     var direction: String = ""
-    var my_store_id: String = ""
-    var my_store_name: String = ""
+    var store_id: String = ""
+    var store_name: String = ""
     var read_or_not: Bool = false
     var requested_store_name: String = ""
     var summary_address: String = ""
     var time: String = ""
     
-    var order_item: [(item_name: String, item_option: [(color: String, size: String, quantity: Int)])] = []
+    var order_item: [(item_name: String, item_category_name: [String], item_option: [(color: String, size: String, quantity: Int, price: Int)])] = []
     var upload_attached_imgs: [(file_name: String, file_data: Data, file_size: Int)] = []
     
+    var upload_files: [(field_name: String, file_name: String, file_data: Data, file_size: Int)] = []
 }
 
-func setReReceiptChat(receiptChatDict: [String: Any]) -> ReReceiptChatData {
+func setReEnquiryReceipt(enquiryReceiptDict: [String: Any]) -> ReEnquiryReceiptData {
     
-    let receiptChatValue = ReReceiptChatData()
-    receiptChatValue.attached_imgs = receiptChatDict["attached_imgs"] as? [String] ?? []
-    receiptChatValue.content = receiptChatDict["content"] as? String ?? ""
-    receiptChatValue.direction = receiptChatDict["direction"] as? String ?? ""
-    receiptChatValue.my_store_id = receiptChatDict["my_store_id"] as? String ?? ""
-    receiptChatValue.my_store_name = receiptChatDict["my_store_name"] as? String ?? ""
-    receiptChatValue.read_or_not = receiptChatDict["read_or_not"] as? Bool ?? false
-    receiptChatValue.requested_store_name = receiptChatDict["requested_store_name"] as? String ?? ""
-    receiptChatValue.summary_address = receiptChatDict["summary_address"] as? String ?? ""
-    receiptChatValue.time = receiptChatDict["time"] as? String ?? ""
-    (receiptChatDict["order_item"] as? Array<[String: Any]> ?? []).forEach { dict in
-        var item_option: [(color: String, size: String, quantity: Int)] = []
+    let enquiryReceiptValue = ReEnquiryReceiptData()
+    enquiryReceiptValue.attached_imgs = enquiryReceiptDict["attached_imgs"] as? [String] ?? []
+    enquiryReceiptValue.content = enquiryReceiptDict["content"] as? String ?? ""
+    enquiryReceiptValue.direction = enquiryReceiptDict["direction"] as? String ?? ""
+    enquiryReceiptValue.store_id = enquiryReceiptDict["store_id"] as? String ?? ""
+    enquiryReceiptValue.store_name = enquiryReceiptDict["store_name"] as? String ?? ""
+    enquiryReceiptValue.read_or_not = enquiryReceiptDict["read_or_not"] as? Bool ?? false
+    enquiryReceiptValue.requested_store_name = enquiryReceiptDict["requested_store_name"] as? String ?? ""
+    enquiryReceiptValue.summary_address = enquiryReceiptDict["summary_address"] as? String ?? ""
+    enquiryReceiptValue.time = enquiryReceiptDict["time"] as? String ?? ""
+    (enquiryReceiptDict["order_item"] as? Array<[String: Any]> ?? []).forEach { dict in
+        var item_option: [(color: String, size: String, quantity: Int, price: Int)] = []
         (dict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
             item_option.append((
                 color: dict["color"] as? String ?? "",
                 size: dict["size"] as? String ?? "",
-                quantity: dict["quantity"] as? Int ?? 0
+                quantity: dict["quantity"] as? Int ?? 0,
+                price: dict["price"] as? Int ?? 0
             ))
         }
-        receiptChatValue.order_item.append((
+        enquiryReceiptValue.order_item.append((
             item_name: dict["item_name"] as? String ?? "",
+            item_category_name: dict["item_category_name"] as? [String] ?? [],
             item_option: item_option
         ))
     }
     
-    return receiptChatValue
+    return enquiryReceiptValue
 }

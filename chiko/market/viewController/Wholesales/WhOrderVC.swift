@@ -82,7 +82,7 @@ class WhOrderVC: UIViewController {
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
 //        tableView.refreshControl = refreshControl
-//        refreshControl.tintColor = .lightGray
+//        refreshControl.tintColor = .black.withAlphaComponent(0.3)
 //        refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         let dateFormatter = DateFormatter()

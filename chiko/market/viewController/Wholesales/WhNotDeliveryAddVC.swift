@@ -62,7 +62,7 @@ extension WhNotDeliveryAddTC: UITableViewDelegate, UITableViewDataSource {
         cell.option_label.text = "옵션. \(data.color) / \(data.size)\n가격. \(priceFormatter.string(from: data.price as NSNumber) ?? "0")\n수량. \(priceFormatter.string(from: data.quantity as NSNumber) ?? "0")"
         
         cell.notDeliveryQuantity_tf.paddingLeft(10); cell.notDeliveryQuantity_tf.paddingRight(10)
-        cell.notDeliveryQuantity_tf.placeholder(text: "미송상품 수량을 입력하세요.", color: .lightGray)
+        cell.notDeliveryQuantity_tf.placeholder(text: "미송상품 수량을 입력하세요.", color: .black.withAlphaComponent(0.3))
         if data.not_delivery_quantity == 0 {
             cell.notDeliveryQuantity_tf.text!.removeAll()
         } else {
@@ -75,7 +75,7 @@ extension WhNotDeliveryAddTC: UITableViewDelegate, UITableViewDataSource {
         
         if data.not_delivery_memo == "" {
             cell.notDeliveryMemo_btn.setTitle("배송예정일을 입력하세요.", for: .normal)
-            cell.notDeliveryMemo_btn.setTitleColor(.lightGray, for: .normal)
+            cell.notDeliveryMemo_btn.setTitleColor(.black.withAlphaComponent(0.3), for: .normal)
         } else {
             cell.notDeliveryMemo_btn.setTitle(data.not_delivery_memo, for: .normal)
             cell.notDeliveryMemo_btn.setTitleColor(.black, for: .normal)
@@ -111,7 +111,7 @@ extension WhNotDeliveryAddTC: UITableViewDelegate, UITableViewDataSource {
         }))
         alert.addAction(UIAlertAction(title: "내용 삭제", style: .destructive, handler: { UIAlertAction in
             sender.setTitle("배송예정일을 입력하세요.", for: .normal)
-            sender.setTitleColor(.lightGray, for: .normal)
+            sender.setTitleColor(.black.withAlphaComponent(0.3), for: .normal)
             self.delegate.WhNotDeliveryArray_new[self.indexpath_row].item_option[sender.tag].not_delivery_memo.removeAll()
         }))
         alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))

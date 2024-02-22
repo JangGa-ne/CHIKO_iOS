@@ -34,6 +34,7 @@ class CategoryVC: UIViewController {
     
     var option_type: String = ""
     var option_key: String = ""
+    var option_row: Int = 0
     
     var option_title: [String] = []
     var indexpath_section: Int = 0
@@ -127,11 +128,12 @@ class CategoryVC: UIViewController {
             }
         } else if option_type == "size" {
             
+            mainTitle_label.text = "사이즈"
+            
+            option_title.append(option_key)
             CategoryObject.SizeArray.forEach { document in
-                document.forEach { (key: String, value: Any) in option_title.append(key)
-                    (value as? [String: [String]] ?? [:]).forEach { (key: String, value: [String]) in
-                        option_content.append((option1: value, option2: []))
-                    }
+                (document[option_key] as? [String: [String]] ?? [:]).forEach { (key: String, value: [String]) in
+                    option_content.append((option1: value, option2: []))
                 }
             }
         }
@@ -270,20 +272,42 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
         /// 소매자(영수증 주문요청)
         if let VCdelegate = ReReceiptUploadVCdelegate, let TCdelegate = ReReceiptUploadTCdelegate {
             
-            let optionSub_name = option_content[indexpath_section].option1[indexPath.row]
+            if option_type == "category", option_key != "" {
+                
+                dispatchGroup.enter()
+                customAlert(message: "카테고리 변경으로 일부 옵션 설정값이 초기화 됩니다.", time: 1) {
+                    /// 데이터 삭제
+                    VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_option.indices.forEach { i in
+                        VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_option[i].size.removeAll()
+                    }
+                    
+                    dispatchGroup.leave()
+                }
+            }
             
-            if option_type == "color" {
-                TCdelegate.option_color = optionSub_name
-                dismiss(animated: true) {
-                    let segue = VCdelegate.storyboard?.instantiateViewController(withIdentifier: "CategoryVC") as! CategoryVC
-                    segue.ReReceiptUploadVCdelegate = VCdelegate
-                    segue.ReReceiptUploadTCdelegate = TCdelegate
-                    segue.option_type = "size"
-                    VCdelegate.presentPanModal(segue)
-                }; return
-            } else if option_type == "size" {
-                TCdelegate.option_size = optionSub_name
-                dismiss(animated: true) { TCdelegate.setQuantity() }; return
+            dispatchGroup.notify(queue: .main) {
+                
+                if self.option_type == "category", self.option_key != "여성의류" {
+                        
+                    let optionMain_name = self.option_title[self.indexpath_section]
+                    let optionSub_name = self.option_content[self.indexpath_section].option1[indexPath.row]
+                    
+                    VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_category_name = [optionMain_name, optionSub_name]
+                    VCdelegate.tableView.reloadData()
+                } else if self.option_type == "category", self.option_key == "여성의류" {
+                        
+                    let optionMain_name = self.women_clothes[indexPath.section].option1
+                    let optionSub_name = self.women_clothes[indexPath.section].option2[indexPath.row]
+                    
+                    VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_category_name = ["여성의류", optionMain_name, optionSub_name]
+                    VCdelegate.tableView.reloadData()
+                } else if self.option_type == "color" {
+                    VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_option[self.option_row].color = self.option_content[self.indexpath_section].option1[indexPath.row]
+                } else if self.option_type == "size" {
+                    VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_option[self.option_row].size = self.option_content[self.indexpath_section].option1[indexPath.row]
+                }
+                
+                self.dismiss(animated: true) { TCdelegate.optionTableView.reloadData() }
             }
         }
         /// 도매자(상품등록)

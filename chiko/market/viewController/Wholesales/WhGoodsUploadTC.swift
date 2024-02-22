@@ -557,7 +557,7 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
                 let data = WhGoodsUploadVCdelegate.OptionPriceArray[indexpath_row].size_price[indexPath.row]
                 
                 cell.optionSize_label.text = data.size
-                cell.optionPrice_tf.placeholder(text: priceFormatter.string(from: WhGoodsUploadVCdelegate.GoodsObject.item_sale_price as NSNumber) ?? "0", color: .lightGray)
+                cell.optionPrice_tf.placeholder(text: priceFormatter.string(from: WhGoodsUploadVCdelegate.GoodsObject.item_sale_price as NSNumber) ?? "0", color: .black.withAlphaComponent(0.3))
                 if data.price <= WhGoodsUploadVCdelegate.GoodsObject.item_sale_price {
                     cell.optionPrice_tf.text!.removeAll()
                 } else {

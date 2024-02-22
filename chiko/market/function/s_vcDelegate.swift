@@ -32,6 +32,7 @@ var ReOrderVCdelegate: ReOrderVC? = nil
 var ReBasketVCdelegate: ReBasketVC? = nil
 var ReBookMarkVCdelegate: ReBookMarkVC? = nil
 var ReStoreVisitVCdelegate: ReStoreVisitVC? = nil
+var ReEnquiryReceiptVCdelegate: ReEnquiryReceiptVC? = nil
 var ReReceiptUploadVCdelegate: ReReceiptUploadVC? = nil
 var ReReceiptUploadTCdelegate: ReReceiptUploadTC? = nil
 /// Wholesales

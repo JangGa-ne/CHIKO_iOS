@@ -124,7 +124,7 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
         alert.addTextField()
         let storePw_tf = alert.textFields?[0] ?? UITextField()
         storePw_tf.keyboardType = .numberPad
-        storePw_tf.placeholder(text: "비밀번호를 입력하세요.", color: .lightGray)
+        storePw_tf.placeholder(text: "비밀번호를 입력하세요.", color: .black.withAlphaComponent(0.3))
         alert.addAction(UIAlertAction(title: "등록", style: .default, handler: { _ in
             if data.store_pw == storePw_tf.text! {
                 /// signup member

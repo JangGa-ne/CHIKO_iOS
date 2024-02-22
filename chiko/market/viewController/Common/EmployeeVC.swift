@@ -41,7 +41,7 @@ class EmployeeVC: UIViewController {
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
         tableView.refreshControl = refreshControl
-        refreshControl.tintColor = .lightGray
+        refreshControl.tintColor = .black.withAlphaComponent(0.3)
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         loadingData()

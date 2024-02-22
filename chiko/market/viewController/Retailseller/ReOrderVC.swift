@@ -170,7 +170,7 @@ class ReOrderVC: UIViewController {
         tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
         tableView.delegate = self; tableView.dataSource = self
         tableView.refreshControl = refreshControl
-        refreshControl.tintColor = .lightGray
+        refreshControl.tintColor = .black.withAlphaComponent(0.3)
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         customLoadingIndicator(animated: true)
@@ -182,7 +182,7 @@ class ReOrderVC: UIViewController {
         /// 데이터 삭제
         ReOrderArray.removeAll(); tableView.reloadData()
         /// Order 요청
-        requestOrder(action: action) { status in
+        requestReOrder(action: action) { status in
             
             self.customLoadingIndicator(animated: false)
             

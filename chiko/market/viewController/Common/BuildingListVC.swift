@@ -149,7 +149,7 @@ extension BuildingListVC: UITableViewDelegate, UITableViewDataSource {
                 delegate.buildingAddressDetail_btn.isSelected = true
             }
             if let delegate = ReReceiptUploadVCdelegate {
-                delegate.ReReceiptChatObject.summary_address = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
+                delegate.ReEnquiryReceiptObject.summary_address = building_name[building_row]+"/"+building_floor[floor_row]+"/"+building_room[indexPath.row]
                 UIView.setAnimationsEnabled(false); delegate.tableView.reloadSections(IndexSet(integer: 0), with: .none); UIView.setAnimationsEnabled(true)
             }
             navigationController?.popViewController(animated: true)

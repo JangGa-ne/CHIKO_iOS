@@ -47,7 +47,6 @@ class ReGoodsVC: UIViewController {
         super.viewDidLoad()
         
         ReGoodsVCdelegate = self
-        ReGoodsFilterVCdelegate = storyboard?.instantiateViewController(withIdentifier: "ReGoodsFilterVC") as? ReGoodsFilterVC
         
         setKeyboard()
         
@@ -63,7 +62,7 @@ class ReGoodsVC: UIViewController {
         categoryName_label_width.constant = stringWidth(text: categoryName_label.text!, fontSize: 12)+20
         categoryFilter_view.isHidden = true
         categoryFilter_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(categoryFilter_view(_:))))
-        search_tf.placeholder(text: "상품명을 입력하세요.", color: .lightGray)
+        search_tf.placeholder(text: "상품명을 입력하세요.", color: .black.withAlphaComponent(0.3))
         search_tf.addTarget(self, action: #selector(edit_search_tf(_:)), for: .editingChanged)
         delete_img.isHidden = true
         delete_btn.isHidden = true
@@ -74,7 +73,7 @@ class ReGoodsVC: UIViewController {
         tableView.contentInset = UIEdgeInsets(top: 22, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
         tableView.refreshControl = refreshControl
-        refreshControl.tintColor = .lightGray
+        refreshControl.tintColor = .black.withAlphaComponent(0.3)
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         loadingData(first: true)
@@ -263,7 +262,7 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "FetchingMoreTC", for: indexPath) as! FetchingMoreTC
             
-            cell.fetchingMore_indicatorView.color = .lightGray
+            cell.fetchingMore_indicatorView.color = .black.withAlphaComponent(0.3)
             cell.fetchingMore_indicatorView.startAnimating()
             
             return cell

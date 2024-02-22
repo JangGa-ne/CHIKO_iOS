@@ -10,8 +10,6 @@ import PanModal
 
 class ReReceiptUploadCC: UICollectionViewCell {
     
-    @IBOutlet weak var option_label: UILabel!
-    
     @IBOutlet weak var receipt_img: UIImageView!
     @IBOutlet weak var receiptRow_label: UILabel!
 }
@@ -22,40 +20,29 @@ class ReReceiptUploadTC: UITableViewCell {
     var indexpath_section: Int = 0
     var indexpath_row: Int = 0
     
-    var option_color: String = ""
-    var option_size: String = ""
-    
     @IBOutlet weak var summaryAddress_tf: UITextField!
     @IBOutlet weak var summaryAddress_btn: UIButton!
     @IBOutlet weak var storeName_tf: UITextField!
     
     @IBOutlet weak var itemNum_label: UILabel!
-    @IBOutlet weak var optionAdd_btn: UIButton!
-    @IBOutlet weak var itemName_tf: UITextField!
-    @IBOutlet weak var option_v: UIView!
-    @IBOutlet weak var optionCollectionView: UICollectionView!
     @IBOutlet weak var delete_btn: UIButton!
+    @IBOutlet weak var itemName_tf: UITextField!
+    @IBOutlet weak var itemCategoryName_btn: UIButton!
+    @IBOutlet weak var color_btn: UIButton!
+    @IBOutlet weak var size_btn: UIButton!
+    @IBOutlet weak var quantity_tf: UITextField!
+    @IBOutlet weak var delete_v: UIView!
+    @IBOutlet weak var optionTableView: UITableView!
+    @IBOutlet weak var optionTableView_height: NSLayoutConstraint!
+    @IBOutlet weak var optionAdd_btn: UIButton!
     
-    @IBOutlet weak var goodsAdd_btn: UIButton!
     @IBOutlet weak var receiptCollecctionView: UICollectionView!
-    @IBOutlet weak var register_btn: UIButton!
     
     func viewDidLoad() {
         
         ReReceiptUploadTCdelegate = self
         
         if indexpath_section == 1 {
-            
-            optionCollectionView.delegate = nil; optionCollectionView.dataSource = nil
-            
-            let layout = UICollectionViewFlowLayout()
-            layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
-            layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
-            optionCollectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
-            optionCollectionView.contentOffset.x = delegate.collectionViewContentOffsets[indexpath_section] ?? 0.0
-            optionCollectionView.delegate = self; optionCollectionView.dataSource = self
-            
-        } else if indexpath_section == 2 {
             
             receiptCollecctionView.delegate = nil; receiptCollecctionView.dataSource = nil
             
@@ -65,76 +52,61 @@ class ReReceiptUploadTC: UITableViewCell {
             receiptCollecctionView.setCollectionViewLayout(layout, animated: true, completion: nil)
             receiptCollecctionView.contentOffset.x = delegate.collectionViewContentOffsets[indexpath_section] ?? 0.0
             receiptCollecctionView.delegate = self; receiptCollecctionView.dataSource = self
+            
+        } else if indexpath_section == 2 {
+            
+            optionTableView.delegate = nil; optionTableView.dataSource = nil
+            
+            optionTableView.separatorStyle = .none
+            optionTableView.contentInset = .zero
+            optionTableView.delegate = self; optionTableView.dataSource = self
+            
+            optionTableView.isHidden = delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option.count == 0
+            optionTableView_height.constant = CGFloat(45*delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option.count)
         }
     }
     
-    @objc func summaryAddress_btn(_ sender: UIButton) {
-        
-        delegate.view.endEditing(true)
-        
-        delegate.segueViewController(identifier: "BuildingListVC")
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
-    @objc func optionAdd_btn(_ sender: UIButton) {
+    @objc func delete_btn(_ sender: UIButton) {
+        delegate.ReEnquiryReceiptObject.order_item.remove(at: sender.tag)
+        delegate.tableView.reloadData()
+    }
+    
+    @objc func end_itemName_tf(_ sender: UITextField) {
+        delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_name = sender.text!
+    }
+    
+    @objc func itemCategoryName_btn(_ sender: UIButton) {
         
-        delegate.view.endEditing(true)
-        
+        let data = delegate.ReEnquiryReceiptObject.order_item[indexpath_row]
         let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "CategoryVC") as! CategoryVC
         segue.ReReceiptUploadVCdelegate = delegate
         segue.ReReceiptUploadTCdelegate = self
-        segue.option_type = "color"
+        segue.option_type = "category"
+        segue.option_key = data.item_category_name.first ?? ""
         delegate.presentPanModal(segue)
     }
     
-    func setQuantity() {
-        
-        let alert = UIAlertController(title: "", message: "수량을 입력해 주세요.", preferredStyle: .alert)
-        alert.addTextField()
-        let sheet_tf = alert.textFields?[0] ?? UITextField()
-        sheet_tf.keyboardType = .numberPad
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
-            if sheet_tf.text ?? "" == "" {
-                self.delegate.dismiss(animated: true) {
-                    self.delegate.customAlert(message: "수량을 입력해 주세요.", time: 1) {
-                        self.setQuantity()
-                    }
-                }
-            } else {
-                self.delegate.dismiss(animated: true) {
-                    /// 데이터 추가
-                    self.delegate.ReReceiptChatObject.order_item[self.indexpath_row].item_option.append((
-                        color: self.option_color,
-                        size: self.option_size,
-                        quantity: Int(sheet_tf.text!) ?? 0
-                    ))
-                    UIView.setAnimationsEnabled(false); self.delegate.tableView.reloadSections(IndexSet(integer: 1), with: .none); UIView.setAnimationsEnabled(true)
-                }
-            }
-        }))
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: { _ in
-            self.option_color.removeAll(); self.option_size.removeAll()
-        }))
-        delegate.present(alert, animated: true, completion: nil); return
+    @objc func optionAdd_btn(_ sender: UIButton) {
+        delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option.append((color: "", size: "", quantity: 0, price: 0))
+        self.delegate.tableView.reloadData()
     }
 }
 
 extension ReReceiptUploadTC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == optionCollectionView, delegate.ReReceiptChatObject.order_item[indexpath_row].item_option.count > 0 {
-            return delegate.ReReceiptChatObject.order_item[indexpath_row].item_option.count
-        } else if collectionView == receiptCollecctionView {
-            if delegate.ReReceiptChatObject.upload_attached_imgs.count > 0 { return delegate.ReReceiptChatObject.upload_attached_imgs.count+1 } else { return 1 }
-        } else {
-            return .zero
-        }
+        if delegate.ReEnquiryReceiptObject.upload_attached_imgs.count > 0 { return delegate.ReEnquiryReceiptObject.upload_attached_imgs.count+1 } else { return 1 }
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-        if collectionView == receiptCollecctionView, indexPath.row != 0 {
+        if indexPath.row != 0 {
             
-            let data = delegate.ReReceiptChatObject.upload_attached_imgs[indexPath.row-1]
+            let data = delegate.ReEnquiryReceiptObject.upload_attached_imgs[indexPath.row-1]
             guard let cell = cell as? ReReceiptUploadCC else { return }
             
             if let imgData = UIImage(data: data.file_data) {
@@ -147,56 +119,105 @@ extension ReReceiptUploadTC: UICollectionViewDelegate, UICollectionViewDataSourc
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        if collectionView == optionCollectionView {
-            
-            let data = delegate.ReReceiptChatObject.order_item[indexpath_row].item_option[indexPath.row]
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReReceiptUploadCC1", for: indexPath) as! ReReceiptUploadCC
-            cell.option_label.text = "\(data.color) / \(data.size) / \(data.quantity)"
-            return cell
-        } else if collectionView == receiptCollecctionView {
-            
-            if indexPath.row == 0 {
-                return collectionView.dequeueReusableCell(withReuseIdentifier: "ReReceiptUploadCC2", for: indexPath) as! ReReceiptUploadCC
-            } else {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReReceiptUploadCC3", for: indexPath) as! ReReceiptUploadCC
-                cell.receiptRow_label.text = "   \(indexPath.row)"
-                return cell
-            }
+        if indexPath.row == 0 {
+            return collectionView.dequeueReusableCell(withReuseIdentifier: "ReReceiptUploadCC1", for: indexPath) as! ReReceiptUploadCC
         } else {
-            return UICollectionViewCell()
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReReceiptUploadCC2", for: indexPath) as! ReReceiptUploadCC
+            cell.receiptRow_label.text = "   \(indexPath.row)"
+            return cell
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        if collectionView == optionCollectionView {
-            let data = delegate.ReReceiptChatObject.order_item[indexpath_row].item_option[indexPath.row]
-            return CGSize(width: stringWidth(text: "\(data.color) / \(data.size) / \(data.quantity)" ,fontSize: 12.1)+40, height: collectionView.frame.height)
-        } else if collectionView == receiptCollecctionView {
-            return CGSize(width: collectionView.frame.height, height: collectionView.frame.height)
-        } else {
-            return .zero
-        }
+        return CGSize(width: collectionView.frame.height, height: collectionView.frame.height)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         delegate.view.endEditing(true)
         
-        if collectionView == optionCollectionView {
-            delegate.ReReceiptChatObject.order_item[indexpath_row].item_option.remove(at: indexPath.row)
-            UIView.setAnimationsEnabled(false); self.delegate.tableView.reloadSections(IndexSet(integer: 1), with: .none); UIView.setAnimationsEnabled(true)
-        } else if collectionView == receiptCollecctionView {
-            if indexPath.row == 0 {
-                delegate.setPhoto(max: 1000) { photos in
-                    self.delegate.ReReceiptChatObject.upload_attached_imgs.append(contentsOf: photos)
-                    collectionView.reloadData()
-                }
-            } else {
-                delegate.ReReceiptChatObject.upload_attached_imgs.remove(at: indexPath.row-1)
+        if indexPath.row == 0 {
+            delegate.setPhoto(max: 1000) { photos in
+                self.delegate.ReEnquiryReceiptObject.upload_attached_imgs.append(contentsOf: photos)
                 collectionView.reloadData()
             }
+        } else {
+            delegate.ReEnquiryReceiptObject.upload_attached_imgs.remove(at: indexPath.row-1)
+            collectionView.reloadData()
         }
+    }
+}
+
+extension ReReceiptUploadTC: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option.count > 0 { return delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option.count } else { return .zero }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let data = delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReReceiptUploadTC4", for: indexPath) as! ReReceiptUploadTC
+        
+        cell.color_btn.setTitle(data.color != "" ? data.color : "색상", for: .normal)
+        cell.color_btn.setTitleColor(data.color != "" ? .black : .black.withAlphaComponent(0.3), for: .normal)
+        cell.color_btn.tag = indexPath.row; cell.color_btn.addTarget(self, action: #selector(color_btn(_:)), for: .touchUpInside)
+        cell.size_btn.setTitle(data.size != "" ? data.size : "사이즈", for: .normal)
+        cell.size_btn.setTitleColor(data.size != "" ? .black : .black.withAlphaComponent(0.3), for: .normal)
+        cell.size_btn.tag = indexPath.row; cell.size_btn.addTarget(self, action: #selector(size_btn(_:)), for: .touchUpInside)
+        cell.quantity_tf.placeholder(text: "수량", color: .black.withAlphaComponent(0.3))
+        cell.quantity_tf.text = data.quantity != 0 ? String(data.quantity) : ""
+        cell.quantity_tf.tag = indexPath.row; cell.quantity_tf.addTarget(self, action: #selector(edit_quantity_tf(_:)), for: .editingChanged)
+        cell.delete_v.tag = indexPath.row; cell.delete_v.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(delete_v(_:))))
+        
+        return cell
+    }
+    
+    @objc func color_btn(_ sender: UIButton) {
+        
+        if delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_category_name.count == 0 { delegate.customAlert(message: "카테고리를 선택해 주세요.", time: 1); return }
+        
+        let data = delegate.ReEnquiryReceiptObject.order_item[indexpath_row]
+        let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "CategoryVC") as! CategoryVC
+        segue.ReReceiptUploadVCdelegate = delegate
+        segue.ReReceiptUploadTCdelegate = self
+        segue.option_type = "color"
+        segue.option_key = data.item_category_name.first ?? ""
+        segue.option_row = sender.tag
+        delegate.presentPanModal(segue)
+    }
+    
+    @objc func size_btn(_ sender: UIButton) {
+        
+        if delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_category_name.count == 0 { delegate.customAlert(message: "카테고리를 선택해 주세요.", time: 1); return }
+        
+        let data = delegate.ReEnquiryReceiptObject.order_item[indexpath_row]
+        let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "CategoryVC") as! CategoryVC
+        segue.ReReceiptUploadVCdelegate = delegate
+        segue.ReReceiptUploadTCdelegate = self
+        segue.option_type = "size"
+        segue.option_key = data.item_category_name.first ?? ""
+        segue.option_row = sender.tag
+        delegate.presentPanModal(segue)
+    }
+    
+    @objc func edit_quantity_tf(_ sender: UITextField) {
+        if Int(sender.text!) ?? 0 == 0 { 
+            sender.text!.removeAll()
+        } else if Int(sender.text!) ?? 0 > 999 {
+            sender.text = "999"
+            sender.resignFirstResponder()
+            delegate.customAlert(message: "최대 999까지만 입력 가능합니다.", time: 1) { sender.becomeFirstResponder() }
+        }
+        delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option[sender.tag].quantity = Int(sender.text!) ?? 0
+    }
+    
+    @objc func delete_v(_ sender: UITapGestureRecognizer) {
+        
+        guard let sender = sender.view else { return }
+        
+        delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option.remove(at: sender.tag)
+        delegate.tableView.reloadData()
     }
 }
 
@@ -206,13 +227,15 @@ class ReReceiptUploadVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    var ReReceiptChatObject: ReReceiptChatData = ReReceiptChatData()
+    var ReEnquiryReceiptObject: ReEnquiryReceiptData = ReEnquiryReceiptData()
     
     var collectionViewContentOffsets: [Int: CGFloat] = [:]
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var goodsAdd_btn: UIButton!
+    @IBOutlet weak var register_btn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -224,6 +247,128 @@ class ReReceiptUploadVC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
+        
+        goodsAdd_btn.addTarget(self, action: #selector(goodsAdd_btn(_:)), for: .touchUpInside)
+        register_btn.addTarget(self, action: #selector(register_btn(_:)), for: .touchUpInside)
+    }
+    
+    @objc func goodsAdd_btn(_ sender: UIButton) {
+        ReEnquiryReceiptObject.order_item.append((item_name: "", item_category_name: [], item_option: [(color: "", size: "", quantity: 0, price: 0)]))
+        tableView.reloadData()
+    }
+    
+    @objc func register_btn(_ sender: UIButton) {
+        
+        var option_count_check: Bool = true
+        var option_check: Bool = true
+        ReEnquiryReceiptObject.order_item.forEach { data in
+            if data.item_option.count == 0 { 
+                option_count_check = false; return
+            } else {
+                data.item_option.forEach { data in
+                    if data.color == "" || data.size == "" || data.quantity == 0 { option_check = false; return }
+                }
+            }
+        }
+        
+        if ReEnquiryReceiptObject.summary_address == "" {
+            customAlert(message: "매장주소를 입력해 주세요.", time: 1)
+        } else if ReEnquiryReceiptObject.upload_attached_imgs.count == 0 {
+            customAlert(message: "영수증 이미지를 첨부해 주세요.", time: 1)
+        } else if ReEnquiryReceiptObject.order_item.count == 0 {
+            customAlert(message: "상품정보를 입력해 주세요.", time: 1)
+        } else if !option_count_check {
+            customAlert(message: "상품 옵션을 추가해 주세요.", time: 1)
+        } else if !option_check {
+            customAlert(message: "미입력된 상품 옵션이 있습니다.", time: 1)
+        } else {
+            
+            customLoadingIndicator(animated: true)
+            
+            var status_code: Int = 500
+            
+            var order_item: Array<[String: Any]> = []
+            ReEnquiryReceiptObject.order_item.forEach { data in
+                
+                var item_option: Array<[String: Any]> = []
+                data.item_option.forEach { data in
+                    item_option.append([
+                        "color": data.color,
+                        "size": data.size,
+                        "quantity": data.quantity
+                    ])
+                }
+                
+                order_item.append([
+                    "item_name": data.item_name,
+                    "item_option": item_option,
+                ])
+            }
+            
+            let params: [String: Any] = [
+                "order_item": order_item,
+                "store_name": StoreObject.store_name,
+                "content": "",
+                "direction": "tomanager",
+                "read_or_not": "false",
+                "summary_address": ReEnquiryReceiptObject.summary_address,
+                "requested_store_name": ReEnquiryReceiptObject.requested_store_name,
+                "user_id": "admin",
+            ]
+            /// 데이터 삭제
+            ReEnquiryReceiptObject.upload_files.removeAll()
+            // 영수증
+            ReEnquiryReceiptObject.upload_attached_imgs.enumerated().forEach { (i, data) in
+                ReEnquiryReceiptObject.upload_files.append((field_name: "attached_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
+            }
+            /// ReEnquiryReceipt 요청
+            dispatchGroup.enter()
+            requestReEnquiryReceipt(parameters: params) { array, fcm_id, status in
+                
+                if status == 200, let first_upload_time = array.first?.data.first?.time, first_upload_time != "" {
+                    /// ReReceipt FileUpload 요청
+                    dispatchGroup.enter()
+                    requestEnquiryFileUpload(action: "add", enquiry_time: first_upload_time, comment_time: first_upload_time, file_data: self.ReEnquiryReceiptObject.upload_files) { array, status in
+                        
+                        if status == 200, let delegate = ReEnquiryReceiptVCdelegate {
+                            delegate.ReEnquiryReceiptArray = array; delegate.tableView.reloadData()
+                        }
+                        
+                        dispatchGroup.leave()
+                    }
+                }
+                    
+                status_code = status; dispatchGroup.leave()
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                
+                self.customLoadingIndicator(animated: false)
+                
+                switch status_code {
+                case 200:
+                    let alert = UIAlertController(title: "", message: "접수 되었습니다.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+//                        let segue = self.storyboard?.instantiateViewController(withIdentifier: "ReEnquiryReceiptDetailVC") as! ReEnquiryReceiptDetailVC
+//                        segue.ReEnquiryReceiptArray = ReEnquiryReceiptArray
+//                        self.navigationController?.pushViewController(segue, animated: true, completion: {
+//                            if let delegate = ReEnquiryReceiptVCdelegate {
+//                                delegate.ReEnquiryReceiptArray = ReEnquiryReceiptArray
+//                                delegate.tableView.reloadData()
+//                            }
+//                            self.navigationController?.popViewController(animated: false)
+//                        })
+                    }))
+                    self.present(alert, animated: true, completion: nil)
+                case 204:
+                    self.customAlert(message: "No Data", time: 1)
+                case 600:
+                    self.customAlert(message: "Error occurred during data conversion", time: 1)
+                default:
+                    self.customAlert(message: "Internal server error", time: 1)
+                }
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -242,10 +387,10 @@ extension ReReceiptUploadVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return 1
-        } else if section == 1, ReReceiptChatObject.order_item.count > 0 {
-            return ReReceiptChatObject.order_item.count
-        } else if section == 2 {
+        } else if section == 1 {
             return 1
+        } else if section == 2, ReEnquiryReceiptObject.order_item.count > 0 {
+            return ReEnquiryReceiptObject.order_item.count
         } else {
             return .zero
         }
@@ -256,8 +401,6 @@ extension ReReceiptUploadVC: UITableViewDelegate, UITableViewDataSource {
         guard let cell = cell as? ReReceiptUploadTC else { return }
         
         if indexPath.section == 1 {
-            collectionViewContentOffsets[indexPath.section] = cell.optionCollectionView.contentOffset.x
-        } else if indexPath.section == 2 {
             collectionViewContentOffsets[indexPath.section] = cell.receiptCollecctionView.contentOffset.x
         }
     }
@@ -272,42 +415,43 @@ extension ReReceiptUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.viewDidLoad()
             
             cell.summaryAddress_tf.isEnabled = false
-            cell.summaryAddress_tf.text = ReReceiptChatObject.summary_address
-            cell.summaryAddress_btn.backgroundColor = ReReceiptChatObject.summary_address != "" ? .H_8CD26B : .black.withAlphaComponent(0.3)
-            cell.summaryAddress_btn.addTarget(cell, action: #selector(cell.summaryAddress_btn(_:)), for: .touchUpInside)
-            cell.storeName_tf.text = ReReceiptChatObject.requested_store_name
+            cell.summaryAddress_tf.text = ReEnquiryReceiptObject.summary_address
+            cell.summaryAddress_btn.backgroundColor = ReEnquiryReceiptObject.summary_address != "" ? .H_8CD26B : .black.withAlphaComponent(0.3)
+            cell.summaryAddress_btn.addTarget(self, action: #selector(summaryAddress_btn(_:)), for: .touchUpInside)
+            cell.storeName_tf.text = ReEnquiryReceiptObject.requested_store_name
             cell.storeName_tf.addTarget(self, action: #selector(end_storeName_tf(_:)), for: .editingDidEnd)
             
             return cell
             
         } else if indexPath.section == 1 {
             
-            let data = ReReceiptChatObject.order_item[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReReceiptUploadTC2", for: indexPath) as! ReReceiptUploadTC
+            cell.delegate = self
+            cell.indexpath_section = indexPath.section
+            cell.viewDidLoad()
+            
+            return cell
+            
+        } else if indexPath.section == 2 {
+            
+            let data = ReEnquiryReceiptObject.order_item[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReReceiptUploadTC3", for: indexPath) as! ReReceiptUploadTC
             cell.delegate = self
             cell.indexpath_section = indexPath.section
             cell.indexpath_row = indexPath.row
             cell.viewDidLoad()
             
             cell.itemNum_label.text = (indexPath.row < 9 ? "0" : "") + String(indexPath.row+1) + "."
+            cell.delete_btn.tag = indexPath.row; cell.delete_btn.addTarget(cell, action: #selector(cell.delete_btn(_:)), for: .touchUpInside)
             cell.itemName_tf.paddingLeft(10); cell.itemName_tf.paddingRight(10)
-            cell.itemName_tf.placeholder(text: "상품명을 입력하세요.", color: .lightGray)
+            cell.itemName_tf.placeholder(text: "상품명을 입력하세요.", color: .black.withAlphaComponent(0.3))
             cell.itemName_tf.text = data.item_name
+            cell.itemName_tf.addTarget(cell, action: #selector(cell.end_itemName_tf(_:)), for: .editingDidEnd)
+            let item_category_name = "\(data.item_category_name)".replacingOccurrences(of: ", ", with: " > ").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+            cell.itemCategoryName_btn.setTitle(item_category_name != "" ? item_category_name : "카테고리", for: .normal)
+            cell.itemCategoryName_btn.setTitleColor(item_category_name != "" ? .black : .black.withAlphaComponent(0.3), for: .normal)
+            cell.itemCategoryName_btn.addTarget(cell, action: #selector(cell.itemCategoryName_btn(_:)), for: .touchUpInside)
             cell.optionAdd_btn.addTarget(cell, action: #selector(cell.optionAdd_btn(_:)), for: .touchUpInside)
-            cell.option_v.isHidden = (data.item_option.count == 0)
-            cell.delete_btn.tag = indexPath.row; cell.delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
-            
-            return cell
-            
-        } else if indexPath.section == 2 {
-            
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ReReceiptUploadTC3", for: indexPath) as! ReReceiptUploadTC
-            cell.delegate = self
-            cell.indexpath_section = indexPath.section
-            cell.viewDidLoad()
-            
-            cell.goodsAdd_btn.addTarget(self, action: #selector(goodsAdd_btn(_:)), for: .touchUpInside)
-            cell.register_btn.addTarget(self, action: #selector(register_btn(_:)), for: .touchUpInside)
             
             return cell
             
@@ -316,47 +460,12 @@ extension ReReceiptUploadVC: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    @objc func summaryAddress_btn(_ sender: UIButton) {
+        segueViewController(identifier: "BuildingListVC")
+    }
+    
     @objc func end_storeName_tf(_ sender: UITextField) {
-        ReReceiptChatObject.requested_store_name = sender.text!
-    }
-    
-    @objc func delete_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
-        
-        ReReceiptChatObject.order_item.remove(at: sender.tag)
-        UIView.setAnimationsEnabled(false); tableView.reloadSections(IndexSet(integer: 1), with: .none); UIView.setAnimationsEnabled(true)
-    }
-    
-    @objc func goodsAdd_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
-        
-        ReReceiptChatObject.order_item.append((item_name: "", item_option: []))
-        UIView.setAnimationsEnabled(false); tableView.reloadSections(IndexSet(integer: 1), with: .none); UIView.setAnimationsEnabled(true)
-    }
-    
-    @objc func register_btn(_ sender: UIButton) {
-        
-        var check: Bool = true
-        check = ReReceiptChatObject.summary_address != ""
-        check = ReReceiptChatObject.order_item.count != 0
-        check = ReReceiptChatObject.upload_attached_imgs.count != 0
-        ReReceiptChatObject.order_item.forEach { data in
-            if data.item_option.count == 0 { check = false; return }
-        }
-        
-        if check {
-            
-            customLoadingIndicator(animated: true)
-            
-            let params: [String: Any] = [
-                "": ""
-            ]
-            
-        } else {
-            
-        }
+        ReEnquiryReceiptObject.requested_store_name = sender.text!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

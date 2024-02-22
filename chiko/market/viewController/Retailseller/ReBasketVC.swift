@@ -96,7 +96,7 @@ class ReBasketVC: UIViewController {
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
         tableView.refreshControl = refreshControl
-        refreshControl.tintColor = .lightGray
+        refreshControl.tintColor = .black.withAlphaComponent(0.3)
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         order_btn.addTarget(self, action: #selector(order_btn(_:)), for: .touchUpInside)
