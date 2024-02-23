@@ -7212,9 +7212,9 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                         </constraints>
                                                                     </view>
                                                                     <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1wy-bA-JyZ">
-                                                                        <rect key="frame" x="14.999999999999996" y="304" width="48.666666666666657" height="30"/>
+                                                                        <rect key="frame" x="15.000000000000004" y="304" width="48.333333333333343" height="30"/>
                                                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="c3g-4J-p2u">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="49" height="30"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="48.333333333333343" height="30"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                             <subviews>
                                                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="Mwd-4c-7pw">
@@ -8702,30 +8702,30 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="WhGoodsTop30TC" id="eJc-in-zlu" customClass="WhGoodsTop30TC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="50" width="393" height="174.66667175292969"/>
+                                                <rect key="frame" x="0.0" y="50" width="393" height="176.33332824707031"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eJc-in-zlu" id="08A-xK-6sn">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="174.66667175292969"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="176.33332824707031"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="si7-Py-Mgn">
-                                                            <rect key="frame" x="20" y="20" width="353" height="154.66666666666666"/>
+                                                            <rect key="frame" x="20" y="20" width="353" height="156.33333333333334"/>
                                                             <subviews>
                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="g38-rQ-kB7">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="154.66666666666666" height="154.66666666666666"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="156.33333333333334" height="156.33333333333334"/>
                                                                     <color key="backgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" secondItem="g38-rQ-kB7" secondAttribute="height" id="8Nf-hn-EdM"/>
                                                                     </constraints>
                                                                 </imageView>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="2bm-OR-gGR">
-                                                                    <rect key="frame" x="164.66666666666663" y="15.000000000000007" width="173.33333333333337" height="124.66666666666669"/>
+                                                                    <rect key="frame" x="166.33333333333337" y="14.999999999999993" width="171.66666666666663" height="126.33333333333331"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="be4-Oi-Q0t">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="133.33333333333334" height="124.66666666666667"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="131.66666666666666" height="126.33333333333333"/>
                                                                             <subviews>
                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="후드 크롭 스웨터 - 캐시미어 울오프" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kzT-Q5-M4a">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="133.33333333333334" height="84.666666666666671"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="131.66666666666666" height="86.333333333333329"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="TVZ-NP-LSx"/>
                                                                                     </constraints>
@@ -8734,10 +8734,10 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                     <nil key="highlightedColor"/>
                                                                                 </label>
                                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="R5i-Ft-God">
-                                                                                    <rect key="frame" x="0.0" y="89.666666666666671" width="133.33333333333334" height="35"/>
+                                                                                    <rect key="frame" x="0.0" y="91.333333333333329" width="131.66666666666666" height="35"/>
                                                                                     <subviews>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TT4-KM-xiP">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="133.33333333333334" height="15"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="131.66666666666666" height="15"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2,000,000" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dP9-2A-uoF">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="63.666666666666664" height="15"/>
@@ -8749,7 +8749,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
                                                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OzV-Ap-sEb" userLabel="line_v">
-                                                                                                    <rect key="frame" x="0.0" y="6.9999999999999858" width="63.666666666666664" height="1"/>
+                                                                                                    <rect key="frame" x="0.0" y="7.0000000000000142" width="63.666666666666664" height="1"/>
                                                                                                     <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                                                                                     <constraints>
                                                                                                         <constraint firstAttribute="height" constant="1" id="s2O-Wp-ebv"/>
@@ -8767,7 +8767,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bkz-y1-qqy">
-                                                                                            <rect key="frame" x="0.0" y="14.999999999999986" width="133.33333333333334" height="20"/>
+                                                                                            <rect key="frame" x="0.0" y="15.000000000000014" width="131.66666666666666" height="20"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="1,250,000" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Syc-UR-WTd">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="79.333333333333329" height="20"/>
@@ -8779,7 +8779,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="↓ 37.5%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zHb-7s-jCu">
-                                                                                                    <rect key="frame" x="84.333333333333343" y="5.6666666666666865" width="49" height="14.333333333333336"/>
+                                                                                                    <rect key="frame" x="84.333333333333343" y="5.6666666666666581" width="47.333333333333343" height="14.333333333333336"/>
                                                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                                                                                     <color key="textColor" systemColor="systemRedColor"/>
                                                                                                     <nil key="highlightedColor"/>
@@ -8800,7 +8800,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                             </subviews>
                                                                         </stackView>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4eP-5B-Irz">
-                                                                            <rect key="frame" x="143.33333333333334" y="0.0" width="30" height="124.66666666666667"/>
+                                                                            <rect key="frame" x="141.66666666666666" y="0.0" width="30" height="126.33333333333333"/>
                                                                             <color key="backgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="width" constant="30" id="cDy-8L-ONb"/>
@@ -8922,7 +8922,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rky-9w-HPS">
-                                                        <rect key="frame" x="125.33333333333333" y="0.0" width="142.33333333333337" height="50"/>
+                                                        <rect key="frame" x="125.33333333333333" y="0.0" width="142.33333333333343" height="50"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="주문관리" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oSF-SS-EvR">
                                                                 <rect key="frame" x="0.0" y="0.0" width="68.666666666666671" height="50"/>
@@ -9397,7 +9397,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rFG-dr-f6y">
-                                                        <rect key="frame" x="125.33333333333333" y="0.0" width="142.33333333333337" height="50"/>
+                                                        <rect key="frame" x="125.33333333333333" y="0.0" width="142.33333333333343" height="50"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="주문관리" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tRy-cn-qSV">
                                                                 <rect key="frame" x="0.0" y="0.0" width="68.666666666666671" height="50"/>
@@ -9487,14 +9487,14 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                         </view>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="WhNotDeliveryTC1" id="17A-zZ-AfA" customClass="WhNotDeliveryTC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="100" width="393" height="367.33334350585938"/>
+                                                <rect key="frame" x="0.0" y="100" width="393" height="369"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="17A-zZ-AfA" id="Hji-x5-Hxp">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="367.33334350585938"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="369"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Afc-6H-eDI">
-                                                            <rect key="frame" x="20" y="0.0" width="353" height="347.33333333333331"/>
+                                                            <rect key="frame" x="20" y="0.0" width="353" height="349"/>
                                                             <subviews>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2024.01.01." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TQE-Ra-b94">
                                                                     <rect key="frame" x="0.0" y="0.0" width="353" height="20"/>
@@ -9506,13 +9506,13 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pgk-f4-X7B">
-                                                                    <rect key="frame" x="0.0" y="30" width="353" height="317.33333333333331"/>
+                                                                    <rect key="frame" x="0.0" y="30" width="353" height="319"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="Cye-Y6-gqf">
-                                                                            <rect key="frame" x="15" y="15" width="323" height="287.33333333333331"/>
+                                                                            <rect key="frame" x="15" y="15" width="323" height="289"/>
                                                                             <subviews>
                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="후드 크롭 스웨터 - 캐시미어 울오프" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3fQ-rq-1zI">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="323" height="31.333333333333332"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="323" height="33"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="wTt-QM-n9g"/>
                                                                                     </constraints>
@@ -9521,7 +9521,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                     <nil key="highlightedColor"/>
                                                                                 </label>
                                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="Mmo-AD-7uU">
-                                                                                    <rect key="frame" x="0.0" y="46.333333333333314" width="323" height="241"/>
+                                                                                    <rect key="frame" x="0.0" y="48" width="323" height="241"/>
                                                                                     <subviews>
                                                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ici-FT-BBt">
                                                                                             <rect key="frame" x="0.0" y="0.0" width="323" height="30"/>
@@ -11140,12 +11140,12 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ak5-Di-0Xd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9821" y="1512"/>
+            <point key="canvasLocation" x="9820.6106870228996" y="1511.9718309859156"/>
         </scene>
-        <!--View Controller-->
+        <!--Re Enquiry Receipt DetailVC-->
         <scene sceneID="JXj-lK-Qwr">
             <objects>
-                <viewController id="MmP-HY-FdQ" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ReEnquiryReceiptDetailVC" id="MmP-HY-FdQ" customClass="ReEnquiryReceiptDetailVC" customModule="market" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gtY-VT-j3r">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -11176,7 +11176,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                                         <connections>
-                                                                            <action selector="back_btn:" destination="jea-nq-N2P" eventType="touchUpInside" id="if7-D8-c5t"/>
+                                                                            <action selector="back_btn:" destination="MmP-HY-FdQ" eventType="touchUpInside" id="nLn-cx-UtN"/>
                                                                         </connections>
                                                                     </button>
                                                                 </subviews>
@@ -11193,8 +11193,8 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                             </view>
                                                         </subviews>
                                                     </stackView>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="주문요청" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nFO-XS-rbm">
-                                                        <rect key="frame" x="162.33333333333334" y="0.0" width="68.666666666666657" height="50"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="주문요청 상세보기" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nFO-XS-rbm">
+                                                        <rect key="frame" x="125.33333333333333" y="0.0" width="142.33333333333337" height="50"/>
                                                         <fontDescription key="fontDescription" name="Cafe24SsurroundairOTF" family="Cafe24 Ssurround air OTF" pointSize="18"/>
                                                         <color key="textColor" white="0.0" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <nil key="highlightedColor"/>
@@ -11219,32 +11219,31 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                             <constraint firstAttribute="bottom" secondItem="5M5-Na-8C3" secondAttribute="bottom" id="Mh7-yS-HF4"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" id="3cp-Od-Wk8">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rkO-Lz-vKz">
+                                        <rect key="frame" x="0.0" y="109" width="393" height="161"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="obN-Eu-wi5">
-                                                <rect key="frame" x="20" y="10" width="353" height="150.33333333333334"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="6PL-eq-0Pf">
+                                                <rect key="frame" x="20" y="10" width="353" height="151"/>
                                                 <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="DNQ-gZ-znI">
-                                                        <rect key="frame" x="0.0" y="0.0" width="353" height="129.33333333333334"/>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="bPP-5O-z2f">
+                                                        <rect key="frame" x="0.0" y="0.0" width="353" height="130"/>
                                                         <subviews>
-                                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="4td-vE-6Kr">
-                                                                <rect key="frame" x="0.0" y="0.0" width="353" height="39.333333333333336"/>
+                                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="VWr-Db-guY">
+                                                                <rect key="frame" x="0.0" y="0.0" width="353" height="40"/>
                                                                 <subviews>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hUf-KK-UfY">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="353" height="19.333333333333332"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EuU-4z-ZnL">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="353" height="20"/>
                                                                         <constraints>
-                                                                            <constraint firstAttribute="height" constant="20" id="QLO-Z4-K68"/>
+                                                                            <constraint firstAttribute="height" constant="20" id="O8a-ao-Zhi"/>
                                                                         </constraints>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2024.01.01 오후 01:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NxF-CH-Jr8">
-                                                                        <rect key="frame" x="0.0" y="19.333333333333343" width="353" height="20"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2024.01.01 오후 01:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0ot-Z6-qoY">
+                                                                        <rect key="frame" x="0.0" y="20" width="353" height="20"/>
                                                                         <constraints>
-                                                                            <constraint firstAttribute="height" constant="20" id="q8m-Tj-oF3"/>
+                                                                            <constraint firstAttribute="height" constant="20" id="lpK-w8-oBj"/>
                                                                         </constraints>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
@@ -11252,35 +11251,36 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                     </label>
                                                                 </subviews>
                                                             </stackView>
-                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R0I-XX-ZA3">
-                                                                <rect key="frame" x="0.0" y="49.333333333333343" width="353" height="80"/>
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="igd-Mg-tbj">
+                                                                <rect key="frame" x="0.0" y="50" width="353" height="80"/>
                                                                 <subviews>
-                                                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="SAl-kU-bKm">
+                                                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="mt4-Wt-Ndc">
                                                                         <rect key="frame" x="-20" y="0.0" width="393" height="80"/>
                                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="iVj-Cg-GYw">
+                                                                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="wBz-DB-AJ2">
                                                                             <size key="itemSize" width="80" height="80"/>
                                                                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                                                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                                                             <inset key="sectionInset" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
                                                                         </collectionViewFlowLayout>
                                                                         <cells>
-                                                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="WCa-ek-kJ7">
+                                                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ReEnquiryReceiptDetailCC" id="K6A-RA-IQk" customClass="ReEnquiryReceiptDetailCC" customModule="market" customModuleProvider="target">
                                                                                 <rect key="frame" x="20" y="0.0" width="80" height="80"/>
                                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="HjF-da-Mtd">
+                                                                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="hEF-br-odI">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="80" height="80"/>
                                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                                     <subviews>
-                                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fXi-dI-FFN">
+                                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wk2-j2-Doi">
                                                                                             <rect key="frame" x="0.0" y="0.0" width="80" height="80"/>
+                                                                                            <color key="backgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                                                                         </imageView>
                                                                                     </subviews>
                                                                                     <constraints>
-                                                                                        <constraint firstItem="fXi-dI-FFN" firstAttribute="leading" secondItem="HjF-da-Mtd" secondAttribute="leading" id="BxI-Ex-sgu"/>
-                                                                                        <constraint firstAttribute="bottom" secondItem="fXi-dI-FFN" secondAttribute="bottom" id="DBt-qx-zbz"/>
-                                                                                        <constraint firstAttribute="trailing" secondItem="fXi-dI-FFN" secondAttribute="trailing" id="Ggd-gS-wMS"/>
-                                                                                        <constraint firstItem="fXi-dI-FFN" firstAttribute="top" secondItem="HjF-da-Mtd" secondAttribute="top" id="U38-ow-GCh"/>
+                                                                                        <constraint firstItem="wk2-j2-Doi" firstAttribute="leading" secondItem="hEF-br-odI" secondAttribute="leading" id="3TL-Az-Fvj"/>
+                                                                                        <constraint firstAttribute="bottom" secondItem="wk2-j2-Doi" secondAttribute="bottom" id="RKt-eI-pJW"/>
+                                                                                        <constraint firstAttribute="trailing" secondItem="wk2-j2-Doi" secondAttribute="trailing" id="TUr-Af-jpU"/>
+                                                                                        <constraint firstItem="wk2-j2-Doi" firstAttribute="top" secondItem="hEF-br-odI" secondAttribute="top" id="qWC-Vs-nih"/>
                                                                                     </constraints>
                                                                                 </collectionViewCellContentView>
                                                                                 <size key="customSize" width="80" height="80"/>
@@ -11289,26 +11289,29 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                         <real key="value" value="10"/>
                                                                                     </userDefinedRuntimeAttribute>
                                                                                 </userDefinedRuntimeAttributes>
+                                                                                <connections>
+                                                                                    <outlet property="receipt_img" destination="wk2-j2-Doi" id="lmN-5k-Zjp"/>
+                                                                                </connections>
                                                                             </collectionViewCell>
                                                                         </cells>
                                                                     </collectionView>
                                                                 </subviews>
                                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <constraints>
-                                                                    <constraint firstItem="SAl-kU-bKm" firstAttribute="leading" secondItem="R0I-XX-ZA3" secondAttribute="leading" constant="-20" id="1OA-3v-a3g"/>
-                                                                    <constraint firstAttribute="trailing" secondItem="SAl-kU-bKm" secondAttribute="trailing" constant="-20" id="5JI-Ul-XSX"/>
-                                                                    <constraint firstAttribute="bottom" secondItem="SAl-kU-bKm" secondAttribute="bottom" id="UDP-bQ-thI"/>
-                                                                    <constraint firstItem="SAl-kU-bKm" firstAttribute="top" secondItem="R0I-XX-ZA3" secondAttribute="top" id="d0V-DH-7yx"/>
-                                                                    <constraint firstAttribute="height" constant="80" id="gQ9-rV-365"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="mt4-Wt-Ndc" secondAttribute="trailing" constant="-20" id="4BR-DM-BDH"/>
+                                                                    <constraint firstItem="mt4-Wt-Ndc" firstAttribute="leading" secondItem="igd-Mg-tbj" secondAttribute="leading" constant="-20" id="Iqc-Sy-20N"/>
+                                                                    <constraint firstAttribute="height" constant="80" id="KgS-GF-pr3"/>
+                                                                    <constraint firstItem="mt4-Wt-Ndc" firstAttribute="top" secondItem="igd-Mg-tbj" secondAttribute="top" id="N34-sm-5hw"/>
+                                                                    <constraint firstAttribute="bottom" secondItem="mt4-Wt-Ndc" secondAttribute="bottom" id="UIb-NT-NCZ"/>
                                                                 </constraints>
                                                             </view>
                                                         </subviews>
                                                     </stackView>
-                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Yj-iL-oIH" userLabel="Line View">
-                                                        <rect key="frame" x="0.0" y="149.33333333333331" width="353" height="1"/>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jhb-et-wvM" userLabel="Line View">
+                                                        <rect key="frame" x="0.0" y="150" width="353" height="1"/>
                                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.10000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="1" id="AMN-iq-oLT"/>
+                                                            <constraint firstAttribute="height" constant="1" id="Awv-15-QBY"/>
                                                         </constraints>
                                                     </view>
                                                 </subviews>
@@ -11316,25 +11319,25 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstItem="obN-Eu-wi5" firstAttribute="leading" secondItem="3cp-Od-Wk8" secondAttribute="leading" constant="20" id="PXM-9z-VPr"/>
-                                            <constraint firstItem="obN-Eu-wi5" firstAttribute="top" secondItem="3cp-Od-Wk8" secondAttribute="top" constant="10" id="TO9-b6-rtD"/>
-                                            <constraint firstAttribute="trailing" secondItem="obN-Eu-wi5" secondAttribute="trailing" constant="20" id="gU4-bb-KGi"/>
-                                            <constraint firstAttribute="bottom" secondItem="obN-Eu-wi5" secondAttribute="bottom" id="iEu-oO-cwe"/>
+                                            <constraint firstItem="6PL-eq-0Pf" firstAttribute="leading" secondItem="rkO-Lz-vKz" secondAttribute="leading" constant="20" id="33p-Be-77z"/>
+                                            <constraint firstAttribute="trailing" secondItem="6PL-eq-0Pf" secondAttribute="trailing" constant="20" id="Bwn-rt-7qb"/>
+                                            <constraint firstItem="6PL-eq-0Pf" firstAttribute="top" secondItem="rkO-Lz-vKz" secondAttribute="top" constant="10" id="Lq1-8o-eV2"/>
+                                            <constraint firstAttribute="bottom" secondItem="6PL-eq-0Pf" secondAttribute="bottom" id="wvC-ac-SRg"/>
                                         </constraints>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="aGY-8m-L7A">
-                                        <rect key="frame" x="0.0" y="269.33333333333331" width="393" height="582.66666666666674"/>
+                                        <rect key="frame" x="0.0" y="270" width="393" height="582"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="ExE-Vq-3NB">
-                                                <rect key="frame" x="0.0" y="50" width="393" height="60.333332061767578"/>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReEnquiryReceiptDetailTC1" id="ExE-Vq-3NB" customClass="ReEnquiryReceiptDetailTC" customModule="market" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="50" width="393" height="67.333335876464844"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ExE-Vq-3NB" id="6l6-3M-d1X">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="60.333332061767578"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="67.333335876464844"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2024.01.01 오후 01:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CvE-8Z-tuX">
-                                                            <rect key="frame" x="30.000000000000007" y="45.333333333333336" width="120.66666666666669" height="15"/>
+                                                            <rect key="frame" x="30.000000000000007" y="52.333333333333336" width="120.66666666666669" height="15.000000000000007"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="15" id="4g9-iw-1Gx"/>
                                                             </constraints>
@@ -11343,10 +11346,10 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K8Z-ZJ-tjI">
-                                                            <rect key="frame" x="20.000000000000004" y="9.9999999999999982" width="55.333333333333343" height="30.333333333333329"/>
+                                                            <rect key="frame" x="20.000000000000004" y="10" width="55.333333333333343" height="37.333333333333336"/>
                                                             <subviews>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="10000" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zDi-wM-mrS">
-                                                                    <rect key="frame" x="10" y="5" width="35.333333333333336" height="20.333333333333332"/>
+                                                                    <rect key="frame" x="10" y="9.9999999999999982" width="35.333333333333336" height="17.333333333333329"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <nil key="highlightedColor"/>
@@ -11354,9 +11357,9 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                             </subviews>
                                                             <color key="backgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="bottom" secondItem="zDi-wM-mrS" secondAttribute="bottom" constant="5" id="6va-pg-O0l"/>
+                                                                <constraint firstAttribute="bottom" secondItem="zDi-wM-mrS" secondAttribute="bottom" constant="10" id="6va-pg-O0l"/>
                                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="NE4-E5-kwb"/>
-                                                                <constraint firstItem="zDi-wM-mrS" firstAttribute="top" secondItem="K8Z-ZJ-tjI" secondAttribute="top" constant="5" id="XQJ-ku-X5e"/>
+                                                                <constraint firstItem="zDi-wM-mrS" firstAttribute="top" secondItem="K8Z-ZJ-tjI" secondAttribute="top" constant="10" id="XQJ-ku-X5e"/>
                                                                 <constraint firstItem="zDi-wM-mrS" firstAttribute="leading" secondItem="K8Z-ZJ-tjI" secondAttribute="leading" constant="10" id="XUm-Wo-Aql"/>
                                                                 <constraint firstAttribute="trailing" secondItem="zDi-wM-mrS" secondAttribute="trailing" constant="10" id="kNy-Cu-pZg"/>
                                                             </constraints>
@@ -11372,16 +11375,21 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <connections>
+                                                    <outlet property="comment_v" destination="K8Z-ZJ-tjI" id="ZIg-cC-5lA"/>
+                                                    <outlet property="content_label" destination="zDi-wM-mrS" id="ecm-tC-3WS"/>
+                                                    <outlet property="datetimeReadorNot_label" destination="CvE-8Z-tuX" id="nap-vu-gpM"/>
+                                                </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="S9X-cy-GKX">
-                                                <rect key="frame" x="0.0" y="110.33333206176758" width="393" height="60.333332061767578"/>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReEnquiryReceiptDetailTC2" id="S9X-cy-GKX" customClass="ReEnquiryReceiptDetailTC" customModule="market" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="117.33333587646484" width="393" height="67.333335876464844"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="S9X-cy-GKX" id="kkk-58-OyR">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="60.333332061767578"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="67.333335876464844"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2024.01.01 오후 01:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2jT-8x-gap">
-                                                            <rect key="frame" x="252.33333333333334" y="45.333333333333336" width="120.66666666666666" height="15"/>
+                                                            <rect key="frame" x="252.33333333333334" y="52.333333333333336" width="120.66666666666666" height="15.000000000000007"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="15" id="SSF-Z5-Nx7"/>
                                                             </constraints>
@@ -11390,10 +11398,10 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wg1-3U-tTS">
-                                                            <rect key="frame" x="317.66666666666669" y="9.9999999999999982" width="55.333333333333314" height="30.333333333333329"/>
+                                                            <rect key="frame" x="317.66666666666669" y="10" width="55.333333333333314" height="37.333333333333336"/>
                                                             <subviews>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="10000" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FH2-so-kZr">
-                                                                    <rect key="frame" x="10" y="5" width="35.333333333333336" height="20.333333333333332"/>
+                                                                    <rect key="frame" x="10" y="9.9999999999999982" width="35.333333333333336" height="17.333333333333329"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <nil key="highlightedColor"/>
@@ -11403,8 +11411,8 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                             <constraints>
                                                                 <constraint firstAttribute="trailing" secondItem="FH2-so-kZr" secondAttribute="trailing" constant="10" id="2JO-Bn-UXL"/>
                                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="LZl-Q3-4Lv"/>
-                                                                <constraint firstAttribute="bottom" secondItem="FH2-so-kZr" secondAttribute="bottom" constant="5" id="NOR-3s-SxQ"/>
-                                                                <constraint firstItem="FH2-so-kZr" firstAttribute="top" secondItem="wg1-3U-tTS" secondAttribute="top" constant="5" id="OIf-Tz-NdI"/>
+                                                                <constraint firstAttribute="bottom" secondItem="FH2-so-kZr" secondAttribute="bottom" constant="10" id="NOR-3s-SxQ"/>
+                                                                <constraint firstItem="FH2-so-kZr" firstAttribute="top" secondItem="wg1-3U-tTS" secondAttribute="top" constant="10" id="OIf-Tz-NdI"/>
                                                                 <constraint firstItem="FH2-so-kZr" firstAttribute="leading" secondItem="wg1-3U-tTS" secondAttribute="leading" constant="10" id="yig-r7-Sne"/>
                                                             </constraints>
                                                         </view>
@@ -11419,9 +11427,14 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <connections>
+                                                    <outlet property="comment_v" destination="wg1-3U-tTS" id="bCm-9l-7eE"/>
+                                                    <outlet property="content_label" destination="FH2-so-kZr" id="J3R-AQ-d6e"/>
+                                                    <outlet property="datetimeReadorNot_label" destination="2jT-8x-gap" id="7hE-vE-nT9"/>
+                                                </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Ifx-jY-xAJ">
-                                                <rect key="frame" x="0.0" y="170.66666412353516" width="393" height="160.33332824707031"/>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReEnquiryReceiptDetailTC3" id="Ifx-jY-xAJ" customClass="ReEnquiryReceiptDetailTC" customModule="market" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="184.66667175292969" width="393" height="160.33332824707031"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Ifx-jY-xAJ" id="Wwa-cv-Zf5">
                                                     <rect key="frame" x="0.0" y="0.0" width="393" height="160.33332824707031"/>
@@ -11485,6 +11498,12 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                             <constraint firstAttribute="bottom" secondItem="p42-qF-zIc" secondAttribute="bottom" id="tMH-i9-Zkf"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="collectionView" destination="mt4-Wt-Ndc" id="l62-nq-YIF"/>
+                        <outlet property="datetime_label" destination="0ot-Z6-qoY" id="8Bc-8U-W3s"/>
+                        <outlet property="tableView" destination="aGY-8m-L7A" id="MQ5-eq-9AQ"/>
+                        <outlet property="title_label" destination="EuU-4z-ZnL" id="9fG-9p-LIq"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hai-hA-1eU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -12475,7 +12494,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V8X-iF-Tjb">
-                                                        <rect key="frame" x="125.33333333333333" y="0.0" width="142.33333333333337" height="50"/>
+                                                        <rect key="frame" x="125.33333333333333" y="0.0" width="142.33333333333343" height="50"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="매장관리" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TbA-LB-NrI">
                                                                 <rect key="frame" x="0.0" y="0.0" width="68.666666666666671" height="50"/>
@@ -20619,17 +20638,17 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReBasketTC0" id="E04-9k-Qkz" customClass="ReBasketTC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="50" width="393" height="169.66667175292969"/>
+                                                <rect key="frame" x="0.0" y="50" width="393" height="171.33332824707031"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="E04-9k-Qkz" id="ULo-DM-rqr">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="169.66667175292969"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="171.33332824707031"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EsT-E3-jGQ">
-                                                            <rect key="frame" x="20" y="10" width="353" height="139.66666666666666"/>
+                                                            <rect key="frame" x="20" y="10" width="353" height="141.33333333333334"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cxa-Fm-XFR">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="139.66666666666666"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="141.33333333333334"/>
                                                                     <subviews>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MYK-Kf-A82">
                                                                             <rect key="frame" x="15" y="15" width="50" height="50"/>
@@ -20708,7 +20727,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </tableViewCell>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReBasketTC1" id="oTe-QN-Tzb" customClass="ReBasketTC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="219.66667175292969" width="393" height="231.33332824707031"/>
+                                                <rect key="frame" x="0.0" y="221.33332824707031" width="393" height="231.33332824707031"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oTe-QN-Tzb" id="Rlu-h5-pOY">
                                                     <rect key="frame" x="0.0" y="0.0" width="393" height="231.33332824707031"/>
@@ -21027,7 +21046,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                 </connections>
                                             </tableViewCell>
                                             <tableViewCell contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReBasketTC3" id="Ncn-aO-Dtc" customClass="ReBasketTC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="451" width="393" height="69.666664123535156"/>
+                                                <rect key="frame" x="0.0" y="452.66665649414062" width="393" height="69.666664123535156"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Ncn-aO-Dtc" id="eLw-VI-4Hv">
                                                     <rect key="frame" x="0.0" y="0.0" width="393" height="69.666664123535156"/>
@@ -21565,7 +21584,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lwL-5m-DxE">
                                 <rect key="frame" x="323" y="748" width="50" height="50"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="add" translatesAutoresizingMaskIntoConstraints="NO" id="OoT-2m-RRb">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.29999999999999999" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="add" translatesAutoresizingMaskIntoConstraints="NO" id="OoT-2m-RRb">
                                         <rect key="frame" x="10" y="10" width="30" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="OoT-2m-RRb" secondAttribute="height" id="MXB-u1-5kZ"/>
@@ -22111,14 +22130,14 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <prototypes>
                                             <tableViewCell contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReGoodsDetailTC0" id="irb-Hq-SGS" customClass="ReGoodsDetailTC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="50" width="393" height="708"/>
+                                                <rect key="frame" x="0.0" y="50" width="393" height="709.66668701171875"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="irb-Hq-SGS" id="CJb-zY-CLs">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="708"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="709.66668701171875"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="8Xp-Ok-1cp">
-                                                            <rect key="frame" x="20" y="10" width="353" height="698"/>
+                                                            <rect key="frame" x="20" y="10" width="353" height="699.66666666666663"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0bh-MG-WNQ">
                                                                     <rect key="frame" x="0.0" y="0.0" width="353" height="70"/>
@@ -22244,10 +22263,10 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                     </userDefinedRuntimeAttributes>
                                                                 </view>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x6P-70-SvD">
-                                                                    <rect key="frame" x="0.0" y="90" width="353" height="544"/>
+                                                                    <rect key="frame" x="0.0" y="90" width="353" height="545.66666666666663"/>
                                                                     <subviews>
                                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gradation_color" translatesAutoresizingMaskIntoConstraints="NO" id="Teb-3K-080">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="353" height="544"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="353" height="545.66666666666663"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                                                                     <real key="value" value="15"/>
@@ -22255,7 +22274,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                             </userDefinedRuntimeAttributes>
                                                                         </imageView>
                                                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K8j-Uy-zly">
-                                                                            <rect key="frame" x="2" y="2" width="349" height="540"/>
+                                                                            <rect key="frame" x="2" y="2" width="349" height="541.66666666666663"/>
                                                                             <subviews>
                                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xl7-Jo-M9k" customClass="ImageSlideshow" customModule="ImageSlideshow">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="349" height="349"/>
@@ -22267,7 +22286,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                 <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Ig-ho-JUW">
                                                                                     <rect key="frame" x="15.000000000000004" y="304" width="48.333333333333343" height="30"/>
                                                                                     <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="fef-0G-4We">
-                                                                                        <rect key="frame" x="0.0" y="0.0" width="48" height="30"/>
+                                                                                        <rect key="frame" x="0.0" y="0.0" width="48.333333333333343" height="30"/>
                                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                         <subviews>
                                                                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="ts1-oI-ctf">
@@ -22307,10 +22326,10 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                     </userDefinedRuntimeAttributes>
                                                                                 </visualEffectView>
                                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="lYC-1z-5Kn">
-                                                                                    <rect key="frame" x="15" y="364" width="319" height="126"/>
+                                                                                    <rect key="frame" x="15" y="364" width="319" height="127.66666666666669"/>
                                                                                     <subviews>
                                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="후드 크롭 스웨터 - 캐시미어 울오프" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F2G-iP-LiG">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="319" height="86"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="319" height="87.666666666666671"/>
                                                                                             <constraints>
                                                                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="y4g-Hq-87C"/>
                                                                                             </constraints>
@@ -22319,7 +22338,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                             <nil key="highlightedColor"/>
                                                                                         </label>
                                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="deJ-0R-nKv">
-                                                                                            <rect key="frame" x="0.0" y="91" width="319" height="35"/>
+                                                                                            <rect key="frame" x="0.0" y="92.666666666666629" width="319" height="35"/>
                                                                                             <subviews>
                                                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BMz-Dz-wxA">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="319" height="15"/>
@@ -22364,7 +22383,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                                             <nil key="highlightedColor"/>
                                                                                                         </label>
                                                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="↓ 37.5%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJ3-Qe-uvr">
-                                                                                                            <rect key="frame" x="84.333333333333329" y="5.6666666666666297" width="51.333333333333329" height="14.333333333333336"/>
+                                                                                                            <rect key="frame" x="84.333333333333329" y="5.6666666666667433" width="51.333333333333329" height="14.333333333333336"/>
                                                                                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                                                                                             <color key="textColor" systemColor="systemRedColor"/>
                                                                                                             <nil key="highlightedColor"/>
@@ -22385,7 +22404,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                     </subviews>
                                                                                 </stackView>
                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="여성의류 &gt; 상의 &gt; 티셔츠" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nly-2p-143">
-                                                                                    <rect key="frame" x="14.999999999999993" y="495" width="122.33333333333331" height="30"/>
+                                                                                    <rect key="frame" x="14.999999999999993" y="496.66666666666663" width="122.33333333333331" height="30"/>
                                                                                     <color key="backgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" id="N6n-PL-n4b"/>
@@ -22396,7 +22415,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                                     <nil key="highlightedColor"/>
                                                                                 </label>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="top" translatesAutoresizingMaskIntoConstraints="NO" id="oaj-ft-GAe">
-                                                                                    <rect key="frame" x="294" y="485" width="40" height="40"/>
+                                                                                    <rect key="frame" x="294" y="486.66666666666663" width="40" height="40"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" constant="40" id="9Ae-VC-F8Z"/>
                                                                                         <constraint firstAttribute="width" secondItem="oaj-ft-GAe" secondAttribute="height" id="tPw-Y5-Cea"/>
@@ -22466,14 +22485,14 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                     </userDefinedRuntimeAttributes>
                                                                 </view>
                                                                 <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vVW-cF-gGw" userLabel="Line View">
-                                                                    <rect key="frame" x="0.0" y="644" width="353" height="1"/>
+                                                                    <rect key="frame" x="0.0" y="645.66666666666663" width="353" height="1"/>
                                                                     <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.10000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="1" id="fYk-Bw-1Sd"/>
                                                                     </constraints>
                                                                 </view>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uhf-15-VJu">
-                                                                    <rect key="frame" x="0.0" y="654" width="353" height="44"/>
+                                                                    <rect key="frame" x="0.0" y="655.66666666666663" width="353" height="44"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="상품 선택" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VRa-wL-Tul">
                                                                             <rect key="frame" x="15" y="0.0" width="323" height="44"/>
@@ -22482,7 +22501,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.30000001192092896" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bottom_buttom" translatesAutoresizingMaskIntoConstraints="NO" id="hNO-UE-AaY">
-                                                                            <rect key="frame" x="323" y="14.666666666666629" width="15" height="15"/>
+                                                                            <rect key="frame" x="323" y="14.666666666666742" width="15" height="15"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="width" constant="15" id="ub8-ry-gUS"/>
                                                                                 <constraint firstAttribute="width" secondItem="hNO-UE-AaY" secondAttribute="height" id="w2m-Dg-Jsl"/>
@@ -22543,7 +22562,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                 </connections>
                                             </tableViewCell>
                                             <tableViewCell contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReGoodsDetailTC1" id="KiR-jk-QNa" customClass="ReGoodsDetailTC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="758" width="393" height="85.333335876464844"/>
+                                                <rect key="frame" x="0.0" y="759.66668701171875" width="393" height="85.333335876464844"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="KiR-jk-QNa" id="4cM-ZK-LBP">
                                                     <rect key="frame" x="0.0" y="0.0" width="393" height="85.333335876464844"/>
@@ -22713,7 +22732,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                 </connections>
                                             </tableViewCell>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReGoodsDetailTC2" id="uef-pR-tdC" customClass="ReGoodsDetailTC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="843.33333587646484" width="393" height="20.333333969116211"/>
+                                                <rect key="frame" x="0.0" y="845.00002288818359" width="393" height="20.333333969116211"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uef-pR-tdC" id="hEv-Qa-eFR">
                                                     <rect key="frame" x="0.0" y="0.0" width="393" height="20.333333969116211"/>
@@ -22737,7 +22756,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
                                                 </connections>
                                             </tableViewCell>
                                             <tableViewCell contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReGoodsDetailTC3" id="syG-d2-Vbl" customClass="ReGoodsDetailTC" customModule="market" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="863.66666984558105" width="393" height="802.33331298828125"/>
+                                                <rect key="frame" x="0.0" y="865.3333568572998" width="393" height="802.33331298828125"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="syG-d2-Vbl" id="VBO-Sm-eu1">
                                                     <rect key="frame" x="0.0" y="0.0" width="393" height="802.33331298828125"/>
@@ -25590,7 +25609,7 @@ A23, 24, 25의 경우 A23 / 가열15호, 16호, 나열10호의 경우 가열15�
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="viewFlipsideBackgroundColor">
             <color red="0.12156862745098039" green="0.12941176470588237" blue="0.14117647058823529" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

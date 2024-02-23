@@ -48,11 +48,36 @@ class EmployeeVC: UIViewController {
     }
     
     @objc func storePw_btn(_ sender: UIButton) {
+        
         if storePw_tf.text!.count < 4 {
             customAlert(message: "4자리 이상 입력해 주세요.", time: 1)
         } else {
             storePw_tf.resignFirstResponder()
             
+            let params: [String: Any] = [
+                "action": "edit",
+                "collection_id": "store",
+                "document_id": StoreObject.store_id,
+                "store_pw": storePw_tf.text!,
+            ]
+            /// Edit DB 요청
+            requestEditDB(params: params) { status in
+                
+                switch status {
+                case 200:
+                    StoreObject.store_pw = self.storePw_tf.text!
+                    self.alert(title: "", message: "변경되었습니다.", style: .alert, time: 1)
+                case 204:
+                    self.storePw_tf.text = StoreObject.store_pw
+                    self.customAlert(message: "No data", time: 1)
+                case 600:
+                    self.storePw_tf.text = StoreObject.store_pw
+                    self.customAlert(message: "Error occurred during data conversion", time: 1)
+                default:
+                    self.storePw_tf.text = StoreObject.store_pw
+                    self.customAlert(message: "Internal server error", time: 1)
+                }
+            }
         }
     }
     

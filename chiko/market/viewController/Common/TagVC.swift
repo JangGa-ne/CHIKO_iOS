@@ -145,6 +145,32 @@ class TagVC: UIViewController {
     
     @objc func save_btn(_ sender: UIButton) {
         
+        var store_tag: [String] = []
+        tags.forEach { data in data.tag.forEach { data in if data.select { store_tag.append(data.name) } } }
+        
+        let params: [String: Any] = [
+            "action": "edit",
+            "collection_id": "store",
+            "document_id": StoreObject.store_id,
+            "store_tag": store_tag,
+        ]
+        /// Edit DB 요청
+        requestEditDB(params: params) { status in
+            
+            switch status {
+            case 200:
+                StoreObject.store_tag = store_tag
+                self.alert(title: "", message: "저장되었습니다.", style: .alert, time: 1) {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            case 204:
+                self.customAlert(message: "No data", time: 1)
+            case 600:
+                self.customAlert(message: "Error occurred during data conversion", time: 1)
+            default:
+                self.customAlert(message: "Internal server error", time: 1)
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

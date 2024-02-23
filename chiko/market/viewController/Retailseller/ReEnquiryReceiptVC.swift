@@ -89,6 +89,8 @@ extension ReEnquiryReceiptVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        
+        let segue = self.storyboard?.instantiateViewController(withIdentifier: "ReEnquiryReceiptDetailVC") as! ReEnquiryReceiptDetailVC
+        segue.ReEnquiryReceiptArray = [ReEnquiryReceiptArray[indexPath.row]]
+        navigationController?.pushViewController(segue, animated: true)
     }
 }

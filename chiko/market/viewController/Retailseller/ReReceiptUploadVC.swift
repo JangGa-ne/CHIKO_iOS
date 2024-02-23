@@ -321,20 +321,26 @@ class ReReceiptUploadVC: UIViewController {
             ReEnquiryReceiptObject.upload_attached_imgs.enumerated().forEach { (i, data) in
                 ReEnquiryReceiptObject.upload_files.append((field_name: "attached_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
             }
+            
+            var new_array: [(store_name: String, summary_address: String, timestamp: String, data: [ReEnquiryReceiptData])] = []
             /// ReEnquiryReceipt 요청
             dispatchGroup.enter()
             requestReEnquiryReceipt(parameters: params) { array, fcm_id, status in
                 
-                if status == 200, let first_upload_time = array.first?.data.first?.time, first_upload_time != "" {
+                if status == 200, let data = array.first?.data.first, data.time != "" {
                     /// ReReceipt FileUpload 요청
                     dispatchGroup.enter()
-                    requestEnquiryFileUpload(action: "add", enquiry_time: first_upload_time, comment_time: first_upload_time, file_data: self.ReEnquiryReceiptObject.upload_files) { array, status in
+                    requestEnquiryFileUpload(action: "add", enquiry_time: data.time, comment_time: data.time, file_data: self.ReEnquiryReceiptObject.upload_files) { array, status in
                         
                         if status == 200, let delegate = ReEnquiryReceiptVCdelegate {
-                            delegate.ReEnquiryReceiptArray = array; delegate.tableView.reloadData()
+                            
+                            delegate.ReEnquiryReceiptArray = array
+                            delegate.tableView.reloadData()
+                            /// Push 요청
+                            requestPush(action: "enquire", fcm_id: fcm_id, body: "주문요청 들어옴", completionHandler: nil)
                         }
                         
-                        dispatchGroup.leave()
+                        new_array = array; dispatchGroup.leave()
                     }
                 }
                     
@@ -347,19 +353,19 @@ class ReReceiptUploadVC: UIViewController {
                 
                 switch status_code {
                 case 200:
-                    let alert = UIAlertController(title: "", message: "접수 되었습니다.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
-//                        let segue = self.storyboard?.instantiateViewController(withIdentifier: "ReEnquiryReceiptDetailVC") as! ReEnquiryReceiptDetailVC
-//                        segue.ReEnquiryReceiptArray = ReEnquiryReceiptArray
-//                        self.navigationController?.pushViewController(segue, animated: true, completion: {
-//                            if let delegate = ReEnquiryReceiptVCdelegate {
-//                                delegate.ReEnquiryReceiptArray = ReEnquiryReceiptArray
-//                                delegate.tableView.reloadData()
-//                            }
-//                            self.navigationController?.popViewController(animated: false)
-//                        })
-                    }))
-                    self.present(alert, animated: true, completion: nil)
+                    self.alert(title: "", message: "접수되었습니다.", style: .alert, time: 1) {
+                        if let delegate = ReEnquiryReceiptVCdelegate {
+                            self.navigationController?.popViewController(animated: false)
+                            let segue = self.storyboard?.instantiateViewController(withIdentifier: "ReEnquiryReceiptDetailVC") as! ReEnquiryReceiptDetailVC
+                            segue.ReEnquiryReceiptArray = new_array
+                            delegate.navigationController?.pushViewController(segue, animated: true, completion: {
+                                delegate.ReEnquiryReceiptArray = new_array
+                                delegate.tableView.reloadData()
+                            })
+                        } else {
+                            self.navigationController?.popViewController(animated: false)
+                        }
+                    }
                 case 204:
                     self.customAlert(message: "No Data", time: 1)
                 case 600:
@@ -466,9 +472,5 @@ extension ReReceiptUploadVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func end_storeName_tf(_ sender: UITextField) {
         ReEnquiryReceiptObject.requested_store_name = sender.text!
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        view.endEditing(true)
     }
 }
