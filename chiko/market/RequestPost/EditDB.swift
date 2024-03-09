@@ -8,9 +8,9 @@
 import UIKit
 import Alamofire
 
-func requestEditDB(params: [String: Any]? = nil, completionHandler: @escaping (Int) -> Void) {
+func requestEditDB(params: [String: Any], completionHandler: @escaping (Int) -> Void) {
     
-    params?.forEach { dict in print(dict) }
+    params.forEach { dict in print(dict) }
     
     AF.request(requestUrl+"/edit_db", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {

@@ -55,7 +55,15 @@ extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource {
         let data = GoodsArray[indexPath.row]
         guard let cell = cell as? WhGoodsTop30TC else { return }
         
-        setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img)
+        setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img)
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+            
+        guard let cell = cell as? WhGoodsTop30TC else { return }
+        
+        cancelKingfisher(imageView: cell.item_img)
+        cell.removeFromSuperview()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

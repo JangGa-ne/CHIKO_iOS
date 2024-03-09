@@ -774,6 +774,7 @@ PODS:
   - ImageSlideshow/SDWebImage (1.9.2):
     - ImageSlideshow/Core
     - SDWebImage (>= 3.7)
+  - Kingfisher (7.10.1)
   - leveldb-library (1.22.2)
   - nanopb (2.30909.1):
     - nanopb/decode (= 2.30909.1)
@@ -800,6 +801,7 @@ DEPENDENCIES:
   - FirebaseFirestore
   - FirebaseMessaging
   - ImageSlideshow/SDWebImage
+  - Kingfisher
   - Nuke
   - NVActivityIndicatorView
   - PanModal
@@ -828,6 +830,7 @@ SPEC REPOS:
     - gRPC-Core
     - GTMSessionFetcher
     - ImageSlideshow
+    - Kingfisher
     - leveldb-library
     - nanopb
     - Nuke
@@ -860,6 +863,7 @@ SPEC CHECKSUMS:
   gRPC-Core: a21a60aefc08c68c247b439a9ef97174b0c54f96
   GTMSessionFetcher: 41b9ef0b4c08a6db4b7eb51a21ae5183ec99a2c8
   ImageSlideshow: be305b54eaf2b2cfc7a7141c7c734605d44dc07d
+  Kingfisher: bc5abe80a8e0144537ef1dd5a0b2621b04f7f439
   leveldb-library: f03246171cce0484482ec291f88b6d563699ee06
   nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   Nuke: 279f17a599fd1c83cf51de5e0e1f2db143a287b0
@@ -870,6 +874,6 @@ SPEC CHECKSUMS:
   SDWebImage: f9258c58221ed854cfa0e2b80ee4033710b1c6d3
   SideMenu: 1b826b95cc7db1a3c7d164f8a6e6e92506ffb0f5
 
-PODFILE CHECKSUM: ae56e5bc185fd114c5f52fc8309493a897717d97
+PODFILE CHECKSUM: c12002cb25d17e524fb087bac08a546699561d13
 
 COCOAPODS: 1.11.3

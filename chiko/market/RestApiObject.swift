@@ -240,6 +240,9 @@ struct GoodsData {
 class ItemOptionData {
     
     var color: String = ""
+    var delivery_price: Int = 0
+    var enter_quantity: Int = 0
+    var explain: String = ""
     var price: Int = 0
     var quantity: Int = 0
     var sequence: Int = 0
@@ -285,6 +288,7 @@ func setGoods(goodsDict: [String: Any]) -> GoodsData {
     (goodsDict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
         let itemOptionValue = ItemOptionData()
         itemOptionValue.color = dict["color"] as? String ?? ""
+        itemOptionValue.delivery_price = dict["delivery_price"] as? Int ?? 0
         itemOptionValue.price = dict["price"] as? Int ?? 0
         itemOptionValue.quantity = dict["quantity"] as? Int ?? 0
         itemOptionValue.size = dict["size"] as? String ?? ""
@@ -329,6 +333,7 @@ func setBasket(basketDict: [String: Any]) -> BasketData {
     (basketDict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
         let itemOptionValue = ItemOptionData()
         itemOptionValue.color = dict["color"] as? String ?? ""
+        itemOptionValue.delivery_price = dict["delivery_price"] as? Int ?? 0
         itemOptionValue.price = dict["price"] as? Int ?? 0
         itemOptionValue.quantity = dict["quantity"] as? Int ?? 0
         itemOptionValue.size = dict["size"] as? String ?? ""
@@ -336,7 +341,7 @@ func setBasket(basketDict: [String: Any]) -> BasketData {
         basketValue.item_option.append(itemOptionValue)
     }
     basketValue.item_mainphoto_img = basketDict["item_mainphoto_img"] as? String ?? ""
-    basketValue.item_sale = basketDict["item_sale"] as? Bool ?? false
+    basketValue.item_sale = Bool(basketDict["item_sale"] as? String ?? "false") ?? false
     basketValue.item_sale_price = basketDict["item_sale_price"] as? Int ?? 0
     basketValue.item_total_price = basketDict["item_total_price"] as? Int ?? 0
     basketValue.item_total_quantity = basketDict["item_total_quantity"] as? Int ?? 0
@@ -358,6 +363,7 @@ class ReOrderData {
     var delivery_name: String = ""
     var delivery_nickname: String = ""
     var delivery_num: String = ""
+    var delivery_price_state: Bool = false
     var order_datetime: String = ""
     var order_id: String = ""
     var order_item: [ReOrderItemData] = []
@@ -385,6 +391,7 @@ func setReOrder(orderDict: [String: Any]) -> ReOrderData {
     orderValue.delivery_name = orderDict["delivery_name"] as? String ?? ""
     orderValue.delivery_nickname = orderDict["delivery_nickname"] as? String ?? ""
     orderValue.delivery_num = orderDict["delivery_num"] as? String ?? ""
+    orderValue.delivery_price_state = Bool(orderDict["delivery_price_state"] as? String ?? "false") ?? false
     orderValue.order_datetime = orderDict["order_datetime"] as? String ?? ""
     orderValue.order_id = orderDict["order_id"] as? String ?? ""
     (orderDict["order_item"] as? Array<[String: Any]> ?? []).forEach { dict in
@@ -409,6 +416,7 @@ func setReOrder(orderDict: [String: Any]) -> ReOrderData {
 class ReOrderItemData {
     
     var delivery_state: String = ""
+    var explain: String = ""
     var item_key: String = ""
     var item_mainphoto_img: String = ""
     var item_name: String = ""
@@ -427,19 +435,23 @@ func setReOrderItem(orderItemDict: [String: Any]) -> ReOrderItemData {
     
     let orderItemValue = ReOrderItemData()
     orderItemValue.delivery_state = orderItemDict["delivery_state"] as? String ?? ""
+    orderItemValue.explain = orderItemDict["explain"] as? String ?? ""
     orderItemValue.item_key = orderItemDict["item_key"] as? String ?? ""
     orderItemValue.item_mainphoto_img = orderItemDict["item_mainphoto_img"] as? String ?? ""
     orderItemValue.item_name = orderItemDict["item_name"] as? String ?? ""
     (orderItemDict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
         let itemOptionValue = ItemOptionData()
         itemOptionValue.color = dict["color"] as? String ?? ""
+        itemOptionValue.delivery_price = dict["delivery_price"] as? Int ?? 0
+        itemOptionValue.enter_quantity = dict["enter_quantity"] as? Int ?? 0
+        itemOptionValue.explain = dict["explain"] as? String ?? ""
         itemOptionValue.price = dict["price"] as? Int ?? 0
         itemOptionValue.quantity = dict["quantity"] as? Int ?? 0
         itemOptionValue.size = dict["size"] as? String ?? ""
         orderItemValue.item_option.append(itemOptionValue)
     }
     orderItemValue.item_price = orderItemDict["item_price"] as? Int ?? 0
-    orderItemValue.item_sale = orderItemDict["item_sale"] as? Bool ?? false
+    orderItemValue.item_sale = Bool(orderItemDict["item_sale"] as? Bool ?? false)
     orderItemValue.item_sale_price = orderItemDict["item_sale_price"] as? Int ?? 0
     orderItemValue.store_id = orderItemDict["store_id"] as? String ?? ""
     orderItemValue.store_name = orderItemDict["store_name"] as? String ?? ""
@@ -501,6 +513,7 @@ func setWhOrder(orderDict: [String: Any]) -> WhOrderData {
     (orderDict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
         let itemOptionValue = ItemOptionData()
         itemOptionValue.color = dict["color"] as? String ?? ""
+        itemOptionValue.delivery_price = dict["delivery_price"] as? Int ?? 0
         itemOptionValue.price = dict["price"] as? Int ?? 0
         itemOptionValue.quantity = dict["quantity"] as? Int ?? 0
         itemOptionValue.size = dict["size"] as? String ?? ""
@@ -541,6 +554,7 @@ func setWhNotDelivery(notDeliveryDict: [String: Any]) -> WhNotDeliveryData {
     (notDeliveryDict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
         let itemOptionValue = ItemOptionData()
         itemOptionValue.color = dict["color"] as? String ?? ""
+        itemOptionValue.delivery_price = dict["delivery_price"] as? Int ?? 0
         itemOptionValue.price = dict["price"] as? Int ?? 0
         itemOptionValue.quantity = dict["quantity"] as? Int ?? 0
         itemOptionValue.size = dict["size"] as? String ?? ""
@@ -569,7 +583,13 @@ class ReEnquiryReceiptData {
     var summary_address: String = ""
     var time: String = ""
     
-    var order_item: [(item_name: String, item_category_name: [String], item_option: [(color: String, size: String, quantity: Int, price: Int)])] = []
+    var order_item: [(
+        explain: String,
+        item_name: String,
+        item_category_name: [String],
+        item_option: [ItemOptionData],
+        item_total_price: Int
+    )] = []
     var upload_attached_imgs: [(file_name: String, file_data: Data, file_size: Int)] = []
     
     var upload_files: [(field_name: String, file_name: String, file_data: Data, file_size: Int)] = []
@@ -583,24 +603,29 @@ func setReEnquiryReceipt(enquiryReceiptDict: [String: Any]) -> ReEnquiryReceiptD
     enquiryReceiptValue.direction = enquiryReceiptDict["direction"] as? String ?? ""
     enquiryReceiptValue.store_id = enquiryReceiptDict["store_id"] as? String ?? ""
     enquiryReceiptValue.store_name = enquiryReceiptDict["store_name"] as? String ?? ""
-    enquiryReceiptValue.read_or_not = enquiryReceiptDict["read_or_not"] as? Bool ?? false
+    enquiryReceiptValue.read_or_not = Bool(enquiryReceiptDict["read_or_not"] as? String ?? "false") ?? false
     enquiryReceiptValue.requested_store_name = enquiryReceiptDict["requested_store_name"] as? String ?? ""
     enquiryReceiptValue.summary_address = enquiryReceiptDict["summary_address"] as? String ?? ""
     enquiryReceiptValue.time = enquiryReceiptDict["time"] as? String ?? ""
     (enquiryReceiptDict["order_item"] as? Array<[String: Any]> ?? []).forEach { dict in
-        var item_option: [(color: String, size: String, quantity: Int, price: Int)] = []
+        var itemOptionArray: [ItemOptionData] = []
         (dict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
-            item_option.append((
-                color: dict["color"] as? String ?? "",
-                size: dict["size"] as? String ?? "",
-                quantity: dict["quantity"] as? Int ?? 0,
-                price: dict["price"] as? Int ?? 0
-            ))
+            let itemOptionValue = ItemOptionData()
+            itemOptionValue.color = dict["color"] as? String ?? ""
+            itemOptionValue.delivery_price = dict["delivery_price"] as? Int ?? 0
+            itemOptionValue.enter_quantity = dict["enter_quantity"] as? Int ?? 0
+            itemOptionValue.explain = dict["explain"] as? String ?? ""
+            itemOptionValue.size = dict["size"] as? String ?? ""
+            itemOptionValue.quantity = dict["quantity"] as? Int ?? 0
+            itemOptionValue.price = dict["price"] as? Int ?? 0
+            itemOptionArray.append(itemOptionValue)
         }
         enquiryReceiptValue.order_item.append((
+            explain: dict["explain"] as? String ?? "",
             item_name: dict["item_name"] as? String ?? "",
             item_category_name: dict["item_category_name"] as? [String] ?? [],
-            item_option: item_option
+            item_option: itemOptionArray,
+            item_total_price: dict["item_total_price"] as? Int ?? 0
         ))
     }
     

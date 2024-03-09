@@ -8,25 +8,28 @@
 import UIKit
 import Alamofire
 
-func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, completionHandler: @escaping (Int) -> Void) {
+func requestReLiquidate(receipt_mode: Bool, LiquidateArray: [BasketData], store_delivery_position: Int, payment_type: String, kr_order_total: Int, completionHandler: @escaping (Int) -> Void) {
     
+    let delivery_data = StoreObject.store_delivery[store_delivery_position]
+    let store_data = StoreObject
+    let member_data = MemberObject
     let timestamp: Int64 = setGMTUnixTimestamp()
+    
     var params: Parameters = [
-        "action": "order_list",
         "cn_total_item_price": 0,
-        "kr_total_item_price": 0,
+        "kr_total_item_price": kr_order_total,
         "vat_total_price": 0,
-        "delivery_nickname": StoreObject.store_delivery[StoreObject.store_delivery_position].nickname,
-        "delivery_address": StoreObject.store_delivery[StoreObject.store_delivery_position].address,
-        "delivery_address_detail": StoreObject.store_delivery[StoreObject.store_delivery_position].address_detail,
-        "delivery_name": StoreObject.store_delivery[StoreObject.store_delivery_position].name,
-        "delivery_num": StoreObject.store_delivery[StoreObject.store_delivery_position].num,
-        "order_store_name": StoreObject.store_name,
-        "order_store_id": StoreObject.store_id,
-        "order_id": MemberObject.member_id,
-        "order_name": MemberObject.member_name,
-        "order_position": MemberObject.member_grade,
-        "order_num": MemberObject.member_num,
+        "delivery_nickname": delivery_data.nickname,
+        "delivery_address": delivery_data.address,
+        "delivery_address_detail": delivery_data.address_detail,
+        "delivery_name": delivery_data.name,
+        "delivery_num": delivery_data.num,
+        "order_store_name": store_data.store_name,
+        "order_store_id": store_data.store_id,
+        "order_id": member_data.member_id,
+        "order_name": member_data.member_name,
+        "order_position": member_data.member_grade,
+        "order_num": member_data.member_num,
         "order_key": "or\(timestamp)",
         "order_datetime": String(timestamp),
         "order_memo": "",
@@ -34,6 +37,8 @@ func requestReLiquidate(LiquidateArray: [BasketData], payment_type: String, comp
         "payment_type": payment_type,
         "receipt_key": "rc\(timestamp)",
     ]
+    
+    params["action"] = receipt_mode ? "enquiry_order_list" : "order_list"
     
     var order_item: Array<[String: Any]> = []
     LiquidateArray.enumerated().forEach { i, data in

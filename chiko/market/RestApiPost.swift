@@ -9,9 +9,11 @@ import UIKit
 import Alamofire
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseMessaging
 import Nuke
 import SDWebImage
 
+let requestPaymentUrl: String = "https://pg.innopay.co.kr/ipay/js/innopay_overseas-2.0.js"
 let requestUrl: String = "https://dk-sto-yy2mch6sra-du.a.run.app"
 let dispatchGroup = DispatchGroup()
 let dispatchQueue = DispatchQueue(label: "com.blink.dk.market2", attributes: .concurrent)
@@ -251,6 +253,10 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
 //                        /// 데이터 추가
 //                        StoreArray.append(setStore(storeDict: storeDict))
 //                    }
+                    
+                    Messaging.messaging().subscribe(toTopic: "enquiry_\(StoreObject.store_id)") { error in
+                        if error == nil { print("도픽구독성공: enquiry_\(StoreObject.store_id)") } else { print("도픽구독실패: enquiry_\(StoreObject.store_id)") }
+                    }
                     
                     completionHandler(200)
                 } else {

@@ -14,7 +14,9 @@ class ImageSlideVC: UIViewController {
         return .lightContent
     }
     
+    var inputs: [InputSource] = []
     var imageUrls: [String] = []
+    var indexpath_row: Int = 0
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
@@ -23,8 +25,21 @@ class ImageSlideVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setImageSlideShew(imageView: item_img, imageUrls: imageUrls, contentMode: .scaleAspectFit)
-        item_img.pageIndicator?.view.tintColor = .white
+        if inputs.count > 0 {
+            item_img.contentScaleMode = .scaleAspectFit
+            item_img.setImageInputs(inputs)
+        } else if imageUrls.count > 0 {
+            setImageSlideShew(imageView: item_img, imageUrls: imageUrls, contentMode: .scaleAspectFit, completionHandler: nil)
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            
+            self.item_img.contentScaleMode = .scaleAspectFit
+//            self.item_img.zoomEnabled = true
+            self.item_img.pageIndicator?.view.tintColor = .white
+            self.item_img.setScrollViewPage(self.indexpath_row+1, animated: false)
+            
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

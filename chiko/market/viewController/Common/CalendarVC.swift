@@ -81,7 +81,13 @@ class CalendarVC: UIViewController {
                 delegate.WhNotDeliveryArray.append(data)
             }
             
-            delegate.totalPrice_label.text = "₩\(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
+            delegate.totalPrice_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
+            
+            if delegate.WhOrderArray.count > 0 {
+                delegate.problemAlert(view: delegate.tableView)
+            } else {
+                delegate.problemAlert(view: delegate.tableView, type: "nodata")
+            }
             delegate.tableView.reloadData()
         }
         

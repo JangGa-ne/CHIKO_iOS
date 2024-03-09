@@ -8,12 +8,19 @@
 import UIKit
 import Alamofire
 
-func requestReOrder(action: String, completionHandler: @escaping (Int) -> Void) {
+func requestReOrder(action: String, completionHandler: @escaping ([ReOrderData], Int) -> Void) {
     
-    let params: Parameters = [
-        "action": "find_order",
+    var params: Parameters = [
         "store_id": StoreObject.store_id,
     ]
+    
+    if action == "normal" {
+        params["action"] = "find_order"
+    } else if action == "receipt" {
+        params["action"] = "get_enquiry_order"
+    }
+    
+    var ReOrderArray: [ReOrderData] = []
     /// x-www-form-urlencoded
     AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
@@ -31,16 +38,16 @@ func requestReOrder(action: String, completionHandler: @escaping (Int) -> Void) 
                 }
                 
                 if array.count > 0 {
-                    completionHandler(200)
+                    completionHandler(ReOrderArray, 200)
                 } else {
-                    completionHandler(204)
+                    completionHandler([], 204)
                 }
             } else {
-                completionHandler(600)
+                completionHandler([], 600)
             }
         } catch {
             print(response.error as Any)
-            completionHandler(response.error?.responseCode ?? 500)
+            completionHandler([], response.error?.responseCode ?? 500)
         }
     }
 }

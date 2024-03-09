@@ -11,10 +11,58 @@ import SDWebImage
 import ImageSlideshow
 import BSImagePicker
 import Photos
+import Kingfisher
+
+func memoryCheck() {
+    /// Kingfisher
+    let cache = ImageCache.default
+    cache.clearMemoryCache(); cache.clearDiskCache(); cache.clearCache()
+//    cache.calculateDiskStorageSize { result in
+//        switch result {
+//        case .success(let size):
+//            if size > 1024 * 1024 * 50 { cache.clearMemoryCache(); cache.clearDiskCache(); cache.clearCache() }
+//        case .failure(let error):
+//            print(error)
+//        }
+//    }
+    
+    SDImageCache.shared.config.maxMemoryCost = 1024 * 1024 * 50
+    SDImageCache.shared.clearMemory()
+    SDImageCache.shared.clearDisk()
+}
+
+func setKingfisher(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UIImage(), cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
+    
+    imageView.layer.cornerRadius = cornerRadius
+    imageView.clipsToBounds = true
+    imageView.contentMode = contentMode
+    
+    let indicator = UIActivityIndicatorView(style: .gray)
+    indicator.frame = CGRect(x: imageView.bounds.midX-10, y: imageView.bounds.midY-10, width: 20, height: 20)
+//    imageView.addSubview(indicator); indicator.startAnimating()
+    
+    if let imageUrl = URL(string: imageUrl) {
+        imageView.kf.setImage(with: imageUrl, options: [
+            .processor(DownsamplingImageProcessor(size: imageView.bounds.size)),
+            .scaleFactor(UIScreen.main.scale),
+            .transition(.fade(0.1)),
+            .cacheMemoryOnly,
+        ]) { _ in
+            indicator.stopAnimating(); indicator.removeFromSuperview()
+        }
+    } else {
+        imageView.image = UIImage(named: "chiko")
+        indicator.stopAnimating(); indicator.removeFromSuperview()
+    }
+}
+
+func cancelKingfisher(imageView: UIImageView) {
+    imageView.kf.cancelDownloadTask()
+}
 
 func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
+    
     let size = image.size
-
     let widthRatio  = targetSize.width / size.width
     let heightRatio = targetSize.height / size.height
 
@@ -35,43 +83,36 @@ func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
     return newImage ?? image
 }
 
-func setImageSlideShew(imageView: ImageSlideshow, imageUrls: [String], cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
+func setImageSlideShew(imageView: ImageSlideshow, imageUrls: [String], cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill, completionHandler: (() -> Void)?) {
     
-    SDImageCache.shared.config.maxMemoryCost = 50 * 1024 * 1024
     SDWebImagePrefetcher.shared.prefetchURLs(imageUrls.compactMap { URL(string: $0) })
     
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true
     imageView.contentScaleMode = contentMode
     
-    var resizeImage: CGSize = CGSize(width: imageView.frame.size.width+100, height: imageView.frame.size.height+100)
-    var scaleMode: SDImageScaleMode = .fill
-    if contentMode == .scaleToFill {
-        scaleMode = .fill
-    } else if contentMode == .scaleAspectFit {
-        scaleMode = .aspectFit
-    } else if contentMode == .scaleAspectFill {
-        scaleMode = .aspectFill
-    }
-
+    let indicator = UIActivityIndicatorView(style: .gray)
+    indicator.frame = CGRect(x: imageView.bounds.midX-10, y: imageView.bounds.midY-10, width: 20, height: 20)
+    imageView.addSubview(indicator); indicator.startAnimating()
+    
     var inputs: [ImageSource] = []
     imageUrls.forEach { imageUrl in
+        inputs.append(ImageSource(image: UIImage()))
+    }
+
+    imageUrls.enumerated().forEach { i, imageUrl in
         guard let url = URL(string: imageUrl) else { return }
-        let transformer = SDImageResizingTransformer(size: resizeImage, scaleMode: scaleMode)
-        SDWebImageManager.shared.loadImage(with: url, options: [], context: [.imageTransformer: transformer], progress: nil) { (image, _, _, _, _, _) in
-            if let image = image {
-                inputs.append(ImageSource(image: image))
-            }
-            if inputs.count == imageUrls.count {
-                imageView.setImageInputs(inputs)
+        SDWebImageManager.shared.loadImage(with: url, options: [], context: [:], progress: nil) { (image, _, _, _, _, _) in
+            if let image = image { inputs[i] = ImageSource(image: image) }
+            DispatchQueue.main.async {
+                imageView.setImageInputs(inputs); indicator.stopAnimating(); indicator.removeFromSuperview()
             }
         }
     }
 }
 
 func preheatImages(urls: [URL]) {
-    let prefetcher = ImagePrefetcher()
-    prefetcher.startPrefetching(with: urls)
+    ImagePrefetcher().startPrefetching(with: urls)
 }
 
 func setNuke(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UIImage(), cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
@@ -82,18 +123,22 @@ func setNuke(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UI
 
     let pipeline = ImagePipeline {
         $0.dataCache = dataCache
-        $0.imageCache = ImageCache(costLimit: 1024 * 1024 * 50)
+        $0.imageCache = ImageCache.shared
     }
     
     var config = pipeline.configuration
-    config.dataLoadingQueue.maxConcurrentOperationCount = 10
+    config.dataLoadingQueue.maxConcurrentOperationCount = 20
     config.isProgressiveDecodingEnabled = true
     
     if let imageUrl = URL(string: imageUrl) {
         let request = ImageRequest(url: imageUrl, processors: [ImageProcessors.Resize(size: imageView.frame.size)])
-        let options = ImageLoadingOptions(placeholder: UIImage(named: "chiko"), transition: .fadeIn(duration: 0.1), contentModes: .init(success: contentMode, failure: contentMode, placeholder: .scaleAspectFit))
-        Nuke.loadImage(with: request, options: options, into: imageView) { response, result, error in
-            if let image = response?.image { imageView.image = image } else { imageView.image = UIImage() }
+        let options = ImageLoadingOptions(placeholder: UIImage(named: "loading"), transition: .fadeIn(duration: 0.1), contentModes: .init(success: contentMode, failure: contentMode, placeholder: .scaleAspectFit))
+        if let cachedImage = pipeline.cache[request] {
+            imageView.image = cachedImage.image
+        } else {
+            Nuke.loadImage(with: request, options: options, into: imageView) { response, result, error in
+                if let image = response?.image { imageView.image = image } else { imageView.image = UIImage() }
+            }
         }
     } else {
         imageView.image = UIImage()
@@ -213,8 +258,8 @@ extension UIViewController {
                     
                     let options = PHImageRequestOptions()
                     options.isSynchronous = true
-                    PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: 1024, height: 1024), contentMode: .aspectFill, options: options) { image, _ in
-                        if let img = image, (img.pngData() ?? Data()).count > 26214400 {
+                    PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: 512, height: 512), contentMode: .aspectFill, options: options) { image, _ in
+                        if let img = image, let jpeg = img.jpegData(compressionQuality: 0.3), jpeg.count > 26214400 {
                             self.customAlert(message: "이미지 최대 크기 25MB를 넘을 수 없습니다.", time: 1)
                         }
                     }
@@ -224,11 +269,11 @@ extension UIViewController {
                         let options = PHImageRequestOptions()
                         options.isSynchronous = true
                         PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: 1024, height: 1024), contentMode: .aspectFill, options: options) { image, _ in
-                            if let img = image, (img.pngData() ?? Data()).count <= 26214400 {
+                            if let img = image, let jpeg = img.jpegData(compressionQuality: 0.3), jpeg.count <= 26214400 {
                                 photos.append((
                                     file_name: (PHAssetResource.assetResources(for: asset).first?.originalFilename ?? "").lowercased(),
-                                    file_data: img.pngData() ?? Data(),
-                                    file_size: (img.pngData() ?? Data()).count
+                                    file_data: jpeg,
+                                    file_size: jpeg.count
                                 ))
                                 if (assets.count == photos.count) { completionHandler(photos) }
                             }

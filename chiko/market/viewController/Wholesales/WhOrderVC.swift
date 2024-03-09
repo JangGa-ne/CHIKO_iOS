@@ -124,7 +124,7 @@ class WhOrderVC: UIViewController {
                 customAlert(message: "해당 날짜에 주문상품이 없어\n미송상품을 추가 할 수 없습니다.", time: 2)
             }
         } else if sender.tag == 1 {
-//            segueViewController(identifier: "WhNotDeliveryVC")
+            segueViewController(identifier: "WhNotDeliveryVC")
         }
     }
     
@@ -168,6 +168,12 @@ class WhOrderVC: UIViewController {
             }
             
             self.totalPrice_label.text = "₩\(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
+            
+            if self.WhOrderArray.count > 0 {
+                self.problemAlert(view: self.tableView)
+            } else {
+                self.problemAlert(view: self.tableView, type: "nodata")
+            }
             self.tableView.reloadData()
         }
     }

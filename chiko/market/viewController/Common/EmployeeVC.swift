@@ -65,16 +65,18 @@ class EmployeeVC: UIViewController {
                 
                 switch status {
                 case 200:
+                    self.storePw_btn.backgroundColor = .H_8CD26B
+                    
                     StoreObject.store_pw = self.storePw_tf.text!
                     self.alert(title: "", message: "변경되었습니다.", style: .alert, time: 1)
                 case 204:
-                    self.storePw_tf.text = StoreObject.store_pw
+                    self.storePw_btn.backgroundColor = .red
                     self.customAlert(message: "No data", time: 1)
                 case 600:
-                    self.storePw_tf.text = StoreObject.store_pw
+                    self.storePw_btn.backgroundColor = .red
                     self.customAlert(message: "Error occurred during data conversion", time: 1)
                 default:
-                    self.storePw_tf.text = StoreObject.store_pw
+                    self.storePw_btn.backgroundColor = .red
                     self.customAlert(message: "Internal server error", time: 1)
                 }
             }

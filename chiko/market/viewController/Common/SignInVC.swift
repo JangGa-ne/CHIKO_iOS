@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseMessaging
 
 class SignInVC: UIViewController {
     
@@ -195,6 +196,11 @@ class SignInVC: UIViewController {
         
         SignUpMemberVCdelegate = nil
         
+        UserDefaults.standard.bool(forKey: "enquiry_\(StoreObject.store_id)")
+        /// 푸시 구독해제
+        Messaging.messaging().unsubscribe(fromTopic: "enquiry_\(StoreObject.store_id)") { error in
+            if error == nil { print("도픽구독해제성공: enquiry_\(StoreObject.store_id)") } else { print("도픽구독해제실패: enquiry_\(StoreObject.store_id)") }
+        }
         /// 데이터 삭제
         /// Common
         MemberObject_signup = MemberData()
@@ -206,7 +212,6 @@ class SignInVC: UIViewController {
         ReStoreArray_best.removeAll()
         ReGoodsArray_best.removeAll()
         ReBasketArray.removeAll()
-        ReOrderArray.removeAll()
         /// Wholesales
         WhGoodsArray_realtime.removeAll()
         WhCountingObject = WhCountingData()

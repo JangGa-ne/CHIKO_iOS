@@ -13,6 +13,7 @@ class ReLiquidateDetailTC: UITableViewCell {
     var LiquidateObject: BasketData = BasketData()
     
     @IBOutlet weak var storeName_btn: UIButton!
+    @IBOutlet weak var item_img_v: UIView!
     @IBOutlet weak var item_img: UIImageView!
     @IBOutlet weak var itemName_btn: UIButton!
     @IBOutlet weak var tableView: UITableView!
@@ -64,8 +65,9 @@ class ReLiquidateDetailVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
+    var receipt_mode: Bool = false
     var LiquidateArray: [BasketData] = []
-    var order_total: Int = 0
+    var total_price: Int = 0
     
     @IBAction func back_btn(_ sender: UIButton) { dismiss(animated: true, completion: nil) }
     
@@ -104,7 +106,18 @@ extension ReLiquidateDetailVC: UITableViewDelegate, UITableViewDataSource {
             let data = LiquidateArray[indexPath.row]
             guard let cell = cell as? ReLiquidateDetailTC else { return }
             
-            setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if indexPath.section == 0 {
+            
+            guard let cell = cell as? ReLiquidateDetailTC else { return }
+            
+            cancelKingfisher(imageView: cell.item_img)
+            cell.removeFromSuperview()
         }
     }
     
@@ -114,11 +127,12 @@ extension ReLiquidateDetailVC: UITableViewDelegate, UITableViewDataSource {
             
             let data = LiquidateArray[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateDetailTC1", for: indexPath) as! ReLiquidateDetailTC
-            
-            cell.storeName_btn.setTitle(data.store_name, for: .normal)
-            cell.itemName_btn.setTitle(data.item_name, for: .normal)
             cell.LiquidateObject = data
             cell.viewDidLoad()
+            
+            cell.storeName_btn.setTitle(data.store_name, for: .normal)
+            cell.item_img_v.isHidden = receipt_mode
+            cell.itemName_btn.setTitle(data.item_name, for: .normal)
             
             var order_total: Int = 0
             if data.choice {
@@ -132,7 +146,7 @@ extension ReLiquidateDetailVC: UITableViewDelegate, UITableViewDataSource {
         } else if indexPath.section == 1 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateDetailTC3", for: indexPath) as! ReLiquidateDetailTC
-            cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
+            cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
             return cell
         } else {
             return UITableViewCell()

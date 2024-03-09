@@ -26,6 +26,7 @@ target 'market' do
   
   # async image
   pod 'Nuke'
+  pod 'Kingfisher'
   
   # bottom sheet
   pod 'PanModal'

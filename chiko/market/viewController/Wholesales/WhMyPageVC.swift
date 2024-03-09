@@ -133,10 +133,10 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
             
             cell.storeName_label.text = StoreObject.store_name
             cell.storeNameEng_label.text = StoreObject.store_name_eng
-            setNuke(imageView: cell.storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 10)
+            setKingfisher(imageView: cell.storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 10)
             cell.memberName_label.text = MemberObject.member_name
             cell.memberGrade_label.text = MemberObject.member_grade
-            setNuke(imageView: cell.memberProfile_img, imageUrl: MemberObject.profile_img, cornerRadius: 10)
+            setKingfisher(imageView: cell.memberProfile_img, imageUrl: MemberObject.profile_img, cornerRadius: 10)
             
             ([cell.store_v, cell.member_v, cell.accountCounting_v, cell.itemFullCounting_v, cell.itemAccountCounting_v, cell.mPay_v] as [UIView]).enumerated().forEach { i, view in
                 view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(select_v(_:))))

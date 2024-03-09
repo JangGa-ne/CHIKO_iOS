@@ -75,6 +75,57 @@ extension UIViewController {
             }
         }
     }
+    
+    func problemAlert(view: UIView, type: String = "") {
+        
+        if type == "" {
+            view.subviews.compactMap { $0 as? UIStackView }.forEach { $0.removeFromSuperview() } ;return
+        } else if view.subviews.contains(where: { $0 is UIStackView }) {
+            return
+        }
+        
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 20
+        stackView.alpha = 0.7
+        
+        let img = UIImageView(image: UIImage(named: "refresh"))
+        img.contentMode = .scaleAspectFit
+        img.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label = UILabel()
+        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        switch type {
+        case "nodata":
+            img.image = UIImage(named: "refresh")
+            label.text = "결과 없음"
+        case "error":
+            img.image = UIImage(named: "refresh")
+            label.text = "문제가 발생했습니다. 다시 시도해주세요."
+            customAlert(message: "피드를 새로 고칠 수 없습니다.", time: 1)
+        default:
+            break
+        }
+        
+        stackView.addArrangedSubview(img)
+        stackView.addArrangedSubview(label)
+        view.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -60),
+            stackView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
+            img.heightAnchor.constraint(equalToConstant: 40)
+        ])
+    }
+
 }
 
 class AlertViewController: UIViewController {

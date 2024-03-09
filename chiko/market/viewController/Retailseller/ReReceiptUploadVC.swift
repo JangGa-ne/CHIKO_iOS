@@ -91,8 +91,8 @@ class ReReceiptUploadTC: UITableViewCell {
     }
     
     @objc func optionAdd_btn(_ sender: UIButton) {
-        delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option.append((color: "", size: "", quantity: 0, price: 0))
-        self.delegate.tableView.reloadData()
+        delegate.ReEnquiryReceiptObject.order_item[indexpath_row].item_option.append(ItemOptionData())
+        delegate.tableView.reloadData()
     }
 }
 
@@ -253,7 +253,7 @@ class ReReceiptUploadVC: UIViewController {
     }
     
     @objc func goodsAdd_btn(_ sender: UIButton) {
-        ReEnquiryReceiptObject.order_item.append((item_name: "", item_category_name: [], item_option: [(color: "", size: "", quantity: 0, price: 0)]))
+        ReEnquiryReceiptObject.order_item.append((explain: "", item_name: "", item_category_name: [], item_option: [], item_total_price: 0))
         tableView.reloadData()
     }
     
@@ -313,6 +313,7 @@ class ReReceiptUploadVC: UIViewController {
                 "read_or_not": "false",
                 "summary_address": ReEnquiryReceiptObject.summary_address,
                 "requested_store_name": ReEnquiryReceiptObject.requested_store_name,
+                "request_id": MemberObject.member_id,
                 "user_id": "admin",
             ]
             /// 데이터 삭제
@@ -325,7 +326,7 @@ class ReReceiptUploadVC: UIViewController {
             var new_array: [(store_name: String, summary_address: String, timestamp: String, data: [ReEnquiryReceiptData])] = []
             /// ReEnquiryReceipt 요청
             dispatchGroup.enter()
-            requestReEnquiryReceipt(parameters: params) { array, fcm_id, status in
+            requestReEnquiryReceipt(parameters: params) { array, status in
                 
                 if status == 200, let data = array.first?.data.first, data.time != "" {
                     /// ReReceipt FileUpload 요청
@@ -336,8 +337,18 @@ class ReReceiptUploadVC: UIViewController {
                             
                             delegate.ReEnquiryReceiptArray = array
                             delegate.tableView.reloadData()
+                            
+                            let params: [String: Any] = [
+                                "type": "enquiry",
+                                "title": "주문요청",
+                                "content": "주문요청 들어왔어요!",
+                                "user_id": "admin",
+                            ]
                             /// Push 요청
-                            requestPush(action: "enquire", fcm_id: fcm_id, body: "주문요청 들어옴", completionHandler: nil)
+                            dispatchGroup.enter()
+                            requestPush(params: params) { _ in
+                                dispatchGroup.leave()
+                            }
                         }
                         
                         new_array = array; dispatchGroup.leave()

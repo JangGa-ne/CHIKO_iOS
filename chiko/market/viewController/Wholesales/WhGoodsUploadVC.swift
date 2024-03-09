@@ -248,10 +248,9 @@ class WhGoodsUploadVC: UIViewController {
                     self.GoodsObject.upload_files.removeAll()
                     
                     var message: String = ""
-                    if self.GoodsObject.item_key != "" { message = "상품수정 완료!" } else { message = "상품등록 완료!" }
+                    if self.GoodsObject.item_key != "" { message = "수정되었습니다." } else { message = "등록되었습니다." }
                     
-                    let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                    self.alert(title: "", message: message, style: .alert, time: 1) {
                         self.navigationController?.popViewController(animated: true, completion: {
                             if self.GoodsObject.item_key != "" {
                                 if let delegate = WhHomeVCdelegate {
@@ -275,8 +274,7 @@ class WhGoodsUploadVC: UIViewController {
                                 }
                             }
                         })
-                    }))
-                    self.present(alert, animated: true, completion: nil)
+                    }
                 case 204:
                     self.customAlert(message: "Upload failure", time: 1)
                 case 600:

@@ -63,10 +63,10 @@ class WhGoodsDetailVC: UIViewController {
         
         let data = GoodsObject
         
-        setImageSlideShew(imageView: item_img, imageUrls: data.item_photo_imgs)
-        item_img.pageIndicator = .none
-        item_img.slideshowInterval = 3
+        setImageSlideShew(imageView: item_img, imageUrls: data.item_photo_imgs, completionHandler: nil)
         item_img.delegate = self
+        item_img.pageIndicator = .none
+        item_img.slideshowInterval = 5
         item_img.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(item_img(_:))))
         
         itemImgPage_view.isHidden = !(data.item_photo_imgs.count > 1)
@@ -116,8 +116,10 @@ class WhGoodsDetailVC: UIViewController {
                                     
     @objc func item_img(_ sender: UITapGestureRecognizer) {
         
+        guard let sender = sender.view as? ImageSlideshow else { return }
         let segue = storyboard?.instantiateViewController(withIdentifier: "ImageSlideVC") as! ImageSlideVC
-        segue.imageUrls = GoodsObject.item_photo_imgs
+        segue.inputs = sender.images
+        segue.indexpath_row = sender.tag
         navigationController?.pushViewController(segue, animated: true)
     }
     
@@ -148,6 +150,7 @@ extension WhGoodsDetailVC: ImageSlideshowDelegate {
     
     func imageSlideshow(_ imageSlideshow: ImageSlideshow, didChangeCurrentPageTo page: Int) {
         itemImgPage_label.text = "\(page+1)"
+        item_img.tag = page
     }
 }
 

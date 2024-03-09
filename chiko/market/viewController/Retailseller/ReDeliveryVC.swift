@@ -33,6 +33,8 @@ class ReDeliveryVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        ReDeliveryVCdelegate = self
+        
         deliveryAdd_btn.addTarget(self, action: #selector(deliveryAdd_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
@@ -41,7 +43,13 @@ class ReDeliveryVC: UIViewController {
     }
     
     @objc func deliveryAdd_btn(_ sender: UIButton) {
-        segueViewController(identifier: "ReDeliveryDetailVC")
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryDetailVC") as! ReDeliveryDetailVC
+        segue.edit = false
+        segue.store_delivery_position = StoreObject.store_delivery_position
+        segue.store_delivery = StoreObject.store_delivery
+        segue.indexpath_row = sender.tag
+        navigationController?.pushViewController(segue, animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,7 +70,7 @@ extension ReDeliveryVC: UITableViewDelegate, UITableViewDataSource {
         let data = StoreObject.store_delivery[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReDeliveryTC", for: indexPath) as! ReDeliveryTC
         
-        cell.nickName_label.text = "⭐️ " + data.nickname != "" ? data.nickname : "배송지\(indexPath.row+1)"
+        cell.nickName_label.text = data.nickname != "" ? "⭐️ \(data.nickname)" : "⭐️ 배송지\(indexPath.row+1)"
         cell.storeDeliveryPosition_img.image = StoreObject.store_delivery_position == indexPath.row ? UIImage(named: "check_on") : UIImage(named: "check_off")
         cell.storeDeliveryPosition_btn.isSelected = StoreObject.store_delivery_position == indexPath.row
         cell.storeDeliveryPosition_btn.tag = indexPath.row; cell.storeDeliveryPosition_btn.addTarget(self, action: #selector(storeDeliveryPosition_btn(_:)), for: .touchUpInside)
@@ -92,6 +100,7 @@ extension ReDeliveryVC: UITableViewDelegate, UITableViewDataSource {
             if let delegate = ReLiquidateVCdelegate {
                 delegate.collectionView.reloadData()
             }
+            self.alert(title: "", message: "기본 배송지로 설정되었습니다.", style: .alert, time: 1)
         }
     }
     

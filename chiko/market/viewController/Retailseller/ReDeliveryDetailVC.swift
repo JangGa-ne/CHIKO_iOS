@@ -71,17 +71,16 @@ class ReDeliveryDetailVC: UIViewController {
             storeDeliveryPosition_btn.isSelected = indexpath_row == store_delivery_position
         }
         
+        storeDeliveryPosition_btn.addTarget(self, action: #selector(storeDeliveryPosition_btn(_:)), for: .touchUpInside)
+        
         save_btn.addTarget(self, action: #selector(save_btn(_:)), for: .touchUpInside)
         delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
     }
     
-    @objc func storeDeliveryPostion_btn(_ sender: UIButton) {
-        
-        if !sender.isSelected {
-            new_store_delivery_position = !edit ? 0 : indexpath_row
-        } else {
-            
-        }
+    @objc func storeDeliveryPosition_btn(_ sender: UIButton) {
+        sender.isSelected = !sender.isSelected
+        storeDeliveryPosition_img.image = sender.isSelected ? UIImage(named: "check_on") : UIImage(named: "check_off")
+        new_store_delivery_position = sender.isSelected ? indexpath_row : (!edit ? 0 : new_store_delivery_position)
     }
     
     @objc func save_btn(_ sender: UIButton) {
@@ -96,35 +95,53 @@ class ReDeliveryDetailVC: UIViewController {
             
             if !edit {
                 /// 데이터 추가
-                store_delivery.append((
-                    address: address_tf.text!,
-                    address_detail: addressDetail_tf.text!,
-                    address_zipcode: addressZipcode_tf.text!,
-                    name: name_tf.text!,
-                    nickname: nickName_tf.text!,
-                    num: num_tf.text!
-                ))
+                store_delivery.append((address: address_tf.text!, address_detail: addressDetail_tf.text!, address_zipcode: addressZipcode_tf.text!, name: name_tf.text!, nickname: nickName_tf.text!, num: num_tf.text!))
             } else {
                 /// 데이터 수정
-                store_delivery[indexpath_row] = (
-                    address: address_tf.text!,
-                    address_detail: addressDetail_tf.text!,
-                    address_zipcode: addressZipcode_tf.text!,
-                    name: name_tf.text!,
-                    nickname: nickName_tf.text!,
-                    num: num_tf.text!
-                )
+                store_delivery[indexpath_row] = (address: address_tf.text!, address_detail: addressDetail_tf.text!, address_zipcode: addressZipcode_tf.text!, name: name_tf.text!, nickname: nickName_tf.text!, num: num_tf.text!)
             }
             
             store_delivery.forEach { data in
-                new_store_delivery.append([
-                    "address": address_tf.text!,
-                    "address_detail": addressDetail_tf.text!,
-                    "address_zipcode": addressZipcode_tf.text!,
-                    "name": name_tf.text!,
-                    "nickname": nickName_tf.text!,
-                    "num": num_tf.text!
-                ])
+                new_store_delivery.append(["address": data.address, "address_detail": data.address_detail, "address_zipcode": data.address_zipcode, "name": data.name, "nickname": data.nickname, "num": data.num])
+            }
+            
+            let params: [String: Any] = [
+                "action": "edit",
+                "collection_id": "store",
+                "document_id": StoreObject.store_id,
+                "store_delivery_position": new_store_delivery_position,
+                "store_delivery": new_store_delivery,
+            ]
+            
+            requestEditDB(params: params) { status in
+                
+                switch status {
+                case 200:
+                    
+                    StoreObject.store_delivery_position = self.new_store_delivery_position
+                    StoreObject.store_delivery = self.store_delivery
+                    if let delegate = ReDeliveryVCdelegate {
+                        delegate.tableView.reloadData()
+                    }
+                    
+                    var message: String = ""
+                    
+                    if self.edit {
+                        message = "변경되었습니다."
+                    } else {
+                        message = "등록되었습니다."
+                    }
+                    
+                    self.alert(title: "", message: message, style: .alert, time: 1) {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                case 204:
+                    self.customAlert(message: "No data", time: 1)
+                case 600:
+                    self.customAlert(message: "Error occurred during data conversion", time: 1)
+                default:
+                    self.customAlert(message: "Internal server error", time: 1)
+                }
             }
         }
     }

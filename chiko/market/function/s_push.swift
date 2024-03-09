@@ -26,10 +26,20 @@ extension UIViewController {
     }
 }
 
+extension AppDelegate: MessagingDelegate {
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        
+        UserDefaults.standard.setValue(fcmToken ?? "", forKey: "fcm_id")
+        NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: ["token": fcmToken ?? ""])
+    }
+}
+
+
 // MARK: PUSH 알림 설정
 extension AppDelegate: UNUserNotificationCenterDelegate {
     
-    // PUSH(포그라운드) 받음
+    // PUSH 받음
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         
         let userInfo = notification.request.content.userInfo
@@ -44,27 +54,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
         let userInfo = response.notification.request.content.userInfo
-        Messaging.messaging().appDidReceiveMessage(userInfo)
-        
         print("알림 누름 userNotificationCenter", userInfo)
+        
+        Messaging.messaging().appDidReceiveMessage(userInfo)
                       
         completionHandler()
     }
-}
-
-extension AppDelegate: MessagingDelegate {
     
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-//        print("FCM Token", fcmToken ?? "")
-        
-        UserDefaults.standard.setValue(fcmToken ?? "", forKey: "fcm_id")
-        
-        NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: ["token": fcmToken ?? ""])
-    }
-}
-
-extension AppDelegate {
-
     // PUSH(서스펜드) 누름
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         

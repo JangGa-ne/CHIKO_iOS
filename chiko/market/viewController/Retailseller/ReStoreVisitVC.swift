@@ -58,7 +58,14 @@ extension ReStoreVisitTC: UICollectionViewDelegate, UICollectionViewDataSource, 
         let data = GoodsArray[indexPath.row]
         guard let cell = cell as? ReStoreVisitCC else { return }
         
-        setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        guard let cell = cell as? ReStoreVisitCC else { return }
+        
+        cancelKingfisher(imageView: cell.item_img)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -148,7 +155,18 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             let data = VisitObject.StoreObject
             guard let cell = cell as? ReStoreVisitTC else { return }
             
-            setNuke(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+            setKingfisher(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if indexPath.row == 0 {
+            
+            guard let cell = cell as? ReStoreVisitTC else { return }
+            
+            cancelKingfisher(imageView: cell.store_img)
+            cell.removeFromSuperview()
         }
     }
     

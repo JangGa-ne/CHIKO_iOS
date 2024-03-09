@@ -50,7 +50,7 @@ class ReGoodsVC: UIViewController {
         
         setKeyboard()
         
-//        setNuke(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
+//        setKingfisher(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
         choiceCategory_btn.addTarget(self, action: #selector(choiceCategory_btn(_:)), for: .touchUpInside)
@@ -146,6 +146,7 @@ class ReGoodsVC: UIViewController {
     }
     
     @objc func delete_btn(_ sender: UIButton) {
+        tableView.refreshControl = refreshControl
         search.removeAll(); search_tf.text!.removeAll(); delete_img.isHidden = true; sender.isHidden = true; loadingData(first: true)
     }
      
@@ -172,14 +173,13 @@ class ReGoodsVC: UIViewController {
         requestReGoods(search: search, item_category_name: item_category_name, item_name: item_name, item_pullup_time: item_pullup_time, item_key: item_key, limit: 10) { array, status in
             
             if status == 200 {
+                self.problemAlert(view: self.tableView)
                 self.GoodsArray += array
                 preheatImages(urls: self.GoodsArray.compactMap { URL(string: $0.item_mainphoto_img) })
             } else if first, status == 204 {
-                self.customAlert(message: "No Data", time: 1)
-            } else if first, status == 600 {
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
+                self.problemAlert(view: self.tableView, type: "nodata")
             } else if first, status != 200 {
-                self.customAlert(message: "Internal server error", time: 1)
+                self.problemAlert(view: self.tableView, type: "error")
             }; self.fetchingMore = false; self.refreshControl.endRefreshing(); self.tableView.reloadData()
         }
     }
@@ -236,7 +236,18 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
             let data = GoodsArray[indexPath.row]
             guard let cell = cell as? ReGoodsTC else { return }
             
-            setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if indexPath.section == 0 {
+            
+            guard let cell = cell as? ReGoodsTC else { return }
+            
+            cancelKingfisher(imageView: cell.item_img)
+            cell.removeFromSuperview()
         }
     }
     

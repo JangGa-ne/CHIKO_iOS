@@ -10,7 +10,7 @@ import Alamofire
 import Nuke
 import SDWebImage
 
-func requestReEnquiryReceipt(parameters: [String: Any]? = nil, completionHandler: @escaping ([(store_name: String, summary_address: String, timestamp: String, data: [ReEnquiryReceiptData])], String, Int) -> Void) {
+func requestReEnquiryReceipt(parameters: [String: Any]? = nil, completionHandler: @escaping ([(store_name: String, summary_address: String, timestamp: String, data: [ReEnquiryReceiptData])], Int) -> Void) {
     
     var params: Parameters = [:]
     
@@ -52,19 +52,17 @@ func requestReEnquiryReceipt(parameters: [String: Any]? = nil, completionHandler
                     ReEnquiryReceiptArray.append((store_name: store_name, summary_address: summary_address, timestamp: timestamp, data: EnquiryReceiptArray))
                 }
                 
-                let fcm_id = responseJson["fcm_id"] as? String ?? ""
-                
                 if ReEnquiryReceiptArray.count > 0 {
-                    completionHandler(ReEnquiryReceiptArray, fcm_id, 200)
+                    completionHandler(ReEnquiryReceiptArray, 200)
                 } else {
-                    completionHandler([], "", 204)
+                    completionHandler([], 204)
                 }
             } else {
-                completionHandler([], "", 600)
+                completionHandler([], 600)
             }
         } catch {
             print(response.error as Any)
-            completionHandler([], "", response.error?.responseCode ?? 500)
+            completionHandler([], response.error?.responseCode ?? 500)
         }
     }
 }

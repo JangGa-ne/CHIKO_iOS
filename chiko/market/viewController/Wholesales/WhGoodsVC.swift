@@ -80,14 +80,13 @@ class WhGoodsVC: UIViewController {
         requestWhGoods(item_disclosure: ["전체 공개", "거래처만 공개"][indexpath_row], item_key: item_key, limit: 10) { array, status in
             
             if status == 200 {
+                self.problemAlert(view: self.tableView)
                 self.GoodsArray += array
                 preheatImages(urls: self.GoodsArray.compactMap { URL(string: $0.item_mainphoto_img) })
             } else if first, status == 204 {
-                self.customAlert(message: "No Data", time: 1)
-            } else if first, status == 600 {
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
+                self.problemAlert(view: self.tableView, type: "nodata")
             } else if first, status != 200 {
-                self.customAlert(message: "Internal server error", time: 1)
+                self.problemAlert(view: self.tableView, type: "error")
             }; self.fetchingMore = false; self.refreshControl.endRefreshing(); self.tableView.reloadData()
         }
     }
@@ -143,9 +142,18 @@ extension WhGoodsVC: UITableViewDelegate, UITableViewDataSource {
             let data = GoodsArray[indexPath.row]
             guard let cell = cell as? WhGoodsTC else { return }
             
-            DispatchQueue.main.async {
-                setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
-            }
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if indexPath.section == 0 {
+            
+            guard let cell = cell as? WhGoodsTC else { return }
+            
+            cancelKingfisher(imageView: cell.item_img)
+            cell.removeFromSuperview()
         }
     }
     

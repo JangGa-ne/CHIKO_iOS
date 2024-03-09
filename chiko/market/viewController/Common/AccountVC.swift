@@ -44,10 +44,10 @@ class AccountVC: UIViewController {
         accountBank_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(accountBank_view(_:))))
         ([accountBank_tf, accountName_tf, accountNum_tf] as [UITextField]).enumerated().forEach { i, tf in
             tf.text = [account_bank, account_name, account_num][i]
-            tf.tag = i
-            tf.addTarget(self, action: #selector(edit_tf(_:)), for: .editingChanged)
-            tf.addTarget(self, action: #selector(end_tf(_:)), for: .editingDidEnd)
-            DispatchQueue.main.async { self.edit_tf(tf) }
+//            tf.tag = i
+//            tf.addTarget(self, action: #selector(edit_tf(_:)), for: .editingChanged)
+//            tf.addTarget(self, action: #selector(end_tf(_:)), for: .editingDidEnd)
+//            DispatchQueue.main.async { self.edit_tf(tf) }
         }
         accountBank_tf.isEnabled = false
         ([checkAccountBank_img, checkAccountName_img, checkaAccountNum_img, checkpassbook_img] as [UIImageView]).forEach { img in
@@ -60,15 +60,17 @@ class AccountVC: UIViewController {
                 self.upload_passbook_img.append((file_name: "passbook_img", file_data: imgData ?? Data(), file_size: imgData?.count ?? 0))
                 if let imgData = UIImage(data: imgData ?? Data()) {
                     self.passbook_img.image = resizeImage(imgData, targetSize: self.passbook_img.frame.size)
-                    self.checkpassbook_img.isHidden = false
+//                    self.checkpassbook_img.isHidden = false
                 } else {
                     self.passbook_img.image = UIImage()
-                    self.checkpassbook_img.isHidden = true
+//                    self.checkpassbook_img.isHidden = true
                 }
             }
         }
         
         passbook_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(passbook_view(_:))))
+        
+        edit_btn.addTarget(self, action: #selector(edit_btn(_:)), for: .touchUpInside)
     }
     
     @objc func accountBank_view(_ sender: UITapGestureRecognizer) {
@@ -116,6 +118,46 @@ class AccountVC: UIViewController {
             self.upload_passbook_img = photo
             self.passbook_img.image = UIImage(data: photo[0].file_data)
             self.checkpassbook_img.isHidden = false
+        }
+    }
+    
+    @objc func edit_btn(_ sender: UIButton) {
+        
+        if accountBank_tf.text! == "" || accountName_tf.text! == "" || (accountNum_tf.text!.count >= 10 && accountNum_tf.text!.count <= 14) {
+            customAlert(message: "미입력된 항목이 있습니다.", time: 1)
+        } else if upload_passbook_img.count == 0 {
+            customAlert(message: "첨부파일을 확인해 주세요.", time: 1)
+        } else {
+            
+            let params: [String: Any] = [
+                "action": "edit",
+                "collection_id": "store",
+                "document_id": StoreObject.store_id,
+                "account": [
+                    "account_bank": accountBank_tf.text!,
+                    "account_name": accountName_tf.text!,
+                    "account_num": accountNum_tf.text!,
+                ],
+            ]
+            /// Edit DB 요청
+            requestEditDB(params: params) { status in
+                
+                switch status {
+                case 200:
+                    StoreObject.account = [
+                        "account_bank": self.accountBank_tf.text!,
+                        "account_name": self.accountName_tf.text!,
+                        "account_num": self.accountNum_tf.text!,
+                    ]
+                    self.alert(title: "", message: "저장되었습니다.", style: .alert, time: 1)
+                case 204:
+                    self.customAlert(message: "No data", time: 1)
+                case 600:
+                    self.customAlert(message: "Error occurred during data conversion", time: 1)
+                default:
+                    self.customAlert(message: "Internal server error", time: 1)
+                }
+            }
         }
     }
     

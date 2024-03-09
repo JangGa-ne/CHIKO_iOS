@@ -51,11 +51,12 @@ class ReBookMarkVC: UIViewController {
             self.customLoadingIndicator(animated: false)
             
             if status == 200 {
+                self.problemAlert(view: self.tableView)
                 self.BookMarkArray += array; self.tableView.reloadData()
-            } else if status == 600 {
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
+            } else if status == 204 {
+                self.problemAlert(view: self.tableView, type: "nodata")
             } else {
-                self.customAlert(message: "Internal server error", time: 1)
+                self.problemAlert(view: self.tableView, type: "error")
             }
         }
     }
@@ -78,7 +79,15 @@ extension ReBookMarkVC: UITableViewDelegate, UITableViewDataSource {
         let data = BookMarkArray[indexPath.row]
         guard let cell = cell as? ReBookMarkTC else { return }
         
-        setNuke(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        setKingfisher(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+            
+        guard let cell = cell as? ReBookMarkTC else { return }
+        
+        cancelKingfisher(imageView: cell.store_img)
+        cell.removeFromSuperview()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

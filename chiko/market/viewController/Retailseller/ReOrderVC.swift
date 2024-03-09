@@ -9,9 +9,13 @@ import UIKit
 
 class ReOrderItemOptionTC: UITableViewCell {
     
+    var delegate: ReOrderVC = ReOrderVC()
+    var indexpath_row: Int = 0
+    
     var OrderItemObject: ReOrderItemData = ReOrderItemData()
     
     @IBOutlet weak var deliveryState_btn: UIButton!
+    @IBOutlet weak var item_img_v: UIView!
     @IBOutlet weak var item_img: UIImageView!
     @IBOutlet weak var itemName_btn: UIButton!
     @IBOutlet weak var tableView: UITableView!
@@ -50,22 +54,40 @@ extension ReOrderItemOptionTC: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         }
-        cell.optionQuantity_label.text = "수량. \(data.quantity)개"
+        if data.enter_quantity > 0 {
+            let content = NSMutableAttributedString()
+            content.append(NSAttributedString(string: "주문수량. \(data.quantity)개", attributes: [.font: UIFont.systemFont(ofSize: 14)]))
+            content.append(NSAttributedString(string: "입고수량. \(data.enter_quantity)개", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)]))
+            cell.optionQuantity_label.attributedText = content
+        } else {
+            cell.optionQuantity_label.text = "주문수량. \(data.quantity)개"
+        }
         cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+        segue.action = delegate.action
+        segue.OrderObject = delegate.ReOrderArray[indexpath_row]
+        delegate.navigationController?.pushViewController(segue, animated: true)
     }
 }
     
 class ReOrderTC: UITableViewCell {
     
-    var ReOrderVCdelegate: ReOrderVC = ReOrderVC()
+    var delegate: ReOrderVC = ReOrderVC()
+    var indexpath_row: Int = 0
     
     var OrderItemArray: [ReOrderItemData] = []
     
     @IBOutlet weak var datetime_label: UILabel!
     @IBOutlet weak var detail_btn: UIButton!
     @IBOutlet weak var delete_btn: UIButton!
+    @IBOutlet weak var deliveryPayment_v: UIView!
+    @IBOutlet weak var deliveryPayment_btn: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tableView_heignt: NSLayoutConstraint!
     
@@ -94,20 +116,32 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
         let data = OrderItemArray[indexPath.row]
         guard let cell = cell as? ReOrderItemOptionTC else { return }
         
-        setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+            
+        guard let cell = cell as? ReOrderItemOptionTC else { return }
+        
+        cancelKingfisher(imageView: cell.item_img)
+        cell.removeFromSuperview()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let data = OrderItemArray[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderTC2", for: indexPath) as! ReOrderItemOptionTC
+        cell.delegate = delegate
+        cell.indexpath_row = indexpath_row
         cell.OrderItemObject = data
         cell.viewDidLoad()
         
         cell.deliveryState_btn.setTitle(data.delivery_state, for: .normal)
-        cell.deliveryState_btn.tag = indexPath.row; cell.deliveryState_btn.addTarget(self, action: #selector(deliveryState_btn(_:)), for: .touchUpInside)
+        cell.item_img_v.isHidden = (delegate.action == "receipt")
         cell.itemName_btn.setTitle(data.item_name, for: .normal)
-        cell.itemName_btn.tag = indexPath.row; cell.itemName_btn.addTarget(self, action: #selector(itemName_btn(_:)), for: .touchUpInside)
+        if delegate.action == "normal" {
+            cell.itemName_btn.tag = indexPath.row; cell.itemName_btn.addTarget(self, action: #selector(itemName_btn(_:)), for: .touchUpInside)
+        }
         
         var order_total: Int = 0
         data.item_option.forEach { data in
@@ -116,6 +150,14 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
         cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+        segue.action = delegate.action
+        segue.OrderObject = delegate.ReOrderArray[indexpath_row]
+        delegate.navigationController?.pushViewController(segue, animated: true)
     }
     
     @objc func deliveryState_btn(_ sender: UIButton) {
@@ -130,10 +172,10 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
     @objc func itemName_btn(_ sender: UIButton) {
         
         let data = OrderItemArray[sender.tag]
-        let segue = ReOrderVCdelegate.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
+        let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
         segue.store_id = data.store_id
         segue.item_key = data.item_key
-        ReOrderVCdelegate.navigationController?.pushViewController(segue, animated: true)
+        delegate.navigationController?.pushViewController(segue, animated: true)
     }
 }
 
@@ -143,7 +185,8 @@ class ReOrderVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    var action: String = "전체"
+    var action: String = "normal"
+    var ReOrderArray: [ReOrderData] = []
     let refreshControl: UIRefreshControl = UIRefreshControl()
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
@@ -167,7 +210,7 @@ class ReOrderVC: UIViewController {
         all_btn_width.constant = stringWidth(text: "전체", fontSize: 12, fontWeight: .medium)+30
         
         tableView.separatorStyle = .none
-        tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
         tableView.delegate = self; tableView.dataSource = self
         tableView.refreshControl = refreshControl
         refreshControl.tintColor = .black.withAlphaComponent(0.3)
@@ -182,11 +225,19 @@ class ReOrderVC: UIViewController {
         /// 데이터 삭제
         ReOrderArray.removeAll(); tableView.reloadData()
         /// Order 요청
-        requestReOrder(action: action) { status in
+        requestReOrder(action: action) { array, status in
             
             self.customLoadingIndicator(animated: false)
             
-            ReOrderArray.sort { $0.order_datetime > $1.order_datetime }
+            if status == 200 {
+                self.problemAlert(view: self.tableView)
+                self.ReOrderArray += array
+                self.ReOrderArray.sort { $0.order_datetime > $1.order_datetime }
+            } else if status == 204 {
+                self.problemAlert(view: self.tableView, type: "nodata")
+            } else {
+                self.problemAlert(view: self.tableView, type: "error")
+            }
             self.tableView.reloadData()
         }
     }
@@ -203,14 +254,6 @@ class ReOrderVC: UIViewController {
                 btn.setTitleColor(.black.withAlphaComponent(0.3), for: .normal)
                 ([all_btn_width, orderDelivery_btn_width, changeReturnCancel_btn_width] as [NSLayoutConstraint])[btn.tag].constant = stringWidth(text: btn.titleLabel!.text!, fontSize: 12, fontWeight: .medium)
             }
-        }
-        
-        if sender.tag == 0 {
-            action = "전체"
-        } else if sender.tag == 1 {
-            action = "주문배송"
-        } else if sender.tag == 2 {
-            action = "교환/반품/취소"
         }
         
         customLoadingIndicator(animated: true)
@@ -239,7 +282,8 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         
         let data = ReOrderArray[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderTC1", for: indexPath) as! ReOrderTC
-        cell.ReOrderVCdelegate = self
+        cell.delegate = self
+        cell.indexpath_row = indexPath.row
         cell.OrderItemArray = data.order_item
         cell.viewDidLoad()
         
@@ -247,24 +291,49 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         cell.detail_btn.tag = indexPath.row; cell.detail_btn.addTarget(self, action: #selector(detail_btn(_:)), for: .touchUpInside)
         cell.delete_btn.tag = indexPath.row; cell.delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
         
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        cell.deliveryPayment_v.isHidden = data.delivery_price_state
+        var delivery_price_zero: Bool = false
+        var delivery_total_price: Int = 0
+        data.order_item.forEach { item in
+            item.item_option.forEach { option in
+                delivery_price_zero = (option.delivery_price == 0)
+                delivery_total_price += option.delivery_price
+            }
+        }
+        cell.deliveryPayment_btn.isHidden = delivery_price_zero
+        cell.deliveryPayment_btn.setTitle("배송비(₩ \(priceFormatter.string(from: delivery_total_price as NSNumber) ?? "0")) 결제하기", for: .normal)
+        cell.deliveryPayment_btn.tag = delivery_total_price; cell.deliveryPayment_btn.addTarget(self, action: #selector(deliveryPayment_btn(_:)), for: .touchUpInside)
         
-        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
-        segue.OrderObject = ReOrderArray[indexPath.row]
-        navigationController?.pushViewController(segue, animated: true)
+        return cell
     }
     
     @objc func detail_btn(_ sender: UIButton) {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+        segue.action = action
         segue.OrderObject = ReOrderArray[sender.tag]
         navigationController?.pushViewController(segue, animated: true)
     }
     
     @objc func delete_btn(_ sender: UIButton) {
         
+    }
+    
+    @objc func deliveryPayment_btn(_ sender: UIButton) {
+        
+        let alert = UIAlertController(title: "", message: "배송비(₩ \(priceFormatter.string(from: sender.tag as NSNumber) ?? "0")) 결제하기", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "결제하기", style: .default, handler: { _ in
+            
+        }))
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+        segue.action = action
+        segue.OrderObject = ReOrderArray[indexPath.row]
+        navigationController?.pushViewController(segue, animated: true)
     }
 }

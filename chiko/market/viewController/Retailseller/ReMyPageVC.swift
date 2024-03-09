@@ -50,7 +50,7 @@ class ReMyPageVC: UIViewController {
         
         ReMyPageVCdelegate = self
         
-//        setNuke(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
+//        setKingfisher(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
@@ -138,7 +138,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         case 1: segueViewController(identifier: "ReOrderVC")
         case 2: segueViewController(identifier: "ReBasketVC")
         case 3: segueViewController(identifier: "ReBookMarkVC")
-        case 4: break
+        case 4: alert(title: "", message: "시스템 점검 중입니다.", style: .alert, time: 1)
         case 5: segueViewController(identifier: "ReEnquiryReceiptVC")
         default:
             break
@@ -149,6 +149,9 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section != 0, segues[indexPath.section-1].1[indexPath.row] != "" {
             segueViewController(identifier: segues[indexPath.section-1].1[indexPath.row])
+        }
+        if indexPath.section != 0, segues[indexPath.section-1].0 == "고객센터" {
+            alert(title: "", message: "시스템 점검 중입니다.", style: .alert, time: 1)
         }
     }
 }

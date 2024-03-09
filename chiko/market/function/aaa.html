@@ -1,0 +1,101 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- InnoPay 결제연동 스크립트(필수) -->
+<script type="text/javascript" src="https://pg.innopay.co.kr/ipay/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://pg.innopay.co.kr/ipay/js/innopay_overseas-2.0.js" charset="utf-8"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        innopay.goPay({
+            //// 필수 파라미터
+            PayMethod     : 'WECHATPAY', // 결제수단( OPCARD, ALIPAY, WECHATPAY )
+            MID          : 'testpay01m', // 가맹점 MID
+            MerchantKey  : 'Ma29gyAFhvv/+e4/AHpV6pISQIvSKziLIbrNoXPbRS5nfTx2DOs8OJve+NzwyoaQ8p9Uy1AN4S1I0Um5v7oNUg==', // 가맹점 라이센스키
+            GoodsName     : 'APP_TEST', // 상품명
+            Amt             : '100', // 결제금액(과세)
+            BuyerName     : 'hong gil dong', // 고객명
+            BuyerTel     : '0123455678', // 고객전화번호
+            BuyerEmail     : 'test@test.com', // 고객이메일
+            ResultYN     : 'Y', // 결제결과창 출력유뮤
+            Currency     : 'CNY', // 통화(KRW/USD/..)
+            Moid         : 'testpay01m' + getDate(), // 가맹점에서 생성한 주문번호 셋팅
+            //// 선택 파라미터
+            ReturnURL      : 'https://pg.innopay.co.kr/ipay/returnPay.jsp', // 결제결과 전송 URL(없는 경우 아래 innopay_result 함수에 결제결과가 전송됨)
+            //GoodsCnt:'',                // 상품갯수 (가맹점 참고용)
+            //MallReserved:'',            // 가맹점 데이터
+            //EncodingType:'utf-8',        // 가맹점 서버 인코딩 타입 (utf-8, euc-kr)
+            //MallIP:'',                // 가맹점 서버 IP
+            //UserIP:'',                // 고객 PC IP
+            //mallUserID:'',            // 가맹점 고객ID
+            //User_ID:'',                // Innopay에 등록된 영업사원ID
+        });
+    });
+
+    /**
+     * 결제결과 수신 Javascript 함수
+     * ReturnURL이 없는 경우 아래 함수로 결과가 리턴됩니다 (함수명 변경불가!)
+     */
+    function innopay_result(data) {
+        var a = JSON.stringify(data);
+        // Sample
+        var mid = data.MID; // 가맹점 MID
+        var tid = data.TID; // 거래고유번호
+        var amt = data.Amt; // 금액
+        var moid = data.MOID; // 주문번호
+        var authdate = data.AuthDate; // 승인일자
+        var authcode = data.AuthCode; // 승인번호
+        var resultcode = data.ResultCode; // 결과코드(PG)
+        var resultmsg = data.ResultMsg; // 결과메세지(PG)
+        var errorcode = data.ErrorCode; // 에러코드(상위기관)
+        var errormsg = data.ErrorMsg; // 에러메세지(상위기관)
+        var EPayCl = data.EPayCl;
+        //alert("["+resultcode+"]"+resultmsg);
+        alert(a);
+    }
+
+    $(function() {
+        $('#CNY').attr('disabled', true);
+        $('input[name="PayMethod"]').click(function() {
+            var state = $('input[name="PayMethod"]:checked').val();
+            if (state == 'OPCARD') {
+                $('#KRW,#USD').attr('disabled', false);
+                $('#CNY').attr('disabled', true);
+                $('#USD').prop('checked', true);
+            } else {
+                $('#KRW,#USD').attr('disabled', true);
+                $('#CNY').attr('disabled', false);
+                $('#CNY').prop('checked', true);
+            }
+        });
+    })
+    
+     /*
+     *  DATE 형식  YYYYMMDDHHMMSS
+     *  중복 MOID 방지
+     */
+          function getDate() {
+              var currentdate = new Date();
+              var rst = pad(currentdate.getFullYear(), 2) + pad(
+                  (currentdate.getMonth() + 1), 2 ) + pad(currentdate.getDate(), 2) + pad(currentdate.getHours(), 2) + pad(
+                  currentdate.getMinutes(), 2 );
+              return rst;
+          }
+          function pad(number, length) {
+              var str = '' + number;
+              while (str.length < length) {
+                  str = '0' + str;
+              }
+              return str;
+          }
+</script>
+
+<!-- 샘플 HTML -->
+<title>INNOPAY Electronic Payment Service</title>
+</head>
+<body>
+</body>
+</html>

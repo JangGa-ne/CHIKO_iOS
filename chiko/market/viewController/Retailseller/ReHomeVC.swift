@@ -46,7 +46,15 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
         let data = ReGoodsArray_best[indexPath.row]
         guard let cell = cell as? ReGoodsTC else { return }
         
-        setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        guard let cell = cell as? ReGoodsTC else { return }
+        
+        cancelKingfisher(imageView: cell.item_img)
+        cell.removeFromSuperview()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -130,8 +138,8 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             let data = ReStoreArray_best[indexPath.row]
             guard let cell = cell as? ReHomeCC else { return }
             
-            setNuke(imageView: cell.store_img, imageUrl: data.StoreObject.store_mainphoto_img, cornerRadius: 15)
-            setNuke(imageView: cell.item_img, imageUrl: data.GoodsObject.item_mainphoto_img, cornerRadius: 10)
+            setKingfisher(imageView: cell.store_img, imageUrl: data.StoreObject.store_mainphoto_img, cornerRadius: 15)
+            setKingfisher(imageView: cell.item_img, imageUrl: data.GoodsObject.item_mainphoto_img, cornerRadius: 10)
             imageUrlColor(imageUrl: data.StoreObject.store_mainphoto_img, point: cell.store_img.center) { color in
                 cell.item_gv.startColor = color.withAlphaComponent(0.0); cell.item_gv.endColor = color.withAlphaComponent(1.0)
                 if isDarkBackground(color: color) {
@@ -146,6 +154,17 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
                     cell.itemSalePrice_label.textColor = .black
                 }
             }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if indexpath_section == 0 {
+            
+            guard let cell = cell as? ReHomeCC else { return }
+            
+            cancelKingfisher(imageView: cell.store_img)
+            cancelKingfisher(imageView: cell.item_img)
         }
     }
     
@@ -227,7 +246,7 @@ class ReHomeVC: UIViewController {
         
         ReHomeVCdelegate = self
         
-//        setNuke(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
+//        setKingfisher(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
         
         preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.StoreObject.store_mainphoto_img) })

@@ -33,7 +33,7 @@ class MPayVC: UIViewController {
         
         MPayVCdelegate = self
         
-        storeCash_label.text = "\(priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0") M"
+        storeCash_label.text = priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0"
         ([addCash_btn, refundCash_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.tag = i; btn.addTarget(self, action: #selector(segue_btn(_:)), for: .touchUpInside)
         }
@@ -44,11 +44,7 @@ class MPayVC: UIViewController {
     }
     
     @objc func segue_btn(_ sender: UIButton) {
-        if sender.tag == 0 {
-            
-        } else if sender.tag == 1 {
-            
-        }
+        segueViewController(identifier: "MPayChargeVC")
     }
 }
 

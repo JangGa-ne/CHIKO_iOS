@@ -37,7 +37,6 @@ var CategoryObject: CategoryData = CategoryData()
 var ReStoreArray_best: [(StoreObject: StoreData, GoodsObject: GoodsData)] = []
 var ReGoodsArray_best: [GoodsData] = []
 var ReBasketArray: [BasketData] = []
-var ReOrderArray: [ReOrderData] = []
 /// Wholesales
 var WhGoodsArray_realtime: [GoodsData] = []
 var WhCountingObject: WhCountingData = WhCountingData()
@@ -57,7 +56,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        dataCache?.sizeLimit = 50 * 1024 * 1024
+        dataCache?.sizeLimit = 1024 * 1024 * 70
+        memoryCheck()
         // init
         priceFormatter.numberStyle = .decimal
         deviceInfo { ratio, device in

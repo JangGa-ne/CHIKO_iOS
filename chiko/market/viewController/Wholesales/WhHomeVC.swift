@@ -83,7 +83,17 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             let data = WhGoodsArray_realtime[indexPath.row]
             guard let cell = cell as? WhHomeCC else { return }
             
-            setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 7.5)
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 7.5)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if collectionView == collectionView2 {
+            
+            guard let cell = cell as? WhHomeCC else { return }
+            
+            cancelKingfisher(imageView: cell.item_img)
         }
     }
     

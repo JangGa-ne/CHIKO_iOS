@@ -75,6 +75,7 @@ extension ReGoodsDetailTC: ImageSlideshowDelegate {
     
     func imageSlideshow(_ imageSlideshow: ImageSlideshow, didChangeCurrentPageTo page: Int) {
         itemImgPage_label.text = "\(page+1)"
+        item_img.tag = page
     }
 }
 
@@ -88,7 +89,6 @@ class ReGoodsDetailVC: UIViewController {
     var item_key: String = ""
     
     var load_img: Bool = false
-    var store_mainphoto_img: String = ""
     
     var GoodsObject: GoodsData = GoodsData()
     var ItemOptionArray: [ItemOptionData] = []
@@ -153,22 +153,11 @@ class ReGoodsDetailVC: UIViewController {
         ([basket_btn, order_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.tag = i; btn.addTarget(self, action: #selector(basket_order_btn(_:)), for: .touchUpInside)
         }
-        
-        guard GoodsObject.store_id != "" else { return }
-        Firestore.firestore().collection("store").document(GoodsObject.store_id).getDocument { ResDocu, error in
-            let dict = ResDocu?.data() ?? [:]
-            self.store_mainphoto_img = dict["store_mainphoto_img"] as? String ?? ""
-            self.tableView.reloadData()
-        }
     }
     
     @objc func basket_order_btn(_ sender: UIButton) {
         
         guard ItemOptionArray.count != 0 else { customAlert(message: "상품을 선택해주세요.", time: 1); return }
-        
-//        if ReBasketArray.filter({ $0.item_key == GoodsObject.item_key }).isEmpty {
-//            
-//        }
         
         var item_option: Array<[String: Any]> = []
         ItemOptionArray.forEach { data in
@@ -279,14 +268,32 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
         guard let cell = cell as? ReGoodsDetailTC else { return }
         
         if indexPath.section == 0 && !load_img { load_img = true
-            setNuke(imageView: cell.store_img, imageUrl: store_mainphoto_img, cornerRadius: 18)
-            setImageSlideShew(imageView: cell.item_img, imageUrls: data.item_photo_imgs)
+            
+            if data.store_id != "" {
+                Firestore.firestore().collection("store").document(GoodsObject.store_id).getDocument { docu, error in
+                    let dict = docu?.data() ?? [:]
+                    setKingfisher(imageView: cell.store_img, imageUrl: dict["store_mainphoto_img"] as? String ?? "", cornerRadius: 18)
+                }
+            }
+            setImageSlideShew(imageView: cell.item_img, imageUrls: data.item_photo_imgs, completionHandler: nil)
             cell.item_img.pageIndicator = .none
-            cell.item_img.slideshowInterval = 3
+            cell.item_img.slideshowInterval = 5
             cell.item_img.delegate = cell
         } else if indexPath.section == 2 {
-            setNuke(imageView: cell.itemContent_img, imageUrl: data.item_content_imgs[indexPath.row])
+            setKingfisher(imageView: cell.itemContent_img, imageUrl: data.item_content_imgs[indexPath.row])
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        let data = GoodsObject
+        guard let cell = cell as? ReGoodsDetailTC else { return }
+        
+        if indexPath.section == 0 {
+            cancelKingfisher(imageView: cell.store_img)
+        } else if indexPath.section == 2 {
+            cancelKingfisher(imageView: cell.itemContent_img)
+        }; cell.removeFromSuperview()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -299,6 +306,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.storeNameEng_label.text = data.store_name_eng
             cell.storeName_label.text = data.store_name
             cell.store_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
+            cell.item_img.delegate = cell
             cell.item_img.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(item_img(_:))))
             cell.itemImgPage_view.isHidden = !(data.item_photo_imgs.count > 1)
             cell.itemImgCount_label.text = "| \(data.item_photo_imgs.count)"
@@ -361,15 +369,6 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
                 }
             }
             
-//            if data.item_material_washing.count > 0 {
-//                
-//                cell.itemMaterialThickness_label.text = data.item_material_washing["thickness"] as? String ?? ""
-//                cell.itemMaterialSeeThrough_label.text = data.item_material_washing["see_through"] as? String ?? ""
-//                cell.itemMaterialFlexibility_label.text = data.item_material_washing["flexibility"] as? String ?? ""
-//                cell.itemMaterialLining_label.text = data.item_material_washing["lining"] as? String ?? ""
-//                cell.itemMaterialWashing_label.text = "\(data.item_material_washing["washing"] as? [String] ?? [])".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
-//            }
-            
             return cell
         } else {
             return UITableViewCell()
@@ -385,8 +384,10 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func item_img(_ sender: UITapGestureRecognizer) {
         
+        guard let sender = sender.view as? ImageSlideshow else { return }
         let segue = storyboard?.instantiateViewController(withIdentifier: "ImageSlideVC") as! ImageSlideVC
-        segue.imageUrls = GoodsObject.item_photo_imgs
+        segue.inputs = sender.images
+        segue.indexpath_row = sender.tag
         navigationController?.pushViewController(segue, animated: true)
     }
     

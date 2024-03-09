@@ -108,15 +108,14 @@ class ReBasketVC: UIViewController {
             
             switch status {
             case 200:
+                self.problemAlert(view: self.tableView)
                 self.choiceAllData()
                 self.totalData()
                 preheatImages(urls: ReBasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
             case 204:
-                print("No data")
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
+                self.problemAlert(view: self.tableView, type: "nodata")
             default:
-                self.customAlert(message: "Internal server error", time: 1)
+                self.problemAlert(view: self.tableView, type: "error")
             }
             
             self.tableView.reloadData(); sender.endRefreshing()
@@ -170,6 +169,12 @@ class ReBasketVC: UIViewController {
         }
         
         orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
+        
+        if OrderArray.count > 0 {
+            problemAlert(view: tableView)
+        } else {
+            problemAlert(view: tableView, type: "nodata")
+        }
     }
     
     @objc func order_btn(_ sender: UIButton) {
@@ -228,7 +233,18 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
             let data = ReBasketArray[indexPath.row]
             guard let cell = cell as? ReBasketTC else { return }
             
-            setNuke(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+            
+        if indexPath.section == 1 {
+            
+            guard let cell = cell as? ReBasketTC else { return }
+            
+            cancelKingfisher(imageView: cell.item_img)
+            cell.removeFromSuperview()
         }
     }
     
@@ -313,15 +329,14 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
                 
                 switch status {
                 case 200:
+                    self.problemAlert(view: self.tableView)
                     self.choiceAllData()
                     self.totalData()
                     preheatImages(urls: ReBasketArray.compactMap { URL(string: $0.item_mainphoto_img) })
                 case 204:
-                    print("No data")
-                case 600:
-                    self.customAlert(message: "Error occurred during data conversion", time: 1)
+                    self.problemAlert(view: self.tableView, type: "nodata")
                 default:
-                    self.customAlert(message: "Internal server error", time: 1)
+                    self.problemAlert(view: self.tableView, type: "error")
                 }
                 
                 self.tableView.reloadData()

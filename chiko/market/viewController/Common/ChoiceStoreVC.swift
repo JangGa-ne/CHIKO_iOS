@@ -81,7 +81,15 @@ extension ChoiceStoreVC: UITableViewDelegate, UITableViewDataSource {
         let data = StoreArray[indexPath.row]
         guard let cell = cell as? ChoiceStoreTC else { return }
         
-        setNuke(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        setKingfisher(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        guard let cell = cell as? ChoiceStoreTC else { return }
+        
+        cancelKingfisher(imageView: cell.storeMain_img)
+        cell.removeFromSuperview()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
