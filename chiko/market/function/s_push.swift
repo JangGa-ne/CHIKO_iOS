@@ -57,6 +57,20 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         print("알림 누름 userNotificationCenter", userInfo)
         
         Messaging.messaging().appDidReceiveMessage(userInfo)
+        
+        let push_type = userInfo["type"] as? String ?? ""
+        
+        DispatchQueue.main.async {
+            if MemberObject.member_id == "", MemberObject.member_pw == "" {
+                if var window = UIApplication.shared.keyWindow?.rootViewController {
+                    while let presentedViewController = window.presentedViewController {
+                        window = presentedViewController
+                    }; window.customAlert(message: "로그인을 해주세요.", time: 1)
+                }
+            } else {
+                
+            }
+        }
                       
         completionHandler()
     }

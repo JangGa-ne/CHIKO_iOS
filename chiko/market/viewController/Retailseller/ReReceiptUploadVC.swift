@@ -49,7 +49,7 @@ class ReReceiptUploadTC: UITableViewCell {
             let layout = UICollectionViewFlowLayout()
             layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
             layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-            receiptCollecctionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+            receiptCollecctionView.setCollectionViewLayout(layout, animated: false)
             receiptCollecctionView.contentOffset.x = delegate.collectionViewContentOffsets[indexpath_section] ?? 0.0
             receiptCollecctionView.delegate = self; receiptCollecctionView.dataSource = self
             
@@ -253,7 +253,7 @@ class ReReceiptUploadVC: UIViewController {
     }
     
     @objc func goodsAdd_btn(_ sender: UIButton) {
-        ReEnquiryReceiptObject.order_item.append((explain: "", item_name: "", item_category_name: [], item_option: [], item_total_price: 0))
+        ReEnquiryReceiptObject.order_item.append((explain: "", item_name: "", item_category_name: [], item_option: [ItemOptionData()], item_total_price: 0))
         tableView.reloadData()
     }
     
@@ -283,7 +283,7 @@ class ReReceiptUploadVC: UIViewController {
             customAlert(message: "미입력된 상품 옵션이 있습니다.", time: 1)
         } else {
             
-            customLoadingIndicator(animated: true)
+            customLoadingIndicator(text: "불러오는 중...", animated: true)
             
             var status_code: Int = 500
             
@@ -300,6 +300,7 @@ class ReReceiptUploadVC: UIViewController {
                 }
                 
                 order_item.append([
+                    "item_category_name": data.item_category_name,
                     "item_name": data.item_name,
                     "item_option": item_option,
                 ])
@@ -377,12 +378,8 @@ class ReReceiptUploadVC: UIViewController {
                             self.navigationController?.popViewController(animated: false)
                         }
                     }
-                case 204:
-                    self.customAlert(message: "No Data", time: 1)
-                case 600:
-                    self.customAlert(message: "Error occurred during data conversion", time: 1)
                 default:
-                    self.customAlert(message: "Internal server error", time: 1)
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                 }
             }
         }

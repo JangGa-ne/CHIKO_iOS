@@ -40,6 +40,17 @@ class ReDeliveryVC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
         tableView.delegate = self; tableView.dataSource = self
+        
+        loadingData()
+    }
+    
+    func loadingData() {
+        
+        if StoreObject.store_delivery.count > 0 {
+            problemAlert(view: tableView)
+        } else {
+            problemAlert(view: tableView, type: "nodata")
+        }; tableView.reloadData()
     }
     
     @objc func deliveryAdd_btn(_ sender: UIButton) {
@@ -96,11 +107,12 @@ extension ReDeliveryVC: UITableViewDelegate, UITableViewDataSource {
         ]
         
         requestEditDB(params: params) { status in
-            self.tableView.reloadData()
-            if let delegate = ReLiquidateVCdelegate {
-                delegate.collectionView.reloadData()
+            self.alert(title: "", message: "기본 배송지로 설정되었습니다.", style: .alert, time: 1) {
+                if let delegate = ReLiquidateVCdelegate {
+                    delegate.collectionView.reloadData()
+                }
+                self.tableView.reloadData()
             }
-            self.alert(title: "", message: "기본 배송지로 설정되었습니다.", style: .alert, time: 1)
         }
     }
     

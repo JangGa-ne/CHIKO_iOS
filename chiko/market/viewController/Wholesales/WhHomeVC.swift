@@ -29,6 +29,7 @@ class WhHomeTC: UITableViewCell {
     @IBOutlet weak var collectionView1: UICollectionView!
     @IBOutlet weak var collectionView2: UICollectionView!
     @IBOutlet weak var collectionView3: UICollectionView!
+    @IBOutlet weak var orderCount_label: UILabel!
     
     func viewDidLoad() {
         
@@ -43,7 +44,7 @@ class WhHomeTC: UITableViewCell {
                     layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
                     layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
                 }
-                collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+                collectionView.setCollectionViewLayout(layout, animated: false)
                 collectionView.delegate = self; collectionView.dataSource = self
             }
         } else if indexpath_section == 2 {
@@ -56,7 +57,7 @@ class WhHomeTC: UITableViewCell {
             
             let layout = UICollectionViewFlowLayout()
             layout.minimumLineSpacing = 1; layout.minimumInteritemSpacing = 1
-            collectionView3.setCollectionViewLayout(layout, animated: true, completion: nil)
+            collectionView3.setCollectionViewLayout(layout, animated: false)
             collectionView3.delegate = self; collectionView3.dataSource = self
         }
     }
@@ -132,7 +133,7 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             cell.grade_label.text = String(indexPath.row+1)
             
             cell.itemName_label.text = data.item_name
-            cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+            cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
             cell.orderCount_label.text = "\(priceFormatter.string(from: data.item_order_count as NSNumber) ?? "0")건"
             
         } else if collectionView == collectionView3 {
@@ -197,6 +198,7 @@ class WhHomeVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
+    var order_count: Int = 0
     var WhGoodsArray_realtime_row: Int = 0
     
     @IBOutlet weak var myPage_btn: UIButton!
@@ -216,6 +218,16 @@ class WhHomeVC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
+        /// WhOrder 요청
+        requestWhOrder { array, _ in
+            self.order_count = array.filter {
+                $0.order_date == setDate(dateformat: "yyyyMMdd")
+            }.flatMap {
+                $0.item_option
+            }.reduce(0) {
+                $0 + $1.quantity
+            }; self.tableView.reloadData()
+        }
         
         goodsUpload_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(goodsUpload_view(_:))))
     }
@@ -242,15 +254,23 @@ class WhHomeVC: UIViewController {
 extension WhHomeVC: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 6
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 1
+            return 0
         } else if section == 1 {
             return 1
         } else if section == 2 {
+            return 0
+        } else if section == 3 {
+            return 0
+//        } else if section == 4, order_count > 0 {
+        } else if section == 4 {
+            return 1
+//        } else if section == 5, order_count > 0 {
+        } else if section == 5 {
             return 1
         } else {
             return .zero
@@ -277,23 +297,45 @@ extension WhHomeVC: UITableViewDelegate, UITableViewDataSource {
             
             return cell
             
-//        } else if indexPath.section == 3 {
-//            
-//            let cell = tableView.dequeueReusableCell(withIdentifier: "WhHomeTC3", for: indexPath) as! WhHomeTC
-//            cell.WhHomeVCdelegate = self
-//            cell.indexpath_section = indexPath.section
-//            cell.viewDidLoad()
-//            
-//            return cell
+        } else if indexPath.section == 3 {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "WhHomeTC3", for: indexPath) as! WhHomeTC
+            cell.WhHomeVCdelegate = self
+            cell.indexpath_section = indexPath.section
+            cell.viewDidLoad()
+            
+            return cell
+        } else if indexPath.section == 4 {
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "WhHomeTC4", for: indexPath) as! WhHomeTC
+            
+            let content = NSMutableAttributedString()
+            content.append(NSAttributedString(string: priceFormatter.string(from: order_count as NSNumber) ?? "0", attributes: [
+                .font: UIFont.boldSystemFont(ofSize: 20)
+            ]))
+            content.append(NSAttributedString(string: "건", attributes: [
+                .font: UIFont.systemFont(ofSize: 14)
+            ]))
+            cell.orderCount_label.attributedText = content
+            
+            return cell
+        } else if indexPath.section == 5 {
+            return tableView.dequeueReusableCell(withIdentifier: "WhHomeTC5", for: indexPath) as! WhHomeTC
         } else {
             return UITableViewCell()
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if indexPath.section == 0 {
             
+        if indexPath.section == 4 {
+            let segue = storyboard?.instantiateViewController(withIdentifier: "WhOrderBatchVC") as! WhOrderBatchVC
+            segue.type = "주문"
+            navigationController?.pushViewController(segue, animated: true)
+        } else if indexPath.section == 5 {
+            let segue = storyboard?.instantiateViewController(withIdentifier: "WhOrderBatchVC") as! WhOrderBatchVC
+            segue.type = "정산"
+            navigationController?.pushViewController(segue, animated: true)
         }
     }
 }

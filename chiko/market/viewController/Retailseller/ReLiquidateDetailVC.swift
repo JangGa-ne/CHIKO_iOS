@@ -48,12 +48,12 @@ extension ReLiquidateDetailTC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateDetailTC2", for: indexPath) as! ReLiquidateDetailTC
         
         if (data.price-LiquidateObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩ \(priceFormatter.string(from: (data.price-LiquidateObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-LiquidateObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-LiquidateObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-LiquidateObject.item_sale_price) as NSNumber) ?? "0"))"
         }
         cell.optionQuantity_label.text = "수량. \(data.quantity)개"
-        cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
+        cell.optionPrice_label.text = "₩\(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
         return cell
     }
@@ -140,13 +140,13 @@ extension ReLiquidateDetailVC: UITableViewDelegate, UITableViewDataSource {
                     order_total += data.price*data.quantity
                 }
             }
-            cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
+            cell.orderTotalPrice_label.text = "₩\(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
             
             return cell
         } else if indexPath.section == 1 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateDetailTC3", for: indexPath) as! ReLiquidateDetailTC
-            cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
+            cell.orderTotalPrice_label.text = "₩\(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
             return cell
         } else {
             return UITableViewCell()

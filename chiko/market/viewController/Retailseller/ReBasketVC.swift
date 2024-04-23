@@ -49,12 +49,12 @@ extension ReBasketTC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC2", for: indexPath) as! ReBasketTC
         
         if (data.price-BasketObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩ \(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
         }
         cell.optionQuantity_label.text = "수량. \(data.quantity)개"
-        cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
+        cell.optionPrice_label.text = "₩\(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
         return cell
     }
@@ -139,12 +139,7 @@ class ReBasketVC: UIViewController {
         var choice: Bool = true
         if ReBasketArray.count == 0 { choice = false }
         ReBasketArray.forEach { data in if !data.choice { choice = false } }
-        if choice {
-            choiceAll_img.image = UIImage(named: "check_on")
-        } else {
-            choiceAll_img.image = UIImage(named: "check_off")
-        }
-        
+        choiceAll_img.image = choice ? UIImage(named: "check_on") : UIImage(named: "check_off")
         choiceAll_btn.isSelected = choice
     }
     
@@ -154,7 +149,7 @@ class ReBasketVC: UIViewController {
         sale_total = 0
         order_total = 0
         /// 데이터 삭제
-        OrderArray.removeAll()
+        OrderArray.removeAll(); tableView.reloadData()
         
         ReBasketArray.enumerated().forEach { i, data in
             if data.choice {
@@ -168,9 +163,9 @@ class ReBasketVC: UIViewController {
             }
         }
         
-        orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
+        orderTotalPrice_label.text = "₩\(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
         
-        if OrderArray.count > 0 {
+        if ReBasketArray.count > 0 {
             problemAlert(view: tableView)
         } else {
             problemAlert(view: tableView, type: "nodata")
@@ -277,13 +272,13 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
                     order_total += data.price*data.quantity
                 }
             }
-            cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
+            cell.orderTotalPrice_label.text = "₩\(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
             
             return cell
         } else if indexPath.section == 2 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC3", for: indexPath) as! ReBasketTC
-            cell.orderTotalPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
+            cell.orderTotalPrice_label.text = "₩\(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
             return cell
         } else {
             return UITableViewCell()

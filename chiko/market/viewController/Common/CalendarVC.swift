@@ -15,7 +15,12 @@ class CalendarVC: UIViewController {
         return .lightContent
     }
     
-    var WhOrderVCdelegate: WhOrderVC? = nil
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    var WhOrderBatchVCdelegate: WhOrderBatchVC? = nil
+    var WhInventoryTCdelegate: WhInventoryTC? = nil
     var WhNotDeliveryAddVCdelegate: WhNotDeliveryAddVC? = nil
     var WhNotDeliveryAddTCdelegate: WhNotDeliveryAddTC? = nil
     
@@ -59,7 +64,7 @@ class CalendarVC: UIViewController {
         
         var total_price: Int = 0
         
-        if let delegate = WhOrderVCdelegate {
+        if let delegate = WhOrderBatchVCdelegate {
             
             delegate.date_btn.setTitle(present_date, for: .normal)
             /// 데이터 삭제
@@ -81,7 +86,7 @@ class CalendarVC: UIViewController {
                 delegate.WhNotDeliveryArray.append(data)
             }
             
-            delegate.totalPrice_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
+            delegate.totalPrice_label.text = "₩\(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
             
             if delegate.WhOrderArray.count > 0 {
                 delegate.problemAlert(view: delegate.tableView)
@@ -89,6 +94,16 @@ class CalendarVC: UIViewController {
                 delegate.problemAlert(view: delegate.tableView, type: "nodata")
             }
             delegate.tableView.reloadData()
+        }
+        
+        if let delegate = WhInventoryTCdelegate {
+            
+            if Int(start_date.replacingOccurrences(of: ".", with: "")) ?? 0 >= Int(present_date.replacingOccurrences(of: ".", with: "")) ?? 0 {
+                customAlert(message: "금일 보다 선택한 날짜가 같거나 작을 수 없습니다.", time: 2); return
+            } else {
+                delegate.InventoryObject.item_option[indexpath_row].date = present_date
+                delegate.register()
+            }
         }
         
         if let VCdelegate = WhNotDeliveryAddVCdelegate, let TCdelegate = WhNotDeliveryAddTCdelegate {

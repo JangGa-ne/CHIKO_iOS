@@ -110,13 +110,14 @@ class WhGoodsUploadVC: UIViewController {
             
             let data = GoodsObject
             
-            customLoadingIndicator(text: "데이터 불러오는중...", animated: true)
+            customLoadingIndicator(text: "불러오는 중...", animated: true)
             /// 상품 대표 이미지
+            data.item_photo_imgs.forEach { _ in ItemArray.append((file_name: "", file_data: Data(), file_size: 0)) }
             data.item_photo_imgs.enumerated().forEach { i, imgUrl in
                 dispatchGroup.enter()
-                imageUrlStringToData(from: imgUrl) { imgData in
+                imageUrlStringToData(from: imgUrl) { mimeType, imgData in
                     DispatchQueue.main.async {
-                        self.ItemArray.append((file_name: String(i)+getFileExtension(from: imgData ?? Data()), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); dispatchGroup.leave()
+                        self.ItemArray[i] = (file_name: "\(i).\((mimeTypes.filter { $0.value == mimeType }.map { $0.key }).first ?? "")", file_data: imgData ?? Data(), file_size: imgData?.count ?? 0); dispatchGroup.leave()
                         UIView.setAnimationsEnabled(false); self.tableView.reloadSections(IndexSet(integer: 0), with: .none); UIView.setAnimationsEnabled(true)
                     }
                 }
@@ -132,11 +133,12 @@ class WhGoodsUploadVC: UIViewController {
                 if data.item_style.contains(style) { style_row = i }
             }
             /// 상품 상세 이미지
+            data.item_content_imgs.forEach { _ in ContentsArray.append((file_name: "", file_data: Data(), file_size: 0)) }
             data.item_content_imgs.enumerated().forEach { i, imgUrl in
                 dispatchGroup.enter()
-                imageUrlStringToData(from: imgUrl) { imgData in
+                imageUrlStringToData(from: imgUrl) { mimeType, imgData in
                     DispatchQueue.main.async {
-                        self.ContentsArray.append((file_name: String(i)+getFileExtension(from: imgData ?? Data()), file_data: imgData ?? Data(), file_size: imgData?.count ?? 0)); self.tableView.reloadData(); dispatchGroup.leave()
+                        self.ContentsArray[i] = (file_name: "\(i).\((mimeTypes.filter { $0.value == mimeType }.map { $0.key }).first ?? "")", file_data: imgData ?? Data(), file_size: imgData?.count ?? 0); dispatchGroup.leave()
                         UIView.setAnimationsEnabled(false); self.tableView.reloadSections(IndexSet(integer: 3), with: .none); UIView.setAnimationsEnabled(true)
                     }
                 }
@@ -266,7 +268,7 @@ class WhGoodsUploadVC: UIViewController {
                                 // 데이터 삭제
                                 WhGoodsArray_realtime.removeAll()
                                 
-                                delegate.customLoadingIndicator(animated: true)
+                                delegate.customLoadingIndicator(text: "불러오는 중...", animated: true)
                                 /// WhRealTime 요청
                                 requestWhRealTime(filter: "최신순", limit: 3) { _ in
                                     delegate.customLoadingIndicator(animated: false)
@@ -275,12 +277,8 @@ class WhGoodsUploadVC: UIViewController {
                             }
                         })
                     }
-                case 204:
-                    self.customAlert(message: "Upload failure", time: 1)
-                case 600:
-                    self.customAlert(message: "Error occurred during data conversion", time: 1)
                 default:
-                    self.customAlert(message: "Internal server error", time: 1)
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                 }
             }
         }

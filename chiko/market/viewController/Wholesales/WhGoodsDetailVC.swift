@@ -11,6 +11,9 @@ import BSImagePicker
 
 class WhGoodsDetailCC: UICollectionViewCell {
     
+    @IBOutlet weak var content_img: UIImageView!
+    @IBOutlet weak var contentRow_label: UILabel!
+    
     @IBOutlet weak var optionName_label: UILabel!
     @IBOutlet weak var optionPrice: UILabel!
 }
@@ -40,12 +43,15 @@ class WhGoodsDetailVC: UIViewController {
     @IBOutlet weak var categoryName_label_width: NSLayoutConstraint!
     @IBOutlet weak var itemTop_img: UIImageView!
     
+    @IBOutlet weak var itemContent_v: UIView!
+    @IBOutlet weak var itemContentCollectionView: UICollectionView!
     @IBOutlet weak var itemContent_label: UILabel!
     @IBOutlet weak var itemCategory_label: UILabel!
     @IBOutlet weak var itemColor_label: UILabel!
     @IBOutlet weak var itemSize_label: UILabel!
     @IBOutlet weak var itemStyle_label: UILabel!
     @IBOutlet weak var itemMaterial_label: UILabel!
+    @IBOutlet weak var itemDateTime_label: UILabel!
     @IBOutlet weak var itemKey_label: UILabel!
     
     @IBOutlet weak var optionPriceCollectionView: UICollectionView!
@@ -61,6 +67,14 @@ class WhGoodsDetailVC: UIViewController {
         
         scrollView.delegate = self
         
+        ([itemContentCollectionView, optionPriceCollectionView] as [UICollectionView]).forEach { collectionView in
+            let layout = UICollectionViewFlowLayout()
+            layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
+            layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+            collectionView.setCollectionViewLayout(layout, animated: false)
+            collectionView.delegate = self; collectionView.dataSource = self
+        }
+        
         let data = GoodsObject
         
         setImageSlideShew(imageView: item_img, imageUrls: data.item_photo_imgs, completionHandler: nil)
@@ -72,8 +86,8 @@ class WhGoodsDetailVC: UIViewController {
         itemImgPage_view.isHidden = !(data.item_photo_imgs.count > 1)
         itemImgCount_label.text = "| \(data.item_photo_imgs.count)"
         itemName_label.text = data.item_name
-        itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
-        itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
+        itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+        itemSalePrice_label.text = "₩\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
         let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
         itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
         itemSalePercent_label.text = "↓ \(percent)%"
@@ -83,6 +97,8 @@ class WhGoodsDetailVC: UIViewController {
         categoryName_label_width.constant = stringWidth(text: categoryName_label.text!, fontSize: 12)+20
         itemTop_img.isHidden = !(data.item_top_check)
         
+        itemContent_v.isHidden = (data.item_content_imgs.count == 0)
+        itemContent_label.isHidden = (data.item_content == "")
         itemContent_label.text = data.item_content
         
         itemCategory_label.text = "\(data.item_category_name)".replacingOccurrences(of: ", ", with: " > ").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
@@ -90,15 +106,10 @@ class WhGoodsDetailVC: UIViewController {
         itemSize_label.text = "\(data.item_sizes)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
         itemStyle_label.text = data.item_style
         itemMaterial_label.text = "\(data.item_materials)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+        itemDateTime_label.text = setTimestampToDateTime(timestamp: Int(data.item_key) ?? 0, dateformat: "yyyy.MM.dd a hh:mm")
         itemKey_label.text = data.item_key
         
-        optionPriceCollectionView.delegate = nil; optionPriceCollectionView.dataSource = nil
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
-        optionPriceCollectionView.setCollectionViewLayout(layout, animated: true)
-        optionPriceCollectionView.delegate = self; optionPriceCollectionView.dataSource = self
+//        optionPriceCollectionView.delegate = nil; optionPriceCollectionView.dataSource = nil
         
         itemMaterialWasingInfo_labels.forEach { label in label.textColor = .black.withAlphaComponent(0.3) }
         data.item_material_washing.forEach { (key: String, value: Any) in
@@ -157,30 +168,58 @@ extension WhGoodsDetailVC: ImageSlideshowDelegate {
 extension WhGoodsDetailVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if GoodsObject.item_option.count > 0 { return GoodsObject.item_option.count } else { return .zero }
+        if collectionView == itemContentCollectionView, GoodsObject.item_content_imgs.count > 0 {
+            return GoodsObject.item_content_imgs.count
+        } else if collectionView == optionPriceCollectionView, GoodsObject.item_option.count > 0 {
+            return GoodsObject.item_option.count
+        } else {
+            return .zero
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        guard let cell = cell as? WhGoodsDetailCC else { return }
+        
+        if collectionView == itemContentCollectionView {
+            setNuke(imageView: cell.content_img, imageUrl: GoodsObject.item_content_imgs[indexPath.row])
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let data = GoodsObject.item_option[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WhGoodsDetailCC", for: indexPath) as! WhGoodsDetailCC
         
-        cell.optionName_label.text = "\(data.color) / \(data.size)"
-        cell.optionPrice.text = "₩ \(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
+        if collectionView == itemContentCollectionView {
+            cell.contentRow_label.text = " "+String(format: "%02d", indexPath.row+1)
+        } else if collectionView == optionPriceCollectionView {
+            
+            let data = GoodsObject.item_option[indexPath.row]
+            
+            cell.optionName_label.text = "\(data.color) / \(data.size)"
+            cell.optionPrice.text = "₩\(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
+        }
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let data = GoodsObject.item_option[indexPath.row]
-        let option_name: CGFloat = stringWidth(text: "\(data.color) / \(data.size)", fontSize: 14)
-        let option_price: CGFloat = stringWidth(text: "₩ \(priceFormatter.string(from: data.price as NSNumber) ?? "0")", fontSize: 14)
-        
-        if option_name > option_price {
-            return CGSize(width: option_name+40, height: collectionView.frame.height)
+        if collectionView == itemContentCollectionView {
+            return CGSize(width: collectionView.bounds.height, height: collectionView.bounds.height)
+        } else if collectionView == optionPriceCollectionView {
+            
+            let data = GoodsObject.item_option[indexPath.row]
+            let option_name: CGFloat = stringWidth(text: "\(data.color) / \(data.size)", fontSize: 14)
+            let option_price: CGFloat = stringWidth(text: "₩\(priceFormatter.string(from: data.price as NSNumber) ?? "0")", fontSize: 14)
+            
+            if option_name > option_price {
+                return CGSize(width: option_name+40, height: collectionView.frame.height)
+            } else {
+                return CGSize(width: option_price+40, height: collectionView.frame.height)
+            }
         } else {
-            return CGSize(width: option_price+40, height: collectionView.frame.height)
+            return .zero
         }
     }
 }

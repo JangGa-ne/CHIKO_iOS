@@ -27,14 +27,21 @@ extension UIViewController {
         }
     }
     
-    func customAlert(message: String, time: CGFloat, completion: (() -> Void)? = nil) {
+    func customAlert(message: String, bookmark: Bool = false, image: UIImage = UIImage(), time: CGFloat, completion: (() -> Void)? = nil) {
         
         let feedbackGenerator = UINotificationFeedbackGenerator()
-        feedbackGenerator.prepare(); feedbackGenerator.notificationOccurred(.error)
+        feedbackGenerator.prepare()
+        if bookmark {
+            feedbackGenerator.notificationOccurred(.success)
+        } else {
+            feedbackGenerator.notificationOccurred(.error)
+        }
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "AlertViewController") as! AlertViewController
         segue.modalPresentationStyle = .overFullScreen
         segue.message = message
+        segue.bookmark = bookmark
+        segue.image = image
         segue.time = time
         presentPanModal(segue)
         
@@ -59,6 +66,7 @@ extension UIViewController {
         
         let loadingTitle_label: UILabel = UILabel()
         loadingTitle_label.frame = CGRect(x: UIScreen.main.bounds.midX-100, y: UIScreen.main.bounds.midY+35, width: 200, height: 20)
+        loadingTitle_label.font = UIFont.boldSystemFont(ofSize: 14)
         loadingTitle_label.textColor = .white
         loadingTitle_label.textAlignment = .center
         loadingTitle_label.text = text
@@ -131,19 +139,34 @@ extension UIViewController {
 class AlertViewController: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+        if #available(iOS 13.0, *) {
+            return bookmark ? .darkContent : .lightContent
+        } else {
+            return bookmark ? .default : .lightContent
+        }
     }
     
     var message: String = ""
+    var bookmark: Bool = false
+    var image: UIImage = UIImage()
     var time: CGFloat = 1
     
-    @IBOutlet weak var background_v: UIView!
+    @IBOutlet weak var normal_v: UIView!
     @IBOutlet weak var message_label: UILabel!
+    
+    @IBOutlet weak var bookmark_v: UIView!
+    @IBOutlet weak var storeMain_img: UIImageView!
+    @IBOutlet weak var storeName_label: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        normal_v.isHidden = bookmark
         message_label.text = message
+        
+        bookmark_v.isHidden = !bookmark
+        storeMain_img.image = image
+        storeName_label.text = "\(message) 👍"
         
         DispatchQueue.main.asyncAfter(deadline: .now()+time) {
             self.dismiss(animated: true, completion: nil)
@@ -163,5 +186,9 @@ extension AlertViewController: PanModalPresentable {
     
     var allowsTapToDismiss: Bool {
         return false
+    }
+    
+    var panModalBackgroundColor: UIColor {
+        return bookmark ? .clear : .black.withAlphaComponent(0.7)
     }
 }

@@ -10,6 +10,7 @@ import UIKit
 class ReHomeCC: UICollectionViewCell {
     
     var load: Bool = false
+    var indexpath_section: Int = 0
     
     @IBOutlet weak var storeNameEng_label: UILabel!
     @IBOutlet weak var storeName_label: UILabel!
@@ -38,15 +39,17 @@ class ReHomeCC: UICollectionViewCell {
 extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if ReGoodsArray_best.count > 0 { return ReGoodsArray_best.count } else { return .zero }
+        if ReGoodsArray_best2[indexpath_section].ReGoodsArray_best.count > 0 { return ReGoodsArray_best2[indexpath_section].ReGoodsArray_best.count } else { return .zero }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let data = ReGoodsArray_best[indexPath.row]
+        var data = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[indexPath.row]
         guard let cell = cell as? ReGoodsTC else { return }
         
-        setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        if !data.load { data.load = true
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        }
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -59,7 +62,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let data = ReGoodsArray_best[indexPath.row]
+        let data = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsTC", for: indexPath) as! ReGoodsTC
         
         if indexPath.row == 0 {
@@ -75,8 +78,8 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
         cell.storeName_btn.setTitle(data.store_name, for: .normal)
         cell.storeName_btn.tag = indexPath.row; cell.storeName_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
         cell.itemName_label.text = data.item_name
-        cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
-        cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
+        cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+        cell.itemSalePrice_label.text = "₩\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
         let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
         cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
         cell.itemSalePercent_label.text = "↓ \(percent)%"
@@ -86,7 +89,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func store_btn(_ sender: UIButton) {
         
-        let data = ReGoodsArray_best[sender.tag]
+        let data = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[sender.tag]
         let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = data.store_id
         ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true)
@@ -95,7 +98,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
-        segue.GoodsObject = ReGoodsArray_best[indexPath.row]
+        segue.GoodsObject = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[indexPath.row]
         ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true)
     }
 }
@@ -113,7 +116,7 @@ class ReHomeTC: UITableViewCell {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 0; layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+        collectionView.setCollectionViewLayout(layout, animated: false)
         collectionView.delegate = self; collectionView.dataSource = self
         collectionView.decelerationRate = .fast
     }
@@ -124,8 +127,8 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if indexpath_section == 0, ReStoreArray_best.count > 0 {
             return ReStoreArray_best.count
-        } else if indexpath_section == 1, ReGoodsArray_best.count > 0 {
-            return 1
+        } else if indexpath_section == 1, ReGoodsArray_best2.count > 0 {
+            return ReGoodsArray_best2.count
         } else {
             return .zero
         }
@@ -169,6 +172,7 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         if indexpath_section == 0 {
             
             let data = ReStoreArray_best[indexPath.row]
@@ -179,8 +183,8 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             cell.item_gv.layer.cornerRadius = 15
             cell.item_gv.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             cell.itemName_label.text = data.GoodsObject.item_name
-            cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.GoodsObject.item_price as NSNumber) ?? "0")"
-            cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.GoodsObject.item_sale_price as NSNumber) ?? "0")"
+            cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.GoodsObject.item_price as NSNumber) ?? "0")"
+            cell.itemSalePrice_label.text = "₩\(priceFormatter.string(from: data.GoodsObject.item_sale_price as NSNumber) ?? "0")"
             let percent = ((Double(data.GoodsObject.item_price)-Double(data.GoodsObject.item_sale_price))/Double(data.GoodsObject.item_price)*1000).rounded()/10
             cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.GoodsObject.item_sale)
             cell.itemSalePercent_label.text = "↓ \(percent)%"
@@ -188,8 +192,13 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             return cell
         } else if indexpath_section == 1 {
             
+            let data = ReGoodsArray_best2[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReHomeCC1", for: indexPath) as! ReHomeCC
+            cell.indexpath_section = indexPath.row
             cell.viewDidLoad()
+            
+            cell.categoryName_label.text = data.title
+            
             return cell
         } else {
             return UICollectionViewCell()
@@ -215,8 +224,9 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
 extension ReHomeTC: UIScrollViewDelegate {
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if scrollView == collectionView {
         
+        if scrollView == collectionView {
+            
             let spacing = UIScreen.main.bounds.width-40+10
             let index = scrollView.contentOffset.x / spacing
             var new_index: CGFloat = 0.0
@@ -224,8 +234,10 @@ extension ReHomeTC: UIScrollViewDelegate {
             if velocity.x > 0 { new_index = ceil(index) } else if velocity.x < 0 { new_index = floor(index) } else { new_index = round(index) }
             
             targetContentOffset.pointee = CGPoint(x: new_index * spacing, y: 0)
+            print("aaaa", targetContentOffset.pointee)
         } else {
             targetContentOffset.pointee = targetContentOffset.pointee
+            print("bbbb", targetContentOffset.pointee)
         }
     }
 }
@@ -251,7 +263,7 @@ class ReHomeVC: UIViewController {
         
         preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.StoreObject.store_mainphoto_img) })
         preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.GoodsObject.item_mainphoto_img) })
-        preheatImages(urls: ReGoodsArray_best.compactMap { URL(string: $0.item_mainphoto_img) })
+        ReGoodsArray_best2.forEach { data in preheatImages(urls: data.ReGoodsArray_best.compactMap { URL(string: $0.item_mainphoto_img) }) }
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
@@ -283,7 +295,7 @@ extension ReHomeVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0, ReStoreArray_best.count > 0 {
             return 1
-        } else if section == 1, ReGoodsArray_best.count > 0 {
+        } else if section == 1, ReGoodsArray_best2.count > 0 {
             return 1
         } else {
             return .zero
@@ -291,18 +303,10 @@ extension ReHomeVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ReHomeTC0", for: indexPath) as! ReHomeTC
-            cell.indexpath_section = indexPath.section
-            cell.viewDidLoad()
-            return cell
-        } else if indexPath.section == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ReHomeTC1", for: indexPath) as! ReHomeTC
-            cell.indexpath_section = indexPath.section
-            cell.viewDidLoad()
-            return cell
-        } else {
-            return UITableViewCell()
-        }
+
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ReHomeTC\(indexPath.section)", for: indexPath) as! ReHomeTC
+        cell.indexpath_section = indexPath.section
+        cell.viewDidLoad()
+        return cell
     }
 }

@@ -46,11 +46,41 @@ class SignInVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        memoryCheck(delete: true)
+        
         SignInVCdelegate = self
         
         setKeyboard()
         // init
         appDelegate.member_type = "retailseller"
+        UserDefaults.standard.bool(forKey: "enquiry_\(StoreObject.store_id)")
+        /// 푸시 구독해제
+        Messaging.messaging().unsubscribe(fromTopic: "enquiry_\(StoreObject.store_id)") { error in
+            if error == nil { print("도픽구독해제성공: enquiry_\(StoreObject.store_id)") } else { print("도픽구독해제실패: enquiry") }
+        }
+        /// 데이터 삭제
+        /// Common
+        MemberObject_signup = MemberData()
+        StoreObject_signup = StoreData()
+        MemberObject = MemberData()
+        StoreObject = StoreData()
+        StoreArray.removeAll()
+        /// Retailseller
+        ReStoreArray_best.removeAll()
+        ReGoodsArray_best.removeAll()
+        ReGoodsArray_best2.removeAll()
+        ReBasketArray.removeAll()
+        /// Wholesales
+        WhGoodsArray_realtime.removeAll()
+        WhCountingObject = WhCountingData()
+        WhOrderArray.removeAll()
+        
+        UserDefaults.standard.removeObject(forKey: "store_index_select")
+        UserDefaults.standard.removeObject(forKey: "store_index")
+        UserDefaults.standard.removeObject(forKey: "member_type")
+        UserDefaults.standard.removeObject(forKey: "member_id")
+        UserDefaults.standard.removeObject(forKey: "member_pw")
+        
         /// navi
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
@@ -74,7 +104,7 @@ class SignInVC: UIViewController {
             btn.tag = i; btn.addTarget(self, action: #selector(sign_btn(_:)), for: .touchUpInside)
         }
         
-        memberId_tf.text = "qqqqqqq"; memberPw_tf.text = "qqq111---"
+        memberId_tf.text = "receo0005"; memberPw_tf.text = "qqq111---"
     }
     
     @objc func memberType_btn(_ sender: UIButton) {
@@ -87,7 +117,7 @@ class SignInVC: UIViewController {
             retailseller_btn.isSelected = true; wholesales_btn.isSelected = false
             retailseller_btn.backgroundColor = .H_8CD26B; wholesales_btn.backgroundColor = .H_F2F2F7
             
-            memberId_tf.text = "qqqqqqq"; memberPw_tf.text = "qqq111---"
+            memberId_tf.text = "receo0005"; memberPw_tf.text = "qqq111---"
             
         } else if sender.tag == 1 {
             /// wholesales
@@ -95,12 +125,21 @@ class SignInVC: UIViewController {
             retailseller_btn.isSelected = false; wholesales_btn.isSelected = true
             retailseller_btn.backgroundColor = .H_F2F2F7; wholesales_btn.backgroundColor = .H_8CD26B
             
-            memberId_tf.text = "fmf7778"; memberPw_tf.text = "1q2w3e4r!"
+            memberId_tf.text = "whceo0005"; memberPw_tf.text = "qqq111---"
         }
     }
     
     @objc func findIdPw_btn(_ sender: UIButton) {
         
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "아이디 찾기", style: .default, handler: { _ in
+            
+        }))
+        alert.addAction(UIAlertAction(title: "비밀번호 찾기", style: .default, handler: { _ in
+            
+        }))
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     @objc func sign_btn(_ sender: UIButton) {
@@ -127,6 +166,11 @@ class SignInVC: UIViewController {
                         /// ReMain 요청
                         dispatchGroup.enter()
                         requestReMain { status in
+                            dispatchGroup.leave()
+                        }
+                        /// Best Items 요청
+                        dispatchGroup.enter()
+                        requestBestItems { status in
                             dispatchGroup.leave()
                         }
                         /// ReBasket 요청
@@ -164,12 +208,10 @@ class SignInVC: UIViewController {
                                 self.segueViewController(identifier: "WhHomeVC")
                             }
                         }
-                    case 204:
-                        self.customAlert(message: "No data", time: 1)
-                    case 600:
-                        self.customAlert(message: "Error occurred during data conversion", time: 1)
+                    case 500:
+                        self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                     default:
-                        self.customAlert(message: "Internal server error", time: 1)
+                        self.customAlert(message: "로그인 실패", time: 1)
                     }
                 }
             }
@@ -195,33 +237,6 @@ class SignInVC: UIViewController {
         setBackSwipeGesture(false)
         
         SignUpMemberVCdelegate = nil
-        
-        UserDefaults.standard.bool(forKey: "enquiry_\(StoreObject.store_id)")
-        /// 푸시 구독해제
-        Messaging.messaging().unsubscribe(fromTopic: "enquiry_\(StoreObject.store_id)") { error in
-            if error == nil { print("도픽구독해제성공: enquiry_\(StoreObject.store_id)") } else { print("도픽구독해제실패: enquiry_\(StoreObject.store_id)") }
-        }
-        /// 데이터 삭제
-        /// Common
-        MemberObject_signup = MemberData()
-        StoreObject_signup = StoreData()
-        MemberObject = MemberData()
-        StoreObject = StoreData()
-        StoreArray.removeAll()
-        /// Retailseller
-        ReStoreArray_best.removeAll()
-        ReGoodsArray_best.removeAll()
-        ReBasketArray.removeAll()
-        /// Wholesales
-        WhGoodsArray_realtime.removeAll()
-        WhCountingObject = WhCountingData()
-        WhOrderArray.removeAll()
-        
-        UserDefaults.standard.removeObject(forKey: "store_index_select")
-        UserDefaults.standard.removeObject(forKey: "store_index")
-        UserDefaults.standard.removeObject(forKey: "member_type")
-        UserDefaults.standard.removeObject(forKey: "member_id")
-        UserDefaults.standard.removeObject(forKey: "member_pw")
     }
 }
 

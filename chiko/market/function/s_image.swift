@@ -12,26 +12,27 @@ import ImageSlideshow
 import BSImagePicker
 import Photos
 import Kingfisher
+import Alamofire
 
-func memoryCheck() {
-    /// Kingfisher
-    let cache = ImageCache.default
-    cache.clearMemoryCache(); cache.clearDiskCache(); cache.clearCache()
-//    cache.calculateDiskStorageSize { result in
-//        switch result {
-//        case .success(let size):
-//            if size > 1024 * 1024 * 50 { cache.clearMemoryCache(); cache.clearDiskCache(); cache.clearCache() }
-//        case .failure(let error):
-//            print(error)
-//        }
-//    }
+func memoryCheck(delete: Bool = false) {
     
-    SDImageCache.shared.config.maxMemoryCost = 1024 * 1024 * 50
-    SDImageCache.shared.clearMemory()
-    SDImageCache.shared.clearDisk()
+    if delete {
+        /// Kingfisher
+        let cache = ImageCache.default
+        cache.clearMemoryCache()
+        cache.cleanExpiredMemoryCache()
+        /// SDWebImage
+        SDImageCache.shared.clearMemory()
+        SDImageCache.shared.clearDisk()
+    } else {
+        
+        dataCache?.sizeLimit = 1024 * 1024 * 70
+        
+        SDImageCache.shared.config.maxMemoryCost = 1024 * 1024 * 50
+    }
 }
 
-func setKingfisher(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UIImage(), cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill) {
+func setKingfisher(imageView: UIImageView, imageUrl: String, placeholder: UIImage = UIImage(), cornerRadius: CGFloat = 0, contentMode: UIView.ContentMode = .scaleAspectFill, completion: (() -> Void)? = nil) {
     
     imageView.layer.cornerRadius = cornerRadius
     imageView.clipsToBounds = true
@@ -39,7 +40,7 @@ func setKingfisher(imageView: UIImageView, imageUrl: String, placeholder: UIImag
     
     let indicator = UIActivityIndicatorView(style: .gray)
     indicator.frame = CGRect(x: imageView.bounds.midX-10, y: imageView.bounds.midY-10, width: 20, height: 20)
-//    imageView.addSubview(indicator); indicator.startAnimating()
+    imageView.addSubview(indicator); indicator.startAnimating()
     
     if let imageUrl = URL(string: imageUrl) {
         imageView.kf.setImage(with: imageUrl, options: [
@@ -51,7 +52,7 @@ func setKingfisher(imageView: UIImageView, imageUrl: String, placeholder: UIImag
             indicator.stopAnimating(); indicator.removeFromSuperview()
         }
     } else {
-        imageView.image = UIImage(named: "chiko")
+        imageView.image = UIImage()
         indicator.stopAnimating(); indicator.removeFromSuperview()
     }
 }
@@ -225,14 +226,19 @@ func imageUrlHeight(imageUrl: String, completionHandler: ((CGFloat) -> Void)? = 
     }.resume()
 }
 
-func imageUrlStringToData(from urlString: String, completion: @escaping (Data?) -> Void) {
+func imageUrlStringToData(from urlString: String, completion: @escaping (String, Data?) -> Void) {
     
-    guard let url = URL(string: urlString) else { completion(nil); return }
+    guard let url = URL(string: urlString) else { completion("", nil); return }
     
-    URLSession.shared.dataTask(with: url) { data, _, error in
-        guard let imageData = data, error == nil else { completion(nil); return }
-        completion(imageData)
-    }.resume()
+    AF.request(urlString.replacingOccurrences(of: "?alt=media", with: ""), method: .get).responseData { response in
+        if let responseJson = try! JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//            print(responseJson)
+            URLSession.shared.dataTask(with: url) { data, _, error in
+                guard let imageData = data, error == nil else { completion("", nil); return }
+                completion(responseJson["contentType"] as? String ?? "", imageData)
+            }.resume()
+        }
+    }
 }
 
 extension UIViewController {
@@ -254,29 +260,25 @@ extension UIViewController {
                 imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
                 if #available(iOS 13.0, *) { imagePicker.settings.theme.backgroundColor = .systemBackground } else { imagePicker.settings.theme.backgroundColor = .white }
                 imagePicker.settings.list.cellsPerRow = { (verticalSize: UIUserInterfaceSizeClass, horizontalSize: UIUserInterfaceSizeClass) -> Int in return 4 }
-                self.presentImagePicker(imagePicker, select: { asset in
-                    
-                    let options = PHImageRequestOptions()
-                    options.isSynchronous = true
-                    PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: 512, height: 512), contentMode: .aspectFill, options: options) { image, _ in
-                        if let img = image, let jpeg = img.jpegData(compressionQuality: 0.3), jpeg.count > 26214400 {
-                            self.customAlert(message: "이미지 최대 크기 25MB를 넘을 수 없습니다.", time: 1)
-                        }
-                    }
-                }, deselect: nil, cancel: nil) { assets in
+                self.presentImagePicker(imagePicker, select: nil, deselect: nil, cancel: nil) { assets in
                     assets.forEach { asset in
-                        
                         let options = PHImageRequestOptions()
                         options.isSynchronous = true
                         PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: 1024, height: 1024), contentMode: .aspectFill, options: options) { image, _ in
-                            if let img = image, let jpeg = img.jpegData(compressionQuality: 0.3), jpeg.count <= 26214400 {
-                                photos.append((
-                                    file_name: (PHAssetResource.assetResources(for: asset).first?.originalFilename ?? "").lowercased(),
-                                    file_data: jpeg,
-                                    file_size: jpeg.count
-                                ))
-                                if (assets.count == photos.count) { completionHandler(photos) }
+                            let file_name = (PHAssetResource.assetResources(for: asset).first?.originalFilename ?? "").lowercased()
+                            guard let img = image else { return }
+                            if (file_name.contains("jpeg") || file_name.contains("jpg")), let image = img.sd_imageData(as: .JPEG, compressionQuality: 0.3), image.count <= 26214400 {
+                                photos.append((file_name: file_name, file_data: image, file_size: image.count))
+                            } else if file_name.contains("png"), let image = img.sd_imageData(as: .PNG, compressionQuality: 0.3), image.count <= 26214400 {
+                                photos.append((file_name: file_name, file_data: image, file_size: image.count))
+                            } else if file_name.contains("heic"), let image = img.sd_imageData(as: .HEIC, compressionQuality: 0.3), image.count <= 26214400 {
+                                photos.append((file_name: file_name, file_data: image, file_size: image.count))
+                            } else if file_name.contains("heif"), let image = img.sd_imageData(as: .HEIF, compressionQuality: 0.3), image.count <= 26214400 {
+                                photos.append((file_name: file_name, file_data: image, file_size: image.count))
+                            } else {
+                                photos.append((file_name: file_name, file_data: Data(), file_size: 0))
                             }
+                            if (assets.count == photos.count) { completionHandler(photos) }
                         }
                     }
                 }

@@ -38,7 +38,6 @@ class ImageSlideVC: UIViewController {
 //            self.item_img.zoomEnabled = true
             self.item_img.pageIndicator?.view.tintColor = .white
             self.item_img.setScrollViewPage(self.indexpath_row+1, animated: false)
-            
         }
     }
     

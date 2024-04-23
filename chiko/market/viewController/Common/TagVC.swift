@@ -27,7 +27,7 @@ class TagTC: UITableViewCell {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        collectionView.setCollectionViewLayout(layout, animated: true)
+        collectionView.setCollectionViewLayout(layout, animated: false)
         collectionView.delegate = self; collectionView.dataSource = self
     }
 }
@@ -157,18 +157,13 @@ class TagVC: UIViewController {
         /// Edit DB 요청
         requestEditDB(params: params) { status in
             
-            switch status {
-            case 200:
+            if status == 200 {
                 StoreObject.store_tag = store_tag
                 self.alert(title: "", message: "저장되었습니다.", style: .alert, time: 1) {
                     self.navigationController?.popViewController(animated: true)
                 }
-            case 204:
-                self.customAlert(message: "No data", time: 1)
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
-            default:
-                self.customAlert(message: "Internal server error", time: 1)
+            } else {
+                self.alert(title: "", message: "문제가 발생했습니다. 다시 시도해주세요.", style: .alert, time: 1)
             }
         }
     }
@@ -176,7 +171,7 @@ class TagVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setBackSwipeGesture(true)
+        setBackSwipeGesture(false)
     }
 }
 

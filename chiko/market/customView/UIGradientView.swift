@@ -9,12 +9,12 @@ import UIKit
 
 class UIGradientView: UIView {
     
-    @IBInspectable var startColor: UIColor = .white { didSet { updateColors() } }
-    @IBInspectable var endColor: UIColor = .white { didSet { updateColors() } }
-    @IBInspectable var startLocation: Double = 1.00 { didSet { updateLocations() } }
-    @IBInspectable var endLocation: Double = 0.00 { didSet { updateLocations() } }
-    @IBInspectable var horizontalMode: Bool = false { didSet { updatePoints() } }
-    @IBInspectable var diagonalMode: Bool = false { didSet { updatePoints() } }
+    @IBInspectable var startColor: UIColor = .white { didSet { DispatchQueue.main.async { self.updateColors() } } }
+    @IBInspectable var endColor: UIColor = .white { didSet { DispatchQueue.main.async { self.updateColors() } } }
+    @IBInspectable var startLocation: Double = 1.00 { didSet { DispatchQueue.main.async { self.updateLocations() } } }
+    @IBInspectable var endLocation: Double = 0.00 { didSet { DispatchQueue.main.async { self.updateLocations() } } }
+    @IBInspectable var horizontalMode: Bool = false { didSet { DispatchQueue.main.async { self.updatePoints() } } }
+    @IBInspectable var diagonalMode: Bool = false { didSet { DispatchQueue.main.async { self.updatePoints() } } }
 
     override public class var layerClass: AnyClass { CAGradientLayer.self }
 
@@ -41,6 +41,8 @@ class UIGradientView: UIView {
 //    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 //        super.traitCollectionDidChange(previousTraitCollection)
 //        
-//        updatePoints(); updateLocations(); updateColors()
+//        DispatchQueue.main.async {
+//            self.updatePoints(); self.updateLocations(); self.updateColors()
+//        }
 //    }
 }

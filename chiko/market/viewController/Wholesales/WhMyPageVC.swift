@@ -37,16 +37,16 @@ class WhMyPageVC: UIViewController {
     
     let menus: [(title: String, content: [String])] = [
         (title: "상품관리", content: ["조회/수정", "상품등록"]),
-        (title: "주문관리", content: ["오늘의주문", "배송관리"]),
-        (title: "정산관리", content: ["매입전잔"]),
+        (title: "주문관리", content: ["오늘의주문", "전체주문/미송"]),
+        (title: "정산관리", content: ["오늘의정산"]),
         (title: "매장관리", content: ["매장태그관리", "직원관리"]),
         (title: "정보관리", content: ["계좌관리", "사업자수정", "내정보수정"]),
         (title: "고객센터", content: ["자주묻는질문"]),
     ]
     let segues: [(String, [String])] = [
         ("상품관리", ["WhGoodsVC", "WhGoodsUploadVC"]),
-        ("주문관리", ["WhOrderVC", ""]),
-        ("정산관리", [""]),
+        ("주문관리", ["WhOrderBatchVC", "WhInventoryVC"]),
+        ("정산관리", ["WhOrderBatchVC"]),
         ("매장관리", ["TagVC", "EmployeeVC"]),
         ("정보관리", ["AccountVC", "StoreVC", "MemberVC"]),
         ("고객센터", [""]),
@@ -91,7 +91,7 @@ class WhMyPageVC: UIViewController {
         WhGoodsDetailVCdelegate = nil
         WhGoodsTop30VCdelegate = nil
         
-        WhOrderVCdelegate = nil
+        WhOrderBatchVCdelegate = nil
         
         AccountVCdelegate = nil
         TagVCdelegate = nil
@@ -161,9 +161,9 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
         guard let sender = sender.view else { return }
         switch sender.tag {
         case 0:
-            break
+            segueViewController(identifier: "StoreVC")
         case 1:
-            break
+            segueViewController(identifier: "MemberVC")
         case 2:
             break
         case 3:
@@ -175,7 +175,8 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
             segue.indexpath_row = 1
             navigationController?.pushViewController(segue, animated: true)
         case 5:
-            segueViewController(identifier: "MPayVC")
+//            segueViewController(identifier: "MPayVC")
+            segueViewController(identifier: "SettingVC")
         default:
             break
         }
@@ -184,7 +185,18 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if indexPath.section != 0, segues[indexPath.section-1].1[indexPath.row] != "" {
-            segueViewController(identifier: segues[indexPath.section-1].1[indexPath.row])
+            
+            if indexPath.section == 2, indexPath.row == 0 {
+                let segue = storyboard?.instantiateViewController(withIdentifier: "WhOrderBatchVC") as! WhOrderBatchVC
+                segue.type = "주문"
+                navigationController?.pushViewController(segue, animated: true)
+            } else if indexPath.section == 3, indexPath.row == 0 {
+                let segue = storyboard?.instantiateViewController(withIdentifier: "WhOrderBatchVC") as! WhOrderBatchVC
+                segue.type = "정산"
+                navigationController?.pushViewController(segue, animated: true)
+            } else {
+                segueViewController(identifier: segues[indexPath.section-1].1[indexPath.row])
+            }
         }
     }
 }

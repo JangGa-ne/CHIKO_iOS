@@ -25,12 +25,12 @@ func requestWhGoods(item_disclosure: String, item_key: String = "0", limit: Int 
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
 //                print(responseJson)
-                if let data = responseJson["data"] as? Array<Any> {
-                    /// goods
-                    data.forEach { data in
-                        /// 데이터 추가
-                        GoodsArray.append(setGoods(goodsDict: data as? [String: Any] ?? [:]))
-                    }
+                let array = responseJson["data"] as? Array<Any> ?? []
+                array.forEach { data in
+                    /// 데이터 추가
+                    GoodsArray.append(setGoods(goodsDict: data as? [String: Any] ?? [:]))
+                }
+                if GoodsArray.count > 0 {
                     completionHandler(GoodsArray, 200)
                 } else {
                     completionHandler([], 204)

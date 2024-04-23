@@ -35,6 +35,7 @@ class EmployeeVC: UIViewController {
         super.viewDidLoad()
         
         storePw_tf.text = StoreObject.store_pw
+        storePw_tf.addTarget(self, action: #selector(edit_storePw_tf(_:)), for: .editingChanged)
         storePw_btn.addTarget(self, action: #selector(storePw_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
@@ -45,6 +46,10 @@ class EmployeeVC: UIViewController {
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         loadingData()
+    }
+    
+    @objc func edit_storePw_tf(_ sender: UITextField) {
+        sender.text! = String(sender.text!.prefix(4))
     }
     
     @objc func storePw_btn(_ sender: UIButton) {
@@ -65,19 +70,12 @@ class EmployeeVC: UIViewController {
                 
                 switch status {
                 case 200:
-                    self.storePw_btn.backgroundColor = .H_8CD26B
-                    
                     StoreObject.store_pw = self.storePw_tf.text!
                     self.alert(title: "", message: "변경되었습니다.", style: .alert, time: 1)
-                case 204:
-                    self.storePw_btn.backgroundColor = .red
-                    self.customAlert(message: "No data", time: 1)
-                case 600:
-                    self.storePw_btn.backgroundColor = .red
-                    self.customAlert(message: "Error occurred during data conversion", time: 1)
+                    self.storePw_btn.backgroundColor = .H_8CD26B
                 default:
                     self.storePw_btn.backgroundColor = .red
-                    self.customAlert(message: "Internal server error", time: 1)
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                 }
             }
         }
@@ -95,14 +93,13 @@ class EmployeeVC: UIViewController {
             
             switch status {
             case 200:
-                self.EmployeeArray += array; self.tableView.reloadData()
+                self.EmployeeArray += array
+                self.problemAlert(view: self.tableView)
             case 204:
-                self.customAlert(message: "No data", time: 1)
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
+                self.problemAlert(view: self.tableView, type: "nodata")
             default:
-                self.customAlert(message: "Internal server error", time: 1)
-            }
+                self.problemAlert(view: self.tableView, type: "error")
+            }; self.tableView.reloadData()
         }
     }
     
@@ -137,6 +134,7 @@ extension EmployeeVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func delete_btn(_ sender: UIButton) {
+        
         
     }
 }

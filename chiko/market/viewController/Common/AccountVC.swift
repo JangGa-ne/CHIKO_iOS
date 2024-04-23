@@ -13,8 +13,6 @@ class AccountVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    var upload_passbook_img: [(file_name: String, file_data: Data, file_size: Int)] = []
-    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var accountBank_view: UIView!
@@ -23,7 +21,7 @@ class AccountVC: UIViewController {
     @IBOutlet weak var accountName_tf: UITextField!
     @IBOutlet weak var checkAccountName_img: UIImageView!
     @IBOutlet weak var accountNum_tf: UITextField!
-    @IBOutlet weak var checkaAccountNum_img: UIImageView!
+    @IBOutlet weak var checkAccountNum_img: UIImageView!
     @IBOutlet weak var noticeAccountNum_label: UILabel!
     
     @IBOutlet weak var passbook_view: UIView!
@@ -50,14 +48,15 @@ class AccountVC: UIViewController {
 //            DispatchQueue.main.async { self.edit_tf(tf) }
         }
         accountBank_tf.isEnabled = false
-        ([checkAccountBank_img, checkAccountName_img, checkaAccountNum_img, checkpassbook_img] as [UIImageView]).forEach { img in
+        ([checkAccountBank_img, checkAccountName_img, checkAccountNum_img, checkpassbook_img] as [UIImageView]).forEach { img in
             img.isHidden = true
         }
         noticeAccountNum_label.isHidden = true
         
-        imageUrlStringToData(from: StoreObject.passbook_img) { imgData in
+        StoreObject.upload_passbook_img.removeAll()
+        imageUrlStringToData(from: StoreObject.passbook_img) { mimeType, imgData in
             DispatchQueue.main.async {
-                self.upload_passbook_img.append((file_name: "passbook_img", file_data: imgData ?? Data(), file_size: imgData?.count ?? 0))
+                StoreObject.upload_passbook_img.append((file_name: "passbook_img.\((mimeTypes.filter { $0.value == mimeType }.map { $0.key }).first ?? "")", file_data: imgData ?? Data(), file_size: imgData?.count ?? 0))
                 if let imgData = UIImage(data: imgData ?? Data()) {
                     self.passbook_img.image = resizeImage(imgData, targetSize: self.passbook_img.frame.size)
 //                    self.checkpassbook_img.isHidden = false
@@ -84,7 +83,7 @@ class AccountVC: UIViewController {
     
     @objc func edit_tf(_ sender: UITextField) {
         
-        let check: UIImageView = [checkAccountBank_img, checkAccountName_img, checkaAccountNum_img][sender.tag]
+        let check: UIImageView = [checkAccountBank_img, checkAccountName_img, checkAccountNum_img][sender.tag]
         let notice: UILabel = [UILabel(), UILabel(), noticeAccountNum_label][sender.tag]
         // init
         check.isHidden = true
@@ -104,7 +103,7 @@ class AccountVC: UIViewController {
     
     @objc func end_tf(_ sender: UITextField) {
         
-        let check: UIImageView = [checkAccountBank_img, checkAccountName_img, checkaAccountNum_img][sender.tag]
+        let check: UIImageView = [checkAccountBank_img, checkAccountName_img, checkAccountNum_img][sender.tag]
         let notice: UILabel = [UILabel(), UILabel(), noticeAccountNum_label][sender.tag]
         
         notice.isHidden = !check.isHidden
@@ -115,7 +114,7 @@ class AccountVC: UIViewController {
         view.endEditing(true)
         
         setPhoto(max: 1) { photo in
-            self.upload_passbook_img = photo
+            StoreObject.upload_passbook_img = photo
             self.passbook_img.image = UIImage(data: photo[0].file_data)
             self.checkpassbook_img.isHidden = false
         }
@@ -123,11 +122,20 @@ class AccountVC: UIViewController {
     
     @objc func edit_btn(_ sender: UIButton) {
         
-        if accountBank_tf.text! == "" || accountName_tf.text! == "" || (accountNum_tf.text!.count >= 10 && accountNum_tf.text!.count <= 14) {
+        if accountBank_tf.text! == "" || accountName_tf.text! == "" || !(accountNum_tf.text!.count >= 10 && accountNum_tf.text!.count <= 14) {
             customAlert(message: "미입력된 항목이 있습니다.", time: 1)
-        } else if upload_passbook_img.count == 0 {
+        } else if StoreObject.upload_passbook_img.count == 0 {
             customAlert(message: "첨부파일을 확인해 주세요.", time: 1)
         } else {
+            
+            customLoadingIndicator(animated: true)
+            
+            /// 통장 사본
+            StoreObject.upload_passbook_img.forEach { (file_name: String, file_data: Data, file_size: Int) in
+                StoreObject.upload_files.append((field_name: "passbook_img", file_name: file_name, file_data: file_data, file_size: file_size))
+            }
+            
+            var status_code: Int = 500
             
             let params: [String: Any] = [
                 "action": "edit",
@@ -140,22 +148,34 @@ class AccountVC: UIViewController {
                 ],
             ]
             /// Edit DB 요청
+            dispatchGroup.enter()
             requestEditDB(params: params) { status in
                 
-                switch status {
-                case 200:
+                if status == 200 {
                     StoreObject.account = [
                         "account_bank": self.accountBank_tf.text!,
                         "account_name": self.accountName_tf.text!,
                         "account_num": self.accountNum_tf.text!,
                     ]
-                    self.alert(title: "", message: "저장되었습니다.", style: .alert, time: 1)
-                case 204:
-                    self.customAlert(message: "No data", time: 1)
-                case 600:
-                    self.customAlert(message: "Error occurred during data conversion", time: 1)
-                default:
-                    self.customAlert(message: "Internal server error", time: 1)
+                    
+                    dispatchGroup.enter()
+                    requestFileUpload(action: "edit", collection_id: "store", document_id: StoreObject.store_id, file_data: StoreObject.upload_files) { fileUrls, status in
+                        StoreObject.passbook_img = fileUrls?["passbook_img"] as? String ?? ""
+                        dispatchGroup.leave()
+                    }
+                }; status_code = status; dispatchGroup.leave()
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                
+                self.customLoadingIndicator(animated: false)
+                
+                if status_code == 200 {
+                    self.alert(title: "", message: "저장되었습니다.", style: .alert, time: 1) {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                } else {
+                    self.alert(title: "", message: "문제가 발생했습니다. 다시 시도해주세요.", style: .alert, time: 1)
                 }
             }
         }

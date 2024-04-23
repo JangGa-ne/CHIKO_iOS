@@ -27,6 +27,7 @@ var StoreObject_signup: StoreData = StoreData()
 var BuildingObject: BuildingData = BuildingData()
 var BuildingArray: [String: [String: [String]]] = [:]
 /// Common
+var PaymentObject: PaymentData = PaymentData()
 var MemberObject: MemberData = MemberData()
 var StoreObject: StoreData = StoreData()
 var StoreArray: [StoreData] = []
@@ -36,11 +37,14 @@ var CategoryObject: CategoryData = CategoryData()
 /// Retailseller
 var ReStoreArray_best: [(StoreObject: StoreData, GoodsObject: GoodsData)] = []
 var ReGoodsArray_best: [GoodsData] = []
+var ReGoodsArray_best2: [(title: String, ReGoodsArray_best: [GoodsData])] = []
 var ReBasketArray: [BasketData] = []
 /// Wholesales
 var WhGoodsArray_realtime: [GoodsData] = []
 var WhCountingObject: WhCountingData = WhCountingData()
 var WhOrderArray: [WhOrderData] = []
+
+var push_type: String = ""
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -56,8 +60,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        dataCache?.sizeLimit = 1024 * 1024 * 70
         memoryCheck()
+        UIViewController.swizzleViewDidDisappear()
         // init
         priceFormatter.numberStyle = .decimal
         deviceInfo { ratio, device in

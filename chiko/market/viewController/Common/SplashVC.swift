@@ -43,6 +43,11 @@ class SplashVC: UIViewController {
                     requestReMain { status in
                         dispatchGroup.leave()
                     }
+                    /// Best Items 요청
+                    dispatchGroup.enter()
+                    requestBestItems { status in
+                        dispatchGroup.leave()
+                    }
                     /// ReBasket 요청
                     dispatchGroup.enter()
                     requestReBasket(type: "get") { status in
@@ -82,17 +87,15 @@ class SplashVC: UIViewController {
                     } else if StoreObject.waiting_step == 2 {
                         self.segueViewController(identifier: "WhHomeVC")
                     }
-//                    else {
+//                   } else {
 //                        back_btn_hidden = true
 //                        self.segueViewController(identifier: "ChoiceStoreVC")
 //                    }
                 }; return
-            case 204:
-                self.customAlert(message: "No data", time: 1)
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
+            case 500:
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
             default:
-                self.customAlert(message: "Internal server error", time: 1)
+                self.customAlert(message: "로그인 실패", time: 1)
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

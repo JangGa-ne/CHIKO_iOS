@@ -59,22 +59,20 @@ class SearchStoreVC: UIViewController {
         /// 데이터 삭제
         StoreArray_search.removeAll()
         
-        customLoadingIndicator(animated: true)
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
         /// Search Store 요청
         requestSearchStore(storeType: search_store_type, storeName: searchStore_tf.text!) { status in
             
-            self.customLoadingIndicator(animated: false); self.tableView.reloadData()
+            self.customLoadingIndicator(animated: false)
             
             switch status {
             case 200:
-                break
+                self.problemAlert(view: self.tableView)
             case 204:
-                self.customAlert(message: "No Data", time: 1)
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
+                self.problemAlert(view: self.tableView, type: "nodata")
             default:
-                self.customAlert(message: "Internal server error", time: 1)
-            }
+                self.problemAlert(view: self.tableView, type: "error")
+            }; self.tableView.reloadData()
         }
     }
     
@@ -96,7 +94,9 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
         let data = StoreArray_search[indexPath.row]
         guard let cell = cell as? SearchStoreTC else { return }
         
-        setKingfisher(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        if !data.load { data.load = true 
+            setKingfisher(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        }
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -155,12 +155,8 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
                         case 200:
                             delegate.tableView.reloadData()
                             self.dismiss(animated: true) { self.navigationController?.popViewController(animated: true) }
-                        case 204:
-                            self.customAlert(message: "No Data", time: 1)
-                        case 600:
-                            self.customAlert(message: "Error occurred during data conversion", time: 1)
                         default:
-                            self.customAlert(message: "Internal server error", time: 1)
+                            self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                         }
                     }
                 }

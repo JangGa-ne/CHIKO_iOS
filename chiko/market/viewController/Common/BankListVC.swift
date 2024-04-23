@@ -14,6 +14,10 @@ class BankListVC: UIViewController {
         return .lightContent
     }
     
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
     var member_type: String = ""
     
     let chinaBank: [String] = [

@@ -81,7 +81,9 @@ extension ChoiceStoreVC: UITableViewDelegate, UITableViewDataSource {
         let data = StoreArray[indexPath.row]
         guard let cell = cell as? ChoiceStoreTC else { return }
         
-        setKingfisher(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        if !data.load { data.load = true
+            setKingfisher(imageView: cell.storeMain_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        }
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -120,7 +122,7 @@ extension ChoiceStoreVC: UITableViewDelegate, UITableViewDataSource {
         store_index_select = true
         store_index = indexPath.row
         
-        customLoadingIndicator(animated: true)
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
         
         if MemberObject.member_type == "retailseller" {
             /// 데이터 삭제

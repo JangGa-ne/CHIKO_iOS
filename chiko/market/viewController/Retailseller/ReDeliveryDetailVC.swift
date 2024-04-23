@@ -115,17 +115,12 @@ class ReDeliveryDetailVC: UIViewController {
             
             requestEditDB(params: params) { status in
                 
-                switch status {
-                case 200:
+                if status == 200 {
                     
                     StoreObject.store_delivery_position = self.new_store_delivery_position
                     StoreObject.store_delivery = self.store_delivery
-                    if let delegate = ReDeliveryVCdelegate {
-                        delegate.tableView.reloadData()
-                    }
                     
                     var message: String = ""
-                    
                     if self.edit {
                         message = "변경되었습니다."
                     } else {
@@ -133,14 +128,12 @@ class ReDeliveryDetailVC: UIViewController {
                     }
                     
                     self.alert(title: "", message: message, style: .alert, time: 1) {
-                        self.navigationController?.popViewController(animated: true)
+                        if let delegate = ReDeliveryVCdelegate {
+                            delegate.loadingData()
+                        }; self.navigationController?.popViewController(animated: true)
                     }
-                case 204:
-                    self.customAlert(message: "No data", time: 1)
-                case 600:
-                    self.customAlert(message: "Error occurred during data conversion", time: 1)
-                default:
-                    self.customAlert(message: "Internal server error", time: 1)
+                } else {
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                 }
             }
         }

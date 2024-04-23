@@ -243,7 +243,7 @@ class WhNotDeliveryAddVC: UIViewController {
         
         if check {
             
-            customLoadingIndicator(animated: true)
+            customLoadingIndicator(text: "불러오는 중...", animated: true)
             
             var order_date: String = ""
             var params: [String: Any] = [:]
@@ -290,7 +290,7 @@ class WhNotDeliveryAddVC: UIViewController {
                 switch status {
                 case 200:
                     self.alert(title: "", message: "미송상품 등록되었습니다.", style: .alert, time: 2) {
-                        if let delegate = WhOrderVCdelegate {
+                        if let delegate = WhOrderBatchVCdelegate {
                             delegate.WhNotDeliveryArray = array; delegate.tableView.reloadData()
                         }
                         self.dismiss(animated: true, completion: nil)

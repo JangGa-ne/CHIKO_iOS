@@ -14,6 +14,10 @@ class SignUpRegisterVC: UIViewController {
         return .lightContent
     }
     
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
     var sms: Bool = false
     var email: Bool = false
     
@@ -162,20 +166,21 @@ class SignUpRegisterVC: UIViewController {
             switch status_code {
             case 200:
                 self.customAlert(message: "회원가입 되었습니다.", time: 1)
+                UserDefaults.standard.setValue(MemberObject_signup.member_type, forKey: "member_type")
+                UserDefaults.standard.setValue(MemberObject_signup.member_id, forKey: "member_id")
+                UserDefaults.standard.setValue(MemberObject_signup.member_pw, forKey: "member_pw")
+                if StoreObject.store_type == "retailseller" {
+                    UserDefaults.standard.setValue("enquiry_\(StoreObject.store_id)", forKey: "re_enquiry")
+                } else if StoreObject.store_type == "wholesales" {
+                    UserDefaults.standard.setValue("enquiry_\(StoreObject.store_id)", forKey: "wh_enquiry")
+                }
                 DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                     self.dismiss(animated: true) {
-                        UserDefaults.standard.setValue(MemberObject_signup.member_type, forKey: "member_type")
-                        UserDefaults.standard.setValue(MemberObject_signup.member_id, forKey: "member_id")
-                        UserDefaults.standard.setValue(MemberObject_signup.member_pw, forKey: "member_pw")
                         SignUpMemberVCdelegate?.segueViewController(identifier: "SplashVC")
                     }
                 }
-            case 204:
-                self.customAlert(message: "No data", time: 1)
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
             default:
-                self.customAlert(message: "Internal server error", time: 1)
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
             }
         }
     }

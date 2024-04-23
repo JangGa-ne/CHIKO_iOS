@@ -78,7 +78,7 @@ extension UIViewController: UIViewControllerTransitioningDelegate {
     static let transition: animationSegue = animationSegue()
 }
 
-extension WhOrderVC {
+extension WhOrderBatchVC {
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         UIViewController.transition.presenting = true; UIViewController.transition.animationTime = 0.2; UIViewController.transition.animationBottom = true; return UIViewController.transition

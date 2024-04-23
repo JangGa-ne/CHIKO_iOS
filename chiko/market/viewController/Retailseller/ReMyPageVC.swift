@@ -11,6 +11,12 @@ class ReMyPageTC: UITableViewCell {
     
     @IBOutlet weak var mPay_view: UIView!
     @IBOutlet weak var mPay_label: UILabel!
+    
+    @IBOutlet weak var member_v: UIView!
+    @IBOutlet weak var memberName_label: UILabel!
+    @IBOutlet weak var memberGrade_label: UILabel!
+    @IBOutlet weak var storeName_label: UILabel!
+    
     @IBOutlet weak var order_view: UIView!
     @IBOutlet weak var basket_view: UIView!
     @IBOutlet weak var basket_noticeView: UIView!
@@ -114,11 +120,17 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTC0", for: indexPath) as! ReMyPageTC
+            
             cell.basket_noticeView.isHidden = (ReBasketArray.count == 0)
-            ([cell.mPay_view, cell.order_view, cell.basket_view, cell.scrap_view, cell.setting_view, cell.enquiryReceipt_view] as [UIView]).enumerated().forEach { i, view in
+            ([cell.mPay_view, cell.member_v, cell.order_view, cell.basket_view, cell.scrap_view, cell.setting_view, cell.enquiryReceipt_view] as [UIView]).enumerated().forEach { i, view in
                 view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(segue_view(_:))))
             }
             cell.mPay_label.text = priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0"
+            
+            cell.memberName_label.text = MemberObject.member_name
+            cell.memberGrade_label.text = MemberObject.member_grade
+            cell.storeName_label.text = StoreObject.store_name
+            
             return cell
         } else {
             
@@ -135,11 +147,12 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         
         switch sender.tag {
         case 0: segueViewController(identifier: "MPayVC")
-        case 1: segueViewController(identifier: "ReOrderVC")
-        case 2: segueViewController(identifier: "ReBasketVC")
-        case 3: segueViewController(identifier: "ReBookMarkVC")
-        case 4: alert(title: "", message: "시스템 점검 중입니다.", style: .alert, time: 1)
-        case 5: segueViewController(identifier: "ReEnquiryReceiptVC")
+        case 1: segueViewController(identifier: "MemberVC")
+        case 2: segueViewController(identifier: "ReOrderVC")
+        case 3: segueViewController(identifier: "ReBasketVC")
+        case 4: segueViewController(identifier: "ReBookMarkVC")
+        case 5: segueViewController(identifier: "SettingVC")
+        case 6: segueViewController(identifier: "ReEnquiryReceiptVC")
         default:
             break
         }

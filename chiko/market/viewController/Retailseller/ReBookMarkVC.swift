@@ -43,7 +43,7 @@ class ReBookMarkVC: UIViewController {
         /// 데이터 삭제
         BookMarkArray.removeAll(); tableView.reloadData()
         
-        customLoadingIndicator(animated: true)
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
         
         /// ReBookMark 요청
         requestReBookMark(store_id: StoreObject.store_id) { array, status in
@@ -52,12 +52,12 @@ class ReBookMarkVC: UIViewController {
             
             if status == 200 {
                 self.problemAlert(view: self.tableView)
-                self.BookMarkArray += array; self.tableView.reloadData()
+                self.BookMarkArray += array
             } else if status == 204 {
                 self.problemAlert(view: self.tableView, type: "nodata")
             } else {
                 self.problemAlert(view: self.tableView, type: "error")
-            }
+            }; self.tableView.reloadData()
         }
     }
     
@@ -79,7 +79,9 @@ extension ReBookMarkVC: UITableViewDelegate, UITableViewDataSource {
         let data = BookMarkArray[indexPath.row]
         guard let cell = cell as? ReBookMarkTC else { return }
         
-        setKingfisher(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        if !data.load { data.load = true
+            setKingfisher(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+        }
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -125,10 +127,8 @@ extension ReBookMarkVC: UITableViewDelegate, UITableViewDataSource {
                 switch status {
                 case 200:
                     self.BookMarkArray.remove(at: indexPath.row); tableView.deleteRows(at: [indexPath], with: .none)
-                case 600:
-                    self.customAlert(message: "Error occurred during data conversion", time: 1)
                 default:
-                    self.customAlert(message: "Internal server error", time: 1)
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                 }
             }
         }

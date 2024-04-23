@@ -124,9 +124,9 @@ class WhGoodsUploadTC: UITableViewCell {
             let layout = UICollectionViewFlowLayout()
             layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
             layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
-            itemCollectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+            itemCollectionView.setCollectionViewLayout(layout, animated: false)
             itemCollectionView.contentInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 10)
-            itemCollectionView.contentOffset.x = WhGoodsUploadVCdelegate.collectionViewContentOffsets[0] ?? 0.0
+            itemCollectionView.contentOffset.x = WhGoodsUploadVCdelegate.collectionViewContentOffsets[0] ?? 0
             itemCollectionView.delegate = self; itemCollectionView.dataSource = self
             itemCollectionView.dragDelegate = self; itemCollectionView.dropDelegate = self
         } else if indexpath_section == 1 {
@@ -145,7 +145,7 @@ class WhGoodsUploadTC: UITableViewCell {
                     layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
                     layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
                 }
-                collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+                collectionView.setCollectionViewLayout(layout, animated: false)
                 collectionView.contentOffset.x = WhGoodsUploadVCdelegate.collectionViewContentOffsets[i+1] ?? 0.0
                 collectionView.delegate = self; collectionView.dataSource = self
             }
@@ -156,7 +156,7 @@ class WhGoodsUploadTC: UITableViewCell {
             let layout = UICollectionViewFlowLayout()
             layout.minimumLineSpacing = 0; layout.minimumInteritemSpacing = 0; layout.scrollDirection = .vertical
             layout.sectionInset = .zero
-            optionPriceCollectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+            optionPriceCollectionView.setCollectionViewLayout(layout, animated: false)
             optionPriceCollectionView.contentOffset.x = WhGoodsUploadVCdelegate.collectionViewContentOffsets[3] ?? 0.0
             optionPriceCollectionView.delegate = self; optionPriceCollectionView.dataSource = self
         } else if indexpath_section == 3 {
@@ -175,7 +175,7 @@ class WhGoodsUploadTC: UITableViewCell {
                     layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
                     layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
                 }
-                collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+                collectionView.setCollectionViewLayout(layout, animated: false)
                 collectionView.contentOffset.x = WhGoodsUploadVCdelegate.collectionViewContentOffsets[i+3+1] ?? 0.0
                 collectionView.delegate = self; collectionView.dataSource = self
             }
@@ -329,12 +329,12 @@ class WhGoodsUploadTC: UITableViewCell {
         
         if 10-WhGoodsUploadVCdelegate.ContentsArray.count == 0 {
             
-            let alert = UIAlertController(title: "", message: "이미지는 최대 10장까지\n등록할 수 있습니다.", preferredStyle: .alert)
+            let alert = UIAlertController(title: "", message: "이미지는 최대 30장까지\n등록할 수 있습니다.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: nil))
             WhGoodsUploadVCdelegate.present(alert, animated: true, completion: nil)
         } else {
             
-            WhGoodsUploadVCdelegate.setPhoto(max: 10-WhGoodsUploadVCdelegate.ContentsArray.count) { photos in
+            WhGoodsUploadVCdelegate.setPhoto(max: 30-WhGoodsUploadVCdelegate.ContentsArray.count) { photos in
                 photos.forEach { photo in
                     self.WhGoodsUploadVCdelegate.ContentsArray.append(photo)
                     self.WhGoodsUploadVCdelegate.tableView.reloadData()
@@ -505,21 +505,23 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
             let data = WhGoodsUploadVCdelegate.ItemArray[indexPath.row]
             guard let cell = cell as? WhGoodsUploadCC else { return }
             
-            if let imgData = UIImage(data: data.file_data) {
-                cell.item_img.image = resizeImage(imgData, targetSize: cell.item_img.frame.size)
-            } else {
-                cell.item_img.image = UIImage()
-            }
+            cell.item_img.image = UIImage(data: data.file_data)
+//            if let imgData = UIImage(data: data.file_data) {
+//                cell.item_img.image = resizeImage(imgData, targetSize: cell.item_img.frame.size)
+//            } else {
+//                cell.item_img.image = UIImage()
+//            }
         } else if indexPath.section == 0, collectionView == contentCollectionView {
             
             let data = WhGoodsUploadVCdelegate.ContentsArray[indexPath.row]
             guard let cell = cell as? WhGoodsUploadCC else { return }
             
-            if let imgData = UIImage(data: data.file_data) {
-                cell.content_img.image = resizeImage(imgData, targetSize: cell.content_img.frame.size)
-            } else {
-                cell.content_img.image = UIImage()
-            }
+            cell.content_img.image = UIImage(data: data.file_data)
+//            if let imgData = UIImage(data: data.file_data) {
+//                cell.content_img.image = resizeImage(imgData, targetSize: cell.content_img.frame.size)
+//            } else {
+//                cell.content_img.image = UIImage()
+//            }
         }
     }
     

@@ -50,7 +50,7 @@ class BuildingListVC: UIViewController {
         }
         
         if BuildingObject.building_name.count == 0 {
-            customLoadingIndicator(animated: true)
+            customLoadingIndicator(text: "불러오는 중...", animated: true)
             /// Building Info 요청
             requestBuildingInfo { status in
                 self.customLoadingIndicator(animated: false)

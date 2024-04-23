@@ -11,7 +11,7 @@ func setGMTUnixTimestamp() -> Int64 {
     return Int64(Date().timeIntervalSince1970 * 1000) % 10000000000000
 }
 
-func setTimestampToDateTime(timestamp: Int, dateformat: String = "yyyy.MM.dd HH:mm:ss") -> String {
+func setTimestampToDateTime(timestamp: Int = Int(setGMTUnixTimestamp()), dateformat: String = "yyyy.MM.dd HH:mm:ss") -> String {
     
     var timeInterval = TimeInterval()
     if (String(timestamp).count == 13) { 
@@ -29,4 +29,13 @@ func setTimestampToDateTime(timestamp: Int, dateformat: String = "yyyy.MM.dd HH:
     } else {
         return ""
     }
+}
+
+func setDate(dateformat: String = "yyyy.MM.dd HH:mm:ss") -> String {
+    
+    let dateFormatter = DateFormatter()
+    dateFormatter.timeZone = .autoupdatingCurrent
+    dateFormatter.dateFormat = dateformat
+    
+    return dateFormatter.string(from: Date())
 }

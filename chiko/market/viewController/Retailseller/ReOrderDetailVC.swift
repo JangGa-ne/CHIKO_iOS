@@ -11,12 +11,16 @@ class ReOrderDetailTC: UITableViewCell {
     
     var OrderItemObject: ReOrderItemData = ReOrderItemData()
     
+    @IBOutlet weak var deliveryPayment_v: UIView!
     @IBOutlet weak var deliveryPayment_btn: UIButton!
+    @IBOutlet weak var deliveryReceipt_v: UIView!
+    @IBOutlet weak var deliveryTracking_btn: UIButton!
+    @IBOutlet weak var deliveryReceipt_btn: UIButton!
     
     @IBOutlet weak var orderId_label: UILabel!
     @IBOutlet weak var orderDatetime_label: UILabel!
-    @IBOutlet weak var KrTotalPrice_label: UILabel!
-    @IBOutlet weak var CnTotalPrice_label: UILabel!
+    @IBOutlet weak var itemPrice_label: UILabel!
+    @IBOutlet weak var deliveryPrice_label: UILabel!
     
     @IBOutlet weak var Address_label: UILabel!
     @IBOutlet weak var AddressDetail_label: UILabel!
@@ -31,11 +35,13 @@ class ReOrderDetailTC: UITableViewCell {
     
     @IBOutlet weak var optionName_label: UILabel!
     @IBOutlet weak var optionQuantity_label: UILabel!
+    @IBOutlet weak var enterQuantity_label: UILabel!
+    @IBOutlet weak var enterDate_label: UILabel!
     @IBOutlet weak var optionPrice_label: UILabel!
     
-    @IBOutlet weak var TotalItemPrice_label: UILabel!
-    @IBOutlet weak var TotalVAT_label: UILabel!
-    @IBOutlet weak var TotalPrice_label: UILabel!
+    @IBOutlet weak var totalItemPrice_label: UILabel!
+    @IBOutlet weak var totalDeliveryPrice_label: UILabel!
+    @IBOutlet weak var totalPrice_label: UILabel!
     
     func viewDidLoad() {
         
@@ -44,7 +50,14 @@ class ReOrderDetailTC: UITableViewCell {
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
-        tableView_heignt.constant = CGFloat(OrderItemObject.item_option.count*50)
+        
+        var total_height: CGFloat = 0.0
+        OrderItemObject.item_option.forEach { option in
+            total_height += 50
+            total_height += option.enter_quantity == 0 ? 0 : 20
+            total_height += option.enter_date == "" || option.enter_quantity == option.quantity ? 0 : 20
+        }
+        tableView_heignt.constant = total_height
     }
 }
 
@@ -60,19 +73,25 @@ extension ReOrderDetailTC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderDetailItemOptionTC", for: indexPath) as! ReOrderDetailTC
         
         if (data.price-OrderItemObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩ \(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         }
-        if data.enter_quantity > 0 {
-            let content = NSMutableAttributedString()
-            content.append(NSAttributedString(string: "주문수량. \(data.quantity)개", attributes: [.font: UIFont.systemFont(ofSize: 14)]))
-            content.append(NSAttributedString(string: "입고수량. \(data.enter_quantity)개", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)]))
-            cell.optionQuantity_label.attributedText = content
-        } else {
-            cell.optionQuantity_label.text = "주문수량. \(data.quantity)개"
-        }
-        cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
+        cell.optionQuantity_label.text = "주문수량. \(data.quantity)개"
+        cell.enterQuantity_label.isHidden = (data.enter_quantity == 0)
+        cell.enterQuantity_label.text = "입고수량. \(data.enter_quantity)개"
+        cell.enterDate_label.isHidden = (data.enter_date == "")
+        let content = NSMutableAttributedString()
+        content.append(NSAttributedString(string: "재입고예정일. ", attributes: [
+            .font: UIFont.boldSystemFont(ofSize: 14),
+            .foregroundColor: UIColor.black
+        ]))
+        content.append(NSAttributedString(string: data.enter_date, attributes: [
+            .font: UIFont.boldSystemFont(ofSize: 14),
+            .foregroundColor: UIColor.systemRed
+        ]))
+        cell.enterDate_label.attributedText = content
+        cell.optionPrice_label.text = "₩\(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
         return cell
     }
@@ -100,15 +119,6 @@ class ReOrderDetailVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        OrderObject.order_item.forEach { item in
-            item.item_option.forEach { option in
-                delivery_price_zero = (option.delivery_price == 0)
-                delivery_total_price += option.delivery_price
-                total_price += option.price*option.quantity
-            }
-        }
-        order_total = total_price+Int(Double(total_price)*(Double(total_vat)/100.0))
         
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
@@ -164,9 +174,14 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderDetailTC1", for: indexPath) as! ReOrderDetailTC
             
-            cell.deliveryPayment_btn.isHidden = delivery_price_zero
-            cell.deliveryPayment_btn.setTitle("배송비(₩ \(priceFormatter.string(from: delivery_total_price as NSNumber) ?? "0")) 결제하기", for: .normal)
+            cell.deliveryPayment_v.isHidden = !((OrderObject.order_state == "상품준비중") || (OrderObject.order_state == "배송준비중" && OrderObject.ch_total_delivery_price == 0.0))
+//            cell.deliveryPayment_btn.isHidden = delivery_price_zero && (OrderObject.order_state != "배송준비중")
+            cell.deliveryPayment_btn.isHidden = (OrderObject.order_state != "배송준비중")
+            cell.deliveryPayment_btn.setTitle("물류비 결제하기", for: .normal)
             cell.deliveryPayment_btn.tag = delivery_total_price; cell.deliveryPayment_btn.addTarget(self, action: #selector(deliveryPayment_btn(_:)), for: .touchUpInside)
+            cell.deliveryReceipt_v.isHidden = !cell.deliveryPayment_v.isHidden
+            cell.deliveryTracking_btn.tag = indexPath.row; cell.deliveryTracking_btn.addTarget(self, action: #selector(deliveryTracking_btn(_:)), for: .touchUpInside)
+            cell.deliveryReceipt_btn.tag = indexPath.row; cell.deliveryReceipt_btn.addTarget(self, action: #selector(deliveryReceipt_btn(_:)), for: .touchUpInside)
             
             return cell
         } else if indexPath.section == 1 {
@@ -176,8 +191,14 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
             
             cell.orderId_label.text = data.order_key
             cell.orderDatetime_label.text = setTimestampToDateTime(timestamp: Int(data.order_datetime) ?? 0)
-            cell.KrTotalPrice_label.text = "₩ \(priceFormatter.string(from: data.kr_total_item_price as NSNumber) ?? "0")"
-            cell.CnTotalPrice_label.text = "¥ \(data.cn_total_item_price)"
+            /// 상품금액
+            cell.itemPrice_label.attributedText = attributedPriceString(krw: data.kr_total_item_price, cny: data.ch_total_item_price, fontSize: 14)
+            /// 물류비
+            if data.ch_total_delivery_price == 0.0 && data.kr_total_delivery_price == 0 {
+                cell.deliveryPrice_label.text = "물류비 결제 후 표시됩니다."
+            } else {
+                cell.deliveryPrice_label.attributedText = attributedPriceString(krw: data.kr_total_delivery_price, cny: data.ch_total_delivery_price, fontSize: 14)
+            }
             
             cell.Address_label.text = data.delivery_address
             cell.AddressDetail_label.text = data.delivery_address_detail
@@ -201,14 +222,19 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
             return cell
         } else if indexPath.section == 3 {
             
+            let data = OrderObject
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderDetailTC4", for: indexPath) as! ReOrderDetailTC
-            
-            cell.TotalItemPrice_label.text = "₩ \(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
-            cell.TotalVAT_label.text = "₩ \(priceFormatter.string(from: Int(Double(total_price)*(Double(total_vat)/100.0)) as NSNumber) ?? "0")"
-            cell.TotalPrice_label.text = "₩ \(priceFormatter.string(from: (order_total+total_vat) as NSNumber) ?? "0")"
-            
-//            cell.delivery_btn.tag = indexPath.row; cell.delivery_btn.addTarget(self, action: #selector(delivery_btn(_:)), for: .touchUpInside)
-            
+            /// 상품금액
+            cell.totalItemPrice_label.attributedText = attributedPriceString(krw: data.kr_total_item_price, cny: data.ch_total_item_price, fontSize: 14)
+            /// 물류비
+            if data.ch_total_delivery_price == 0.0 && data.kr_total_delivery_price == 0 {
+                cell.totalDeliveryPrice_label.text = "물류비 결제 후 표시됩니다."
+            } else {
+                cell.totalDeliveryPrice_label.attributedText = attributedPriceString(krw: data.kr_total_delivery_price, cny: data.ch_total_delivery_price, fontSize: 14)
+            }
+            /// 총 금액
+            cell.totalPrice_label.attributedText = attributedPriceString(krw: data.kr_total_item_price+data.kr_total_delivery_price, cny: data.ch_total_item_price+data.ch_total_delivery_price)
+                        
             return cell
         } else {
             return UITableViewCell()
@@ -217,12 +243,25 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func deliveryPayment_btn(_ sender: UIButton) {
         
-        let alert = UIAlertController(title: "", message: "배송비(₩ \(priceFormatter.string(from: sender.tag as NSNumber) ?? "0")) 결제하기", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "결제하기", style: .default, handler: { _ in
-            
-        }))
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-        present(alert, animated: true, completion: nil)
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryPaymentVC") as! ReDeliveryPaymentVC
+        segue.action = action
+        segue.OrderObject = OrderObject
+        navigationController?.pushViewController(segue, animated: true)
+    }
+    
+    @objc func deliveryTracking_btn(_ sender: UIButton) {
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryTrackingVC") as! ReDeliveryTrackingVC
+        segue.linkUrl = "https://www.sf-international.com/kr/ko/dynamic_function/waybill/#search/bill-number/"+OrderObject.delivery_tracking_num
+        navigationController?.pushViewController(segue, animated: true)
+    }
+    
+    @objc func deliveryReceipt_btn(_ sender: UIButton) {
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryPaymentVC") as! ReDeliveryPaymentVC
+        segue.action = action
+        segue.OrderObject = OrderObject
+        navigationController?.pushViewController(segue, animated: true)
     }
     
     @objc func itemName_btn(_ sender: UIButton) {
@@ -232,12 +271,5 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
         segue.store_id = data.store_id
         segue.item_key = data.item_key
         navigationController?.pushViewController(segue, animated: true)
-    }
-    
-    @objc func delivery_btn(_ sender: UIButton) {
-        
-//        let data = OrderObject.order_item[sender.tag]
-        
-        alert(title: "", message: "시스템 점검 중입니다.", style: .alert, time: 1)
     }
 }

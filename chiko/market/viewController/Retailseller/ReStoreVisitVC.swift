@@ -42,7 +42,7 @@ class ReStoreVisitTC: UITableViewCell {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+        collectionView.setCollectionViewLayout(layout, animated: false)
         collectionView.delegate = self; collectionView.dataSource = self
     }
 }
@@ -55,10 +55,12 @@ extension ReStoreVisitTC: UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-        let data = GoodsArray[indexPath.row]
+        var data = GoodsArray[indexPath.row]
         guard let cell = cell as? ReStoreVisitCC else { return }
         
-        setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        if !data.load { data.load = true
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -74,7 +76,7 @@ extension ReStoreVisitTC: UICollectionViewDelegate, UICollectionViewDataSource, 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReStoreVisitCC", for: indexPath) as! ReStoreVisitCC
         
         cell.itemName_label.text = data.item_name
-        cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+        cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
         
         return cell
     }
@@ -115,7 +117,7 @@ class ReStoreVisitVC: UIViewController {
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
         
-        customLoadingIndicator(animated: true)
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
         
         /// ReStore Visit 요청
         requestReStoreVisit(store_id: store_id, limit: 5) { object, status in
@@ -124,14 +126,13 @@ class ReStoreVisitVC: UIViewController {
             
             switch status {
             case 200:
-                self.VisitObject = object; self.tableView.reloadData()
+                self.VisitObject = object
+                self.problemAlert(view: self.tableView)
             case 204:
-                self.customAlert(message: "No Data", time: 1)
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
+                self.problemAlert(view: self.tableView, type: "nodata")
             default:
-                self.customAlert(message: "Internal server error", time: 1)
-            }
+                self.problemAlert(view: self.tableView, type: "error")
+            }; self.tableView.reloadData()
         }
     }
     
@@ -139,6 +140,8 @@ class ReStoreVisitVC: UIViewController {
         super.viewWillAppear(animated)
         
         setBackSwipeGesture(true)
+        
+        ReGoodsVCdelegate = nil
     }
 }
 
@@ -155,7 +158,9 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             let data = VisitObject.StoreObject
             guard let cell = cell as? ReStoreVisitTC else { return }
             
-            setKingfisher(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+            if !data.load { data.load = true
+                setKingfisher(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 10)
+            }
         }
     }
     
@@ -241,6 +246,11 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
                 if action == "favorites_add" {
                     data.store_favorites.append(StoreObject.store_id)
                     data.account_counting += 1
+                    imageUrlStringToData(from: self.VisitObject.StoreObject.store_mainphoto_img) { mimeType, imgData in
+                        DispatchQueue.main.async {
+                            self.customAlert(message: data.store_name, bookmark: true, image: UIImage(data: imgData ?? Data()) ?? UIImage(), time: 2)
+                        }
+                    }
                 } else if action == "favorites_delete" {
                     data.store_favorites = data.store_favorites.filter { $0 != StoreObject.store_id }
                     data.account_counting -= 1
@@ -250,16 +260,30 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
                 if let delegate = ReBookMarkVCdelegate {
                     delegate.loadingData()
                 }
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
             default:
-                self.customAlert(message: "Internal server error", time: 1)
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
             }
         }
     }
     
     @objc func detail_btn(_ sender: UIButton) {
         
+        if sender.tag == 3 && !(VisitObject.StoreObject.store_favorites.contains(StoreObject.store_id)) {
+            customAlert(message: "'스토어찜'을 하셔야 보실 수 있습니다.", time: 1)
+        } else {
+            
+            let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsVC") as! ReGoodsVC
+            segue.detail = true
+            segue.store_id = VisitObject.StoreObject.store_id
+            if sender.tag == 1 {
+                segue.disclosure = ""
+            } else if sender.tag == 2 {
+                segue.disclosure = "전체 공개"
+            } else if sender.tag == 3 {
+                segue.disclosure = "거래처만 공개"
+            }
+            navigationController?.pushViewController(segue, animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

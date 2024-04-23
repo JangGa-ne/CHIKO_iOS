@@ -16,6 +16,10 @@ class ReGoodsVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
+    var detail: Bool = false
+    var store_id: String = ""
+    var disclosure: String = ""
+    
     var isMenuOpen: Bool = false
     
     var item_category_name: [String] = []
@@ -26,6 +30,11 @@ class ReGoodsVC: UIViewController {
     var startIndexChange: Bool = false
     var startIndex: Int = 0
     var refreshControl: UIRefreshControl = UIRefreshControl()
+    
+    @IBOutlet weak var back_v: UIView!
+    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
+    @IBOutlet weak var title_img: UIImageView!
+    @IBOutlet weak var title_label: UILabel!
     
     @IBOutlet weak var storeMain_img: UIImageView!
     @IBOutlet weak var choiceStore_btn: UIButton!
@@ -49,6 +58,9 @@ class ReGoodsVC: UIViewController {
         ReGoodsVCdelegate = self
         
         setKeyboard()
+        
+        back_v.isHidden = !detail
+        title_img.isHidden = detail
         
 //        setKingfisher(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
@@ -75,6 +87,8 @@ class ReGoodsVC: UIViewController {
         tableView.refreshControl = refreshControl
         refreshControl.tintColor = .black.withAlphaComponent(0.3)
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
+        
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
         
         loadingData(first: true)
     }
@@ -155,6 +169,8 @@ class ReGoodsVC: UIViewController {
         if search_tf.text! == "" {
             customAlert(message: "상품명을 입력하세요.", time: 1)
             search.removeAll()
+        } else if search_tf.text!.count < 2 {
+            customAlert(message: "두글자 이상 입력하세요.", time: 1); return
         } else {
             search = search_tf.text!
         }; loadingData(first: true)
@@ -169,25 +185,63 @@ class ReGoodsVC: UIViewController {
     func loadingData(first: Bool = false, item_name: String = "", item_pullup_time: String = "0", item_key: String = "0") {
         /// 데이터 삭제
         if first { GoodsArray.removeAll() }
+        
+        var params: [String: Any] = [
+            "action": "search",
+            "search": search,
+            "item_name": item_name,
+            "item_pullup_time": item_pullup_time,
+            "item_key": item_key,
+            "limit": 10,
+        ]
+        if item_category_name.count == 0 {
+            params["filter"] = "전체보기"
+        } else {
+            params["filter"] = "카테고리"
+            params["filterValue"] = item_category_name
+        }
+        
+        if detail {
+            params["store_id"] = store_id
+            params["item_disclosure"] = disclosure
+        }
         /// ReGoods 요청
-        requestReGoods(search: search, item_category_name: item_category_name, item_name: item_name, item_pullup_time: item_pullup_time, item_key: item_key, limit: 10) { array, status in
+        requestReGoods(params: params) { array, status in
+            
+            self.customLoadingIndicator(animated: false)
             
             if status == 200 {
+                
                 self.problemAlert(view: self.tableView)
                 self.GoodsArray += array
                 preheatImages(urls: self.GoodsArray.compactMap { URL(string: $0.item_mainphoto_img) })
+                
+                if first {
+                    self.tableView.reloadData()
+                } else {
+                    var reload: [IndexPath] = []
+                    (self.tableView.numberOfRows(inSection: 0) ..< self.GoodsArray.count).forEach { i in
+                        reload.append(IndexPath(row: i, section: 0))
+                    }
+                    UIView.setAnimationsEnabled(false); self.tableView.beginUpdates(); self.tableView.insertRows(at: reload, with: .none); self.tableView.endUpdates(); UIView.setAnimationsEnabled(true)
+                }
             } else if first, status == 204 {
-                self.problemAlert(view: self.tableView, type: "nodata")
+                self.problemAlert(view: self.tableView, type: "nodata"); self.tableView.reloadData()
             } else if first, status != 200 {
-                self.problemAlert(view: self.tableView, type: "error")
-            }; self.fetchingMore = false; self.refreshControl.endRefreshing(); self.tableView.reloadData()
+                self.problemAlert(view: self.tableView, type: "error"); self.tableView.reloadData()
+            }
+            
+            self.fetchingMore = false; self.refreshControl.endRefreshing()
+            UIView.setAnimationsEnabled(false)
+            self.tableView.reloadSections(IndexSet(integer: 1), with: .none)
+            UIView.setAnimationsEnabled(true)
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setBackSwipeGesture(false)
+        setBackSwipeGesture(detail)
         
         ChoiceStoreVCdelegate = nil
         ReStoreVisitVCdelegate = nil
@@ -203,7 +257,7 @@ extension ReGoodsVC: UIScrollViewDelegate {
         let contentHeight: CGFloat = scrollView.contentSize.height
         let frameHeight: CGFloat = scrollView.frame.height
         
-        if contentOffsetY > contentHeight-frameHeight && contentOffsetY > 0 && !fetchingMore {
+        if contentOffsetY > contentHeight-frameHeight && contentOffsetY > 0 && !fetchingMore && GoodsArray.count > 0 {
             fetchingMore = true; startIndexChange = true; tableView.reloadData()
             DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
                 let data = self.GoodsArray[self.GoodsArray.count-1]
@@ -233,10 +287,12 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 0 {
             
-            let data = GoodsArray[indexPath.row]
+            var data = GoodsArray[indexPath.row]
             guard let cell = cell as? ReGoodsTC else { return }
             
-            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+            if !data.load { data.load = true
+                setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+            }
         }
     }
     
@@ -261,8 +317,8 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
             cell.storeName_btn.setTitle(data.store_name, for: .normal)
             cell.storeName_btn.tag = indexPath.row; cell.storeName_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
             cell.itemName_label.text = data.item_name
-            cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
-            cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
+            cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+            cell.itemSalePrice_label.text = "₩\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
             let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
             cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
             cell.itemSalePercent_label.text = "↓ \(percent)%"

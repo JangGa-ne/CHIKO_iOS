@@ -13,7 +13,6 @@ class MPayChargeVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    var exchange_rate_cash: Double = 184.65
     var cny_cash: String = "0"
     var krw_cash: String = "0"
     
@@ -62,7 +61,7 @@ class MPayChargeVC: UIViewController {
         let cny = Double(cny_cash) ?? 0.0
         cny_label.text = "\(priceFormatter.string(from: cny as NSNumber) ?? "0") CNY"
         
-        let krw = Int(exchange_rate_cash * cny)
+        let krw = Int(PaymentObject.exchange_rate * cny)
         krw_cash = String(krw)
         krw_label.text = "\(priceFormatter.string(from: krw as NSNumber) ?? "0") KRW"
     }
@@ -70,9 +69,18 @@ class MPayChargeVC: UIViewController {
     @objc func charge_btn(_ sender: UIButton) {
         
         if Int(krw_cash) ?? 0 >= 100 {
-            let segue = storyboard?.instantiateViewController(withIdentifier: "PaymentVC") as! PaymentVC
-            segue.cny_cash = cny_cash.replacingOccurrences(of: ".", with: "")
-            navigationController?.pushViewController(segue, animated: true)
+//            let segue = storyboard?.instantiateViewController(withIdentifier: "PaymentVC") as! PaymentVC
+//            segue.cny_cash = cny_cash.replacingOccurrences(of: ".", with: "")
+//            navigationController?.pushViewController(segue, animated: true)
+            alert(title: "test", message: "페이충전 되었습니다.", style: .alert, time: 1) {
+                StoreObject.store_cash += Int(self.krw_cash) ?? 0
+                if let delegate = MPayVCdelegate {
+                    delegate.tableView.reloadData()
+                }
+                if let delegate = ReLiquidateVCdelegate {
+                    delegate.reStoreCash_label.text = priceFormatter.string(from: (Int(self.krw_cash) ?? 0) as NSNumber) ?? "0"
+                }
+            }
         } else {
             customAlert(message: "최소 충전가능 금액은 100 KRW 입니다.", time: 1)
         }

@@ -52,10 +52,12 @@ extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let data = GoodsArray[indexPath.row]
+        var data = GoodsArray[indexPath.row]
         guard let cell = cell as? WhGoodsTop30TC else { return }
         
-        setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img)
+        if !data.load { data.load = true
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img)
+        }
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -72,8 +74,8 @@ extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WhGoodsTop30TC", for: indexPath) as! WhGoodsTop30TC
         
         cell.itemName_label.text = data.item_name
-        cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
-        cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
+        cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+        cell.itemSalePrice_label.text = "₩\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
         let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
         cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
         cell.itemSalePercent_label.text = "↓ \(percent)%"

@@ -8,34 +8,33 @@
 import UIKit
 import Alamofire
 
-func requestReLiquidate(receipt_mode: Bool, LiquidateArray: [BasketData], store_delivery_position: Int, payment_type: String, kr_order_total: Int, completionHandler: @escaping (Int) -> Void) {
+func requestReLiquidate(receipt_mode: Bool, LiquidateArray: [BasketData], store_delivery_position: Int, timestamp: Int64, payment_type: String, kr_order_total: Int, completionHandler: @escaping (Int) -> Void) {
     
     let delivery_data = StoreObject.store_delivery[store_delivery_position]
     let store_data = StoreObject
     let member_data = MemberObject
-    let timestamp: Int64 = setGMTUnixTimestamp()
     
     var params: Parameters = [
-        "cn_total_item_price": 0,
+        "ch_total_item_price": (Double(kr_order_total)/PaymentObject.exchange_rate*100).rounded()/100,
         "kr_total_item_price": kr_order_total,
-        "vat_total_price": 0,
         "delivery_nickname": delivery_data.nickname,
         "delivery_address": delivery_data.address,
         "delivery_address_detail": delivery_data.address_detail,
         "delivery_name": delivery_data.name,
         "delivery_num": delivery_data.num,
-        "order_store_name": store_data.store_name,
         "order_store_id": store_data.store_id,
+        "order_store_name": store_data.store_name,
+        "order_store_name_eng": store_data.store_name_eng,
+        "order_key": "or\(timestamp)",
         "order_id": member_data.member_id,
         "order_name": member_data.member_name,
         "order_position": member_data.member_grade,
         "order_num": member_data.member_num,
-        "order_key": "or\(timestamp)",
         "order_datetime": String(timestamp),
         "order_memo": "",
-        "order_state": "결제완료",
+        "order_state": "상품준비중",
         "payment_type": payment_type,
-        "receipt_key": "rc\(timestamp)",
+        "gdre_key": "gdre\(timestamp)",
     ]
     
     params["action"] = receipt_mode ? "enquiry_order_list" : "order_list"

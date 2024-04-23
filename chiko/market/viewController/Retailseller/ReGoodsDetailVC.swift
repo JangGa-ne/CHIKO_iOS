@@ -58,7 +58,7 @@ class ReGoodsDetailTC: UITableViewCell {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         guard let data = ReGoodsDetailVCdelegate?.ItemOptionArray[sender.tag] else { return }
         if data.quantity > 1 { data.quantity -= 1; optionQuantity_label.text = "\(data.quantity)" }
-        optionPrice_label.text = "₩ \(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
+        optionPrice_label.text = "₩\(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
         ReGoodsDetailVCdelegate?.setTotalPrice()
     }
     
@@ -66,7 +66,7 @@ class ReGoodsDetailTC: UITableViewCell {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         guard let data = ReGoodsDetailVCdelegate?.ItemOptionArray[sender.tag] else { return }
         data.quantity += 1; optionQuantity_label.text = "\(data.quantity)"
-        optionPrice_label.text = "₩ \(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
+        optionPrice_label.text = "₩\(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
         ReGoodsDetailVCdelegate?.setTotalPrice()
     }
 }
@@ -88,8 +88,6 @@ class ReGoodsDetailVC: UIViewController {
     var store_id: String = ""
     var item_key: String = ""
     
-    var load_img: Bool = false
-    
     var GoodsObject: GoodsData = GoodsData()
     var ItemOptionArray: [ItemOptionData] = []
     
@@ -110,7 +108,7 @@ class ReGoodsDetailVC: UIViewController {
         
         guard store_id != "" && item_key != "" else { return }
         
-        customLoadingIndicator(animated: true)
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
         
         requestFindReGoods(store_id: store_id, item_key: item_key) { object, status in
             
@@ -119,10 +117,8 @@ class ReGoodsDetailVC: UIViewController {
             switch status {
             case 200:
                 self.GoodsObject = object; self.viewDidLoad()
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
             default:
-                self.customAlert(message: "Internal server error", time: 1)
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
             }
         }
     }
@@ -196,7 +192,7 @@ class ReGoodsDetailVC: UIViewController {
                 if data.item_key == self.GoodsObject.item_key { params["basket_key"] = data.basket_key; type = "edit" }
             }
             
-            customLoadingIndicator(animated: true)
+            customLoadingIndicator(text: "불러오는 중...", animated: true)
             
             /// ReBasket 요청
             requestReBasket(type: type, params: params) { status in
@@ -208,10 +204,8 @@ class ReGoodsDetailVC: UIViewController {
                     self.customAlert(message: "장바구니에 상품이 담겼습니다.", time: 1) {
 //                        self.segueViewController(identifier: "ReBasketVC")
                     }
-                case 600:
-                    self.customAlert(message: "Error occurred during data conversion", time: 1)
                 default:
-                    self.customAlert(message: "Internal server error", time: 1)
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                 }
             }
         } else if sender.tag == 1 {
@@ -229,7 +223,7 @@ class ReGoodsDetailVC: UIViewController {
             total_price += (data.price*data.quantity)
             total_quantity += data.quantity
         }
-        totalPrice_label.text = "₩ \(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
+        totalPrice_label.text = "₩\(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -264,16 +258,18 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let data = GoodsObject
+        var data = GoodsObject
         guard let cell = cell as? ReGoodsDetailTC else { return }
         
-        if indexPath.section == 0 && !load_img { load_img = true
+        if indexPath.section == 0 && !data.load { data.load = true
             
-            if data.store_id != "" {
+            if data.store_mainphoto_img == "" && data.store_id != "" {
                 Firestore.firestore().collection("store").document(GoodsObject.store_id).getDocument { docu, error in
                     let dict = docu?.data() ?? [:]
                     setKingfisher(imageView: cell.store_img, imageUrl: dict["store_mainphoto_img"] as? String ?? "", cornerRadius: 18)
                 }
+            } else {
+                setKingfisher(imageView: cell.store_img, imageUrl: data.store_mainphoto_img, cornerRadius: 18)
             }
             setImageSlideShew(imageView: cell.item_img, imageUrls: data.item_photo_imgs, completionHandler: nil)
             cell.item_img.pageIndicator = .none
@@ -286,7 +282,6 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        let data = GoodsObject
         guard let cell = cell as? ReGoodsDetailTC else { return }
         
         if indexPath.section == 0 {
@@ -311,8 +306,8 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.itemImgPage_view.isHidden = !(data.item_photo_imgs.count > 1)
             cell.itemImgCount_label.text = "| \(data.item_photo_imgs.count)"
             cell.itemName_label.text = data.item_name
-            cell.itemPrice_label.text = "₩ \(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
-            cell.itemSalePrice_label.text = "₩ \(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
+            cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
+            cell.itemSalePrice_label.text = "₩\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
             let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
             cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
             cell.itemSalePercent_label.text = "↓ \(percent)%"
@@ -332,15 +327,15 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.optionColor_view.backgroundColor = .init(hex: "#\(ColorArray[data.color] ?? "ffffff")")
             cell.optionSequence_label.text = "상품 \(data.sequence)."
             if (data.price-GoodsObject.item_sale_price) < 0 {
-                cell.optionName_label.text = "\(data.color) + \(data.size) (₩ \(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
+                cell.optionName_label.text = "\(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
             } else {
-                cell.optionName_label.text = "\(data.color) + \(data.size) (+₩ \(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
+                cell.optionName_label.text = "\(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
             }
             cell.optionDelete_btn.tag = indexPath.row; cell.optionDelete_btn.addTarget(self, action: #selector(optionDelete_btn(_:)), for: .touchUpInside)
             cell.optionMinus_btn.tag = indexPath.row; cell.optionMinus_btn.addTarget(cell, action: #selector(cell.optionMinus_btn(_:)), for: .touchUpInside)
             cell.optionQuantity_label.text = "\(data.quantity)"
             cell.optionPlus_btn.tag = indexPath.row; cell.optionPlus_btn.addTarget(cell, action: #selector(cell.optionPlus_btn(_:)), for: .touchUpInside)
-            cell.optionPrice_label.text = "₩ \(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
+            cell.optionPrice_label.text = "₩\(priceFormatter.string(from: data.price*data.quantity as NSNumber) ?? "0")"
             
             return cell
         } else if indexPath.section == 2 {

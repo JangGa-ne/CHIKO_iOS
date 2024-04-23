@@ -115,7 +115,7 @@ class SignUpMemberVC: UIViewController {
             phoneNum_btn.isHidden = true
             submitDocu_sv.isHidden = true
         } else if MemberObject_signup.member_type == "wholesales" {
-            phoneNum_btn.isHidden = false
+            phoneNum_btn.isHidden = true
             submitDocu_sv.isHidden = true
         }
         /// register or search store
@@ -130,7 +130,9 @@ class SignUpMemberVC: UIViewController {
         
         var filterContains: String = ""
         
+        let text = sender.text!.replacingOccurrences(of: " ", with: "")
         let member_type: String = MemberObject_signup.member_type
+        
         let check: UIImageView = [UIImageView(), checkPhoneNumCheck_img, UIImageView(), checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img][sender.tag]
         let notice: UILabel = [noticePhoneNum_label, noticePhoneNumCheck_label, noticeMemberId_label, noticeMemberPw_label, noticeMemberPwCheck_label, UILabel(), noticeMemberEmail_label][sender.tag]
         // init
@@ -148,10 +150,12 @@ class SignUpMemberVC: UIViewController {
             checkPhoneNumCheck_img.isHidden = true
             
             if member_type == "retailseller" {
-                check.isHidden = !(isChinesePhoneNumValid(sender.text!) || sender.text! == "01031870005")
+//                check.isHidden = !(isChinesePhoneNumValid(text) || text == "01031870005")
+                check.isHidden = !(text.count != 0  || text == "01031870005")
                 checkPhoneNum_img.isHidden = check.isHidden
             } else if member_type == "wholesales" {
-                check.isHidden = !(sender.text!.count == 11 || sender.text! == "01031870005")
+                check.isHidden = !(text.count == 11 || text == "01031870005")
+                checkPhoneNum_img.isHidden = check.isHidden
             }
         case phoneNumCheck_tf:
             
@@ -187,7 +191,7 @@ class SignUpMemberVC: UIViewController {
                 notice.text = "4~20자까지 입력 가능합니다."
             } else if sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) != nil {
                 notice.text = "영어 소문자 또는 숫자 조합"
-            } else {
+            } else if text.count > 0 {
                 check.isHidden = false
             }
             memberId_btn.isSelected = false
@@ -207,7 +211,7 @@ class SignUpMemberVC: UIViewController {
                 notice.text = "영어, 숫자, 특수문자 - ' ! @ # $ % ^ & * ( ) - + = 조합"
             } else if !isPasswordValid(sender.text!) {
                 notice.text = "영어, 숫자, 특수문자가 최소 1자 이상 포함되어야 합니다."
-            } else {
+            } else if text.count > 0 {
                 check.isHidden = false
             }
             break
@@ -216,14 +220,14 @@ class SignUpMemberVC: UIViewController {
                 notice.text = "비밀번호 형식이 맞지 않습니다."
             } else if sender.text! != memberPw_tf.text! {
                 notice.text = "비밀번호가 맞지 않습니다."
-            } else if sender.text!.count > 0 {
+            } else if text.count > 0 {
                 check.isHidden = false
             }
             break
         case memberName_tf:
-            if sender.text!.count > 0 { check.isHidden = false }
+            if text.count > 0 { check.isHidden = false }
         case memberEmail_tf:
-            if isEmailValid(sender.text!) { check.isHidden = false }
+            if isEmailValid(text) { check.isHidden = false }
         default:
             break
         }
@@ -289,7 +293,7 @@ class SignUpMemberVC: UIViewController {
                     self.phoneNumCheck_view.isHidden = false
                     DispatchQueue.main.asyncAfter(deadline: .now()+1) { self.phoneNumCheck_tf.becomeFirstResponder() }
                 } else {
-                    self.customAlert(message: "Internal server error", time: 1)
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                     sender.isSelected = false
                     sender.backgroundColor = .systemOrange
                     self.phoneNumCheck_view.isHidden = true
@@ -325,7 +329,7 @@ class SignUpMemberVC: UIViewController {
                     sender.backgroundColor = .systemOrange
                     self.noticeMemberId_label.isHidden = true
                     self.noticeMemberId_label.textColor = .systemRed
-                    self.customAlert(message: "Internal server error", time: 1)
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                 }
             }
         }
@@ -363,8 +367,9 @@ class SignUpMemberVC: UIViewController {
             check_img += [checkPhoneNum_img]
         }
         if MemberObject_signup.member_type == "wholesales" {
-            check_btn += [phoneNum_btn]
-            check_img += [checkPhoneNumCheck_img]
+//            check_btn += [phoneNum_btn]
+//            check_img += [checkPhoneNumCheck_img]
+            check_img += [checkPhoneNum_img]
         }
         check_btn.forEach { btn in
             if !btn.isSelected { customAlert(message: "미입력된 항목이 있거나\n확인되지 않은 항목이 있습니다.", time: 1); final_check = false }

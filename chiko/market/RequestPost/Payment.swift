@@ -8,8 +8,34 @@
 import UIKit
 import Alamofire
 
-func requestExchangeRate() {
+func requestExchangeRate(completionHandler: @escaping (Int) -> Void) {
     
+    let params: Parameters = [
+        "collection_id": "admin_data",
+        "document_id": "price_info",
+    ]
+    
+    params.forEach { dict in print(dict) }
+    ///
+    AF.request(requestUrl+"/get_db", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                let data = responseJson["data"] as? [String: Any] ?? nil
+                if data != nil {
+                    PaymentObject = setPayment(paymentDict: data ?? [:])
+                    completionHandler(200)
+                } else {
+                    completionHandler(204)
+                }
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
 }
 
 func requestPayment(params: [String: Any], completionHandler: ((String, Int) -> Void)?) {

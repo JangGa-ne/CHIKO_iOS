@@ -102,7 +102,7 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
             params["store_address"] = StoreObject_signup.store_address_street
             params["store_address_detail"] = StoreObject_signup.store_address_detail
             params["store_address_zipcode"] = StoreObject_signup.store_address_zipcode
-            params["wechat_id"] = StoreObject.wechat_id
+            params["wechat_id"] = StoreObject_signup.wechat_id
         } else if MemberObject_signup.member_type == "wholesales" {
             StoreObject_signup.store_id = "wh"+String(timestamp)
             params["business_reg_status"] = String(StoreObject_signup.business_reg_status)
@@ -201,7 +201,7 @@ func requestFileUpload(action: String, collection_id: String, document_id: Strin
                         }
                     } else {
                         /// 이미지 캐시 삭제
-                        ImageCache.shared.removeAll(); SDImageCache.shared.clearMemory(); SDImageCache.shared.clearDisk()
+                        memoryCheck(delete: true)
                         /// 데이터 추가
                         fileUrls = responseJson["data"] as? [String: Any] ?? [:]
                         completionHandler(fileUrls, 200)
@@ -254,8 +254,30 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
 //                        StoreArray.append(setStore(storeDict: storeDict))
 //                    }
                     
-                    Messaging.messaging().subscribe(toTopic: "enquiry_\(StoreObject.store_id)") { error in
-                        if error == nil { print("도픽구독성공: enquiry_\(StoreObject.store_id)") } else { print("도픽구독실패: enquiry_\(StoreObject.store_id)") }
+                    var topics: [String] = []
+                    if StoreObject.store_type == "retailseller" {
+                        topics = [
+                            UserDefaults.standard.string(forKey: "re_enquiry") ?? "",
+                            "",
+                            "",
+                            "",
+                            "",
+                        ]
+                    } else if StoreObject.store_type == "wholesales" {
+                        topics = [
+                            UserDefaults.standard.string(forKey: "wh_enquiry") ?? "",
+                            "",
+                            "",
+                            "",
+                            "",
+                        ]
+                    }
+                    topics.forEach { topic in
+                        if topic != "" {
+                            Messaging.messaging().subscribe(toTopic: topic) { error in
+                                if error == nil { print("도픽구독성공: \(topic)") } else { print("도픽구독실패: \(topic)") }
+                            }
+                        }
                     }
                     
                     completionHandler(200)
@@ -417,30 +439,43 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
     }
 }
 
-func requestReGoods(search: String, item_category_name: [String] = [], item_name: String = "", item_pullup_time: String = "0", item_key: String = "0", limit: Int = 99999, completionHandler: @escaping (([GoodsData], Int) -> Void)) {
+func requestBestItems(completionHandler: @escaping ((Int) -> Void)) {
     
-    var params: Parameters = [
-        "action": "search",
-//        "filteredColorFilter": "",                            // 색상
-//        "storeNameFilter": "",                                // 매장명
-//        "styleFilter": "",                                    // 스타일
-//        "priceRangeFilter": ["minPrice", "maxPrice"],         // 가격범위(원가)
-//        "salePriceRangeFilter": ["minPrice", "maxPrice"],     // 가격범위(할인가)
-        "search": search,
-        "item_name": item_name,
-        "item_pullup_time": item_pullup_time,
-        "item_key": item_key,
-        "limit": limit,
+    let params: Parameters = [
+        "collection_id": "main",
+        "document_id": "best_items",
     ]
-    
-//    if startAt != "" { params["start_index"] = startAt }
-    
-    if item_category_name.count == 0 {
-        params["filter"] = "전체보기"
-    } else {
-        params["filter"] = "카테고리"
-        params["filterValue"] = item_category_name
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/get_db", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                /// best goods
+                let data = responseJson["data"] as? [String: Any] ?? [:]
+                let _: [()]? = data.compactMap({ (key: String, value: Any) in
+                    let array = data[key] as? Array<[String: Any]> ?? []
+                    var ReGoodsArray_best: [GoodsData] = []
+                    array.forEach { dict in
+                        /// 데이터 추가
+                        ReGoodsArray_best.append(setGoods(goodsDict: dict))
+                    }
+                    ReGoodsArray_best.sort { $0.item_pullup_time > $1.item_pullup_time }
+                    /// 데이터 추가
+                    ReGoodsArray_best2.append((title: key, ReGoodsArray_best: ReGoodsArray_best))
+                })
+                ReGoodsArray_best2.sort { $0.title < $1.title }
+                completionHandler(ReGoodsArray_best2.count > 0 ? 200 : 204)
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
     }
+}
+
+func requestReGoods(params: [String: Any], completionHandler: @escaping (([GoodsData], Int) -> Void)) {
     
     print(params)
     
@@ -682,20 +717,20 @@ func requestReBookMark(store_id: String, completionHandler: @escaping (([StoreDa
         "store_id": store_id,
     ]
     
-    var StoreArray: [StoreData] = []
+    var BookMarkArray: [StoreData] = []
     
     AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
 //                print(responseJson)
-                if let array = responseJson["data"] as? Array<[String: Any]> {
-                    
-                    array.forEach { dict in
-                        /// 데이터 추가
-                        StoreArray.append(setStore(storeDict: dict))
-                    }
-                    
-                    completionHandler(StoreArray, 200)
+                let array = responseJson["data"] as? Array<[String: Any]> ?? []
+                array.forEach { dict in
+                    /// 데이터 추가
+                    BookMarkArray.append(setStore(storeDict: dict))
+                }
+                
+                if array.count > 0 {
+                    completionHandler(BookMarkArray, 200)
                 } else {
                     completionHandler([], 204)
                 }
@@ -843,8 +878,10 @@ func requestEmployee(completionHandler: @escaping (([MemberData], Int) -> Void))
                 let array = responseJson["data"] as? Array<[String: Any]> ?? []
                 array.forEach { dict in
                     /// 데이터 추가
-                    if dict["user_id"] as? String ?? "" == MemberObject.member_id {
+                    if dict["member_position"] as? String ?? "" == "ceo" {
                         EmployeeArray.insert(setMember(memberDict: dict), at: 0)
+                    } else if dict["user_id"] as? String ?? "" == MemberObject.member_id && EmployeeArray.count > 1 {
+                        EmployeeArray.insert(setMember(memberDict: dict), at: 1)
                     } else {
                         EmployeeArray.append(setMember(memberDict: dict))
                     }
@@ -865,10 +902,95 @@ func requestEmployee(completionHandler: @escaping (([MemberData], Int) -> Void))
     }
 }
 
+func requestWhInventory(completionHandler: @escaping (([InventoryData], Int) -> Void)) {
+    
+    let params: Parameters = [
+        "action": "get_whole",
+        "store_id": StoreObject.store_id,
+    ]
+    
+    var InventoryArray: [InventoryData] = []
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/inventory", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                let array = responseJson["data"] as? Array<[String: Any]> ?? []
+                array.forEach { dict in
+                    /// 데이터 추가
+                    InventoryArray.append(setInventory(inventoryDict: dict))
+                }
+                
+                if array.count > 0 {
+                    completionHandler(InventoryArray, 200)
+                } else {
+                    completionHandler([], 204)
+                }
+            } else {
+                completionHandler([], 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler([], response.error?.responseCode ?? 500)
+        }
+    }
+}
 
+func requestEditStore(completionHandler: @escaping ((Int) -> Void)) {
+    
+    let params: Parameters = [
+        "action": "store_edit",
+        "store_id": StoreObject.store_id,
+    ]
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/dk_sto", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                if responseJson["message"] as? String ?? "" == "success" {
+                    completionHandler(200)
+                } else {
+                    completionHandler(500)
+                }
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}
 
-
-
-
+func requestReReceipt(action: String, params: [String: Any], completionHandler: @escaping ((ReceiptData, ReceiptData, Int) -> Void)) {
+    
+    var ReGoodsReceiptObject: ReceiptData = ReceiptData()
+    var ReDpcostReceiptObject: ReceiptData = ReceiptData()
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/receipt", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+                print(responseJson)
+                if responseJson["message"] as? String ?? "" == "success" {
+                    if action == "set_goods" {
+                        ReGoodsReceiptObject = setReceipt(receiptDict: responseJson["data"] as? [String: Any] ?? [:])
+                    } else if action == "set_dpcost" {
+                        ReDpcostReceiptObject = setReceipt(receiptDict: responseJson["data"] as? [String: Any] ?? [:])
+                    } else if action == "get_receipt" {
+                        ReGoodsReceiptObject = setReceipt(receiptDict: responseJson["goods_receipt"] as? [String: Any] ?? [:])
+                        ReDpcostReceiptObject = setReceipt(receiptDict: responseJson["dpcost_receipt"] as? [String: Any] ?? [:])
+                    }; completionHandler(ReGoodsReceiptObject, ReDpcostReceiptObject, 200)
+                } else {
+                    completionHandler(ReGoodsReceiptObject, ReDpcostReceiptObject, 500)
+                }
+            } else {
+                completionHandler(ReGoodsReceiptObject, ReDpcostReceiptObject, 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(ReGoodsReceiptObject, ReDpcostReceiptObject, response.error?.responseCode ?? 500)
+        }
+    }
+}
 
 

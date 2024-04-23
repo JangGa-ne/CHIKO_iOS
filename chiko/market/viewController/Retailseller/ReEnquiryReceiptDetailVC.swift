@@ -54,7 +54,7 @@ class ReEnquiryReceiptDetailVC: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+        collectionView.setCollectionViewLayout(layout, animated: false)
         collectionView.delegate = self; collectionView.dataSource = self
         
         tableView.separatorStyle = .none
@@ -93,7 +93,7 @@ class ReEnquiryReceiptDetailVC: UIViewController {
     
     func loadingData() {
         
-        customLoadingIndicator(animated: true)
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
         
         var board_index: String = ""
         if let data = ReEnquiryReceiptArray.first, data.data.count > 0, let data = ReEnquiryReceiptArray.first?.data[0] {

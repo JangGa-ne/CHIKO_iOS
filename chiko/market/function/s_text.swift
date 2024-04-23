@@ -53,3 +53,21 @@ extension UITextView {
         contentOffset.y = -max(0, (bounds.size.height - size.height * zoomScale) / 2)
     }
 }
+
+func attributedPriceString(krw: Int, cny: Double, fontSize: CGFloat = 16) -> NSAttributedString {
+    
+    let priceString = NSMutableAttributedString()
+    let numberFormatter = NumberFormatter()
+    numberFormatter.numberStyle = .decimal
+    
+    priceString.append(NSAttributedString(string: "₩\(numberFormatter.string(from: krw as NSNumber) ?? "0") / ", attributes: [
+        .font: UIFont.systemFont(ofSize: fontSize)
+    ]))
+    
+    numberFormatter.maximumFractionDigits = 2
+    priceString.append(NSAttributedString(string: "¥\(numberFormatter.string(from: cny as NSNumber) ?? "0")", attributes: [
+        .font: UIFont.boldSystemFont(ofSize: fontSize)
+    ]))
+    
+    return priceString
+}

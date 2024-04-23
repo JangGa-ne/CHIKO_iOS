@@ -26,7 +26,6 @@ class ReEnquiryReceiptVC: UIViewController {
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var order_btn: UIButton!
     @IBOutlet weak var receiptUpload_v: UIView!
     
     override func viewDidLoad() {
@@ -41,9 +40,10 @@ class ReEnquiryReceiptVC: UIViewController {
         refreshControl.tintColor = .black.withAlphaComponent(0.3)
         refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
+        
         loadingData()
         
-        order_btn.addTarget(self, action: #selector(order_btn(_:)), for: .touchUpInside)
         receiptUpload_v.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(receiptUpload_v(_:))))
     }
     
@@ -55,31 +55,20 @@ class ReEnquiryReceiptVC: UIViewController {
     }
     
     func loadingData() {
-        
-        customLoadingIndicator(animated: true)
         /// ReEnquiryReceipt 요청
         requestReEnquiryReceipt { array, status in
             
             self.customLoadingIndicator(animated: false)
             
-            switch status {
-            case 200:
-                self.ReEnquiryReceiptArray = array; self.tableView.reloadData()
-            case 204:
-                self.customAlert(message: "No Data", time: 1)
-            case 600:
-                self.customAlert(message: "Error occurred during data conversion", time: 1)
-            default:
-                self.customAlert(message: "Internal server error", time: 1)
-            }
+            if status == 200 {
+                self.problemAlert(view: self.tableView)
+                self.ReEnquiryReceiptArray = array
+            } else if status == 204 {
+                self.problemAlert(view: self.tableView, type: "nodata")
+            } else {
+                self.problemAlert(view: self.tableView, type: "error")
+            }; self.tableView.reloadData()
         }
-    }
-    
-    @objc func order_btn(_ sender: UIButton) {
-        
-        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderVC") as! ReOrderVC
-        segue.action = "receipt"
-        navigationController?.pushViewController(segue, animated: true)
     }
     
     @objc func receiptUpload_v(_ sender: UITapGestureRecognizer) {

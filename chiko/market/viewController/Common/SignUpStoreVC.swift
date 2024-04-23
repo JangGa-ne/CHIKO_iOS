@@ -37,9 +37,9 @@ class SignUpStoreVC: UIViewController {
     @IBOutlet weak var checkBusinessRegNum_img: UIImageView!
     @IBOutlet weak var noticeBusinessRegNum_label: UILabel!
     /// 매장명
-    @IBOutlet weak var storeNameChi_tf: UITextField!
-    @IBOutlet weak var checkStoreNameChi_img: UIImageView!
-    @IBOutlet weak var noticeStoreNameChi_label: UILabel!
+    @IBOutlet weak var storeName_tf: UITextField!
+    @IBOutlet weak var checkStoreName_img: UIImageView!
+    @IBOutlet weak var noticeStoreName_label: UILabel!
     /// 매장명 (영어)
     @IBOutlet weak var storeNameEng_tf: UITextField!
     @IBOutlet weak var checkStoreNameEng_img: UIImageView!
@@ -113,7 +113,7 @@ class SignUpStoreVC: UIViewController {
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
         /// placeholder, delegate, edti, return next/done
-        ([businessRegNum_tf, storeNameChi_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, domainAddress_tf, accountBank_tf, depositorName_tf, accountNum_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
+        ([businessRegNum_tf, storeName_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, domainAddress_tf, accountBank_tf, depositorName_tf, accountNum_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
             tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. www.example.com", "은행명을 입력하세요.", "예금주명을 입력하세요.", "-를 빼고 입력하세요.", "", ""][i], color: .black.withAlphaComponent(0.3))
             tf.delegate = self
             tf.tag = i
@@ -122,11 +122,11 @@ class SignUpStoreVC: UIViewController {
             if tf != domainAddress_tf && tf != accountNum_tf { tf.returnKeyType = .next } else { tf.returnKeyType = .done }
         }
         /// check
-        ([checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img] as [UIImageView]).forEach { img in
+        ([checkBusinessRegNum_img, checkStoreName_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img] as [UIImageView]).forEach { img in
             img.isHidden = true
         }
         /// notice
-        ([noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, noticeDomainAddress_label, noticeAccountNum_label] as [UILabel]).forEach { label in
+        ([noticeBusinessRegNum_label, noticeStoreName_label, noticeStoreNameEng_label, noticeStoreTel_label, noticeDomainAddress_label, noticeAccountNum_label] as [UILabel]).forEach { label in
             label.isHidden = true
         }
         
@@ -167,7 +167,7 @@ class SignUpStoreVC: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
-        collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+        collectionView.setCollectionViewLayout(layout, animated: false)
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 10)
         collectionView.delegate = self; collectionView.dataSource = self
         /// back submit store
@@ -177,12 +177,12 @@ class SignUpStoreVC: UIViewController {
     @objc func changedEditStoreInfo_if(_ sender: UITextField) {
         
         var filterContains: String = ""
-        let member_type = MemberObject_signup.member_type
-        let chineseRange = 0x4E00...0x9FFF
-        let koreanRange = 0xAC00...0xD7AF
         
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
-        let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), noticeAccountNum_label, UILabel()][sender.tag]
+        let text = sender.text!.replacingOccurrences(of: " ", with: "")
+        let member_type = MemberObject_signup.member_type
+        
+        let check: UIImageView = [checkBusinessRegNum_img, checkStoreName_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
+        let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreName_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), noticeAccountNum_label, UILabel()][sender.tag]
         // init
         check.isHidden = true
         notice.isHidden = true
@@ -190,49 +190,38 @@ class SignUpStoreVC: UIViewController {
         switch sender {
         case businessRegNum_tf:
 //            if isChineseBusinessRegNumValid(sender.text!) { check.isHidden = false }
-            if sender.text!.count == 10 { check.isHidden = false }
-        case storeNameChi_tf:
-            filterContains = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()-+="
-            
-            let allowedCharacters = NSMutableCharacterSet()
-            allowedCharacters.formUnion(with: CharacterSet(charactersIn: filterContains))
-            if let characterSetFromRange = NSCharacterSet(range: NSRange(location: chineseRange.lowerBound, length: chineseRange.upperBound-chineseRange.lowerBound+1)) as CharacterSet? {
-                allowedCharacters.formUnion(with: characterSetFromRange)
-            }
-            if let characterSetFromRange = NSCharacterSet(range: NSRange(location: koreanRange.lowerBound, length: koreanRange.upperBound-koreanRange.lowerBound+1)) as CharacterSet? {
-                allowedCharacters.formUnion(with: characterSetFromRange)
-            }
-            
-            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: allowedCharacters.inverted) == nil { check.isHidden = false }
+            if text.count == 10 { check.isHidden = false }
+        case storeName_tf:
+            let regex = try! NSRegularExpression(pattern: "^[가-힣ㄱ-ㅎㅏ-ㅣ一-龥a-zA-Z~`!@#\\$%^&*\\(\\)-+=]+$", options: .caseInsensitive)
+            if regex.firstMatch(in: text, options: [], range: NSRange(location: 0, length: text.count)) != nil { check.isHidden = false }
         case storeNameEng_tf:
             filterContains = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()-+="
-            
-            if sender.text!.count > 0 && sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) == nil { check.isHidden = false }
+            if text.count > 0 && text.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) == nil { check.isHidden = false }
         case storeTel_tf:
-//            if isChineseTelNumValid(sender.text!) { check.isHidden = false }
+//            if isChineseTelNumValid(text) { check.isHidden = false }
             if StoreObject_signup.store_type == "retailseller" {
-                check.isHidden = !(sender.text!.count > 0)
+                check.isHidden = !(text.count > 0)
             } else if StoreObject_signup.store_type == "wholesales" {
-                check.isHidden = !(sender.text!.count >= 8 && sender.text!.count <= 12)
+                check.isHidden = !(text.count >= 8 && text.count <= 12)
             }
         case storeAddressStreet_tf:
-            if sender.text!.count > 0 { check.isHidden = false }
+            if text.count > 0 { check.isHidden = false }
         case storeAddressDetail_tf:
-            if sender.text!.count > 0 { check.isHidden = false }
+            if text.count > 0 { check.isHidden = false }
         case storeAddressZipCode_tf:
-            if sender.text!.count > 0 { check.isHidden = false }
+            if text.count > 0 { check.isHidden = false }
         case domainAddress_tf:
-            if isUrlValid(sender.text!) { check.isHidden = false }
+            if isUrlValid(text) { check.isHidden = false }
         case depositorName_tf:
-            if sender.text!.count > 0 { check.isHidden = false }
+            if text.count > 0 { check.isHidden = false }
         case accountNum_tf:
             if member_type == "retailseller" {
-                if isChineseAccountNumValid(sender.text!) { check.isHidden = false }
+                if isChineseAccountNumValid(text) { check.isHidden = false }
             } else if member_type == "wholesales" {
-                if sender.text!.count >= 10 && sender.text!.count <= 14 { check.isHidden = false }
+                if text.count >= 10 && text.count <= 14 { check.isHidden = false }
             }
         case wechatId_tf:
-            if sender.text!.count > 0 { check.isHidden = false }
+            if text.count > 0 { check.isHidden = false }
         default:
             break
         }
@@ -240,8 +229,8 @@ class SignUpStoreVC: UIViewController {
     
     @objc func endEditStoreInfo_if(_ sender: UITextField) {
         
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
-        let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreNameChi_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), noticeAccountNum_label, UILabel()][sender.tag]
+        let check: UIImageView = [checkBusinessRegNum_img, checkStoreName_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, checkDomainAddress_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkWechatId_img, checkStoreMainPhoto_img, checkpassbook_img, checkBusinessReg_img][sender.tag]
+        let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreName_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), noticeAccountNum_label, UILabel()][sender.tag]
         
         notice.isHidden = !check.isHidden
     }
@@ -319,7 +308,7 @@ class SignUpStoreVC: UIViewController {
         view.endEditing(true)
         
         var final_check: Bool = true
-        var check_img: [UIImageView] = [checkStoreNameChi_img, checkStoreNameEng_img, checkStoreTel_img]
+        var check_img: [UIImageView] = [checkStoreName_img, checkStoreNameEng_img, checkStoreTel_img]
         
         if StoreObject_signup.store_type == "retailseller" {
             if StoreObject_signup.onoff_type == "online" {
@@ -347,7 +336,7 @@ class SignUpStoreVC: UIViewController {
         let alert = UIAlertController(title: "매장 등록", message: "기입한 내용이 맞는지 확인바랍니다.\n작성완료 후 수정이 불가하며, 신규작성해야 합니다.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
             if let delegate = SignUpMemberVCdelegate {
-                StoreObject_signup.store_name = self.storeNameChi_tf.text!
+                StoreObject_signup.store_name = self.storeName_tf.text!
                 StoreObject_signup.store_name_eng = self.storeNameEng_tf.text!
                 StoreObject_signup.store_tel = self.storeTel_tf.text!
                 StoreObject_signup.account = ["account_bank": self.accountBank_tf.text!, "account_name": self.depositorName_tf.text!, "account_num": self.accountNum_tf.text!]
@@ -387,8 +376,8 @@ extension SignUpStoreVC {
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         if textField == businessRegNum_tf {
-            storeNameChi_tf.becomeFirstResponder()
-        } else if textField == storeNameChi_tf {
+            storeName_tf.becomeFirstResponder()
+        } else if textField == storeName_tf {
             storeNameEng_tf.becomeFirstResponder()
         }
         

@@ -57,9 +57,9 @@ class CategoryVC: UIViewController {
         setKeyboard()
         
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal; layout.minimumLineSpacing = 0; layout.minimumInteritemSpacing = 20
+        layout.scrollDirection = .horizontal; layout.minimumLineSpacing = 20; layout.minimumInteritemSpacing = 20
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        collectionView.setCollectionViewLayout(layout, animated: true, completion: nil)
+        collectionView.setCollectionViewLayout(layout, animated: false)
         collectionView.delegate = self; collectionView.dataSource = self
         
         if #available(iOS 15.0, *) { tableView.sectionHeaderTopPadding = 0 }
