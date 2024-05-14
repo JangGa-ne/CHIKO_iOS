@@ -2,7 +2,7 @@
 //  ReDeliveryTrackingVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 4/8/24.
+//  Created by 장 제현 on 4/8/24.
 //
 
 import UIKit
@@ -17,19 +17,19 @@ class ReDeliveryTrackingVC: UIViewController {
     var linkUrl: String = ""
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
-    @IBOutlet weak var wkWebView: WKWebView!
+    @IBOutlet weak var WkWebView: WKWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        wkWebView.scrollView.showsHorizontalScrollIndicator = false
-        wkWebView.scrollView.showsVerticalScrollIndicator = false
-        wkWebView.scrollView.isScrollEnabled = true
+        WkWebView.scrollView.showsHorizontalScrollIndicator = false
+        WkWebView.scrollView.showsVerticalScrollIndicator = false
+        WkWebView.scrollView.isScrollEnabled = true
         
-        if let linkUrl = URL(string: linkUrl) { wkWebView.load(URLRequest(url: linkUrl)) }
+        if let linkUrl = URL(string: linkUrl) { WkWebView.load(URLRequest(url: linkUrl)) }
         
-        wkWebView.uiDelegate = self; wkWebView.navigationDelegate = self
-        wkWebView.configuration.userContentController.add(self, name: "callBackHandler")
+        WkWebView.uiDelegate = self; WkWebView.navigationDelegate = self
+        WkWebView.configuration.userContentController.add(self, name: "callBackHandler")
     }
     
     override func viewWillAppear(_ animated: Bool) {

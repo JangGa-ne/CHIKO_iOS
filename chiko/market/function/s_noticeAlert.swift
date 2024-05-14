@@ -2,7 +2,7 @@
 //  s_noticeAlert.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/16.
+//  Created by 장 제현 on 2023/10/16.
 //
 
 import UIKit
@@ -27,11 +27,11 @@ extension UIViewController {
         }
     }
     
-    func customAlert(message: String, bookmark: Bool = false, image: UIImage = UIImage(), time: CGFloat, completion: (() -> Void)? = nil) {
+    func customAlert(message: String, scrap: Bool = false, image: UIImage = UIImage(), time: CGFloat, completion: (() -> Void)? = nil) {
         
         let feedbackGenerator = UINotificationFeedbackGenerator()
         feedbackGenerator.prepare()
-        if bookmark {
+        if scrap {
             feedbackGenerator.notificationOccurred(.success)
         } else {
             feedbackGenerator.notificationOccurred(.error)
@@ -39,8 +39,8 @@ extension UIViewController {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "AlertViewController") as! AlertViewController
         segue.modalPresentationStyle = .overFullScreen
-        segue.message = message
-        segue.bookmark = bookmark
+        segue.message = translation(message)
+        segue.scrap = scrap
         segue.image = image
         segue.time = time
         presentPanModal(segue)
@@ -69,7 +69,7 @@ extension UIViewController {
         loadingTitle_label.font = UIFont.boldSystemFont(ofSize: 14)
         loadingTitle_label.textColor = .white
         loadingTitle_label.textAlignment = .center
-        loadingTitle_label.text = text
+        loadingTitle_label.text = text == "불러오는 중..." ? translation(text) : text
         backgroundView.addSubview(loadingTitle_label)
         
         if animated {
@@ -112,10 +112,10 @@ extension UIViewController {
         switch type {
         case "nodata":
             img.image = UIImage(named: "refresh")
-            label.text = "결과 없음"
+            label.text = translation("결과 없음")
         case "error":
             img.image = UIImage(named: "refresh")
-            label.text = "문제가 발생했습니다. 다시 시도해주세요."
+            label.text = translation("문제가 발생했습니다. 다시 시도해주세요.")
             customAlert(message: "피드를 새로 고칠 수 없습니다.", time: 1)
         default:
             break
@@ -140,31 +140,31 @@ class AlertViewController: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 13.0, *) {
-            return bookmark ? .darkContent : .lightContent
+            return scrap ? .darkContent : .lightContent
         } else {
-            return bookmark ? .default : .lightContent
+            return scrap ? .default : .lightContent
         }
     }
     
     var message: String = ""
-    var bookmark: Bool = false
+    var scrap: Bool = false
     var image: UIImage = UIImage()
     var time: CGFloat = 1
     
     @IBOutlet weak var normal_v: UIView!
     @IBOutlet weak var message_label: UILabel!
     
-    @IBOutlet weak var bookmark_v: UIView!
+    @IBOutlet weak var Scrap_v: UIView!
     @IBOutlet weak var storeMain_img: UIImageView!
     @IBOutlet weak var storeName_label: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        normal_v.isHidden = bookmark
+        normal_v.isHidden = scrap
         message_label.text = message
         
-        bookmark_v.isHidden = !bookmark
+        Scrap_v.isHidden = !scrap
         storeMain_img.image = image
         storeName_label.text = "\(message) 👍"
         
@@ -189,6 +189,6 @@ extension AlertViewController: PanModalPresentable {
     }
     
     var panModalBackgroundColor: UIColor {
-        return bookmark ? .clear : .black.withAlphaComponent(0.7)
+        return scrap ? .clear : .black.withAlphaComponent(0.7)
     }
 }

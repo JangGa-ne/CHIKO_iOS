@@ -2,7 +2,7 @@
 //  s_push.swift
 //  market
 //
-//  Created by Busan Dynamic on 1/18/24.
+//  Created by 장 제현 on 1/18/24.
 //
 
 import UIKit
@@ -33,10 +33,16 @@ extension AppDelegate: MessagingDelegate {
         UserDefaults.standard.setValue(fcmToken ?? "", forKey: "fcm_id")
         NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: ["token": fcmToken ?? ""])
     }
+    
+    // PUSH(서스펜드) 누름
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        
+        completionHandler(.newData)
+    }
 }
 
-
-// MARK: PUSH 알림 설정
 extension AppDelegate: UNUserNotificationCenterDelegate {
     
     // PUSH 받음
@@ -46,6 +52,23 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         Messaging.messaging().appDidReceiveMessage(userInfo)
         
         print("알림 받음 userNotificationCenter", userInfo)
+        
+        if let delegate = NoticeVCdelegate {
+            delegate.loadingData()
+        }
+        
+        if let delegate = ReHomeVCdelegate {
+            delegate.noticeDot_v.isHidden = false
+        }
+        if let delegate = ReGoodsVCdelegate {
+            delegate.noticeDot_v.isHidden = false
+        }
+        if let delegate = ReMyPageVCdelegate {
+            delegate.noticeDot_v.isHidden = false
+        }
+        if let delegate = WhHomeVCdelegate {
+            delegate.noticeDot_v.isHidden = false
+        }
         
         completionHandler([.alert, .sound, .badge])
     }
@@ -58,28 +81,22 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         Messaging.messaging().appDidReceiveMessage(userInfo)
         
-        let push_type = userInfo["type"] as? String ?? ""
-        
-        DispatchQueue.main.async {
-            if MemberObject.member_id == "", MemberObject.member_pw == "" {
-                if var window = UIApplication.shared.keyWindow?.rootViewController {
-                    while let presentedViewController = window.presentedViewController {
-                        window = presentedViewController
-                    }; window.customAlert(message: "로그인을 해주세요.", time: 1)
-                }
-            } else {
-                
-            }
+        push_type = userInfo["type"] as? String ?? ""
+        segue_type = userInfo["segue"] as? String ?? ""
+        /// 로그인 정보 확인
+//        if MemberObject.member_id == "", MemberObject.member_pw == "" {
+//            if var window = UIApplication.shared.keyWindow?.rootViewController {
+//                while let presentedViewController = window.presentedViewController {
+//                    window = presentedViewController
+//                }; window.customAlert(message: "로그인을 해주세요.", time: 1)
+//            }
+//        }
+        if StoreObject.store_type == "retailseller", let delegate = ReMainTBCdelegate {
+            delegate.segueViewController(identifier: "NoticeVC")
+        } else if StoreObject.store_type == "wholesales", let delegate = WhHomeVCdelegate {
+            delegate.segueViewController(identifier: "NoticeVC")
         }
                       
         completionHandler()
-    }
-    
-    // PUSH(서스펜드) 누름
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
-        Messaging.messaging().appDidReceiveMessage(userInfo)
-        
-        completionHandler(.newData)
     }
 }

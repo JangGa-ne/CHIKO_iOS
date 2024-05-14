@@ -2,7 +2,7 @@
 //  MemberVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 12/12/23.
+//  Created by 장 제현 on 12/12/23.
 //
 
 import UIKit
@@ -210,8 +210,8 @@ class MemberVC: UIViewController {
     @objc func afterMemberPwCheck_btn(_ sender: UIButton) {
         
         view.endEditing(true)
-         
-        if checkBeforeMemberPw_img.isHidden, checkAfterMemberPw_img.isHidden, checkAfterMemberPwCheck_img.isHidden {
+        
+        if beforeMemberPw_tf.text! != "", checkBeforeMemberPw_img.isHidden, afterMemberPw_tf.text! != "", checkAfterMemberPw_img.isHidden, afterMemberPwCheck_tf.text! != "", checkAfterMemberPwCheck_img.isHidden {
             
             customLoadingIndicator(animated: true)
             

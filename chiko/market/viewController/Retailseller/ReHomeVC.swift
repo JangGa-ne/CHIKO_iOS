@@ -2,7 +2,7 @@
 //  ReHomeVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 10/31/23.
+//  Created by 장 제현 on 10/31/23.
 //
 
 import UIKit
@@ -11,6 +11,8 @@ class ReHomeCC: UICollectionViewCell {
     
     var load: Bool = false
     var indexpath_section: Int = 0
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var storeNameEng_label: UILabel!
     @IBOutlet weak var storeName_label: UILabel!
@@ -107,7 +109,15 @@ class ReHomeTC: UITableViewCell {
     
     var indexpath_section: Int = 0
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBOutlet weak var collectionView: UICollectionView!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     func viewDidLoad() {
         
@@ -144,7 +154,8 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             setKingfisher(imageView: cell.store_img, imageUrl: data.StoreObject.store_mainphoto_img, cornerRadius: 15)
             setKingfisher(imageView: cell.item_img, imageUrl: data.GoodsObject.item_mainphoto_img, cornerRadius: 10)
             imageUrlColor(imageUrl: data.StoreObject.store_mainphoto_img, point: cell.store_img.center) { color in
-                cell.item_gv.startColor = color.withAlphaComponent(0.0); cell.item_gv.endColor = color.withAlphaComponent(1.0)
+                cell.item_gv.startColor = color.withAlphaComponent(0.0)
+                cell.item_gv.endColor = color.withAlphaComponent(1.0)
                 if isDarkBackground(color: color) {
                     cell.itemName_label.textColor = .white
                     cell.itemPrice_label.textColor = .white.withAlphaComponent(0.3)
@@ -197,7 +208,7 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             cell.indexpath_section = indexPath.row
             cell.viewDidLoad()
             
-            cell.categoryName_label.text = data.title
+            cell.categoryName_label.text = translation(data.title)
             
             return cell
         } else {
@@ -234,10 +245,8 @@ extension ReHomeTC: UIScrollViewDelegate {
             if velocity.x > 0 { new_index = ceil(index) } else if velocity.x < 0 { new_index = floor(index) } else { new_index = round(index) }
             
             targetContentOffset.pointee = CGPoint(x: new_index * spacing, y: 0)
-            print("aaaa", targetContentOffset.pointee)
         } else {
             targetContentOffset.pointee = targetContentOffset.pointee
-            print("bbbb", targetContentOffset.pointee)
         }
     }
 }
@@ -250,6 +259,8 @@ class ReHomeVC: UIViewController {
     
     @IBOutlet weak var storeMain_img: UIImageView!
     @IBOutlet weak var choiceStore_btn: UIButton!
+    @IBOutlet weak var noticeDot_v: UIView!
+    @IBOutlet weak var notice_btn: UIButton!
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -260,6 +271,8 @@ class ReHomeVC: UIViewController {
         
 //        setKingfisher(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
+        noticeDot_v.isHidden = notice_read
+        notice_btn.addTarget(self, action: #selector(notice_btn(_:)), for: .touchUpInside)
         
         preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.StoreObject.store_mainphoto_img) })
         preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.GoodsObject.item_mainphoto_img) })
@@ -275,11 +288,16 @@ class ReHomeVC: UIViewController {
         segueViewController(identifier: "ChoiceStoreVC")
     }
     
+    @objc func notice_btn(_ sender: UIButton) {
+        segueViewController(identifier: "NoticeVC")
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         setBackSwipeGesture(false)
         
+        NoticeVCdelegate = nil
         ChoiceStoreVCdelegate = nil
         ReStoreVisitVCdelegate = nil
         ReGoodsDetailVCdelegate = nil

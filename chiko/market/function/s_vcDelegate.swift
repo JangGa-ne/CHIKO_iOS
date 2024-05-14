@@ -2,7 +2,7 @@
 //  s_vcDelegate.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/16.
+//  Created by 장 제현 on 2023/10/16.
 //
 
 import UIKit
@@ -21,7 +21,11 @@ weak var AccountVCdelegate: AccountVC? = nil
 weak var TagVCdelegate: TagVC? = nil
 weak var MPayVCdelegate: MPayVC? = nil
 weak var CalendarVCdelegate: CalendarVC? = nil
+weak var PaymentVCdelegate: PaymentVC? = nil
+weak var ScrapVCdelegate: ScrapVC? = nil
+weak var NoticeVCdelegate: NoticeVC? = nil
 // Retailseller
+weak var ReMainTBCdelegate: ReMainTBC? = nil
 weak var ReHomeVCdelegate: ReHomeVC? = nil
 weak var ReGoodsVCdelegate: ReGoodsVC? = nil
 weak var ReGoodsFilterVCdelegate: ReGoodsFilterVC? = nil
@@ -29,8 +33,9 @@ weak var ReGoodsDetailVCdelegate: ReGoodsDetailVC? = nil
 weak var ReMyPageVCdelegate: ReMyPageVC? = nil
 weak var ReLiquidateVCdelegate: ReLiquidateVC? = nil
 weak var ReOrderVCdelegate: ReOrderVC? = nil
+weak var ReOrderDetailVCdelegate: ReOrderDetailVC? = nil
+weak var ReDeliveryPaymentVCdelegate: ReDeliveryPaymentVC? = nil
 weak var ReBasketVCdelegate: ReBasketVC? = nil
-weak var ReBookMarkVCdelegate: ReBookMarkVC? = nil
 weak var ReStoreVisitVCdelegate: ReStoreVisitVC? = nil
 weak var ReDeliveryVCdelegate: ReDeliveryVC? = nil
 weak var ReEnquiryReceiptVCdelegate: ReEnquiryReceiptVC? = nil

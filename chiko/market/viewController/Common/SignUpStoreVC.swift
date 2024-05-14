@@ -2,14 +2,17 @@
 //  SignUpStoreVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/18.
+//  Created by 장 제현 on 2023/10/18.
 //
+
+/// 번역완료
 
 import UIKit
 import PanModal
 
 class SignUpStoreCC: UICollectionViewCell {
     
+    @IBOutlet var label: UILabel!
     @IBOutlet weak var item_img: UIImageView!
     @IBOutlet weak var itemRow_label: UILabel!
 }
@@ -19,6 +22,9 @@ class SignUpStoreVC: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBAction func back_btn(_ sender: UIButton) { view.endEditing(true); navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
@@ -101,6 +107,13 @@ class SignUpStoreVC: UIViewController {
     
     @IBOutlet weak var complete_btn: UIButton!
     
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = NSLocalizedString(label.text!, comment: "") }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -114,7 +127,7 @@ class SignUpStoreVC: UIViewController {
         navi_lineView.alpha = 0.0
         /// placeholder, delegate, edti, return next/done
         ([businessRegNum_tf, storeName_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, domainAddress_tf, accountBank_tf, depositorName_tf, accountNum_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. www.example.com", "은행명을 입력하세요.", "예금주명을 입력하세요.", "-를 빼고 입력하세요.", "", ""][i], color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: translation(["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. www.example.com", "은행명을 입력하세요.", "예금주명을 입력하세요.", "-를 빼고 입력하세요.", "", ""][i]), color: .black.withAlphaComponent(0.3))
             tf.delegate = self
             tf.tag = i
             tf.addTarget(self, action: #selector(changedEditStoreInfo_if(_:)), for: .editingChanged)
@@ -151,8 +164,9 @@ class SignUpStoreVC: UIViewController {
             storeAddress_sv.isHidden = true
             buildingAddressDetail_sv.isHidden = false
             domainAddress_sv.isHidden = true
-            wechatId_sv.isHidden = true
+//            wechatId_sv.isHidden = true
         }
+        wechatId_sv.isHidden = true
         /// building address detail
         buildingAddressDetail_tf.isEnabled = false
         buildingAddressDetail_btn.addTarget(self, action: #selector(buildingAddressDetail_btn(_:)), for: .touchUpInside)
@@ -318,7 +332,7 @@ class SignUpStoreVC: UIViewController {
             } else if StoreObject_signup.onoff_type == "onoffline" {
                 check_img += [checkStoreAddressStreet_img, checkDomainAddress_img]
             }
-            check_img += [checkWechatId_img]
+//            check_img += [checkWechatId_img]
         } else if StoreObject_signup.store_type == "wholesales" {
             check_img += [checkBusinessRegNum_img, checkAccountBank_img, checkDepositorName_img, checkAccountNum_img, checkBusinessReg_img, checkStoreMainPhoto_img, checkpassbook_img]
         }
@@ -333,8 +347,8 @@ class SignUpStoreVC: UIViewController {
         
         if !final_check { return }
         
-        let alert = UIAlertController(title: "매장 등록", message: "기입한 내용이 맞는지 확인바랍니다.\n작성완료 후 수정이 불가하며, 신규작성해야 합니다.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+        let alert = UIAlertController(title: translation("매장 등록"), message: translation("기입한 내용이 맞는지 확인바랍니다.\n작성완료 후 수정이 불가하며, 신규작성해야 합니다."), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: translation("확인"), style: .default, handler: { _ in
             if let delegate = SignUpMemberVCdelegate {
                 StoreObject_signup.store_name = self.storeName_tf.text!
                 StoreObject_signup.store_name_eng = self.storeNameEng_tf.text!
@@ -357,7 +371,7 @@ class SignUpStoreVC: UIViewController {
             }
             self.dismiss(animated: true) { self.navigationController?.popViewController(animated: true) }
         }))
-        alert.addAction(UIAlertAction(title: "취소", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: translation("취소"), style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
@@ -440,6 +454,7 @@ extension SignUpStoreVC: UICollectionViewDelegate, UICollectionViewDataSource, U
         if indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SignUpStoreCC0", for: indexPath) as! SignUpStoreCC
             cell.tag = -1; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectItemAt(_:))))
+            cell.label.text = translation(cell.label.text!)
             return cell
         } else if indexPath.section == 1 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SignUpStoreCC1", for: indexPath) as! SignUpStoreCC

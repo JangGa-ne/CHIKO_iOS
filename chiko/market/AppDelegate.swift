@@ -2,20 +2,27 @@
 //  appDelegate.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/12.
+//  Created by 장 제현 on 2023/10/12.
 //
+
+/// APPLE ACCOUNT
+/// ID: chikoddpmall@gmail.com
+/// PW: Ehdeoans1!
 
 import UIKit
 import Nuke
 import FirebaseCore
 import FirebaseMessaging
 
+var system_language: String = ""
 let dataCache = try? DataCache(name: "com.blink.dk.market2")
 
 var priceFormatter: NumberFormatter = NumberFormatter()
 var back_btn_hidden: Bool = false
 
 var fcm_id: String = ""
+var push_type: String = ""
+var segue_type: String = ""
 
 var platform_type: String = ""
 var device_info: String = ""
@@ -34,6 +41,8 @@ var StoreArray: [StoreData] = []
 var store_index_select: Bool = false
 var store_index: Int = 0
 var CategoryObject: CategoryData = CategoryData()
+var NoticeArray: [NoticeData] = []
+var notice_read: Bool = true
 /// Retailseller
 var ReStoreArray_best: [(StoreObject: StoreData, GoodsObject: GoodsData)] = []
 var ReGoodsArray_best: [GoodsData] = []
@@ -43,8 +52,6 @@ var ReBasketArray: [BasketData] = []
 var WhGoodsArray_realtime: [GoodsData] = []
 var WhCountingObject: WhCountingData = WhCountingData()
 var WhOrderArray: [WhOrderData] = []
-
-var push_type: String = ""
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -59,6 +66,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var member_pw: String = ""
        
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        system_language = getCurrentLanguage() ?? "ko-kr"
         
         memoryCheck()
         UIViewController.swizzleViewDidDisappear()
@@ -76,6 +85,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else if device_ratio == "19:9" {
             divice_radius = 50
         }
+        /// AppVersion
+        appVersion = Double(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") ?? 1.0
+        appBuildCode = Int(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1") ?? 1
+        /// AppStoreVersion
+        requestAppStoreVersion { status in
+            
+            if appBuildCode < storeBuildCode, PaymentVCdelegate == nil {
+                
+                let alert = UIAlertController(title: "앱 업데이트 알림", message: "최신버전이 업데이트 되었습니다.\n업데이트 하시겠습니까?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "업데이트", style: .default, handler: { _ in
+                    if let url = URL(string: storeUrl) { UIApplication.shared.open(url) }
+                }))
+                self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+            }
+        }
         
         store_index_select = Bool(UserDefaults.standard.string(forKey: "store_index_select") ?? "false") ?? false
         store_index = UserDefaults.standard.integer(forKey: "store_index")
@@ -87,8 +111,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge], completionHandler: { didAllow, Error in })
         application.registerForRemoteNotifications()
-        /// Category 요청
-        requestCategory(action: ["color_category", "item_category", "size_category", "style_category", "material_category"]) { _ in }
         /// first segue
         let segue = storyboard.instantiateViewController(withIdentifier: "SplashVC") as! SplashVC
         let root = UINavigationController(rootViewController: segue)
@@ -100,6 +122,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidEnterBackground(_ application: UIApplication) {
         window?.endEditing(true)
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        /// AppVersion
+        appVersion = Double(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") ?? 1.0
+        appBuildCode = Int(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1") ?? 1
+        /// AppStoreVersion
+        requestAppStoreVersion { status in
+            
+            if appBuildCode < storeBuildCode, PaymentVCdelegate == nil {
+                
+                let alert = UIAlertController(title: "앱 업데이트 알림", message: "최신버전이 업데이트 되었습니다.\n업데이트 하시겠습니까?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "업데이트", style: .default, handler: { _ in
+                    if let url = URL(string: storeUrl) { UIApplication.shared.open(url) }
+                }))
+                self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+            }
+        }
     }
 }
 

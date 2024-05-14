@@ -2,8 +2,10 @@
 //  SearchStoreVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/18.
+//  Created by 장 제현 on 2023/10/18.
 //
+
+/// 번역완료
 
 import UIKit
 
@@ -27,6 +29,8 @@ class SearchStoreVC: UIViewController {
     var search_store_type: String = ""
     var StoreArray_search: [StoreData] = []
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBAction func back_btn(_ sender: UIButton) { view.endEditing(true); navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
     @IBOutlet weak var navi_lineView: UIView!
@@ -34,6 +38,12 @@ class SearchStoreVC: UIViewController {
     @IBOutlet weak var searchStore_tf: UITextField!
     @IBOutlet weak var searchStore_btn: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +56,7 @@ class SearchStoreVC: UIViewController {
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
         
-        searchStore_tf.placeholder(text: "매장명을 입력하세요.", color: .black.withAlphaComponent(0.3))
+        searchStore_tf.placeholder(text: translation("매장명을 입력하세요."), color: .black.withAlphaComponent(0.3))
         searchStore_btn(UIButton())
         searchStore_btn.addTarget(self, action: #selector(searchStore_btn(_:)), for: .touchUpInside)
         
@@ -128,12 +138,12 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
         view.endEditing(true)
         
         let data = StoreArray_search[indexPath.row]
-        let alert = UIAlertController(title: "비밀번호 입력", message: "스토어를 등록하기 위해\n 비밀번호를 입력해 주세요.", preferredStyle: .alert)
+        let alert = UIAlertController(title: translation("비밀번호 입력"), message: translation("스토어를 등록하기 위해\n비밀번호를 입력해 주세요."), preferredStyle: .alert)
         alert.addTextField()
         let storePw_tf = alert.textFields?[0] ?? UITextField()
         storePw_tf.keyboardType = .numberPad
-        storePw_tf.placeholder(text: "비밀번호를 입력하세요.", color: .black.withAlphaComponent(0.3))
-        alert.addAction(UIAlertAction(title: "등록", style: .default, handler: { _ in
+        storePw_tf.placeholder(text: translation("비밀번호를 입력하세요."), color: .black.withAlphaComponent(0.3))
+        alert.addAction(UIAlertAction(title: translation("등록"), style: .default, handler: { _ in
             if data.store_pw == storePw_tf.text! {
                 /// signup member
                 if let delegate = self.SignUpMemberVCdelegate {
@@ -164,7 +174,7 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
                 self.customAlert(message: "비밀번호가 맞지 않습니다.", time: 1)
             }
         }))
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: translation("취소"), style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     

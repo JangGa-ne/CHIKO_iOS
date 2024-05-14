@@ -2,7 +2,7 @@
 //  s_base.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/16.
+//  Created by 장 제현 on 2023/10/16.
 //
 
 import UIKit

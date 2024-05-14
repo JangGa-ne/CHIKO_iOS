@@ -2,7 +2,7 @@
 //  ReGoodsVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 11/8/23.
+//  Created by 장 제현 on 11/8/23.
 //
 
 import UIKit
@@ -31,13 +31,17 @@ class ReGoodsVC: UIViewController {
     var startIndex: Int = 0
     var refreshControl: UIRefreshControl = UIRefreshControl()
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBOutlet weak var back_v: UIView!
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     @IBOutlet weak var title_img: UIImageView!
-    @IBOutlet weak var title_label: UILabel!
     
     @IBOutlet weak var storeMain_img: UIImageView!
     @IBOutlet weak var choiceStore_btn: UIButton!
+    @IBOutlet weak var noticeDot_v: UIView!
+    @IBOutlet weak var notice_btn: UIButton!
     
     @IBOutlet weak var choiceCategory_btn: UIButton!
     @IBOutlet weak var categoryAll_label: UILabel!
@@ -52,6 +56,13 @@ class ReGoodsVC: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,6 +75,8 @@ class ReGoodsVC: UIViewController {
         
 //        setKingfisher(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
+        noticeDot_v.isHidden = notice_read
+        notice_btn.addTarget(self, action: #selector(notice_btn(_:)), for: .touchUpInside)
         
         choiceCategory_btn.addTarget(self, action: #selector(choiceCategory_btn(_:)), for: .touchUpInside)
         categoryAll_label.layer.cornerRadius = 7.5
@@ -74,7 +87,7 @@ class ReGoodsVC: UIViewController {
         categoryName_label_width.constant = stringWidth(text: categoryName_label.text!, fontSize: 12)+20
         categoryFilter_view.isHidden = true
         categoryFilter_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(categoryFilter_view(_:))))
-        search_tf.placeholder(text: "상품명을 입력하세요.", color: .black.withAlphaComponent(0.3))
+        search_tf.placeholder(text: translation("상품명을 입력하세요."), color: .black.withAlphaComponent(0.3))
         search_tf.addTarget(self, action: #selector(edit_search_tf(_:)), for: .editingChanged)
         delete_img.isHidden = true
         delete_btn.isHidden = true
@@ -95,6 +108,10 @@ class ReGoodsVC: UIViewController {
     
     @objc func choiceStore_btn(_ sender: UIButton) {
         segueViewController(identifier: "ChoiceStoreVC")
+    }
+    
+    @objc func notice_btn(_ sender: UIButton) {
+        segueViewController(identifier: "NoticeVC")
     }
     
     @objc func choiceCategory_btn(_ sender: UIButton) {
@@ -243,6 +260,7 @@ class ReGoodsVC: UIViewController {
         
         setBackSwipeGesture(detail)
         
+        NoticeVCdelegate = nil
         ChoiceStoreVCdelegate = nil
         ReStoreVisitVCdelegate = nil
         ReGoodsDetailVCdelegate = nil

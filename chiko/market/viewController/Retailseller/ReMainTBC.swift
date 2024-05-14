@@ -2,7 +2,7 @@
 //  ReMainTBC.swift
 //  market
 //
-//  Created by Busan Dynamic on 10/31/23.
+//  Created by 장 제현 on 10/31/23.
 //
 
 import UIKit
@@ -28,6 +28,7 @@ class ReMainTBC: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        ReMainTBCdelegate = self
         delegate = self
         
         if #available(iOS 13.0, *) {
@@ -52,7 +53,7 @@ class ReMainTBC: UITabBarController {
         tabBar.items!.enumerated().forEach { i, tabBarItem in
             tabBarItem.selectedImage = UIImage(named: ["tab0_on", "tab1_on", "tab2_on"][i])
             tabBarItem.image = UIImage(named: ["tab0_off", "tab1_off", "tab2_off"][i])
-            tabBarItem.title = ["홈", "상품리스트", "마이페이지"][i]
+            tabBarItem.title = translation(["홈", "상품리스트", "마이페이지"][i])
         }
     }
 }

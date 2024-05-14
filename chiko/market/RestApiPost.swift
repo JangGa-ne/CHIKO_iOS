@@ -2,7 +2,7 @@
 //  RestApiPost.swift
 //  market
 //
-//  Created by Busan Dynamic on 11/16/23.
+//  Created by 장 제현 on 11/16/23.
 //
 
 import UIKit
@@ -82,6 +82,7 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
     params["device_info"] = device_info
     params["fcm_id"] = MemberObject_signup.fcm_id
     params["marketing_agree"] = String(MemberObject_signup.marketing_agree)
+    params["marketing_agree_type"] = MemberObject_signup.marketing_agree_type
     params["member_position"] = MemberObject_signup.member_grade
     params["my_store"] = MemberObject_signup.my_store
     params["platform_type"] = "iOS"
@@ -92,6 +93,12 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
     params["user_name"] = MemberObject_signup.member_name
     params["user_email"] = MemberObject_signup.member_email
     params["user_type"] = MemberObject_signup.member_type
+    params["topics"] = [
+        "local": "true",
+        "marketing": "true",
+        "dpcost_request": "true",
+        "enquiry": "true",
+    ]
     /// member grade
     if MemberObject_signup.member_grade == "ceo" {
         /// store
@@ -253,29 +260,11 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
 //                        /// 데이터 추가
 //                        StoreArray.append(setStore(storeDict: storeDict))
 //                    }
-                    
-                    var topics: [String] = []
-                    if StoreObject.store_type == "retailseller" {
-                        topics = [
-                            UserDefaults.standard.string(forKey: "re_enquiry") ?? "",
-                            "",
-                            "",
-                            "",
-                            "",
-                        ]
-                    } else if StoreObject.store_type == "wholesales" {
-                        topics = [
-                            UserDefaults.standard.string(forKey: "wh_enquiry") ?? "",
-                            "",
-                            "",
-                            "",
-                            "",
-                        ]
-                    }
-                    topics.forEach { topic in
-                        if topic != "" {
-                            Messaging.messaging().subscribe(toTopic: topic) { error in
-                                if error == nil { print("도픽구독성공: \(topic)") } else { print("도픽구독실패: \(topic)") }
+                    /// 토픽 설정
+                    MemberObject.topics.forEach { (key: String, value: Any) in
+                        if Bool(value as? String ?? "false") ?? false {
+                            Messaging.messaging().subscribe(toTopic: "\(key)_\(StoreObject.store_id)") { error in
+                                if error == nil { print("도픽구독성공: \(key)_\(StoreObject.store_id)") } else { print("도픽구독실패: \(key)_\(StoreObject.store_id)") }
                             }
                         }
                     }
@@ -687,7 +676,7 @@ func requestReStoreAdd(store_id: String, store_pw: String, completionHandler: @e
     }
 }
 
-func requestReBookMark(action: String, re_store_id: String, wh_store_id: String, completionHandler: @escaping ((Int) -> Void)) {
+func requestScrap(action: String, re_store_id: String, wh_store_id: String, completionHandler: @escaping ((Int) -> Void)) {
     
     let params: Parameters = [
         "action": action,
@@ -710,14 +699,14 @@ func requestReBookMark(action: String, re_store_id: String, wh_store_id: String,
     }
 }
 
-func requestReBookMark(store_id: String, completionHandler: @escaping (([StoreData], Int) -> Void)) {
+func requestScrap(store_id: String, completionHandler: @escaping (([StoreData], Int) -> Void)) {
     
     let params: Parameters = [
         "action": "favorites_find",
         "store_id": store_id,
     ]
     
-    var BookMarkArray: [StoreData] = []
+    var ScrapArray: [StoreData] = []
     
     AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
@@ -726,11 +715,11 @@ func requestReBookMark(store_id: String, completionHandler: @escaping (([StoreDa
                 let array = responseJson["data"] as? Array<[String: Any]> ?? []
                 array.forEach { dict in
                     /// 데이터 추가
-                    BookMarkArray.append(setStore(storeDict: dict))
+                    ScrapArray.append(setStore(storeDict: dict))
                 }
                 
                 if array.count > 0 {
-                    completionHandler(BookMarkArray, 200)
+                    completionHandler(ScrapArray, 200)
                 } else {
                     completionHandler([], 204)
                 }
@@ -970,7 +959,7 @@ func requestReReceipt(action: String, params: [String: Any], completionHandler: 
     AF.request(requestUrl+"/receipt", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
-                print(responseJson)
+//                print(responseJson)
                 if responseJson["message"] as? String ?? "" == "success" {
                     if action == "set_goods" {
                         ReGoodsReceiptObject = setReceipt(receiptDict: responseJson["data"] as? [String: Any] ?? [:])
@@ -993,4 +982,58 @@ func requestReReceipt(action: String, params: [String: Any], completionHandler: 
     }
 }
 
+func requestAppStoreVersion(completionHandler: ((Int) -> Void)? = nil) {
+    
+    let params: Parameters = [
+        "collection_id": "main_center",
+        "document_id": "ios",
+    ]
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/get_db", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+                print(responseJson)
+                
+                let dict = responseJson["data"] as? [String: Any] ?? [:]
+                storeVersion = Double(dict["version_code"] as? String ?? "") ?? 1.0
+                storeUrl = dict["store_url"] as? String ?? ""
+                storeBuildCode = dict["build_code"] as? Int ?? 1
+                
+                completionHandler?(200)
+            } else {
+                completionHandler?(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler?(response.error?.responseCode ?? 500)
+        }
+    }
+}
 
+func requestNotice(completionHandler: ((Int) -> Void)? = nil) {
+    
+    let params: Parameters = [
+        "collection_id": "notice",
+        "document_id": StoreObject.store_id,
+    ]
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/get_db", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                let dict = responseJson["data"] as? [String: Any] ?? [:]
+                let _: [()] = dict.compactMap { (key: String, value: Any) in
+                    /// 데이터 추가
+                    NoticeArray.append(setNotice(noticeDict: value as? [String: Any] ?? [:]))
+                }
+                NoticeArray.sort { $0.datetime > $1.datetime }
+                NoticeArray.count > 0 ? completionHandler?(200) : completionHandler?(204)
+            } else {
+                completionHandler?(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler?(response.error?.responseCode ?? 500)
+        }
+    }
+}

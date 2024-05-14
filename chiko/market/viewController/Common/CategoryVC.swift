@@ -2,19 +2,25 @@
 //  CategoryVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 11/9/23.
+//  Created by 장 제현 on 11/9/23.
 //
+
+/// 번역완료
 
 import UIKit
 import PanModal
 
 class CategoryCC: UICollectionViewCell {
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBOutlet weak var title_label: UILabel!
     @IBOutlet weak var lineView: UIView!
 }
 
 class CategoryTC: UITableViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var title_label: UILabel!
     @IBOutlet weak var color_view: UIView!
@@ -44,12 +50,20 @@ class CategoryVC: UIViewController {
     var women_clothes: [(option1: String, option2: [String])] = []
     var isSectionExpanded: Array = Array<Bool>()
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBOutlet weak var mainTitle_label: UILabel!
     @IBOutlet weak var subTitle_label: UILabel!
     @IBAction func back_btn(_ sender: UIButton) { dismiss(animated: true, completion: nil) }
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var tableView: UITableView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,12 +83,18 @@ class CategoryVC: UIViewController {
         
         loadingData()
     }
-     
+    
     func loadingData() {
+        
+        if CategoryObject.ColorArray.count == 0 || CategoryObject.CategoryArray.count == 0 || CategoryObject.SizeArray.count == 0 || CategoryObject.StyleArray.count == 0 || CategoryObject.MaterialArray.count == 0 {
+            requestCategory(action: ["color_category", "item_category", "size_category", "style_category", "material_category"]) { _ in
+                self.collectionView.reloadData(); self.tableView.reloadData()
+            }
+        }
         
         if option_type == "category" {
             
-            mainTitle_label.text = "카테고리"
+            mainTitle_label.text = translation("카테고리")
         
             var first: Bool = false
             CategoryObject.CategoryArray.forEach { document in
@@ -95,7 +115,7 @@ class CategoryVC: UIViewController {
             
         } else if option_type == "color" {
             
-            mainTitle_label.text = "색상"
+            mainTitle_label.text = translation("색상")
             
             CategoryObject.ColorArray.forEach { document in
                 document.forEach { (key: String, value: Any) in option_title.append(key)
@@ -115,7 +135,7 @@ class CategoryVC: UIViewController {
             
         } else if option_type == "material", let delegate = WhGoodsUploadVCdelegate { 
             
-            mainTitle_label.text = "주요소재"
+            mainTitle_label.text = translation("주요소재")
             
             if delegate.option_key.contains("의류") { indexpath_section = 0 } else { indexpath_section = 1 }
             
@@ -128,7 +148,7 @@ class CategoryVC: UIViewController {
             }
         } else if option_type == "size" {
             
-            mainTitle_label.text = "사이즈"
+            mainTitle_label.text = translation("사이즈")
             
             option_title.append(option_key)
             CategoryObject.SizeArray.forEach { document in
@@ -159,14 +179,14 @@ extension CategoryVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCC", for: indexPath) as! CategoryCC
         
-        cell.title_label.text = option_title[indexPath.row]
+        cell.title_label.text = translation(option_title[indexPath.row])
         cell.lineView.isHidden = (indexPath.row != indexpath_section)
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: stringWidth(text: option_title[indexPath.row], fontSize: 14.5, fontWeight: .bold), height: 40)
+        return CGSize(width: stringWidth(text: translation(option_title[indexPath.row]), fontSize: 14.5, fontWeight: .bold), height: 40)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -198,7 +218,7 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryTC0") as! CategoryTC
         
         cell.tag = section; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggleSection(_:))))
-        cell.title_label.text = women_clothes[section].option1
+        cell.title_label.text = translation(women_clothes[section].option1)
         
         return cell
     }
@@ -220,11 +240,11 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryTC1", for: indexPath) as! CategoryTC
         
         if option_key != "여성의류" {
-            cell.title_label.text = option_content[indexpath_section].option1[indexPath.row]
+            cell.title_label.text = translation(option_content[indexpath_section].option1[indexPath.row])
             cell.color_view.isHidden = (option_type != "color")
             if option_type == "color" { cell.color_view.backgroundColor = UIColor(hex: "#"+option_content[indexpath_section].option2[indexPath.row]) }
         } else {
-            cell.title_label.text = "\(indexPath.row+1). \(women_clothes[indexPath.section].option2[indexPath.row])"
+            cell.title_label.text = "\(indexPath.row+1). \(translation(women_clothes[indexPath.section].option2[indexPath.row]))"
             cell.color_view.isHidden = true
         }
         return cell
@@ -253,14 +273,14 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                 let optionSub_name = option_content[indexpath_section].option1[indexPath.row]
                 
                 delegate.item_category_name = [optionMain_name, optionSub_name]
-                delegate.categoryName_label.text = "\(optionMain_name) > \(optionSub_name)"
+                delegate.categoryName_label.text = "\(translation(optionMain_name)) > \(translation(optionSub_name))"
             } else {
                 
                 let optionMain_name = women_clothes[indexPath.section].option1
                 let optionSub_name = women_clothes[indexPath.section].option2[indexPath.row]
                 
                 delegate.item_category_name = ["여성의류", optionMain_name, optionSub_name]
-                delegate.categoryName_label.text = "여성의류 > \(optionMain_name) > \(optionSub_name)"
+                delegate.categoryName_label.text = "\(translation("여성의류")) > \(translation(optionMain_name)) > \(translation(optionSub_name))"
             }
             
             delegate.categoryAll_label.isHidden = true
@@ -299,7 +319,7 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                     let optionMain_name = self.women_clothes[indexPath.section].option1
                     let optionSub_name = self.women_clothes[indexPath.section].option2[indexPath.row]
                     
-                    VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_category_name = ["여성의류", optionMain_name, optionSub_name]
+                    VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_category_name = [translation("여성의류"), optionMain_name, optionSub_name]
                     VCdelegate.tableView.reloadData()
                 } else if self.option_type == "color" {
                     VCdelegate.ReEnquiryReceiptObject.order_item[TCdelegate.indexpath_row].item_option[self.option_row].color = self.option_content[self.indexpath_section].option1[indexPath.row]
@@ -345,13 +365,13 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                     
                     if delegate.GoodsObject.item_materials.contains(optionSub_name) { customAlert(message: "이미 선택한 소재입니다.", time: 1); return }
                     
-                    let alert = UIAlertController(title: "", message: "\(optionMain_name) > \(optionSub_name)\n혼용률을 입력해 주세요.", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "", message: "\(optionMain_name) > \(optionSub_name)\n\(translation("혼용률을 입력해 주세요."))", preferredStyle: .alert)
                     alert.addTextField()
                     let sheet_tf = alert.textFields?[0] ?? UITextField()
                     sheet_tf.keyboardType = .numberPad
-                    sheet_tf.placeholder(text: "미입력시 퍼센트(%)가 표기 되지 않습니다.", color: .lightGray)
+                    sheet_tf.placeholder(text: translation("미입력시 퍼센트(%)가 표기 되지 않습니다."), color: .lightGray)
                     sheet_tf.addTarget(self, action: #selector(textfield(_:)), for: .editingChanged)
-                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                    alert.addAction(UIAlertAction(title: translation("확인"), style: .default, handler: { _ in
                         if alert.textFields?[0].text ?? "" == "" {
                             delegate.MaterialArray.append((option_name: optionSub_name, option_percent: ""))
                             delegate.GoodsObject.item_materials.append(optionSub_name)
@@ -361,7 +381,7 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                         }
                         self.dismiss(animated: true) { delegate.tableView.reloadData() }
                     }))
-                    alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+                    alert.addAction(UIAlertAction(title: translation("취소"), style: .cancel, handler: nil))
                     present(alert, animated: true, completion: nil); return
                 }
                 

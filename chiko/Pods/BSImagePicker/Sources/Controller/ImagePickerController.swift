@@ -20,16 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/// 번역완료
+
 import UIKit
 import Photos
+
+func translation(_ string: String?) -> String {
+    return NSLocalizedString(string ?? "", comment: "")
+}
 
 // MARK: ImagePickerController
 @objcMembers open class ImagePickerController: UINavigationController {
     // MARK: Public properties
     public weak var imagePickerDelegate: ImagePickerControllerDelegate?
     public var settings: Settings = Settings()
-    public var doneButton: UIBarButtonItem = UIBarButtonItem(title: "완료", style: .done, target: nil, action: nil)
-    public var cancelButton: UIBarButtonItem = UIBarButtonItem(title: "취소", style: .done, target: nil, action: nil)
+    public var doneButton: UIBarButtonItem = UIBarButtonItem(title: translation("완료"), style: .done, target: nil, action: nil)
+    public var cancelButton: UIBarButtonItem = UIBarButtonItem(title: translation("취소"), style: .done, target: nil, action: nil)
     public var albumButton: UIButton = UIButton(type: .custom)
     public var selectedAssets: [PHAsset] { get { return assetStore.assets } }
 
@@ -37,7 +43,7 @@ import Photos
     // Figure out why. Until then, expose the variable for users to set to whatever they want it localized to
     // TODO: Fix this ^^
     /// Title to use for button
-    public var doneButtonTitle = Bundle(identifier: "com.apple.UIKit")?.localizedString(forKey: "완료", value: "완료", table: "") ?? "완료"
+    public var doneButtonTitle = Bundle(identifier: "com.apple.UIKit")?.localizedString(forKey: translation("완료"), value: translation("완료"), table: "") ?? translation("완료")
 
     // MARK: Internal properties
     var assetStore: AssetStore
@@ -147,7 +153,7 @@ import Photos
     }
     
     func updatedDoneButton() {
-        doneButton.title = assetStore.count > 0 ? "완료 \(assetStore.count)" : "완료"
+        doneButton.title = assetStore.count > 0 ? "\(translation("완료")) \(assetStore.count)" : translation("완료")
         doneButton.isEnabled = assetStore.count >= settings.selection.min
     }
 

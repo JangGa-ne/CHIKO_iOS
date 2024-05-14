@@ -2,7 +2,7 @@
 //  s_image.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/18.
+//  Created by 장 제현 on 2023/10/18.
 //
 
 import UIKit
@@ -49,11 +49,11 @@ func setKingfisher(imageView: UIImageView, imageUrl: String, placeholder: UIImag
             .transition(.fade(0.1)),
             .cacheMemoryOnly,
         ]) { _ in
-            indicator.stopAnimating(); indicator.removeFromSuperview()
+            indicator.stopAnimating(); indicator.removeFromSuperview(); completion?()
         }
     } else {
         imageView.image = UIImage()
-        indicator.stopAnimating(); indicator.removeFromSuperview()
+        indicator.stopAnimating(); indicator.removeFromSuperview(); completion?()
     }
 }
 
@@ -200,6 +200,8 @@ func imageUrlColor(imageUrl: String, point: CGPoint, completionHandler: ((UIColo
             let g = CGFloat(pixelData[1]) / 255
             let b = CGFloat(pixelData[2]) / 255
             let a = CGFloat(pixelData[3]) / 255
+            
+            print(UIColor(red: r, green: g, blue: b, alpha: a))
             
             completionHandler?(UIColor(red: r, green: g, blue: b, alpha: a))
         }

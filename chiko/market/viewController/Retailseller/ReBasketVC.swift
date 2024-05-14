@@ -2,14 +2,19 @@
 //  ReBasketVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 11/16/23.
+//  Created by 장 제현 on 11/16/23.
 //
+
+/// 번역완료
 
 import UIKit
 
 class ReBasketTC: UITableViewCell {
     
     var BasketObject: BasketData = BasketData()
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var storeName_btn: UIButton!
     @IBOutlet weak var choice_img: UIImageView!
@@ -49,11 +54,11 @@ extension ReBasketTC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC2", for: indexPath) as! ReBasketTC
         
         if (data.price-BasketObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "\(translation("옵션.")) \(translation(data.color)) + \(translation(data.size)) (-₩\(priceFormatter.string(from: -(data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "\(translation("옵션.")) \(translation(data.color)) + \(translation(data.size)) (+₩\(priceFormatter.string(from: (data.price-BasketObject.item_sale_price) as NSNumber) ?? "0"))"
         }
-        cell.optionQuantity_label.text = "수량. \(data.quantity)개"
+        cell.optionQuantity_label.text = "\(translation("수량.")) \(String(format: NSLocalizedString("개", comment: ""), String(data.quantity)))"
         cell.optionPrice_label.text = "₩\(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
         return cell
@@ -75,6 +80,9 @@ class ReBasketVC: UIViewController {
     
     var refreshControl: UIRefreshControl = UIRefreshControl()
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     @IBOutlet weak var choiceAll_label: UILabel!
     @IBOutlet weak var choiceAll_img: UIImageView!
@@ -84,6 +92,13 @@ class ReBasketVC: UIViewController {
     
     @IBOutlet weak var orderTotalPrice_label: UILabel!
     @IBOutlet weak var order_btn: UIButton!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -246,13 +261,24 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if indexPath.section == 0 {
-            return tableView.dequeueReusableCell(withIdentifier: "ReBasketTC0", for: indexPath) as! ReBasketTC
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC0", for: indexPath) as! ReBasketTC
+            cell.labels.forEach { label in
+                if label.text!.contains("도매 매장에 직접") {
+                    label.text = translation("도매 매장에 직접 주문하는 장바구니 입니다.\n각 매장별 주문이 들어갑니다.")
+                } else {
+                    label.text = translation(label.text!)
+                }
+            }
+            return cell
         } else if indexPath.section == 1 {
             
             let data = ReBasketArray[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC1", for: indexPath) as! ReBasketTC
             cell.BasketObject = data
             cell.viewDidLoad()
+            
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
             
             cell.storeName_btn.setTitle(data.store_name, for: .normal)
             cell.storeName_btn.tag = indexPath.row; cell.storeName_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
@@ -278,6 +304,9 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
         } else if indexPath.section == 2 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReBasketTC3", for: indexPath) as! ReBasketTC
+            
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            
             cell.orderTotalPrice_label.text = "₩\(priceFormatter.string(from: order_total as NSNumber) ?? "0")"
             return cell
         } else {

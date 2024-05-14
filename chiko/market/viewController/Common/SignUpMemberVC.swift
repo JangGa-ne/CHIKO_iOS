@@ -2,7 +2,7 @@
 //  SignUpMemberVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/18.
+//  Created by 장 제현 on 2023/10/18.
 //
 
 import UIKit
@@ -13,6 +13,9 @@ class SignUpMemberVC: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBAction func back_btn(_ sender: UIButton) { view.endEditing(true); navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
@@ -34,6 +37,7 @@ class SignUpMemberVC: UIViewController {
     /// 아이디
     @IBOutlet weak var memberId_tf: UITextField!
     @IBOutlet weak var memberId_btn: UIButton!
+    var checkMemberId_img = UIImageView()
     @IBOutlet weak var noticeMemberId_label: UILabel!
     /// 비밀번호
     @IBOutlet weak var memberPw_tf: UITextField!
@@ -65,6 +69,13 @@ class SignUpMemberVC: UIViewController {
     
     @IBOutlet weak var signUp_btn: UIButton!
     
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = NSLocalizedString(label.text!, comment: "") }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -80,7 +91,7 @@ class SignUpMemberVC: UIViewController {
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(scrollView(_:))))
         /// placeholder, delegate, edit, return next/done
         ([phoneNum_tf, phoneNumCheck_tf, memberId_tf, memberPw_tf, memberPwCheck_tf, memberName_tf, memberEmail_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["-없이 입력", "", "영어 소문자 또는 숫자 4~20자리", "영어+숫자+특수문자 조합 8~15자리", "", "", "@이하 주소까지 모두 입력"][i], color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: translation(["-없이 입력", "", "영어 소문자 또는 숫자 4~20자리", "영어+숫자+특수문자 조합 8~15자리", "", "", "@이하 주소까지 모두 입력"][i]), color: .black.withAlphaComponent(0.3))
             tf.delegate = self
             tf.tag = i
             tf.addTarget(self, action: #selector(changedEditMemberInfo_if(_:)), for: .editingChanged)
@@ -91,8 +102,10 @@ class SignUpMemberVC: UIViewController {
         ([noticePhoneNum_label, noticePhoneNumCheck_label, noticeMemberId_label, noticeMemberPw_label, noticeMemberPwCheck_label, noticeMemberEmail_label] as [UILabel]).forEach { label in
             label.isHidden = true
         }
+        noticeMemberId_label.text = translation("4~20자까지만 입력 가능합니다.\n(영어 소문자 또는 숫자 조합)")
+        noticeMemberPw_label.text = translation("8~15자까지만 입력 가능합니다.\n(영어, 숫자, 특수문자 - ' ! @ # $ % \\ ^ & * ( ) - + = 조합)")
         /// check
-        ([checkPhoneNum_img, checkPhoneNumCheck_img, checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img, checkMemberIdCard_img] as [UIImageView]).forEach { img in
+        ([checkPhoneNum_img, checkPhoneNumCheck_img, checkMemberId_img, checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img, checkMemberIdCard_img] as [UIImageView]).forEach { img in
             img.isHidden = true
         }
         
@@ -133,7 +146,7 @@ class SignUpMemberVC: UIViewController {
         let text = sender.text!.replacingOccurrences(of: " ", with: "")
         let member_type: String = MemberObject_signup.member_type
         
-        let check: UIImageView = [UIImageView(), checkPhoneNumCheck_img, UIImageView(), checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img][sender.tag]
+        let check: UIImageView = [UIImageView(), checkPhoneNumCheck_img, checkMemberId_img, checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img][sender.tag]
         let notice: UILabel = [noticePhoneNum_label, noticePhoneNumCheck_label, noticeMemberId_label, noticeMemberPw_label, noticeMemberPwCheck_label, UILabel(), noticeMemberEmail_label][sender.tag]
         // init
         check.isHidden = true
@@ -188,14 +201,12 @@ class SignUpMemberVC: UIViewController {
             filterContains = "abcdefghijklmnopqrstuvwxyz0123456789"
             
             if sender.text!.count < 4 || sender.text!.count > 20 {
-                notice.text = "4~20자까지 입력 가능합니다."
+                notice.text = translation("4~20자까지 입력 가능합니다.")
             } else if sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) != nil {
-                notice.text = "영어 소문자 또는 숫자 조합"
+                notice.text = translation("영어 소문자 또는 숫자 조합")
             } else if text.count > 0 {
                 check.isHidden = false
             }
-            memberId_btn.isSelected = false
-            memberId_btn.backgroundColor = .black.withAlphaComponent(0.3)
             break
         case memberPw_tf:
             
@@ -206,20 +217,20 @@ class SignUpMemberVC: UIViewController {
             filterContains = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%^&*()-+="
             
             if sender.text!.count < 8 || sender.text!.count > 15 {
-                notice.text = "8~15자까지 입력 가능합니다."
+                notice.text = translation("8~15자까지 입력 가능합니다.")
             } else if sender.text!.rangeOfCharacter(from: CharacterSet(charactersIn: filterContains).inverted) != nil {
-                notice.text = "영어, 숫자, 특수문자 - ' ! @ # $ % ^ & * ( ) - + = 조합"
+                notice.text = translation("영어, 숫자, 특수문자 - ' ! @ # $ % ^ & * ( ) - + = 조합")
             } else if !isPasswordValid(sender.text!) {
-                notice.text = "영어, 숫자, 특수문자가 최소 1자 이상 포함되어야 합니다."
+                notice.text = translation("영어, 숫자, 특수문자가 최소 1자 이상 포함되어야 합니다.")
             } else if text.count > 0 {
                 check.isHidden = false
             }
             break
         case memberPwCheck_tf:
             if !noticeMemberPw_label.isHidden {
-                notice.text = "비밀번호 형식이 맞지 않습니다."
+                notice.text = translation("비밀번호 형식이 맞지 않습니다.")
             } else if sender.text! != memberPw_tf.text! {
-                notice.text = "비밀번호가 맞지 않습니다."
+                notice.text = translation("비밀번호가 맞지 않습니다.")
             } else if text.count > 0 {
                 check.isHidden = false
             }
@@ -237,7 +248,7 @@ class SignUpMemberVC: UIViewController {
         
         if sender == phoneNumCheck_tf { return }
         
-        let check: UIImageView = [UIImageView(), checkPhoneNumCheck_img, UIImageView(), checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img][sender.tag]
+        let check: UIImageView = [UIImageView(), checkPhoneNumCheck_img, checkMemberId_img, checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img][sender.tag]
         let notice: UILabel = [noticePhoneNum_label, noticePhoneNumCheck_label, noticeMemberId_label, noticeMemberPw_label, noticeMemberPwCheck_label, UILabel(), noticeMemberEmail_label][sender.tag]
         
         notice.isHidden = !check.isHidden
@@ -253,11 +264,11 @@ class SignUpMemberVC: UIViewController {
             ceo_btn.isSelected = true; employee_btn.isSelected = false
             ceo_btn.backgroundColor = .H_8CD26B; employee_btn.backgroundColor = .white
             /// set register store
-            registerSearchStoreTitle_label.text = "매장 등록"
+            registerSearchStoreTitle_label.text = translation("매장 등록")
             new_label.isHidden = true
             registerSearchStoreName_label.text?.removeAll()
             registerSearchStore_btn.isSelected = false
-            registerSearchStore_btn.setTitle("매장등록", for: .normal)
+            registerSearchStore_btn.setTitle(translation("매장등록"), for: .normal)
             registerSearchStore_btn.backgroundColor = .black.withAlphaComponent(0.3)
         } else if sender.tag == 1 {
             /// employee
@@ -265,11 +276,11 @@ class SignUpMemberVC: UIViewController {
             ceo_btn.isSelected = false; employee_btn.isSelected = true
             ceo_btn.backgroundColor = .white; employee_btn.backgroundColor = .H_8CD26B
             /// set searh store
-            registerSearchStoreTitle_label.text = "매장 찾기"
+            registerSearchStoreTitle_label.text = translation("매장 찾기")
             new_label.isHidden = true
             registerSearchStoreName_label.text?.removeAll()
             registerSearchStore_btn.isSelected = false
-            registerSearchStore_btn.setTitle("매장찾기", for: .normal)
+            registerSearchStore_btn.setTitle(translation("매장찾기"), for: .normal)
             registerSearchStore_btn.backgroundColor = .black.withAlphaComponent(0.3)
         }
     }
@@ -306,7 +317,9 @@ class SignUpMemberVC: UIViewController {
         /// hidden keyboard
         view.endEditing(true)
         
-        if memberId_tf.text!.count > 0, noticeMemberId_label.isHidden {
+        if memberId_tf.text! == "" {
+            customAlert(message: "아이디를 입력하세요.", time: 1)
+        } else if noticeMemberId_label.isHidden {
             customLoadingIndicator(animated: true)
             /// Member ID Check 요청
             requestCheckId(member_id: memberId_tf.text!) { status in
@@ -315,14 +328,14 @@ class SignUpMemberVC: UIViewController {
                     sender.isSelected = true
                     sender.backgroundColor = .H_8CD26B
                     self.noticeMemberId_label.isHidden = false
-                    self.noticeMemberId_label.text = "사용 가능한 아이디 입니다."
+                    self.noticeMemberId_label.text = translation("사용 가능한 아이디 입니다.")
                     self.noticeMemberId_label.textColor = .systemGreen
                     self.memberPw_tf.becomeFirstResponder()
                 } else if status == 204 {
                     sender.isSelected = false
                     sender.backgroundColor = .black.withAlphaComponent(0.3)
                     self.noticeMemberId_label.isHidden = false
-                    self.noticeMemberId_label.text = "이미 사용중인 아이디 입니다."
+                    self.noticeMemberId_label.text = translation("이미 사용중인 아이디 입니다.")
                     self.noticeMemberId_label.textColor = .systemRed
                 } else {
                     sender.isSelected = false
@@ -393,7 +406,9 @@ class SignUpMemberVC: UIViewController {
             StoreObject_signup.ceo_num = MemberObject_signup.member_num
         }
         /// segue agreement
-        presentPanModal(storyboard?.instantiateViewController(withIdentifier: "SignUpRegisterVC") as! SignUpRegisterVC)
+        let segue = storyboard?.instantiateViewController(withIdentifier: "SignUpRegisterVC") as! SignUpRegisterVC
+        segue.modalPresentationStyle = .overCurrentContext; segue.transitioningDelegate = self
+        present(segue, animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {

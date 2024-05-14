@@ -2,10 +2,22 @@
 //  s_text.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/07/21.
+//  Created by 장 제현 on 2023/07/21.
 //
 
 import UIKit
+
+func translation(_ string: String?) -> String {
+    return NSLocalizedString(string ?? "", comment: "")
+}
+
+func getCurrentLanguage() -> String? {
+    if let preferredLanguage = Locale.preferredLanguages.first {
+        return preferredLanguage
+    } else {
+        return nil
+    }
+}
 
 func stringWidth(text: String, fontName: String = "", fontSize: CGFloat = 14, fontWeight: UIFont.Weight = .regular) -> CGFloat {
     if fontName == "" {

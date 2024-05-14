@@ -2,7 +2,7 @@
 //  WhMyPageVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 1/2/24.
+//  Created by 장 제현 on 1/2/24.
 //
 
 import UIKit
@@ -165,7 +165,7 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
         case 1:
             segueViewController(identifier: "MemberVC")
         case 2:
-            break
+            segueViewController(identifier: "ScrapVC")
         case 3:
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsVC") as! WhGoodsVC
             segue.indexpath_row = 0

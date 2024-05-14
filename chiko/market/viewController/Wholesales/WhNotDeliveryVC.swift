@@ -2,7 +2,7 @@
 //  WhNotDeliveryVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 2/2/24.
+//  Created by 장 제현 on 2/2/24.
 //
 
 import UIKit
@@ -137,7 +137,7 @@ class WhNotDeliveryVC: UIViewController {
             self.customLoadingIndicator(animated: false)
             
             if status_code == 200 {
-                self.filter = self.filter_btn.titleLabel?.text! ?? "" == "전체보기" ? "날짜별" : "전체보기"
+                self.filter = self.filter_btn.title(for: .normal) ?? "" == "전체보기" ? "날짜별" : "전체보기"
                 self.filter_btn(UIButton())
                 self.problemAlert(view: self.tableView)
             } else if status_code == 204 {

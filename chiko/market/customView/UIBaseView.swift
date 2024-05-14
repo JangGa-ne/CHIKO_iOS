@@ -2,7 +2,7 @@
 //  UIBaseView.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/07/19.
+//  Created by 장 제현 on 2023/07/19.
 //
 
 import UIKit

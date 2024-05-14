@@ -2,7 +2,7 @@
 //  WhHomeVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 11/21/23.
+//  Created by 장 제현 on 11/21/23.
 //
 
 import UIKit
@@ -201,6 +201,8 @@ class WhHomeVC: UIViewController {
     var order_count: Int = 0
     var WhGoodsArray_realtime_row: Int = 0
     
+    @IBOutlet weak var noticeDot_v: UIView!
+    @IBOutlet weak var notice_btn: UIButton!
     @IBOutlet weak var myPage_btn: UIButton!
     
     @IBOutlet weak var scrollView: UIScrollView!
@@ -213,6 +215,8 @@ class WhHomeVC: UIViewController {
         
         WhHomeVCdelegate = self
         
+        noticeDot_v.isHidden = notice_read
+        notice_btn.addTarget(self, action: #selector(notice_btn(_:)), for: .touchUpInside)
         myPage_btn.addTarget(self, action: #selector(myPage_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
@@ -232,6 +236,10 @@ class WhHomeVC: UIViewController {
         goodsUpload_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(goodsUpload_view(_:))))
     }
     
+    @objc func notice_btn(_ sender: UIButton) {
+        segueViewController(identifier: "NoticeVC")
+    }
+    
     @objc func myPage_btn(_ sender: UIButton) {
         segueViewController(identifier: "WhMyPageVC")
     }
@@ -245,6 +253,7 @@ class WhHomeVC: UIViewController {
         
         setBackSwipeGesture(false)
         
+        NoticeVCdelegate = nil
         WhMyPageVCdelegate = nil
         WhGoodsUploadVCdelegate = nil
         WhGoodsDetailVCdelegate = nil

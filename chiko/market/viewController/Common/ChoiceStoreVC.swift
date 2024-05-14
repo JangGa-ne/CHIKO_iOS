@@ -2,7 +2,7 @@
 //  ChoiceStoreVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/18.
+//  Created by 장 제현 on 2023/10/18.
 //
 
 import UIKit

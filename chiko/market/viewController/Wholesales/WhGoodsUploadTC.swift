@@ -2,7 +2,7 @@
 //  WhGoodsUploadTC.swift
 //  market
 //
-//  Created by Busan Dynamic on 12/4/23.
+//  Created by 장 제현 on 12/4/23.
 //
 
 import UIKit

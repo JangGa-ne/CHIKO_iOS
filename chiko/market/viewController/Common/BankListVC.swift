@@ -2,11 +2,13 @@
 //  BankListVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 10/23/23.
+//  Created by 장 제현 on 10/23/23.
 //
 
 import UIKit
 import PanModal
+
+/// 번역완료
 
 class BankListVC: UIViewController {
     
@@ -66,11 +68,21 @@ class BankListVC: UIViewController {
     ]
     var koreaBank_row: Int = 0
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBOutlet weak var alert_v: UIView!
     @IBOutlet weak var pickerView: UIPickerView!
     
     @IBOutlet weak var choice_btn: UIButton!
     @IBAction func back_btn(_ sender: UIButton) { dismiss(animated: true, completion: nil) }
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = NSLocalizedString("은행을\n선택해 주세요.", comment: "") }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

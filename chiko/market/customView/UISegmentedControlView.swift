@@ -2,7 +2,7 @@
 //  UISegmentedControlView.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/07/26.
+//  Created by 장 제현 on 2023/07/26.
 //
 
 import UIKit
@@ -57,7 +57,7 @@ class UISegmentedControlView: UIView {
             buttons[selectedButtonIndex].isSelected = true
             delegate?.segmentedControlValueChanged(
                 segmentedControlView: self,
-                selectedItem: items[buttons[selectedButtonIndex].titleLabel?.text! ?? ""] as? String ?? ""
+                selectedItem: items[buttons[selectedButtonIndex].title(for: .normal) ?? ""] as? String ?? ""
             )
         }
     }
@@ -85,7 +85,7 @@ class UISegmentedControlView: UIView {
         selectedButtonIndex = sender.tag
         delegate?.segmentedControlValueChanged(
             segmentedControlView: self,
-            selectedItem: items[buttons[sender.tag].titleLabel?.text! ?? ""] as? String ?? ""
+            selectedItem: items[buttons[sender.tag].title(for: .normal) ?? ""] as? String ?? ""
         )
     }
     

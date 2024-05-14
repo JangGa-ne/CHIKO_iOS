@@ -2,7 +2,7 @@
 //  s_animation.swift
 //  market
 //
-//  Created by Busan Dynamic on 2/7/24.
+//  Created by 장 제현 on 2/7/24.
 //
 
 import UIKit
@@ -16,7 +16,7 @@ class animationSegue: NSObject, UIViewControllerAnimatedTransitioning {
     var animationBottom: Bool = false
     var animationAlpha: Bool = false
     var presenting: Bool = false
-    let dimmingView = UIButton()
+    let dimmingView = UIView()
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return animationTime
@@ -33,7 +33,10 @@ class animationSegue: NSObject, UIViewControllerAnimatedTransitioning {
         
         if presenting {
             
-            dimmingView.backgroundColor = .black; dimmingView.alpha = 0.0; dimmingView.frame = containerView.bounds; containerView.addSubview(dimmingView)
+            dimmingView.frame = containerView.bounds
+            dimmingView.backgroundColor = .black
+            dimmingView.alpha = 0.0
+            containerView.addSubview(dimmingView)
             
             if animationLeft { toVC.view.frame = CGRect(x: -finalWidth, y: 0.0, width: finalWidth, height: finalHeight) }
             if animationRight { toVC.view.frame = CGRect(x: finalWidth, y: 0.0, width: finalWidth, height: finalHeight) }
@@ -76,6 +79,28 @@ class animationSegue: NSObject, UIViewControllerAnimatedTransitioning {
 
 extension UIViewController: UIViewControllerTransitioningDelegate {
     static let transition: animationSegue = animationSegue()
+}
+
+extension SignUpMemberVC {
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        UIViewController.transition.presenting = true; UIViewController.transition.animationTime = 0.2; UIViewController.transition.animationBottom = true; return UIViewController.transition
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        UIViewController.transition.presenting = false; UIViewController.transition.animationTime = 0.2; UIViewController.transition.animationBottom = true; return UIViewController.transition
+    }
+}
+
+extension SignUpRegisterVC {
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        UIViewController.transition.presenting = true; UIViewController.transition.animationTime = 0.2; UIViewController.transition.animationRight = true; return UIViewController.transition
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        UIViewController.transition.presenting = false; UIViewController.transition.animationTime = 0.2; UIViewController.transition.animationRight = true; return UIViewController.transition
+    }
 }
 
 extension WhOrderBatchVC {

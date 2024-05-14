@@ -5,16 +5,28 @@
 //  Created by 장 제현 on 11/12/23.
 //
 
+/// 번역완료
+
 import UIKit
 import PanModal
 
 class ReGoodsOptionTC: UITableViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var optionColor_view: UIView!
     @IBOutlet weak var optionSequence_label: UILabel!
     @IBOutlet weak var optionNamePrice_label: UILabel!
     @IBOutlet weak var optionSelect_btn: UIButton!
     @IBOutlet weak var optionSoldOut_label: UILabel!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
 }
 
 class ReGoodsOptionVC: UIViewController {
@@ -25,9 +37,17 @@ class ReGoodsOptionVC: UIViewController {
     
     var GoodsObject: GoodsData = GoodsData()
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBAction func back_btn(_ sender: UIButton) { dismiss(animated: true, completion: nil) }
     
     @IBOutlet weak var tableView: UITableView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,11 +69,11 @@ extension ReGoodsOptionVC: UITableViewDelegate, UITableViewDataSource {
         let data = GoodsObject.item_option[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsOptionTC", for: indexPath) as! ReGoodsOptionTC
         cell.optionColor_view.backgroundColor = .init(hex: "#\(ColorArray[data.color] ?? "ffffff")")
-        cell.optionSequence_label.text = "상품 \(indexPath.row+1)."
+        cell.optionSequence_label.text = "\(translation("상품")) \(indexPath.row+1)."
         if (data.price-GoodsObject.item_sale_price) < 0 {
-            cell.optionNamePrice_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))\n가격. ₩\(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
+            cell.optionNamePrice_label.text = "\(translation("옵션")). \(translation(data.color)) + \(translation(data.size)) (₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))\n\(translation("가격")). ₩\(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
         } else {
-            cell.optionNamePrice_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))\n가격. ₩\(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
+            cell.optionNamePrice_label.text = "\(translation("옵션")). \(translation(data.color)) + \(translation(data.size)) (+₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))\n\(translation("가격")). ₩\(priceFormatter.string(from: data.price as NSNumber) ?? "0")"
         }
         cell.optionSoldOut_label.isHidden = !data.sold_out
         cell.optionSelect_btn.tag = indexPath.row; cell.optionSelect_btn.addTarget(self, action: #selector(optionSelect_btn(_:)), for: .touchUpInside)

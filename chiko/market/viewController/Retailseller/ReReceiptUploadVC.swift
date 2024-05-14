@@ -2,7 +2,7 @@
 //  ReReceiptUploadVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 2/20/24.
+//  Created by 장 제현 on 2/20/24.
 //
 
 import UIKit
@@ -461,7 +461,7 @@ extension ReReceiptUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.itemName_tf.placeholder(text: "상품명을 입력하세요.", color: .black.withAlphaComponent(0.3))
             cell.itemName_tf.text = data.item_name
             cell.itemName_tf.addTarget(cell, action: #selector(cell.end_itemName_tf(_:)), for: .editingDidEnd)
-            let item_category_name = "\(data.item_category_name)".replacingOccurrences(of: ", ", with: " > ").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+            let item_category_name = data.item_category_name.map { $0 }.joined(separator: " > ")
             cell.itemCategoryName_btn.setTitle(item_category_name != "" ? item_category_name : "카테고리", for: .normal)
             cell.itemCategoryName_btn.setTitleColor(item_category_name != "" ? .black : .black.withAlphaComponent(0.3), for: .normal)
             cell.itemCategoryName_btn.addTarget(cell, action: #selector(cell.itemCategoryName_btn(_:)), for: .touchUpInside)

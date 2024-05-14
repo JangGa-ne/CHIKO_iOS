@@ -2,7 +2,7 @@
 //  SplashVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/18.
+//  Created by 장 제현 on 2023/10/18.
 //
 
 import UIKit
@@ -37,6 +37,11 @@ class SplashVC: UIViewController {
         requestSignIn { status in
             
             if status == 200 {
+                /// Notice 요청
+                dispatchGroup.enter()
+                requestNotice { status in
+                    notice_read = NoticeArray.allSatisfy { $0.read_or_not }; dispatchGroup.leave()
+                }
                 if MemberObject.member_type == "retailseller" {
                     /// ReMain 요청
                     dispatchGroup.enter()
@@ -79,19 +84,32 @@ class SplashVC: UIViewController {
 //                    self.segueViewController(identifier: "ChoiceStoreVC")
 //                } else
                 if MemberObject.member_type == "retailseller" {
-                    self.segueTabBarController(identifier: "ReMainTBC", idx: 0)
+                    self.segueTabBarController(identifier: "ReMainTBC", idx: 0) { delegate in
+//                        if push_type == "" {
+//                            self.customAlert(message: "회원타입 에러: 도매자로 로그인 해주세요.", time: 1)
+//                        }
+                        if push_type != "" {
+                            delegate.segueViewController(identifier: "NoticeVC")
+                        }
+                    }
                 } else if MemberObject.member_type == "wholesales" {
                     if StoreObject.waiting_step == 0 || StoreObject.waiting_step == 1 {
                         back_btn_hidden = true
                         self.segueViewController(identifier: "WhWaitingVC")
                     } else if StoreObject.waiting_step == 2 {
-                        self.segueViewController(identifier: "WhHomeVC")
-                    }
-//                   } else {
+                        self.segueViewController(identifier: "WhHomeVC") { delegate in
+                            if push_type == "enquiry" || push_type == "dpcost_request" {
+                                self.customAlert(message: "회원타입 에러: 소매자로 로그인 해주세요.", time: 1)
+                            } else if push_type != "" {
+                                delegate?.segueViewController(identifier: "NoticeVC")
+                            }
+                        }
+//                    } else {
 //                        back_btn_hidden = true
+//                        /// 매장선택
 //                        self.segueViewController(identifier: "ChoiceStoreVC")
-//                    }
-                }; return
+                    }
+                }; if push_type != "" { push_type.removeAll(); segue_type.removeAll() }; return
             case 500:
                 self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
             default:

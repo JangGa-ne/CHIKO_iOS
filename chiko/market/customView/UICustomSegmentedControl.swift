@@ -2,7 +2,7 @@
 //  UICustomSegmentedControl.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/07/26.
+//  Created by 장 제현 on 2023/07/26.
 //
 
 import UIKit

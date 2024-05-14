@@ -2,7 +2,7 @@
 //  WhOrderBatchVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 1/30/24.
+//  Created by 장 제현 on 1/30/24.
 //
 
 import UIKit
@@ -69,8 +69,6 @@ class WhOrderBatchVC: UIViewController {
     }
     
     var type: String = "주문" // 주문.정산
-    var selected_date: String = ""
-    
     var WhOrderArray_all: [WhOrderData] = []
     var WhOrderArray: [WhOrderData] = []
     var WhNotDeliveryArray_all: [WhNotDeliveryData] = []
@@ -83,6 +81,8 @@ class WhOrderBatchVC: UIViewController {
     @IBOutlet weak var subTitle_label: UILabel!
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var total_v: UIView!
+    @IBOutlet weak var totalPrice_sv: UIStackView!
     @IBOutlet weak var totalPrice_label: UILabel!
     @IBOutlet weak var notDeliveryAdd_btn: UIButton!
     @IBOutlet weak var notDelivery_btn: UIButton!
@@ -101,8 +101,13 @@ class WhOrderBatchVC: UIViewController {
             subTitle_label.text = "오늘의정산"
         }
         
+        total_v.frame.size.height = type == "정산" ? 85 : 150
+        totalPrice_sv.isHidden = type == "정산"
+        tableView.layoutIfNeeded()
+        
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
+        if #available(iOS 15.0, *) { tableView.sectionHeaderTopPadding = .zero }
         tableView.delegate = self; tableView.dataSource = self
         tableView.refreshControl = refreshControl
         refreshControl.tintColor = .black.withAlphaComponent(0.3)
@@ -140,7 +145,7 @@ class WhOrderBatchVC: UIViewController {
             if WhOrderArray.count > 0 {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 let segue = storyboard?.instantiateViewController(withIdentifier: "WhNotDeliveryAddVC") as! WhNotDeliveryAddVC
-                segue.modalPresentationStyle = .overCurrentContext; segue.transitioningDelegate = self
+                segue.modalPresentationStyle = .currentContext; segue.transitioningDelegate = self
                 segue.present_date = date_btn.titleLabel!.text!
                 segue.WhOrderArray = WhOrderArray
                 segue.WhNotDeliveryArray = WhNotDeliveryArray
@@ -155,7 +160,7 @@ class WhOrderBatchVC: UIViewController {
     
     func loadingData() {
         /// 데이터 삭제
-        WhOrderArray_all.removeAll(); WhOrderArray.removeAll(); tableView.reloadData()
+        WhOrderArray_all.removeAll(); WhOrderArray.removeAll(); WhNotDeliveryArray_all.removeAll(); WhNotDeliveryArray.removeAll(); tableView.reloadData()
         
         /// WhOrder 요청
         dispatchGroup.enter()
@@ -173,12 +178,9 @@ class WhOrderBatchVC: UIViewController {
             var total_price: Int = 0
             
             self.customLoadingIndicator(animated: false)
-            /// 데이터 삭제
-            self.WhOrderArray.removeAll()
-            self.WhNotDeliveryArray.removeAll()
             
             self.WhOrderArray_all.filter { data in
-                return data.order_date.contains(self.date_btn.titleLabel?.text!.replacingOccurrences(of: ".", with: "") ?? "") && self.date_btn.titleLabel?.text! != ""
+                return data.order_date.contains(self.date_btn.title(for: .normal)?.replacingOccurrences(of: ".", with: "") ?? "") && self.date_btn.title(for: .normal) != ""
             }.forEach { data in
                 data.item_option.forEach { data in total_price += (data.price*data.quantity) }
                 /// 데이터 추가
@@ -186,7 +188,7 @@ class WhOrderBatchVC: UIViewController {
             }
             
             self.WhNotDeliveryArray_all.filter { data in
-                return data.order_date.contains(self.date_btn.titleLabel?.text!.replacingOccurrences(of: ".", with: "") ?? "") && self.date_btn.titleLabel?.text! != ""
+                return data.order_date.contains(self.date_btn.title(for: .normal)?.replacingOccurrences(of: ".", with: "") ?? "") && self.date_btn.title(for: .normal) != ""
             }.forEach { data in
                 /// 데이터 추가
                 self.WhNotDeliveryArray.append(data)
@@ -257,7 +259,7 @@ extension WhOrderBatchVC: UITableViewDelegate, UITableViewDataSource {
             cell.receiveCalculate_v.transform = CGAffineTransform(rotationAngle: CGFloat(5 * Double.pi / 180))
             
             cell.itemName_label.text = data.item_name
-            data.item_option.forEach { data in 
+            data.item_option.forEach { data in
                 price += (data.price*data.quantity)
                 receive_price += data.enter_price
                 deserve_price += (data.price*data.enter_quantity-data.enter_price)

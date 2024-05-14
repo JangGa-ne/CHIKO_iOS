@@ -2,7 +2,7 @@
 //  WhGoodsUploadVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 11/22/23.
+//  Created by 장 제현 on 11/22/23.
 //
 
 import UIKit

@@ -2,8 +2,10 @@
 //  ReLiquidateDetailVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 12/18/23.
+//  Created by 장 제현 on 12/18/23.
 //
+
+/// 번역완료
 
 import UIKit
 import PanModal
@@ -11,6 +13,8 @@ import PanModal
 class ReLiquidateDetailTC: UITableViewCell {
     
     var LiquidateObject: BasketData = BasketData()
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var storeName_btn: UIButton!
     @IBOutlet weak var item_img_v: UIView!
@@ -48,11 +52,11 @@ extension ReLiquidateDetailTC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateDetailTC2", for: indexPath) as! ReLiquidateDetailTC
         
         if (data.price-LiquidateObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-LiquidateObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "\(translation("옵션.")) \(translation(data.color)) + \(translation(data.size)) (-₩\(priceFormatter.string(from: -(data.price-LiquidateObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-LiquidateObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "\(translation("옵션.")) \(translation(data.color)) + \(translation(data.size)) (+₩\(priceFormatter.string(from: (data.price-LiquidateObject.item_sale_price) as NSNumber) ?? "0"))"
         }
-        cell.optionQuantity_label.text = "수량. \(data.quantity)개"
+        cell.optionQuantity_label.text = "\(translation("수량.")) \(String(format: NSLocalizedString("개", comment: ""), String(data.quantity)))"
         cell.optionPrice_label.text = "₩\(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
         return cell
@@ -69,9 +73,17 @@ class ReLiquidateDetailVC: UIViewController {
     var LiquidateArray: [BasketData] = []
     var total_price: Int = 0
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBAction func back_btn(_ sender: UIButton) { dismiss(animated: true, completion: nil) }
     
     @IBOutlet weak var tableView: UITableView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -130,6 +142,8 @@ extension ReLiquidateDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.LiquidateObject = data
             cell.viewDidLoad()
             
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            
             cell.storeName_btn.setTitle(data.store_name, for: .normal)
             cell.item_img_v.isHidden = receipt_mode
             cell.itemName_btn.setTitle(data.item_name, for: .normal)
@@ -146,7 +160,11 @@ extension ReLiquidateDetailVC: UITableViewDelegate, UITableViewDataSource {
         } else if indexPath.section == 1 {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateDetailTC3", for: indexPath) as! ReLiquidateDetailTC
+            
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            
             cell.orderTotalPrice_label.text = "₩\(priceFormatter.string(from: total_price as NSNumber) ?? "0")"
+            
             return cell
         } else {
             return UITableViewCell()

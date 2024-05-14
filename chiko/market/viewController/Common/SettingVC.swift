@@ -2,7 +2,7 @@
 //  SettingVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 3/29/24.
+//  Created by 장 제현 on 3/29/24.
 //
 
 import UIKit
@@ -13,7 +13,6 @@ class SettingTC: UITableViewCell {
     @IBOutlet weak var cell_v: UIView!
     @IBOutlet weak var title_label: UILabel!
     @IBOutlet weak var switch_btn: UISwitch!
-    @IBOutlet weak var info_label: UILabel!
     @IBOutlet weak var next_img: UIImageView!
     @IBOutlet weak var lineView: UIView!
 }
@@ -25,34 +24,35 @@ class SettingVC: UIViewController {
     }
     
     var menus: [(title: String, content: [String])] = [
-        (title: "약관", content: ["이용약관", "개인정보 수집", "마케팅정보 수신"]),
-        (title: "기타", content: ["Face ID 인증 사용", "앱 버전"]),
+        (title: "Agreement", content: ["전자상거래 이용약관", "해외구매 이용약관", "개인정보처리방침", "개인 및 법인정보 제3자 제공동의서"]),
+        (title: "Other", content: ["Face ID 인증 사용", "소프트웨어 업데이트"]),
     ]
     var segues: [(String, [String])] = [
-        (title: "약관", content: ["", "", ""]),
-        (title: "기타", content: ["", ""]),
+        (title: "Agreement", content: ["https://sites.google.com/view/chiko-terms1", "https://sites.google.com/view/chiko-terms2", "https://sites.google.com/view/chiko-terms3", "https://sites.google.com/view/chiko-terms4"]),
+        (title: "Other", content: ["", "VersionVC"]),
     ]
     var topics: [String] = []
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var withdrawal_btn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if StoreObject.store_type == "retailseller" {
-            menus.insert((title: "알림", content: ["영수증 주문요청", "마케팅정보 수신"]), at: 0)
+            menus.insert((title: "알림", content: ["마케팅 정보", "영수증 주문요청"]), at: 0)
             segues.insert((title: "알림", content: ["", ""]), at: 0)
             topics = [
-                UserDefaults.standard.string(forKey: "re_enquiry") ?? "",
-                "",
+                MemberObject.topics["marketing"] as? String ?? "false",
+                MemberObject.topics["enquiry"] as? String ?? "false",
             ]
         } else if StoreObject.store_type == "wholesales" {
             menus.insert((title: "알림", content: ["마케팅정보 수신"]), at: 0)
             segues.insert((title: "알림", content: [""]), at: 0)
             topics = [
-                "",
+                MemberObject.topics["marketing"] as? String ?? "false",
             ]
         }
         
@@ -60,6 +60,12 @@ class SettingVC: UIViewController {
         tableView.contentInset = UIEdgeInsets(top: -10, left: 0, bottom: 20, right: 0)
         if #available(iOS 15.0, *) { tableView.sectionHeaderTopPadding = .zero }
         tableView.delegate = self; tableView.dataSource = self
+        
+        withdrawal_btn.addTarget(self, action: #selector(withdrawal_btn(_:)), for: .touchUpInside)
+    }
+    
+    @objc func withdrawal_btn(_ sender: UIButton) {
+        segueViewController(identifier: "WithdrawalVC")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -110,13 +116,12 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             cell.switch_btn.isHidden = false
             cell.switch_btn.transform = CGAffineTransform(scaleX: 0.6455, y: 0.6455)
-            cell.switch_btn.isOn = topics[indexPath.row] != ""
+            cell.switch_btn.isOn = Bool(topics[indexPath.row]) ?? false
             cell.switch_btn.tag = indexPath.row; cell.switch_btn.addTarget(self, action: #selector(switch_btn(_:)), for: .valueChanged)
         } else {
             cell.switch_btn.isHidden = true
         }
         
-        cell.info_label.isHidden = !(indexPath.section == 2 && indexPath.row == 1)
         cell.next_img.isHidden = !(indexPath.section == 1)
         
         return cell
@@ -126,43 +131,49 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
         
         customLoadingIndicator(animated: true)
         
+        var title: String = ""
         var topic: String = ""
-        var topic_key: String = ""
-        if StoreObject.store_type == "retailseller" {
-            topic_key = "re_"
-        } else if StoreObject.store_type == "wholesales" {
-            topic_key = "wh_"
-        }
-        
         if sender.tag == 0 {
-            topic = "enquiry_\(StoreObject.store_id)"
-            topic_key += "enquiry"
+            title = "마케팅 정보"
+            topic = "marketing"
         } else if sender.tag == 1 {
-            
-        }
+            title = "영수증 주문요청"
+            topic = "enquiry"
+        }; MemberObject.topics[topic] = String(sender.isOn)
         
         guard topic != "" else { self.customLoadingIndicator(animated: false); return }
         
+        let params: [String: Any] = [
+            "action": "edit",
+            "collection_id": "member",
+            "document_id": MemberObject.member_id,
+            "topics": MemberObject.topics,
+        ]
+        
         if sender.isOn {
-            Messaging.messaging().subscribe(toTopic: topic) { error in
+            Messaging.messaging().subscribe(toTopic: "\(topic)_\(StoreObject.store_id)") { error in
                 self.customLoadingIndicator(animated: false)
                 if error == nil {
-                    self.alert(title: "영수증 주문요청", message: "\(setTimestampToDateTime())\n알림 수신 동의 처리가 되었습니다.", style: .alert, time: 1)
-                    UserDefaults.standard.setValue(topic, forKey: topic_key)
+                    requestEditDB(params: params) { _ in
+                        self.alert(title: title, message: "\(setTimestampToDateTime())\n알림 수신 동의 처리가 되었습니다.", style: .alert, time: 1)
+                    }; print("도픽구독성공: \(topic)_\(StoreObject.store_id)")
                 } else {
-                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
-                    sender.isOn = false
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
+                        MemberObject.topics[topic] = "false"
+                    }; print("도픽구독실패: \(topic)_\(StoreObject.store_id)"); sender.isOn = false
                 }
             }
         } else {
-            Messaging.messaging().unsubscribe(fromTopic: topic) { error in
+            Messaging.messaging().unsubscribe(fromTopic: "\(topic)_\(StoreObject.store_id)") { error in
                 self.customLoadingIndicator(animated: false)
                 if error == nil {
-                    self.alert(title: "영수증 주문요청", message: "\(setTimestampToDateTime())\n알림 수신 거부 처리가 되었습니다.", style: .alert, time: 1)
-                    UserDefaults.standard.removeObject(forKey: topic_key)
+                    requestEditDB(params: params) { _ in
+                        self.alert(title: title, message: "\(setTimestampToDateTime())\n알림 수신 거부 처리가 되었습니다.", style: .alert, time: 1) 
+                    }; print("도픽구독해제성공: \(topic)_\(StoreObject.store_id)")
                 } else {
-                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
-                    sender.isOn = true
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
+                        MemberObject.topics[topic] = "false"
+                    }; print("도픽구독해제실패: \(topic)_\(StoreObject.store_id)"); sender.isOn = true
                 }
             }
         }
@@ -170,12 +181,21 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        let identifier = segues[indexPath.section].1[indexPath.row]
+        guard identifier != "" else { return }
+        
         if indexPath.section == 0 {
             
         } else if indexPath.section == 1 {
-            
+            let segue = storyboard?.instantiateViewController(withIdentifier: "SafariVC") as! SafariVC
+            segue.linkUrl = identifier
+            navigationController?.pushViewController(segue, animated: true)
         } else if indexPath.section == 2 {
-            
+            if indexPath.row == 0 {
+                
+            } else if indexPath.row == 1 {
+                segueViewController(identifier: identifier)
+            }
         }
     }
 }

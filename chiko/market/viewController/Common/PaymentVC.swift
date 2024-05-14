@@ -2,8 +2,10 @@
 //  PaymentVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 3/7/24.
+//  Created by 장 제현 on 3/7/24.
 //
+
+/// 번역완료
 
 import UIKit
 import WebKit
@@ -15,23 +17,38 @@ class PaymentVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
-    var payment_type: String = ""
+    var type: String = ""               // 결제타입(상품, 물류)
+    var payment_type: String = ""       // 결제수단(OPCARD, ALIPAY, WECHATPAY)
     var item_name: String = ""
     var cny_cash: String = ""
     
-    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
+    @IBOutlet var labels: [UILabel]!
     
-    @IBOutlet weak var wkWebView: WKWebView!
+    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
+    @IBOutlet weak var testPayment_btn: UIButton!
+    
+    @IBOutlet weak var WkWebView: WKWebView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        PaymentVCdelegate = self
+        
         print(payment_type, cny_cash)
         
-        wkWebView.uiDelegate = self
-        wkWebView.navigationDelegate = self
-        wkWebView.configuration.preferences.javaScriptEnabled = true
-        wkWebView.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
+        testPayment_btn.isHidden = !(MemberObject.member_id == "receo0005")
+        testPayment_btn.addTarget(self, action: #selector(testPayment_btn(_:)), for: .touchUpInside)
+        
+        WkWebView.uiDelegate = self
+        WkWebView.navigationDelegate = self
+        WkWebView.configuration.preferences.javaScriptEnabled = true
+        WkWebView.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
         
         let htmlString = """
         <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -128,7 +145,26 @@ class PaymentVC: UIViewController {
         """
 
         // Load HTML string
-        wkWebView.loadHTMLString(htmlString, baseURL: URL(string: "https://www.chiko-ddpmall.com") ?? nil)
+        WkWebView.loadHTMLString(htmlString, baseURL: URL(string: "https://pg.innopay.co.kr/ipay/js/innopay_overseas-2.0.js") ?? nil)
+    }
+    
+    func clearCache() {
+        let websiteDataTypes: Set<String> = [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache]
+        let dateFrom = Date(timeIntervalSince1970: 0)
+        
+        WKWebsiteDataStore.default().removeData(ofTypes: websiteDataTypes, modifiedSince: dateFrom) {
+            print("Cache cleared successfully")
+        }
+    }
+    
+    @objc func testPayment_btn(_ sender: UIButton) {
+        navigationController?.popViewController(animated: true, completion: {
+            if self.type == "상품", let delegate = ReLiquidateVCdelegate {
+                delegate.payment(status: 200)
+            } else if self.type == "물류", let delegate = ReDeliveryPaymentVCdelegate {
+                delegate.payment(status: 200)
+            }
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -143,12 +179,13 @@ extension PaymentVC: WKUIDelegate, WKNavigationDelegate {
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         if navigationAction.targetFrame == nil {
             // 팝업을 허용하기 위해 새 WKWebView를 만듭니다.
-            let newWebView = WKWebView(frame: self.wkWebView.bounds, configuration: configuration)
+            let newWebView = WKWebView(frame: self.WkWebView.bounds, configuration: configuration)
             newWebView.navigationDelegate = self
-            self.wkWebView.addSubview(newWebView)
+            self.WkWebView.addSubview(newWebView)
             return newWebView
+        } else {
+            return nil
         }
-        return nil
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {

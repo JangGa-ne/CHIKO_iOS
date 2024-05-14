@@ -5,6 +5,8 @@
 //  Created by 장 제현 on 11/11/23.
 //
 
+/// 번역완료
+
 import UIKit
 import FirebaseFirestore
 import ImageSlideshow
@@ -13,6 +15,8 @@ import PanModal
 class ReGoodsDetailTC: UITableViewCell {
     
     var ItemOptionArray: [(color: String, price: Int, quantity: Int, sequence: Int, size: String)] = []
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var store_img: UIImageView!
     @IBOutlet weak var storeName_label: UILabel!
@@ -96,6 +100,9 @@ class ReGoodsDetailVC: UIViewController {
     var total_price: Int = 0
     var total_quantity: Int = 0
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var tableView: UITableView!
@@ -105,6 +112,9 @@ class ReGoodsDetailVC: UIViewController {
     
     override func loadView() {
         super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
         
         guard store_id != "" && item_key != "" else { return }
         
@@ -298,8 +308,11 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsDetailTC0", for: indexPath) as! ReGoodsDetailTC
             
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            
             cell.storeNameEng_label.text = data.store_name_eng
             cell.storeName_label.text = data.store_name
+            cell.store_btn.setTitle(translation("매장 보기"), for: .normal)
             cell.store_btn.addTarget(self, action: #selector(store_btn(_:)), for: .touchUpInside)
             cell.item_img.delegate = cell
             cell.item_img.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(item_img(_:))))
@@ -313,7 +326,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.itemSalePercent_label.text = "↓ \(percent)%"
             cell.categoryName_label.layer.cornerRadius = 7.5
             cell.categoryName_label.clipsToBounds = true
-            cell.categoryName_label.text = "\(data.item_category_name)".replacingOccurrences(of: ", ", with: " > ").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+            cell.categoryName_label.text = data.item_category_name.map { translation($0) }.joined(separator: " > ")
             cell.categoryName_label_width.constant = stringWidth(text: cell.categoryName_label.text!, fontSize: 12)+20
             cell.itemTop_img.isHidden = !(data.item_top_check)
             cell.optionSelect_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(optionSelect_view(_:))))
@@ -325,11 +338,11 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsDetailTC1", for: indexPath) as! ReGoodsDetailTC
             
             cell.optionColor_view.backgroundColor = .init(hex: "#\(ColorArray[data.color] ?? "ffffff")")
-            cell.optionSequence_label.text = "상품 \(data.sequence)."
+            cell.optionSequence_label.text = "\(translation("상품")) \(data.sequence)."
             if (data.price-GoodsObject.item_sale_price) < 0 {
-                cell.optionName_label.text = "\(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
+                cell.optionName_label.text = "\(translation(data.color)) + \(translation(data.size)) (₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
             } else {
-                cell.optionName_label.text = "\(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
+                cell.optionName_label.text = "\(translation(data.color)) + \(translation(data.size)) (+₩\(priceFormatter.string(from: (data.price-GoodsObject.item_sale_price) as NSNumber) ?? "0"))"
             }
             cell.optionDelete_btn.tag = indexPath.row; cell.optionDelete_btn.addTarget(self, action: #selector(optionDelete_btn(_:)), for: .touchUpInside)
             cell.optionMinus_btn.tag = indexPath.row; cell.optionMinus_btn.addTarget(cell, action: #selector(cell.optionMinus_btn(_:)), for: .touchUpInside)
@@ -340,18 +353,24 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
             return cell
         } else if indexPath.section == 2 {
             return tableView.dequeueReusableCell(withIdentifier: "ReGoodsDetailTC2", for: indexPath) as! ReGoodsDetailTC
-        } else if indexPath.section == 3 || indexPath.section == 4 {
+        } else if indexPath.section == 3 {
             
             let data = GoodsObject
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsDetailTC3", for: indexPath) as! ReGoodsDetailTC
             
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            
             cell.itemContent_label.text = data.item_content
             
-            cell.itemCategory_label.text = "\(data.item_category_name)".replacingOccurrences(of: ", ", with: " > ").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
-            cell.itemColor_label.text = "\(data.item_colors)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
-            cell.itemSize_label.text = "\(data.item_sizes)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
-            cell.itemStyle_label.text = data.item_style
-            cell.itemMaterial_label.text = "\(data.item_materials)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+            cell.itemCategory_label.text = data.item_category_name.map { translation($0) }.joined(separator: " > ")
+            cell.itemColor_label.text = data.item_colors.map { translation($0) }.joined(separator: ", ")
+            cell.itemSize_label.text = data.item_sizes.map { translation($0) }.joined(separator: ", ")
+            cell.itemStyle_label.text = translation(data.item_style)
+            cell.itemMaterial_label.text = data.item_materials.map { text in
+                guard let range = text.range(of: " ") else { return text }
+                let material = String(text[..<range.lowerBound])
+                return translation(material) + text.replacingOccurrences(of: "\(material) ", with: "")
+            }.joined(separator: ", ")
             cell.itemKey_label.text = data.item_key
             
             data.item_material_washing.forEach { (key: String, value: Any) in
@@ -360,7 +379,16 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
                 let tags: [Int] = (key != "washing") ? [map[value as? String ?? ""]].compactMap { $0 } : (value as? [String] ?? []).compactMap { map[$0] }
 
                 cell.itemMaterialWasingInfo_labels.forEach { label in
+                    
                     if tags.contains(label.tag) { label.textColor = .black }
+                    
+                    switch label.tag {
+                    case 13: label.text = translation("드라이\n클리닝")
+                    case 17: label.text = translation("표백제\n사용금지")
+                    case 18: label.text = translation("다림질\n금지")
+                    case 19: label.text = translation("세탁기\n금지")
+                    default: break
+                    }
                 }
             }
             

@@ -2,7 +2,7 @@
 //  WhGoods.swift
 //  market
 //
-//  Created by Busan Dynamic on 2/21/24.
+//  Created by 장 제현 on 2/21/24.
 //
 
 import UIKit

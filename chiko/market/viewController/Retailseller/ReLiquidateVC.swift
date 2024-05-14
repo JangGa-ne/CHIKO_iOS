@@ -2,13 +2,17 @@
 //  ReLiquidateVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 12/14/23.
+//  Created by 장 제현 on 12/14/23.
 //
+
+/// 번역완료
 
 import UIKit
 import PanModal
 
 class ReLiquidateTC: UITableViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var optionName_label: UILabel!
     @IBOutlet weak var optionQuantity_label: UILabel!
@@ -37,6 +41,9 @@ class ReLiquidateVC: UIViewController {
     var total_price: Int = 0
     var payment_type: String = ""
     var item_name: String = ""
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
@@ -84,6 +91,13 @@ class ReLiquidateVC: UIViewController {
     
     @IBOutlet weak var payment_btn: UIButton!
     
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -109,7 +123,7 @@ class ReLiquidateVC: UIViewController {
         itemTotalPrice_label.text = "₩\(priceFormatter.string(from: item_total_price as NSNumber) ?? "0")"
         moreItem_sv.isHidden = !(LiquidateArray.count > 1)
         moreItem_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moreItem_view(_:))))
-        moreItemCount_label.text = "\(LiquidateArray.count)개"
+        moreItemCount_label.text = String(format: NSLocalizedString("개", comment: ""), String(LiquidateArray.count))
         /// 주문정보
         orderStoreName_label.text = "\(StoreObject.store_name)(\(StoreObject.store_name_eng))"
         orderMemberName_label.text = MemberObject.member_name
@@ -134,7 +148,7 @@ class ReLiquidateVC: UIViewController {
             btn.tag = i; btn.addTarget(self, action: #selector(paymentType_btn(_:)), for: .touchUpInside)
         }
         /// M . Pay
-        reStoreName_label.text = "\(StoreObject.store_name)의"
+        reStoreName_label.text = String(format: NSLocalizedString("의", comment: ""), StoreObject.store_name)
         reStoreCash_label.text = priceFormatter.string(from: StoreObject.store_cash as NSNumber) ?? "0"
         reStoreCash_btn.layer.cornerRadius = 10
         reStoreCash_btn.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
@@ -205,14 +219,16 @@ class ReLiquidateVC: UIViewController {
     @objc func agreement_btn(_ sender: UIButton) {
         
         view.endEditing(true)
-            
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "SafariVC") as! SafariVC
         if sender.tag == 0 {
-            
+            segue.linkUrl = "https://sites.google.com/view/chiko-terms4"
         } else if sender.tag == 1 {
-            
+            segue.linkUrl = "https://sites.google.com/view/chiko-terms2"
         } else if sender.tag == 2 {
-            
+            segue.linkUrl = "https://sites.google.com/view/chiko-terms2"
         }
+        navigationController?.pushViewController(segue, animated: true)
     }
     
     @objc func payment_btn(_ sender: UIButton) {
@@ -234,97 +250,107 @@ class ReLiquidateVC: UIViewController {
         } else {
             
             let segue = storyboard?.instantiateViewController(withIdentifier: "PaymentVC") as! PaymentVC
+            segue.type = "상품"
             segue.payment_type = payment_type
             segue.item_name = item_name
             segue.cny_cash = String((Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100).replacingOccurrences(of: ".", with: "")
             navigationController?.pushViewController(segue, animated: true, completion: {
                 self.customLoadingIndicator(animated: false)
             })
+        }
+    }
+    
+    func payment(status: Int) {
+        
+        switch status {
+        case 200:
             
-//            var status_code: Int = 500
-//            let timestamp = setGMTUnixTimestamp()
-//            
-//            customLoadingIndicator(text: "결제 중...", animated: true)
-//            
-////            /// M.Pay 요청
-////            dispatchGroup.enter()
-////            requestMPay { status in
-////                status_code = status; dispatchGroup.leave()
-////            }
-////            
-////            if StoreObject.store_cash < total_price {
-////                customLoadingIndicator(animated: false)
-////                customAlert(message: "M.Pay 잔액이 부족합니다.", time: 1); return
-////            }
+            var status_code: Int = 500
+            let timestamp = setGMTUnixTimestamp()
+
+            customLoadingIndicator(text: "주문 중...", animated: true)
+
+//            /// M.Pay 요청
 //            dispatchGroup.enter()
-//            let params: [String: Any] = [
-//                "action": "set_goods",
-//                "AuthCode": "240401098592440",
-//                "AuthDate": "240401094010",
-//                "BuyerEmail": "geabzz89@gmail.com",
-//                "MID": "testpay01m",
-//                "Amt": "20000",
-//                "TID": "testpay01m21082404010939482256",
-//                "GoodsName": "APP_TEST",
-//                "MallReserved": "",
-//                "Currency": "CNY",
-//                "PayMethod": "ALIPAY",
-//                "name": "hong+gill+dong",
-//                "mallUserID": "",
-//                "MOID": "testpay01m202404010939",
-//                "ResultMsg": "success",
-//                "ResultCode": "3001",
-//                "weight": 0,
-//                "kr_price": total_price,
-//                "ch_price": (Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100,
-//                "gdre_key": "gdre\(timestamp)",
-//                "order_key": "or\(timestamp)",
-//                "order_id": MemberObject.member_id,
-//                "order_name": MemberObject.member_name,
-//                "order_position": MemberObject.member_grade,
-//                "order_datetime": String(timestamp),
-//                "payment_type": payment_type,
-//            ]
-//            /// Goods Receipt 요청
-//            requestReReceipt(action: "set_goods", params: params) { _, _, status in
-//                if status == 200 {
-//                    /// Liquidate 요청
-//                    dispatchGroup.enter()
-//                    requestReLiquidate(receipt_mode: self.receipt_mode, LiquidateArray: self.LiquidateArray, store_delivery_position: self.store_delivery_position, timestamp: timestamp, payment_type: self.payment_type, kr_order_total: self.total_price) { status in
-//                        status_code = status; dispatchGroup.leave()
-//                    }
-//                }; dispatchGroup.leave()
+//            requestMPay { status in
+//                status_code = status; dispatchGroup.leave()
 //            }
-//            
-//            dispatchGroup.notify(queue: .main) {
-//                
-//                self.customLoadingIndicator(animated: false)
-//                
-//                switch status_code {
-//                case 200:
-//                    ReLiquidateVCdelegate = nil
-//                    self.alert(title: "", message: "주문/결제가\n정상적으로 완료되었습니다.", style: .alert, time: 1) {
-//                        if self.receipt_mode {
-//                            self.navigationController?.popViewController(animated: true, completion: {
-//                                if let delegate = ReEnquiryReceiptDetailVCdelegate {
-//                                    delegate.loadingData()
-//                                }
-//                            })
-//                        } else {
-//                            self.navigationController?.popViewController(animated: false, completion: {
-//                                if let delegate = ReGoodsDetailVCdelegate {
-//                                    delegate.segueTabBarController(identifier: "ReMainTBC", idx: 2, animated: false)
-//                                    delegate.segueViewController(identifier: "ReOrderVC")
-//                                } else if let delegate = ReBasketVCdelegate {
-//                                    delegate.segueViewController(identifier: "ReOrderVC")
-//                                }
-//                            })
-//                        }
-//                    }
-//                default:
-//                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
-//                }
+//
+//            if StoreObject.store_cash < total_price {
+//                customLoadingIndicator(animated: false)
+//                customAlert(message: "M.Pay 잔액이 부족합니다.", time: 1); return
 //            }
+            let params: [String: Any] = [
+                "action": "set_goods",
+                "AuthCode": "",
+                "AuthDate": "",
+                "BuyerEmail": MemberObject.member_email,
+                "MID": "",
+                "Amt": String((Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100).replacingOccurrences(of: ".", with: ""),
+                "TID": "",
+                "GoodsName": item_name,
+                "MallReserved": "",
+                "Currency": "CNY",
+                "PayMethod": payment_type,
+                "name": MemberObject.member_name,
+                "mallUserID": "",
+                "MOID": "",
+                "ResultMsg": "success",
+                "ResultCode": "",
+                "weight": 0,
+                "kr_price": total_price,
+                "ch_price": (Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100,
+                "gdre_key": "gdre\(timestamp)",
+                "order_key": "or\(timestamp)",
+                "order_id": MemberObject.member_id,
+                "order_name": MemberObject.member_name,
+                "order_position": MemberObject.member_grade,
+                "order_datetime": String(timestamp),
+                "payment_type": payment_type,
+            ]
+            /// Goods Receipt 요청
+            dispatchGroup.enter()
+            requestReReceipt(action: "set_goods", params: params) { _, _, status in
+                if status == 200 {
+                    /// Liquidate 요청
+                    dispatchGroup.enter()
+                    requestReLiquidate(receipt_mode: self.receipt_mode, LiquidateArray: self.LiquidateArray, store_delivery_position: self.store_delivery_position, timestamp: timestamp, payment_type: self.payment_type, kr_order_total: self.total_price) { status in
+                        status_code = status; dispatchGroup.leave()
+                    }
+                }; dispatchGroup.leave()
+            }
+
+            dispatchGroup.notify(queue: .main) {
+
+                self.customLoadingIndicator(animated: false)
+
+                switch status_code {
+                case 200:
+                    ReLiquidateVCdelegate = nil
+                    self.alert(title: "", message: "주문/결제가\n정상적으로 완료되었습니다.", style: .alert, time: 1) {
+                        if self.receipt_mode {
+                            self.navigationController?.popViewController(animated: true, completion: {
+                                if let delegate = ReEnquiryReceiptDetailVCdelegate {
+                                    delegate.loadingData()
+                                }
+                            })
+                        } else {
+                            self.navigationController?.popViewController(animated: false, completion: {
+                                if let delegate = ReGoodsDetailVCdelegate {
+                                    delegate.segueTabBarController(identifier: "ReMainTBC", idx: 2, animated: false)
+                                    delegate.segueViewController(identifier: "ReOrderVC")
+                                } else if let delegate = ReBasketVCdelegate {
+                                    delegate.segueViewController(identifier: "ReOrderVC")
+                                }
+                            })
+                        }
+                    }
+                default:
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+                }
+            }
+        default:
+            self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
         }
     }
     
@@ -335,6 +361,7 @@ class ReLiquidateVC: UIViewController {
         
         store_delivery_position = StoreObject.store_delivery_position
         
+        PaymentVCdelegate = nil
         ReDeliveryVCdelegate = nil
     }
 }
@@ -351,11 +378,11 @@ extension ReLiquidateVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReLiquidateTC", for: indexPath) as! ReLiquidateTC
         
         if (data.price-LiquidateArray[0].item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "\(translation("옵션.")) \(translation(data.color)) + \(translation(data.size)) (-₩\(priceFormatter.string(from: -(data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "\(translation("옵션.")) \(translation(data.color)) + \(translation(data.size)) (+₩\(priceFormatter.string(from: (data.price-LiquidateArray[0].item_sale_price) as NSNumber) ?? "0"))"
         }
-        cell.optionQuantity_label.text = "수량. \(data.quantity)개"
+        cell.optionQuantity_label.text = "\(translation("수량.")) \(String(format: NSLocalizedString("개", comment: ""), String(data.quantity)))"
         cell.optionPrice_label.text = "₩\(priceFormatter.string(from: (data.price*data.quantity) as NSNumber) ?? "0")"
         
         return cell

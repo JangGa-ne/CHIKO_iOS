@@ -2,7 +2,7 @@
 //  s_time.swift
 //  market
 //
-//  Created by Busan Dynamic on 10/24/23.
+//  Created by 장 제현 on 10/24/23.
 //
 
 import UIKit

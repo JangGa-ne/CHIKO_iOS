@@ -2,11 +2,12 @@
 //  SignUpRegisterVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 10/24/23.
+//  Created by 장 제현 on 10/24/23.
 //
 
+/// 번역완료
+
 import UIKit
-import PanModal
 
 class SignUpRegisterVC: UIViewController {
     
@@ -21,7 +22,11 @@ class SignUpRegisterVC: UIViewController {
     var sms: Bool = false
     var email: Bool = false
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBOutlet weak var alert_v: UIView!
+    @IBOutlet weak var title_label: UILabel!
     @IBOutlet var agree_sv_s: [UIStackView]!
     @IBOutlet var agree_img_s: [UIImageView]!
     @IBOutlet var agree_label_s: [UILabel]!
@@ -32,9 +37,20 @@ class SignUpRegisterVC: UIViewController {
     @IBOutlet weak var sms_btn: UIButton!
     @IBOutlet weak var email_img: UIImageView!
     @IBOutlet weak var email_btn: UIButton!
+    @IBOutlet weak var marketing_label: UILabel!
     
     @IBOutlet weak var register_btn: UIButton!
     @IBAction func back_btn(_ sender: UIButton) { dismiss(animated: true, completion: nil) }
+    
+    override func loadView() {
+        super.loadView()
+        
+        title_label.text = "이용 약관을 읽고\n동의해 주세요."
+        marketing_label.text = "∙ 이벤트 및 혜택 정보를 받아 보실 수 있습니다.\n∙ 서비스의 주요 안내사항 및 거래정보 등과 관련된 내용은 수신여부와 관계없이 발송됩니다."
+        
+        labels.forEach { label in label.text = NSLocalizedString(label.text!, comment: "") }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,6 +84,10 @@ class SignUpRegisterVC: UIViewController {
         agree_btn_s.forEach { btn in btn.addTarget(self, action: #selector(normal_agree_btn(_:)), for: .touchUpInside) }
         sms_btn.addTarget(self, action: #selector(marketing_agree_btn(_:)), for: .touchUpInside)
         email_btn.addTarget(self, action: #selector(marketing_agree_btn(_:)), for: .touchUpInside)
+        
+        agreeDetail_btn_s.forEach { btn in
+            btn.addTarget(self, action: #selector(agreeDetail_btn(_:)), for: .touchUpInside)
+        }
         /// signup
         register_btn.addTarget(self, action: #selector(register_btn(_:)), for: .touchUpInside)
     }
@@ -126,6 +146,18 @@ class SignUpRegisterVC: UIViewController {
         }
     }
     
+    @objc func agreeDetail_btn(_ sender: UIButton) {
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "SafariVC") as! SafariVC
+        segue.modalPresentationStyle = .overCurrentContext; segue.transitioningDelegate = self
+        if sender.tag == 0 {
+            segue.linkUrl = "https://sites.google.com/view/chiko-terms1"
+        } else if sender.tag == 1 {
+            segue.linkUrl = "https://sites.google.com/view/chiko-terms3"
+        }
+        present(segue, animated: true, completion: nil)
+    }
+    
     @objc func register_btn(_ sender: UIButton) {
         
         var final_check: Bool = true
@@ -169,30 +201,18 @@ class SignUpRegisterVC: UIViewController {
                 UserDefaults.standard.setValue(MemberObject_signup.member_type, forKey: "member_type")
                 UserDefaults.standard.setValue(MemberObject_signup.member_id, forKey: "member_id")
                 UserDefaults.standard.setValue(MemberObject_signup.member_pw, forKey: "member_pw")
-                if StoreObject.store_type == "retailseller" {
-                    UserDefaults.standard.setValue("enquiry_\(StoreObject.store_id)", forKey: "re_enquiry")
-                } else if StoreObject.store_type == "wholesales" {
-                    UserDefaults.standard.setValue("enquiry_\(StoreObject.store_id)", forKey: "wh_enquiry")
-                }
                 DispatchQueue.main.asyncAfter(deadline: .now()+1) {
                     self.dismiss(animated: true) {
-                        SignUpMemberVCdelegate?.segueViewController(identifier: "SplashVC")
+                        if let delegate = SignUpMemberVCdelegate {
+                            delegate.segueViewController(identifier: "SplashVC")
+                        }
                     }
                 }
             default:
-                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
+                    /// document 및 storage 삭제 처리 필요
+                }
             }
         }
-    }
-}
-
-extension SignUpRegisterVC: PanModalPresentable {
-    
-    var panScrollable: UIScrollView? {
-        return nil
-    }
-    
-    var showDragIndicator: Bool {
-        return false
     }
 }

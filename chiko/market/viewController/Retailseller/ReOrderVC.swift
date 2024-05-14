@@ -2,8 +2,10 @@
 //  ReOrderVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 12/21/23.
+//  Created by 장 제현 on 12/21/23.
 //
+
+/// 번역완료
 
 import UIKit
 
@@ -13,6 +15,9 @@ class ReOrderItemOptionTC: UITableViewCell {
     var indexpath_row: Int = 0
     
     var OrderItemObject: ReOrderItemData = ReOrderItemData()
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var orderState_btn: UIButton!
     @IBOutlet weak var item_img_v: UIView!
@@ -58,17 +63,19 @@ extension ReOrderItemOptionTC: UITableViewDelegate, UITableViewDataSource {
         let data = OrderItemObject.item_option[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderItemOptionTC", for: indexPath) as! ReOrderItemOptionTC
         
+        cell.labels.forEach { label in label.text = translation(label.text!) }
+        
         if (data.price-OrderItemObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "\(translation("옵션.")) \(translation(data.color)) + \(translation(data.size)) (-₩\(priceFormatter.string(from: -(data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "\(translation("옵션.")) \(translation(data.color)) + \(translation(data.size)) (+₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         }
-        cell.optionQuantity_label.text = "주문수량. \(data.quantity)개"
+        cell.optionQuantity_label.text = "\(translation("주문수량.")) \(String(format: NSLocalizedString("개", comment: ""), String(data.quantity)))"
         cell.enterQuantity_label.isHidden = (data.enter_quantity == 0)
-        cell.enterQuantity_label.text = "입고수량. \(data.enter_quantity)개"
+        cell.enterQuantity_label.text = "\(translation("입고수량.")) \(String(format: NSLocalizedString("개", comment: ""), String(data.enter_quantity)))"
         cell.enterDate_label.isHidden = (data.enter_date == "")
         let content = NSMutableAttributedString()
-        content.append(NSAttributedString(string: "재입고예정일. ", attributes: [
+        content.append(NSAttributedString(string: "\(translation("재입고예정일.")) ", attributes: [
             .font: UIFont.boldSystemFont(ofSize: 14),
             .foregroundColor: UIColor.black
         ]))
@@ -97,6 +104,9 @@ class ReOrderTC: UITableViewCell {
     var indexpath_row: Int = 0
     
     var OrderItemArray: [ReOrderItemData] = []
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var datetime_label: UILabel!
     @IBOutlet weak var detail_btn: UIButton!
@@ -137,7 +147,7 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        var data = OrderItemArray[indexPath.row]
+        let data = OrderItemArray[indexPath.row]
         guard let cell = cell as? ReOrderItemOptionTC else { return }
         
         if !data.load { data.load = true
@@ -162,7 +172,10 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
         cell.OrderItemObject = data
         cell.viewDidLoad()
         
-        cell.orderState_btn.setTitle(delegate.ReOrderArray[indexpath_row].order_state, for: .normal)
+        cell.labels.forEach { label in label.text = translation(label.text!) }
+        cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+        
+        cell.orderState_btn.setTitle(translation(delegate.ReOrderArray[indexpath_row].order_state), for: .normal)
         cell.item_img_v.isHidden = (delegate.action == "receipt")
         cell.itemName_btn.setTitle(data.item_name, for: .normal)
         if delegate.action == "normal" {
@@ -215,6 +228,8 @@ class ReOrderVC: UIViewController {
     var ReOrderArray: [ReOrderData] = []
     let refreshControl: UIRefreshControl = UIRefreshControl()
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var scrollView: UIScrollView!
@@ -224,6 +239,12 @@ class ReOrderVC: UIViewController {
     @IBOutlet weak var changeReturnCancel_btn_width: NSLayoutConstraint!
     
     @IBOutlet weak var tableView: UITableView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -247,7 +268,7 @@ class ReOrderVC: UIViewController {
         loadingData()
     }
     
-    func loadingData() {
+    func loadingData(completion: (() -> Void)? = nil) {
         /// 데이터 삭제
         ReOrderArray.removeAll(); tableView.reloadData()
         /// Order 요청
@@ -263,8 +284,7 @@ class ReOrderVC: UIViewController {
                 self.problemAlert(view: self.tableView, type: "nodata")
             } else {
                 self.problemAlert(view: self.tableView, type: "error")
-            }
-            self.tableView.reloadData()
+            }; self.tableView.reloadData(); completion?()
         }
     }
     
@@ -295,6 +315,8 @@ class ReOrderVC: UIViewController {
         super.viewWillAppear(animated)
         
         setBackSwipeGesture(true)
+        
+        ReOrderDetailVCdelegate = nil
     }
 }
 
@@ -313,6 +335,15 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         cell.OrderItemArray = data.order_item
         cell.viewDidLoad()
         
+        cell.labels.forEach { label in 
+            if label.text!.contains("상품 입고 후의 검수를") {
+                label.text = translation("상품 입고 후의 검수를 거쳐 물류비가 적용될 예정입니다.\n물류비 미납 시 상품은 배송되지 않으며, 알림이 공지된 후 일정 기간 내에 결제가 이루어지지 않을 경우 폐기될 수 있습니다.")
+            } else {
+                label.text = translation(label.text!)
+            }
+        }
+        cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+        
         cell.datetime_label.text = setTimestampToDateTime(timestamp: Int(data.order_datetime) ?? 0, dateformat: "yyyy. MM. dd.")
         cell.detail_btn.tag = indexPath.row; cell.detail_btn.addTarget(self, action: #selector(detail_btn(_:)), for: .touchUpInside)
         cell.delete_btn.tag = indexPath.row; cell.delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
@@ -320,7 +351,7 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         cell.deliveryPayment_v.isHidden = !((data.order_state == "상품준비중") || (data.order_state == "배송준비중" && data.ch_total_delivery_price == 0.0))
 //        cell.deliveryPayment_btn.isHidden = delivery_price_zero && (data.order_state != "배송준비중")
         cell.deliveryPayment_btn.isHidden = (data.order_state != "배송준비중")
-        cell.deliveryPayment_btn.setTitle("물류비 결제하기", for: .normal)
+        cell.deliveryPayment_btn.setTitle(translation("물류비 결제하기"), for: .normal)
         cell.deliveryPayment_btn.tag = indexPath.row; cell.deliveryPayment_btn.addTarget(self, action: #selector(deliveryPayment_btn(_:)), for: .touchUpInside)
         cell.deliveryReceipt_v.isHidden = !cell.deliveryPayment_v.isHidden
         cell.deliveryTracking_btn.tag = indexPath.row; cell.deliveryTracking_btn.addTarget(self, action: #selector(deliveryTracking_btn(_:)), for: .touchUpInside)

@@ -2,7 +2,7 @@
 //  ReDeliveryPaymentVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 3/28/24.
+//  Created by 장 제현 on 3/28/24.
 //
 
 import UIKit
@@ -22,6 +22,7 @@ class ReDeliveryPaymentVC: UIViewController {
     
     var action: String = "normal"
     var OrderObject: ReOrderData = ReOrderData()
+    var item_name: String = ""
     var total_option_weight: Double = 0.0
     var total_delivery_price: Int = 0
     var payment_type: String = ""
@@ -53,6 +54,12 @@ class ReDeliveryPaymentVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        ReDeliveryPaymentVCdelegate = self
+        
+        if OrderObject.order_item.count > 0 {
+            item_name = OrderObject.order_item.count == 1 ? OrderObject.order_item[0].item_name : "\(OrderObject.order_item[0].item_name) 외 \(OrderObject.order_item.count-1)개"
+        }
+        
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
         if #available(iOS 15.0, *) { tableView.sectionHeaderTopPadding = .zero }
@@ -75,7 +82,7 @@ class ReDeliveryPaymentVC: UIViewController {
                 self.totalPrice_label.attributedText = attributedPriceString(krw: Int(self.total_option_weight*Double(PaymentObject.dpcostperkg)), cny: self.total_option_weight*Double(PaymentObject.dpcostperkg)/PaymentObject.exchange_rate)
             }
         } else {
-            totalWeight_label.text = "\(priceFormatter.string(from: Double(OrderObject.kr_total_delivery_price)/OrderObject.total_delivery_weight as NSNumber) ?? "0") x \(String(OrderObject.total_delivery_weight).replacingOccurrences(of: ".0", with: ""))kg"
+            totalWeight_label.text = "\(priceFormatter.string(from: Double(OrderObject.kr_total_delivery_price)/self.total_option_weight as NSNumber) ?? "0") x \(String(self.total_option_weight).replacingOccurrences(of: ".0", with: ""))kg"
             totalPrice_label.attributedText = attributedPriceString(krw: OrderObject.kr_total_delivery_price, cny: OrderObject.ch_total_delivery_price)
         }
         /// 결제수단
@@ -122,6 +129,7 @@ class ReDeliveryPaymentVC: UIViewController {
         } else {
             
             let segue = storyboard?.instantiateViewController(withIdentifier: "PaymentVC") as! PaymentVC
+            segue.type = "물류"
             segue.payment_type = payment_type
             segue.item_name = "물류비(\(totalPrice_label.text!))"
             if OrderObject.ch_total_delivery_price == 0.0 {
@@ -135,10 +143,102 @@ class ReDeliveryPaymentVC: UIViewController {
         }
     }
     
+    func payment(status: Int) {
+        
+        switch status {
+        case 200:
+            
+            var status_code: Int = 500
+            let timestamp = setGMTUnixTimestamp()
+
+            customLoadingIndicator(text: "물류비 결제 중...", animated: true)
+                
+            let params: [String: Any] = [
+                "action": "set_dpcost",
+                "store_id": StoreObject.store_id,
+                "AuthCode": "",
+                "AuthDate": "",
+                "BuyerEmail": MemberObject.member_email,
+                "MID": "",
+                "Amt": String(format: "%.2f", total_option_weight*Double(PaymentObject.dpcostperkg)/PaymentObject.exchange_rate).replacingOccurrences(of: ".", with: ""),
+                "TID": "",
+                "GoodsName": "\(item_name)의 물류비",
+                "MallReserved": "",
+                "Currency": "CNY",
+                "PayMethod": payment_type,
+                "name": MemberObject.member_name,
+                "mallUserID": "",
+                "MOID": "",
+                "ResultMsg": "success",
+                "ResultCode": "",
+                "weight": total_option_weight,
+                "kr_price": Int(total_option_weight*Double(PaymentObject.dpcostperkg)),
+                "ch_price": (total_option_weight*Double(PaymentObject.dpcostperkg)/PaymentObject.exchange_rate*100).rounded()/100,
+                "dpre_key": "dpre\(timestamp)",
+                "order_key": OrderObject.order_key,
+                "order_id": MemberObject.member_id,
+                "order_name": MemberObject.member_name,
+                "order_position": MemberObject.member_grade,
+                "order_datetime": String(timestamp),
+                "payment_type": payment_type,
+            ]
+            
+            var ReceiptObject: ReceiptData = ReceiptData()
+            /// DpCost Receipt 요청
+            dispatchGroup.enter()
+            requestReReceipt(action: "set_dpcost", params: params) { _, object, status in
+                /// Order 요청
+                if status == 200, let delegate = ReOrderVCdelegate {
+                    dispatchGroup.enter()
+                    delegate.loadingData {
+                        dispatchGroup.leave()
+                    }
+                }; ReceiptObject = object; status_code = status; dispatchGroup.leave()
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                
+                self.customLoadingIndicator(animated: false)
+                
+                switch status_code {
+                case 200:
+                    
+                    if let delegate1 = ReOrderVCdelegate {
+                        
+                        self.customLoadingIndicator(text: "처리 중...", animated: true)
+                        
+                        if let matchedData = delegate1.ReOrderArray.first(where: { $0.order_key == ReceiptObject.order_key }) {
+                            if let delegate2 = ReOrderDetailVCdelegate {
+                                delegate2.OrderObject = matchedData; delegate2.tableView.reloadData()
+                            }
+                            self.alert(title: "", message: "물류비 결제가\n정상적으로 완료되었습니다.", style: .alert, time: 1) {
+                                self.navigationController?.popViewController(animated: true)
+                            }
+                        } else {
+                            self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
+                                /// 결제 취소하는 로직 필요함
+                            }
+                        }
+                        
+                        self.customLoadingIndicator(animated: false)
+                    }
+                default:
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
+                        /// 결제 취소하는 로직 필요함
+                    }
+                }
+            }
+        default:
+            self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         setBackSwipeGesture(false)
+        
+        PaymentVCdelegate = nil
     }
 }
 

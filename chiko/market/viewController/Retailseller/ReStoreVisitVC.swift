@@ -2,7 +2,7 @@
 //  ReStoreVisitVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 11/20/23.
+//  Created by 장 제현 on 11/20/23.
 //
 
 import UIKit
@@ -235,8 +235,8 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
         
         customLoadingIndicator(animated: true)
         
-        /// ReBookMark Add / Delete 요청
-        requestReBookMark(action: action, re_store_id: StoreObject.store_id, wh_store_id: data.store_id) { status in
+        /// Scrap Add / Delete 요청
+        requestScrap(action: action, re_store_id: StoreObject.store_id, wh_store_id: data.store_id) { status in
             
             self.customLoadingIndicator(animated: false)
             
@@ -248,7 +248,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
                     data.account_counting += 1
                     imageUrlStringToData(from: self.VisitObject.StoreObject.store_mainphoto_img) { mimeType, imgData in
                         DispatchQueue.main.async {
-                            self.customAlert(message: data.store_name, bookmark: true, image: UIImage(data: imgData ?? Data()) ?? UIImage(), time: 2)
+                            self.customAlert(message: data.store_name, scrap: true, image: UIImage(data: imgData ?? Data()) ?? UIImage(), time: 2)
                         }
                     }
                 } else if action == "favorites_delete" {
@@ -257,7 +257,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
                 }
                 self.tableView.reloadData()
                 
-                if let delegate = ReBookMarkVCdelegate {
+                if let delegate = ScrapVCdelegate {
                     delegate.loadingData()
                 }
             default:

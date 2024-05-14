@@ -2,7 +2,7 @@
 //  ReGoodsTC.swift
 //  
 //
-//  Created by Busan Dynamic on 11/8/23.
+//  Created by 장 제현 on 11/8/23.
 //
 
 import UIKit

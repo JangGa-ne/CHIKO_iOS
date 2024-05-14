@@ -2,12 +2,16 @@
 //  ReMyPageVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 11/13/23.
+//  Created by 장 제현 on 11/13/23.
 //
+
+/// 번역완료
 
 import UIKit
 
 class ReMyPageTC: UITableViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var mPay_view: UIView!
     @IBOutlet weak var mPay_label: UILabel!
@@ -26,6 +30,12 @@ class ReMyPageTC: UITableViewCell {
     
     @IBOutlet weak var title_label: UILabel!
     @IBOutlet weak var title_bottom: NSLayoutConstraint!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
 }
 
 class ReMyPageVC: UIViewController {
@@ -45,8 +55,12 @@ class ReMyPageVC: UIViewController {
         ("고객센터", [""]),
     ]
     
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBOutlet weak var storeMain_img: UIImageView!
     @IBOutlet weak var choiceStore_btn: UIButton!
+    @IBOutlet weak var noticeDot_v: UIView!
+    @IBOutlet weak var notice_btn: UIButton!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var logout_btn: UIButton!
@@ -56,8 +70,12 @@ class ReMyPageVC: UIViewController {
         
         ReMyPageVCdelegate = self
         
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+        
 //        setKingfisher(imageView: storeMain_img, imageUrl: StoreObject.store_mainphoto_img, cornerRadius: 15)
 //        choiceStore_btn.addTarget(self, action: #selector(choiceStore_btn(_:)), for: .touchUpInside)
+        noticeDot_v.isHidden = notice_read
+        notice_btn.addTarget(self, action: #selector(notice_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
@@ -71,13 +89,17 @@ class ReMyPageVC: UIViewController {
         segueViewController(identifier: "ChoiceStoreVC")
     }
     
+    @objc func notice_btn(_ sender: UIButton) {
+        segueViewController(identifier: "NoticeVC")
+    }
+    
     @objc func logout_btn(_ sender: UIButton) {
         
-        let alert = UIAlertController(title: "", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "로그아웃", style: .destructive, handler: { _ in
+        let alert = UIAlertController(title: "", message: translation("로그아웃 하시겠습니까?"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: translation("로그아웃"), style: .destructive, handler: { _ in
             self.segueViewController(identifier: "SignInVC")
         }))
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: translation("취소"), style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
@@ -86,9 +108,10 @@ class ReMyPageVC: UIViewController {
         
         setBackSwipeGesture(false)
         
+        NoticeVCdelegate = nil
         ChoiceStoreVCdelegate = nil
         ReBasketVCdelegate = nil
-        ReBookMarkVCdelegate = nil
+        ScrapVCdelegate = nil
         
         tableView.reloadData()
     }
@@ -103,7 +126,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTCT") as! ReMyPageTC
-        cell.title_label.text = menus[section-1].title
+        cell.title_label.text = translation(menus[section-1].title)
         return cell
     }
     
@@ -135,7 +158,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         } else {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReMyPageTC1", for: indexPath) as! ReMyPageTC
-            cell.title_label.text = menus[indexPath.section-1].content[indexPath.row]
+            cell.title_label.text = translation(menus[indexPath.section-1].content[indexPath.row])
             cell.title_bottom.constant = menus[indexPath.section-1].content.count-1 == indexPath.row ? 10 : 0
             return cell
         }
@@ -150,7 +173,7 @@ extension ReMyPageVC: UITableViewDelegate, UITableViewDataSource {
         case 1: segueViewController(identifier: "MemberVC")
         case 2: segueViewController(identifier: "ReOrderVC")
         case 3: segueViewController(identifier: "ReBasketVC")
-        case 4: segueViewController(identifier: "ReBookMarkVC")
+        case 4: segueViewController(identifier: "ScrapVC")
         case 5: segueViewController(identifier: "SettingVC")
         case 6: segueViewController(identifier: "ReEnquiryReceiptVC")
         default:

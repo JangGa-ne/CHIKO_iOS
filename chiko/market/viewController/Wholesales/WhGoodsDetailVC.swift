@@ -2,7 +2,7 @@
 //  WhGoodsDetailVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 12/8/23.
+//  Created by 장 제현 on 12/8/23.
 //
 
 import UIKit
@@ -59,6 +59,7 @@ class WhGoodsDetailVC: UIViewController {
     @IBOutlet var itemMaterialWasingInfo_labels: [UILabel]!
     
     @IBOutlet weak var edit_btn: UIButton!
+    @IBOutlet weak var soldOut_btn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,7 +94,7 @@ class WhGoodsDetailVC: UIViewController {
         itemSalePercent_label.text = "↓ \(percent)%"
         categoryName_label.layer.cornerRadius = 7.5
         categoryName_label.clipsToBounds = true
-        categoryName_label.text = "\(data.item_category_name)".replacingOccurrences(of: ", ", with: " > ").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+        categoryName_label.text = data.item_category_name.map { $0 }.joined(separator: " > ")
         categoryName_label_width.constant = stringWidth(text: categoryName_label.text!, fontSize: 12)+20
         itemTop_img.isHidden = !(data.item_top_check)
         
@@ -101,11 +102,11 @@ class WhGoodsDetailVC: UIViewController {
         itemContent_label.isHidden = (data.item_content == "")
         itemContent_label.text = data.item_content
         
-        itemCategory_label.text = "\(data.item_category_name)".replacingOccurrences(of: ", ", with: " > ").replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
-        itemColor_label.text = "\(data.item_colors)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
-        itemSize_label.text = "\(data.item_sizes)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+        itemCategory_label.text = data.item_category_name.map { $0 }.joined(separator: " > ")
+        itemColor_label.text = data.item_colors.map { $0 }.joined(separator: ", ")
+        itemSize_label.text = data.item_sizes.map { $0 }.joined(separator: ", ")
         itemStyle_label.text = data.item_style
-        itemMaterial_label.text = "\(data.item_materials)".replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+        itemMaterial_label.text = data.item_materials.map { $0 }.joined(separator: ", ")
         itemDateTime_label.text = setTimestampToDateTime(timestamp: Int(data.item_key) ?? 0, dateformat: "yyyy.MM.dd a hh:mm")
         itemKey_label.text = data.item_key
         
@@ -118,11 +119,22 @@ class WhGoodsDetailVC: UIViewController {
             let tags: [Int] = (key != "washing") ? [map[value as? String ?? ""]].compactMap { $0 } : (value as? [String] ?? []).compactMap { map[$0] }
 
             itemMaterialWasingInfo_labels.forEach { label in
+                
                 if tags.contains(label.tag) { label.textColor = .black }
+                
+                switch label.tag {
+                case 13: label.text = translation("드라이\n클리닝")
+                case 17: label.text = translation("표백제\n사용금지")
+                case 18: label.text = translation("다림질\n금지")
+                case 19: label.text = translation("세탁기\n금지")
+                default: break
+                }
             }
         }
         
         edit_btn.addTarget(self, action: #selector(edit_btn(_:)), for: .touchUpInside)
+        soldOut_btn.addTarget(self, action: #selector(soldOut_btn(_:)), for: .touchUpInside)
+        soldOut_btn.isHidden = true
     }
                                     
     @objc func item_img(_ sender: UITapGestureRecognizer) {
@@ -146,6 +158,10 @@ class WhGoodsDetailVC: UIViewController {
             segue.ColorArray.append((option_name: color, option_color: ColorArray[color] ?? "ffffff"))
         }
         navigationController?.pushViewController(segue, animated: true)
+    }
+    
+    @objc func soldOut_btn(_ sender: UIButton) {
+        alert(title: "", message: "서비스 준비중 입니다...", style: .alert, time: 1)
     }
     
     override func viewWillAppear(_ animated: Bool) {

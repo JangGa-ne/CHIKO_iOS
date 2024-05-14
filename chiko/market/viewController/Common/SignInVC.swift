@@ -2,8 +2,10 @@
 //  SignInVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/16.
+//  Created by 장 제현 on 2023/10/16.
 //
+
+/// 번역완료
 
 import UIKit
 import FirebaseMessaging
@@ -13,6 +15,9 @@ class SignInVC: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var navi_label: UILabel!
     @IBOutlet weak var navi_lineView: UIView!
@@ -30,6 +35,9 @@ class SignInVC: UIViewController {
     
     override func loadView() {
         super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
                 
         NotificationCenter.default.addObserver(self, selector: #selector(show(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(hidden(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -53,10 +61,12 @@ class SignInVC: UIViewController {
         setKeyboard()
         // init
         appDelegate.member_type = "retailseller"
-        UserDefaults.standard.bool(forKey: "enquiry_\(StoreObject.store_id)")
         /// 푸시 구독해제
-        Messaging.messaging().unsubscribe(fromTopic: "enquiry_\(StoreObject.store_id)") { error in
-            if error == nil { print("도픽구독해제성공: enquiry_\(StoreObject.store_id)") } else { print("도픽구독해제실패: enquiry") }
+        let store_id: String = StoreObject.store_id
+        ["local", "marketing", "dpcost_request", "enquiry"].forEach { topic in
+            Messaging.messaging().unsubscribe(fromTopic: "\(topic)_\(store_id)") { error in
+                error == nil ? print("도픽구독해제성공: \(topic)_\(store_id)") : print("도픽구독해제실패: \(topic)_\(store_id)")
+            }
         }
         /// 데이터 삭제
         /// Common
@@ -65,6 +75,7 @@ class SignInVC: UIViewController {
         MemberObject = MemberData()
         StoreObject = StoreData()
         StoreArray.removeAll()
+        NoticeArray.removeAll()
         /// Retailseller
         ReStoreArray_best.removeAll()
         ReGoodsArray_best.removeAll()
@@ -94,7 +105,7 @@ class SignInVC: UIViewController {
         }
         /// member_id, member_pw
         ([memberId_tf, memberPw_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["아이디를 입력하세요.", "비밀번호를 입력하세요."][i], color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: translation(["아이디를 입력하세요.", "비밀번호를 입력하세요."][i]), color: .black.withAlphaComponent(0.3))
             if i != [memberId_tf, memberPw_tf].count-2 { tf.returnKeyType = .next } else { tf.returnKeyType = .done }
         }
         /// find id/pw
@@ -104,7 +115,7 @@ class SignInVC: UIViewController {
             btn.tag = i; btn.addTarget(self, action: #selector(sign_btn(_:)), for: .touchUpInside)
         }
         
-        memberId_tf.text = "receo0005"; memberPw_tf.text = "qqq111---"
+//        memberId_tf.text = "receo0005"; memberPw_tf.text = "qqq111---"
     }
     
     @objc func memberType_btn(_ sender: UIButton) {
@@ -117,7 +128,7 @@ class SignInVC: UIViewController {
             retailseller_btn.isSelected = true; wholesales_btn.isSelected = false
             retailseller_btn.backgroundColor = .H_8CD26B; wholesales_btn.backgroundColor = .H_F2F2F7
             
-            memberId_tf.text = "receo0005"; memberPw_tf.text = "qqq111---"
+//            memberId_tf.text = "receo0005"; memberPw_tf.text = "qqq111---"
             
         } else if sender.tag == 1 {
             /// wholesales
@@ -125,20 +136,20 @@ class SignInVC: UIViewController {
             retailseller_btn.isSelected = false; wholesales_btn.isSelected = true
             retailseller_btn.backgroundColor = .H_F2F2F7; wholesales_btn.backgroundColor = .H_8CD26B
             
-            memberId_tf.text = "whceo0005"; memberPw_tf.text = "qqq111---"
+//            memberId_tf.text = "whceo0005"; memberPw_tf.text = "qqq111---"
         }
     }
     
     @objc func findIdPw_btn(_ sender: UIButton) {
         
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "아이디 찾기", style: .default, handler: { _ in
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: translation("아이디 찾기"), style: .default, handler: { _ in
             
         }))
-        alert.addAction(UIAlertAction(title: "비밀번호 찾기", style: .default, handler: { _ in
-            
+        alert.addAction(UIAlertAction(title: translation("비밀번호 찾기"), style: .default, handler: { _ in
+            self.segueViewController(identifier: "FindVC")
         }))
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: translation("취소"), style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
@@ -162,27 +173,34 @@ class SignInVC: UIViewController {
                 dispatchGroup.enter()
                 requestSignIn { status in
                     
-                    if status == 200, MemberObject.member_type == "retailseller" {
-                        /// ReMain 요청
+                    if status == 200 {
+                        /// Notice 요청
                         dispatchGroup.enter()
-                        requestReMain { status in
-                            dispatchGroup.leave()
+                        requestNotice { status in
+                            notice_read = NoticeArray.allSatisfy { $0.read_or_not }; dispatchGroup.leave()
                         }
-                        /// Best Items 요청
-                        dispatchGroup.enter()
-                        requestBestItems { status in
-                            dispatchGroup.leave()
-                        }
-                        /// ReBasket 요청
-                        dispatchGroup.enter()
-                        requestReBasket(type: "get") { status in
-                            dispatchGroup.leave()
-                        }
-                    } else if status == 200, MemberObject.member_type == "wholesales" {
-                        /// WhRealTime 요청
-                        dispatchGroup.enter()
-                        requestWhRealTime(filter: "최신순", limit: 3) { status in
-                            dispatchGroup.leave()
+                        if MemberObject.member_type == "retailseller" {
+                            /// ReMain 요청
+                            dispatchGroup.enter()
+                            requestReMain { status in
+                                dispatchGroup.leave()
+                            }
+                            /// Best Items 요청
+                            dispatchGroup.enter()
+                            requestBestItems { status in
+                                dispatchGroup.leave()
+                            }
+                            /// ReBasket 요청
+                            dispatchGroup.enter()
+                            requestReBasket(type: "get") { status in
+                                dispatchGroup.leave()
+                            }
+                        } else if MemberObject.member_type == "wholesales" {
+                            /// WhRealTime 요청
+                            dispatchGroup.enter()
+                            requestWhRealTime(filter: "최신순", limit: 3) { status in
+                                dispatchGroup.leave()
+                            }
                         }
                     }
                     
@@ -198,7 +216,9 @@ class SignInVC: UIViewController {
                         UserDefaults.standard.setValue(appDelegate.member_type, forKey: "member_type")
                         UserDefaults.standard.setValue(appDelegate.member_id, forKey: "member_id")
                         UserDefaults.standard.setValue(appDelegate.member_pw, forKey: "member_pw")
+//                        /// 매장선택
 //                        self.segueViewController(identifier: "ChoiceStoreVC")
+                        
                         if MemberObject.member_type == "retailseller" {
                             self.segueTabBarController(identifier: "ReMainTBC", idx: 0)
                         } else if MemberObject.member_type == "wholesales" {
@@ -207,7 +227,7 @@ class SignInVC: UIViewController {
                             } else if StoreObject.waiting_step == 2 {
                                 self.segueViewController(identifier: "WhHomeVC")
                             }
-                        }
+                        }; if push_type != "" { push_type.removeAll(); segue_type.removeAll() }
                     case 500:
                         self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                     default:
@@ -218,15 +238,15 @@ class SignInVC: UIViewController {
         } else if sender.tag == 1 {
             /// signup
             let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            alert.addAction(UIAlertAction(title: "소매자 회원가입", style: .default, handler: { _ in
+            alert.addAction(UIAlertAction(title: translation("소매자 회원가입"), style: .default, handler: { _ in
                 MemberObject_signup.member_type = "retailseller"
                 DispatchQueue.main.async { self.segueViewController(identifier: "SignUpMemberVC") }
             }))
-            alert.addAction(UIAlertAction(title: "도매 판매자 회원가입", style: .default, handler: { _ in
+            alert.addAction(UIAlertAction(title: translation("도매 판매자 회원가입"), style: .default, handler: { _ in
                 MemberObject_signup.member_type = "wholesales"
                 DispatchQueue.main.async { self.segueViewController(identifier: "SignUpMemberVC") }
             }))
-            alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: translation("취소"), style: .cancel, handler: nil))
             present(alert, animated: true, completion: nil)
         }
     }

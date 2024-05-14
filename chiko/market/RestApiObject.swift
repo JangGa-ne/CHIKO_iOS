@@ -2,7 +2,7 @@
 //  RestApiObject.swift
 //  market
 //
-//  Created by Busan Dynamic on 2023/10/16.
+//  Created by 장 제현 on 2023/10/16.
 //
 
 import UIKit
@@ -65,6 +65,7 @@ class MemberData {
     var signup_time: String = ""
     var profile_img: String = ""
     var my_store: String = ""
+    var topics: [String: Any] = [:]
     // 소매자
     var member_idcard_img: String = ""
     
@@ -95,6 +96,7 @@ func setMember(memberDict: [String: Any]) -> MemberData {
     memberValue.member_pw = memberDict["user_pw"] as? String ?? ""
     memberValue.member_type = memberDict["user_type"] as? String ?? ""
     memberValue.member_idcard_img = memberDict["user_idcard_img"] as? String ?? ""
+    memberValue.topics = memberDict["topics"] as? [String: Any] ?? [:]
     /// 데이터 추가
     return memberValue
 }
@@ -815,4 +817,30 @@ func setReceipt(receiptDict: [String: Any]) -> ReceiptData {
     receiptValue.payment_type = receiptDict["payment_type"] as? String ?? ""
     
     return receiptValue
+}
+
+class NoticeData {
+    
+    var board_index: String = ""
+    var body: String = ""
+    var datetime: String = ""
+    var order_key: String = ""
+    var read_or_not: Bool = false
+    var segue: String = ""
+    var title: String = ""
+    var type: String = ""
+}
+
+func setNotice(noticeDict: [String: Any]) -> NoticeData {
+    
+    let noticeValue = NoticeData()
+    noticeValue.board_index = noticeDict["board_index"] as? String ?? ""
+    noticeValue.body = noticeDict["body"] as? String ?? ""
+    noticeValue.datetime = noticeDict["datetime"] as? String ?? ""
+    noticeValue.order_key = noticeDict["order_key"] as? String ?? ""
+    noticeValue.read_or_not = Bool(noticeDict["read_or_not"] as? String ?? "false") ?? false
+    noticeValue.segue = noticeDict["segue"] as? String ?? ""
+    noticeValue.title = noticeDict["title"] as? String ?? ""
+    noticeValue.type = noticeDict["type"] as? String ?? ""
+    return noticeValue
 }

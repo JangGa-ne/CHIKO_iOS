@@ -2,7 +2,7 @@
 //  ReOrderDetailVC.swift
 //  market
 //
-//  Created by Busan Dynamic on 12/22/23.
+//  Created by 장 제현 on 12/22/23.
 //
 
 import UIKit
@@ -73,9 +73,9 @@ extension ReOrderDetailTC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReOrderDetailItemOptionTC", for: indexPath) as! ReOrderDetailTC
         
         if (data.price-OrderItemObject.item_sale_price) < 0 {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(translation(data.size)) (₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         } else {
-            cell.optionName_label.text = "옵션. \(data.color) + \(data.size) (+₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
+            cell.optionName_label.text = "옵션. \(data.color) + \(translation(data.size)) (+₩\(priceFormatter.string(from: (data.price-OrderItemObject.item_sale_price) as NSNumber) ?? "0"))"
         }
         cell.optionQuantity_label.text = "주문수량. \(data.quantity)개"
         cell.enterQuantity_label.isHidden = (data.enter_quantity == 0)
@@ -119,6 +119,8 @@ class ReOrderDetailVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        ReOrderDetailVCdelegate = self
         
         tableView.separatorStyle = .none
         tableView.contentInset = .zero
