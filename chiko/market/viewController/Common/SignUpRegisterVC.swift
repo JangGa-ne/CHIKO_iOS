@@ -48,7 +48,7 @@ class SignUpRegisterVC: UIViewController {
         title_label.text = "이용 약관을 읽고\n동의해 주세요."
         marketing_label.text = "∙ 이벤트 및 혜택 정보를 받아 보실 수 있습니다.\n∙ 서비스의 주요 안내사항 및 거래정보 등과 관련된 내용은 수신여부와 관계없이 발송됩니다."
         
-        labels.forEach { label in label.text = NSLocalizedString(label.text!, comment: "") }
+        labels.forEach { label in label.text = translation(label.text!) }
         buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
     }
     

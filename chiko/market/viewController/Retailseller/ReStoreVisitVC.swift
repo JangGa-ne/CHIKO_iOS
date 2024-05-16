@@ -5,6 +5,8 @@
 //  Created by 장 제현 on 11/20/23.
 //
 
+/// 번역완료
+
 import UIKit
 
 class ReStoreVisitCC: UICollectionViewCell {
@@ -17,6 +19,9 @@ class ReStoreVisitCC: UICollectionViewCell {
 class ReStoreVisitTC: UITableViewCell {
     
     var GoodsArray: [GoodsData] = []
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var store_img: UIImageView!
     @IBOutlet weak var storeNameEng_label: UILabel!
@@ -185,7 +190,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             cell.storeNameEng_label.text = data.store_name_eng
             cell.storeName_label.text = data.store_name
             cell.storeTel_label.text = "Tel. \(data.store_tel)"
-            cell.storeCounting_label.text = "거래처 수 \(data.account_counting) ∙ 전체상품 수 \(data.item_full_counting) ∙ 거래처상품 수 \(data.item_account_counting)"
+            cell.storeCounting_label.text = "\(translation("거래처 수")) \(data.account_counting) ∙ \(translation("전체상품 수")) \(data.item_full_counting) ∙ \(translation("거래처상품 수")) \(data.item_account_counting)"
             cell.storeTag_label.isHidden = true//(data.store_tag.count == 0)
             data.store_tag.forEach { store_tag in cell.storeTag_label.text!.append("#\(store_tag) ") }
             
@@ -203,14 +208,17 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReStoreVisitTC1", for: indexPath) as! ReStoreVisitTC
             
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+            
             if indexPath.row == 1 {
                 cell.tiele_label.text = "BEST"
                 cell.GoodsArray = VisitObject.ReGoodsArray_best
             } else if indexPath.row == 2 {
-                cell.tiele_label.text = "전체 공개"
+                cell.tiele_label.text = translation("전체 공개")
                 cell.GoodsArray = VisitObject.GoodsArray_full
             } else if indexPath.row == 3 {
-                cell.tiele_label.text = "거래처만 공개"
+                cell.tiele_label.text = translation("거래처만 공개")
                 cell.GoodsArray = VisitObject.GoodsArray_business
             }
             cell.detail_btn.tag = indexPath.row; cell.detail_btn.addTarget(self, action: #selector(detail_btn(_:)), for: .touchUpInside)

@@ -75,11 +75,11 @@ extension ReOrderItemOptionTC: UITableViewDelegate, UITableViewDataSource {
         cell.enterQuantity_label.text = "\(translation("입고수량.")) \(String(format: NSLocalizedString("개", comment: ""), String(data.enter_quantity)))"
         cell.enterDate_label.isHidden = (data.enter_date == "")
         let content = NSMutableAttributedString()
-        content.append(NSAttributedString(string: "\(translation("재입고예정일.")) ", attributes: [
+        content.append(NSAttributedString(string: translation("재입고예정일.")+" ", attributes: [
             .font: UIFont.boldSystemFont(ofSize: 14),
             .foregroundColor: UIColor.black
         ]))
-        content.append(NSAttributedString(string: data.enter_date, attributes: [
+        content.append(NSAttributedString(string: translation(data.enter_date), attributes: [
             .font: UIFont.boldSystemFont(ofSize: 14),
             .foregroundColor: UIColor.systemRed
         ]))

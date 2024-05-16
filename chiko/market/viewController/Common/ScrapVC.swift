@@ -5,6 +5,8 @@
 //  Created by 장 제현 on 11/30/23.
 //
 
+/// 번역완료
+
 import UIKit
 
 class ScrapTC: UITableViewCell {
@@ -23,9 +25,17 @@ class ScrapVC: UIViewController {
     
     var ScrapArray: [StoreData] = []
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var tableView: UITableView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -118,7 +128,7 @@ extension ScrapVC: UITableViewDelegate, UITableViewDataSource {
         
         guard StoreObject.store_type == "retailseller" else { return nil }
         
-        return "팔로우 취소"
+        return translation("팔로우 취소")
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {

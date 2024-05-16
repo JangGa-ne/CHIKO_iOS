@@ -110,7 +110,7 @@ class SignUpStoreVC: UIViewController {
     override func loadView() {
         super.loadView()
         
-        labels.forEach { label in label.text = NSLocalizedString(label.text!, comment: "") }
+        labels.forEach { label in label.text = translation(label.text!) }
         buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
     }
     

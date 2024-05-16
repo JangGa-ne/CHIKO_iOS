@@ -803,7 +803,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = market/market.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = UPXJ67DYPF;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -811,7 +811,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = CHIKO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "사진을 찍으려면, 카메라 권한을 허용해 주세요.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "첨부(프로필, 매장대표사진, 썸네일 등) 해야하는 이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = Main.storyboard;
@@ -844,7 +844,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = market/market.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = UPXJ67DYPF;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -852,7 +852,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = CHIKO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "사진을 찍으려면, 카메라 권한을 허용해 주세요.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "첨부(프로필, 매장대표사진, 썸네일 등) 해야하는 이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = Main.storyboard;

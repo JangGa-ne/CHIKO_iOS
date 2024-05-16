@@ -28,7 +28,7 @@ class FindVC: UIViewController {
     override func loadView() {
         super.loadView()
         
-        labels.forEach { label in label.text = NSLocalizedString(label.text!, comment: "") }
+        labels.forEach { label in label.text = translation(label.text!) }
     }
     
     override func viewDidLoad() {

@@ -93,8 +93,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if appBuildCode < storeBuildCode, PaymentVCdelegate == nil {
                 
-                let alert = UIAlertController(title: "앱 업데이트 알림", message: "최신버전이 업데이트 되었습니다.\n업데이트 하시겠습니까?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "업데이트", style: .default, handler: { _ in
+                let alert = UIAlertController(title: translation("앱 업데이트 알림"), message: translation("최신버전이 업데이트 되었습니다.\n업데이트 하시겠습니까?"), preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: translation("업데이트"), style: .default, handler: { _ in
                     if let url = URL(string: storeUrl) { UIApplication.shared.open(url) }
                 }))
                 self.window?.rootViewController?.present(alert, animated: true, completion: nil)
@@ -133,8 +133,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if appBuildCode < storeBuildCode, PaymentVCdelegate == nil {
                 
-                let alert = UIAlertController(title: "앱 업데이트 알림", message: "최신버전이 업데이트 되었습니다.\n업데이트 하시겠습니까?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "업데이트", style: .default, handler: { _ in
+                let alert = UIAlertController(title: translation("앱 업데이트 알림"), message: translation("최신버전이 업데이트 되었습니다.\n업데이트 하시겠습니까?"), preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: translation("업데이트"), style: .default, handler: { _ in
                     if let url = URL(string: storeUrl) { UIApplication.shared.open(url) }
                 }))
                 self.window?.rootViewController?.present(alert, animated: true, completion: nil)

@@ -5,6 +5,8 @@
 //  Created by 장 제현 on 2/21/24.
 //
 
+/// 번역
+
 import UIKit
 
 class ReEnquiryReceiptDetailCC: UICollectionViewCell {
@@ -13,6 +15,9 @@ class ReEnquiryReceiptDetailCC: UICollectionViewCell {
 }
 
 class ReEnquiryReceiptDetailTC: UITableViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var comment_v: UIView!
     @IBOutlet weak var content_sv: UIStackView!
@@ -29,6 +34,9 @@ class ReEnquiryReceiptDetailVC: UIViewController {
     var enquiry_time: String = ""
     var ReEnquiryReceiptArray: [(store_name: String, summary_address: String, timestamp: String, data: [ReEnquiryReceiptData])] = []
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var title_label: UILabel!
@@ -40,6 +48,13 @@ class ReEnquiryReceiptDetailVC: UIViewController {
     @IBOutlet weak var order_v: UIView!
     @IBOutlet weak var order_btn: UIButton!
     @IBOutlet weak var cancel_btn: UIButton!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -212,7 +227,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
         guard let data = ReEnquiryReceiptArray.first?.data[indexPath.row+1] else { return UITableViewCell() }
         let content = data.content.replacingOccurrences(of: " ", with: "")
         let datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yyyy.MM.dd a hh:mm")
-        let read_or_not = data.read_or_not ? "읽음" : ""
+        let read_or_not = data.read_or_not ? translation("읽음") : ""
         
         switch true {
         case data.direction == "touser":
@@ -245,11 +260,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
                         attributes: [.font: UIFont.boldSystemFont(ofSize: 16)]
                     ))
                     content.append(NSAttributedString(
-                        string: "\(item.item_category_name)\n"
-                            .replacingOccurrences(of: ", ", with: " > ")
-                            .replacingOccurrences(of: "\"", with: "")
-                            .replacingOccurrences(of: "[", with: "")
-                            .replacingOccurrences(of: "]", with: ""),
+                        string: item.item_category_name.map { translation($0) }.joined(separator: " > "),
                         attributes: [
                             .font: UIFont.systemFont(ofSize: 12),
                             .foregroundColor: UIColor.black.withAlphaComponent(0.3)
@@ -273,7 +284,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
                         item.item_option.forEach { option in
                             option_total_price += option.price * option.quantity
                             content.append(NSAttributedString(
-                                string: "- \(option.color)+\(option.size) (\(priceFormatter.string(from: option.price as NSNumber) ?? "0")) / \(priceFormatter.string(from: option.quantity as NSNumber) ?? "0")장\n",
+                                string: "- \(translation(option.color))+\(translation(option.size)) (\(priceFormatter.string(from: option.price as NSNumber) ?? "0")) / \(String(format: NSLocalizedString("개", comment: ""), priceFormatter.string(from: option.quantity as NSNumber) ?? "0"))\n",
                                 attributes: [
                                     .font: UIFont.systemFont(ofSize: 14),
                                     .foregroundColor: UIColor.black.withAlphaComponent(0.7)
@@ -291,7 +302,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
                             content.append(NSAttributedString(string: "\n", attributes: [.font: UIFont.systemFont(ofSize: 5)]))
                         }
                         item_total_price += option_total_price
-                        content.append(NSAttributedString(string: "금액: \(priceFormatter.string(from: option_total_price as NSNumber) ?? "0")", attributes: [.font: UIFont.systemFont(ofSize: 14)]))
+                        content.append(NSAttributedString(string: "\(translation("금액:")) \(priceFormatter.string(from: option_total_price as NSNumber) ?? "0")", attributes: [.font: UIFont.systemFont(ofSize: 14)]))
                     }
                     
                     content_label.attributedText = content
@@ -308,7 +319,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
                         let itemTotalPrice_label = UILabel()
                         itemTotalPrice_label.numberOfLines = 10000
                         itemTotalPrice_label.textColor = .black
-                        itemTotalPrice_label.attributedText = NSAttributedString(string: "총금액: \(priceFormatter.string(from: item_total_price as NSNumber) ?? "0")", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
+                        itemTotalPrice_label.attributedText = NSAttributedString(string: "\(translation("총금액:")) \(priceFormatter.string(from: item_total_price as NSNumber) ?? "0")", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
                         itemTotalPrice_label.frame.size.height = 20
                         cell.content_sv.addArrangedSubview(itemTotalPrice_label)
                     }
@@ -334,12 +345,17 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             
             cell.comment_v.layer.cornerRadius = 15
             cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            cell.content_label.text = data.content.replacingOccurrences(of: "\\n", with: "\n")
+            cell.content_label.text = translation(data.content.replacingOccurrences(of: "\\n", with: "\n"))
             cell.datetimeReadorNot_label.text = data.read_or_not ? "\(read_or_not) ∙ \(datetime)" : datetime
             
             return cell
         case data.direction == "touser", content.contains("접수됨"):
-            return tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC3", for: indexPath) as! ReEnquiryReceiptDetailTC
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC3", for: indexPath) as! ReEnquiryReceiptDetailTC
+            
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            
+            return cell
         default:
             return UITableViewCell()
         }

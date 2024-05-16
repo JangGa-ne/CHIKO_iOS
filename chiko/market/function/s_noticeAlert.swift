@@ -133,7 +133,6 @@ extension UIViewController {
             img.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
-
 }
 
 class AlertViewController: UIViewController {
@@ -151,12 +150,20 @@ class AlertViewController: UIViewController {
     var image: UIImage = UIImage()
     var time: CGFloat = 1
     
+    @IBOutlet var labels: [UILabel]!
+    
     @IBOutlet weak var normal_v: UIView!
     @IBOutlet weak var message_label: UILabel!
     
     @IBOutlet weak var Scrap_v: UIView!
     @IBOutlet weak var storeMain_img: UIImageView!
     @IBOutlet weak var storeName_label: UILabel!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

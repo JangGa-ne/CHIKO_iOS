@@ -5,9 +5,13 @@
 //  Created by 장 제현 on 3/28/24.
 //
 
+/// 번역완료
+
 import UIKit
 
 class ReDeliveryPaymentTC: UITableViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var itemName_label: UILabel!
     @IBOutlet weak var optionName_label: UILabel!
@@ -26,6 +30,9 @@ class ReDeliveryPaymentVC: UIViewController {
     var total_option_weight: Double = 0.0
     var total_delivery_price: Int = 0
     var payment_type: String = ""
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     /// 오늘의 환율
@@ -50,6 +57,13 @@ class ReDeliveryPaymentVC: UIViewController {
     /// 결제하기
     @IBOutlet weak var deliveryPayment_sv: UIStackView!
     @IBOutlet weak var deliveryPayment_btn: UIButton!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -271,7 +285,7 @@ extension ReDeliveryPaymentVC: UITableViewDelegate, UITableViewDataSource {
         let option = OrderObject.order_item[indexPath.section].item_option[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReDeliveryPaymentTC", for: indexPath) as! ReDeliveryPaymentTC
         
-        cell.optionName_label.text = "\(option.color)+\(option.size) / \(option.quantity)개"
+        cell.optionName_label.text = "\(translation(option.color))+\(translation(option.size)) / \(String(format: NSLocalizedString("개", comment: ""), String(option.quantity)))"
         cell.optionWeight_label.text = "\(String(Double(option.quantity) * option.weight).replacingOccurrences(of: ".0", with: ""))kg"
         
         return cell

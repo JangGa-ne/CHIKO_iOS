@@ -5,6 +5,8 @@
 //  Created by 장 제현 on 4/8/24.
 //
 
+/// 번역완료
+
 import UIKit
 import WebKit
 
@@ -15,9 +17,18 @@ class ReDeliveryTrackingVC: UIViewController {
     }
     
     var linkUrl: String = ""
+    
+    @IBOutlet var labels: [UILabel]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var WkWebView: WKWebView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

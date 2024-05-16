@@ -5,10 +5,14 @@
 //  Created by 장 제현 on 3/29/24.
 //
 
+/// 번역완료
+
 import UIKit
 import FirebaseMessaging
 
 class SettingTC: UITableViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var cell_v: UIView!
     @IBOutlet weak var title_label: UILabel!
@@ -33,10 +37,20 @@ class SettingVC: UIViewController {
     ]
     var topics: [String] = []
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var withdrawal_btn: UIButton!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,7 +126,7 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
             cell.lineView.isHidden = false
         }
         
-        cell.title_label.text = menus[indexPath.section].content[indexPath.row]
+        cell.title_label.text = translation(menus[indexPath.section].content[indexPath.row])
         if indexPath.section == 0 {
             cell.switch_btn.isHidden = false
             cell.switch_btn.transform = CGAffineTransform(scaleX: 0.6455, y: 0.6455)
@@ -155,7 +169,7 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
                 self.customLoadingIndicator(animated: false)
                 if error == nil {
                     requestEditDB(params: params) { _ in
-                        self.alert(title: title, message: "\(setTimestampToDateTime())\n알림 수신 동의 처리가 되었습니다.", style: .alert, time: 1)
+                        self.alert(title: translation(title), message: "\(setTimestampToDateTime())\n\(translation("알림 수신 동의 처리되었습니다."))", style: .alert, time: 1)
                     }; print("도픽구독성공: \(topic)_\(StoreObject.store_id)")
                 } else {
                     self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
@@ -168,7 +182,7 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
                 self.customLoadingIndicator(animated: false)
                 if error == nil {
                     requestEditDB(params: params) { _ in
-                        self.alert(title: title, message: "\(setTimestampToDateTime())\n알림 수신 거부 처리가 되었습니다.", style: .alert, time: 1) 
+                        self.alert(title: translation(title), message: "\(setTimestampToDateTime())\n\(translation("알림 수신 거부 처리되었습니다."))", style: .alert, time: 1)
                     }; print("도픽구독해제성공: \(topic)_\(StoreObject.store_id)")
                 } else {
                     self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
