@@ -15,6 +15,7 @@ import FirebaseCore
 import FirebaseMessaging
 
 var system_language: String = ""
+var system_country: String = ""
 let dataCache = try? DataCache(name: "com.blink.dk.market2")
 
 var priceFormatter: NumberFormatter = NumberFormatter()
@@ -67,7 +68,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        system_language = getCurrentLanguage() ?? "ko-kr"
+        system_language = getCurrentLanguage() ?? "ko-kr"; print("시스템언어", system_language)
+        system_country = getCountryCallingCode() ?? "+82"; print("국가코드", system_country)
         
         memoryCheck()
         UIViewController.swizzleViewDidDisappear()

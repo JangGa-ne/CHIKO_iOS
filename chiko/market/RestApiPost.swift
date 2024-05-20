@@ -288,8 +288,8 @@ func requestPhoneNum(phoneNum: String, completionHandler: @escaping ((Int) -> Vo
     if phoneNum.contains("01031870005") {
         completionHandler(200)
     } else {
-        Auth.auth().languageCode = "ko"
-        PhoneAuthProvider.provider().verifyPhoneNumber(phoneNum, uiDelegate: nil) { verificationID, error in
+        Auth.auth().languageCode = system_language
+        PhoneAuthProvider.provider().verifyPhoneNumber(system_country+phoneNum, uiDelegate: nil) { verificationID, error in
             if (error == nil) {
                 print(verificationID as Any)
                 UserDefaults.standard.setValue(verificationID ?? "", forKey: "verification_id")
@@ -412,7 +412,7 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
                     ReGoodsArray_best.append(setGoods(goodsDict: dict))
                 }
                 if ReStoreArray_best.count+ReGoodsArray_best.count > 0 {
-                    ReStoreArray_best.sort { $0.StoreObject.store_name_eng < $1.StoreObject.store_name_eng }
+                    ReStoreArray_best.sort { $0.StoreObject.best_position < $1.StoreObject.best_position }
                     ReGoodsArray_best.sort { $0.item_pullup_time > $1.item_pullup_time }
                     completionHandler(200)
                 } else {

@@ -5,9 +5,13 @@
 //  Created by 장 제현 on 12/12/23.
 //
 
+/// 번역완료
+
 import UIKit
 
 class StoreCC: UICollectionViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
     
     @IBOutlet weak var item_img: UIImageView!
     @IBOutlet weak var itemRow_label: UILabel!
@@ -24,8 +28,11 @@ class StoreVC: UIViewController {
     var store_name_eng: String = ""
     var store_mainphoto_img: Data = Data()
     var upload_store_mainphoto_img: Data = Data()
-    
+    /// 사업자등록번호, 매장명, 매장명(영어), 매장전화번호, 매장주소(도로명, 상세, 우편번호), 건물/층/호수, 도메인, 위챗
     var input_check: [Bool] = [false, false, false, false, false, false, false, false, false, false]
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
@@ -91,6 +98,13 @@ class StoreVC: UIViewController {
     
     @IBOutlet weak var edit_btn: UIButton!
     
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -103,7 +117,7 @@ class StoreVC: UIViewController {
         store_name_eng = data.store_name_eng
         /// placeholder, delegate, edti, return next/done
         ([businessRegNum_tf, storeName_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, buildingAddressDetail_tf, domainAddress_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "", "ex. www.example.com", "", ""][i], color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: translation(["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "", "ex. www.example.com", "", ""][i]), color: .black.withAlphaComponent(0.3))
             tf.text = [data.business_reg_num, data.store_name, data.store_name_eng, data.store_tel, data.store_address_street, data.store_address_detail, data.store_address_zipcode, data.summary_address, data.store_domain, data.wechat_id][i]
             input_check[i] = (tf.text! != "")
             tf.delegate = self
@@ -156,8 +170,9 @@ class StoreVC: UIViewController {
             storeAddress_sv.isHidden = true
             buildingAddressDetail_sv.isHidden = false
             domainAddress_sv.isHidden = true
-            wechatId_sv.isHidden = true
+//            wechatId_sv.isHidden = true
         }
+        wechatId_sv.isHidden = true
         /// building address detail
         buildingAddressDetail_tf.isEnabled = false
         buildingAddressDetail_btn.isSelected = data.summary_address != ""
@@ -223,7 +238,6 @@ class StoreVC: UIViewController {
         let text = sender.text!.replacingOccurrences(of: " ", with: "")
         let member_type = StoreObject.store_type
         
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreName_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, UIImageView(), checkDomainAddress_img, checkWechatId_img, checkStoreMainPhoto_img, checkBusinessReg_img][sender.tag]
         let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreName_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), UILabel()][sender.tag]
         // init
         input_check[sender.tag] = false
@@ -263,7 +277,6 @@ class StoreVC: UIViewController {
     
     @objc func endEditStoreInfo_if(_ sender: UITextField) {
         
-        let check: UIImageView = [checkBusinessRegNum_img, checkStoreName_img, checkStoreNameEng_img, checkStoreTel_img, checkStoreAddressStreet_img, checkStoreAddressDetail_img, checkStoreAddressZipCode_img, UIImageView(), checkDomainAddress_img, checkWechatId_img, checkStoreMainPhoto_img, checkBusinessReg_img][sender.tag]
         let notice: UILabel = [noticeBusinessRegNum_label, noticeStoreName_label, noticeStoreNameEng_label, noticeStoreTel_label, UILabel(), UILabel(), UILabel(), UILabel(), noticeDomainAddress_label, UILabel(), UILabel(), UILabel()][sender.tag]
         
         notice.isHidden = input_check[sender.tag]
@@ -342,7 +355,7 @@ class StoreVC: UIViewController {
         input_check.enumerated().forEach { i, check in
             if !check {
                 if StoreObject.store_type == "retailseller" {
-                    if i != 0 && !(onoff_type == "online" && i >= 4 && i <= 6) && i != 7 && !(onoff_type == "offline" && i == 8) {
+                    if i != 0 && !(onoff_type == "online" && i >= 4 && i <= 6) && i != 7 && !(onoff_type == "offline" && i == 8) && i != 9 { // i = 9 위챗아이디
                         final_check = false
                     }
                 } else if StoreObject.store_type == "wholesales" {
@@ -529,6 +542,9 @@ extension StoreVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         if indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StoreCC0", for: indexPath) as! StoreCC
             cell.tag = -1; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectItemAt(_:))))
+            
+            cell.labels.forEach { label in label.text = translation(label.text!) }
+            
             return cell
         } else if indexPath.section == 1 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StoreCC1", for: indexPath) as! StoreCC

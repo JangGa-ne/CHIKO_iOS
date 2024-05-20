@@ -5,9 +5,14 @@
 //  Created by 장 제현 on 2/14/24.
 //
 
+/// 번역완료
+
 import UIKit
 
 class ReDeliveryTC: UITableViewCell {
+    
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var nickName_label: UILabel!
     @IBOutlet weak var storeDeliveryPosition_img: UIImageView!
@@ -25,10 +30,20 @@ class ReDeliveryVC: UIViewController {
         if #available(iOS 13.0, *) { return .darkContent } else { return .default }
     }
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     @IBOutlet weak var deliveryAdd_btn: UIButton!
     
     @IBOutlet weak var tableView: UITableView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +96,10 @@ extension ReDeliveryVC: UITableViewDelegate, UITableViewDataSource {
         let data = StoreObject.store_delivery[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReDeliveryTC", for: indexPath) as! ReDeliveryTC
         
-        cell.nickName_label.text = data.nickname != "" ? "⭐️ \(data.nickname)" : "⭐️ 배송지\(indexPath.row+1)"
+        cell.labels.forEach { label in label.text = translation(label.text!) }
+        cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+        
+        cell.nickName_label.text = data.nickname != "" ? "⭐️ \(data.nickname)" : "⭐️ \(translation("배송지"))\(indexPath.row+1)"
         cell.storeDeliveryPosition_img.image = StoreObject.store_delivery_position == indexPath.row ? UIImage(named: "check_on") : UIImage(named: "check_off")
         cell.storeDeliveryPosition_btn.isSelected = StoreObject.store_delivery_position == indexPath.row
         cell.storeDeliveryPosition_btn.tag = indexPath.row; cell.storeDeliveryPosition_btn.addTarget(self, action: #selector(storeDeliveryPosition_btn(_:)), for: .touchUpInside)

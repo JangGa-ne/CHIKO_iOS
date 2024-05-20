@@ -91,7 +91,7 @@ class SignUpMemberVC: UIViewController {
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(scrollView(_:))))
         /// placeholder, delegate, edit, return next/done
         ([phoneNum_tf, phoneNumCheck_tf, memberId_tf, memberPw_tf, memberPwCheck_tf, memberName_tf, memberEmail_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: translation(["-없이 입력", "", "영어 소문자 또는 숫자 4~20자리", "영어+숫자+특수문자 조합 8~15자리", "", "", "@이하 주소까지 모두 입력"][i]), color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: translation(["-없이 입력", "인증번호 입력", "영어 소문자 또는 숫자 4~20자리", "영어+숫자+특수문자 조합 8~15자리", "", "", "@이하 주소까지 모두 입력"][i]), color: .black.withAlphaComponent(0.3))
             tf.delegate = self
             tf.tag = i
             tf.addTarget(self, action: #selector(changedEditMemberInfo_if(_:)), for: .editingChanged)
@@ -125,10 +125,10 @@ class SignUpMemberVC: UIViewController {
         memberIdCard_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(memberIdCard_view(_:))))
         /// submit document
         if MemberObject_signup.member_type == "retailseller" {
-            phoneNum_btn.isHidden = true
+//            phoneNum_btn.isHidden = true
             submitDocu_sv.isHidden = true
         } else if MemberObject_signup.member_type == "wholesales" {
-            phoneNum_btn.isHidden = true
+//            phoneNum_btn.isHidden = true
             submitDocu_sv.isHidden = true
         }
         /// register or search store
@@ -164,11 +164,11 @@ class SignUpMemberVC: UIViewController {
             
             if member_type == "retailseller" {
 //                check.isHidden = !(isChinesePhoneNumValid(text) || text == "01031870005")
-                check.isHidden = !(text.count != 0  || text == "01031870005")
-                checkPhoneNum_img.isHidden = check.isHidden
+                check.isHidden = !(text.count != 0 || text == "01031870005")
+//                checkPhoneNum_img.isHidden = check.isHidden
             } else if member_type == "wholesales" {
                 check.isHidden = !(text.count == 11 || text == "01031870005")
-                checkPhoneNum_img.isHidden = check.isHidden
+//                checkPhoneNum_img.isHidden = check.isHidden
             }
         case phoneNumCheck_tf:
             
@@ -295,7 +295,7 @@ class SignUpMemberVC: UIViewController {
         if phoneNum_tf.text!.count > 0, noticePhoneNum_label.isHidden {
             customLoadingIndicator(animated: true)
             /// Phone Number Send 요청
-            requestPhoneNum(phoneNum: "+86"+phoneNum_tf.text!) { status in
+            requestPhoneNum(phoneNum: phoneNum_tf.text!) { status in
                 self.customLoadingIndicator(animated: false)
                 if status == 200 {
                     self.customAlert(message: "인증번호를 요청하였습니다.", time: 1)
@@ -376,14 +376,13 @@ class SignUpMemberVC: UIViewController {
         var check_btn: [UIButton] = [memberId_btn, registerSearchStore_btn]
         var check_img: [UIImageView] = [checkMemberPw_Img, checkMemberPwCheck_Img, checkMemberName_img, checkMemberEmail_img]
         
-        if MemberObject_signup.member_type == "retailseller" {
-            check_img += [checkPhoneNum_img]
-        }
-        if MemberObject_signup.member_type == "wholesales" {
-//            check_btn += [phoneNum_btn]
-//            check_img += [checkPhoneNumCheck_img]
-            check_img += [checkPhoneNum_img]
-        }
+//        if MemberObject_signup.member_type == "retailseller" {
+//            check_img += [checkPhoneNum_img]
+//        }
+//        if MemberObject_signup.member_type == "wholesales" {
+            check_btn += [phoneNum_btn]
+            check_img += [checkPhoneNumCheck_img]
+//        }
         check_btn.forEach { btn in
             if !btn.isSelected { customAlert(message: "미입력된 항목이 있거나\n확인되지 않은 항목이 있습니다.", time: 1); final_check = false }
         }

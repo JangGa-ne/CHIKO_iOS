@@ -5,9 +5,13 @@
 //  Created by 장 제현 on 12/10/23.
 //
 
+/// 번역완료
+
 import UIKit
 
 class EmployeeTC: UITableViewCell {
+    
+    @IBOutlet var buttons: [UIButton]!
     
     @IBOutlet weak var employeeId_label: UILabel!
     @IBOutlet weak var employeeName_label: UILabel!
@@ -24,12 +28,22 @@ class EmployeeVC: UIViewController {
     
     var refreshControl: UIRefreshControl = UIRefreshControl()
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var storePw_tf: UITextField!
     @IBOutlet weak var storePw_btn: UIButton!
     
     @IBOutlet weak var tableView: UITableView!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,7 +85,7 @@ class EmployeeVC: UIViewController {
                 switch status {
                 case 200:
                     StoreObject.store_pw = self.storePw_tf.text!
-                    self.alert(title: "", message: "변경되었습니다.", style: .alert, time: 1)
+                    self.alert(title: "", message: translation("변경되었습니다."), style: .alert, time: 1)
                     self.storePw_btn.backgroundColor = .H_8CD26B
                 default:
                     self.storePw_btn.backgroundColor = .red
@@ -120,6 +134,8 @@ extension EmployeeVC: UITableViewDelegate, UITableViewDataSource {
         
         let data = EmployeeArray[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "EmployeeTC", for: indexPath) as! EmployeeTC
+        
+        cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
         
         cell.employeeId_label.text = data.member_id
         if data.member_grade == "ceo" {

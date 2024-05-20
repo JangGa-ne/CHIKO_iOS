@@ -12,11 +12,27 @@ func translation(_ string: String?) -> String {
 }
 
 func getCurrentLanguage() -> String? {
-    if let preferredLanguage = Locale.preferredLanguages.first {
+    if #available(iOS 16.0, *), let preferredLanguage = Locale.current.language.languageCode?.identifier {
+        return preferredLanguage
+    } else if let preferredLanguage = Locale.current.languageCode {
         return preferredLanguage
     } else {
         return nil
     }
+}
+
+func getCountryCallingCode() -> String? {
+    
+    let countryCallingCodes: [String: String] = [
+        "en": "1",   // 미국
+        "ko": "82",  // 대한민국
+        "zh": "86",  // 중국
+    ]
+    
+    guard let currentLocale = Locale.current.languageCode else { return nil }
+    guard let callingCode = countryCallingCodes[currentLocale] else { return nil }
+    
+    return "+\(callingCode)"
 }
 
 func stringWidth(text: String, fontName: String = "", fontSize: CGFloat = 14, fontWeight: UIFont.Weight = .regular) -> CGFloat {

@@ -22,6 +22,9 @@ class ReDeliveryDetailVC: UIViewController {
     var new_store_delivery_position: Int = 0
     var new_store_delivery: Array<[String: Any]> = []
     
+    @IBOutlet var labels: [UILabel]!
+    @IBOutlet var buttons: [UIButton]!
+    
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
     @IBOutlet weak var nickName_tf: UITextField!
@@ -37,11 +40,19 @@ class ReDeliveryDetailVC: UIViewController {
     @IBOutlet weak var num_tf: UITextField!
     @IBOutlet weak var checkNum_img: UIImageView!
     
+    @IBOutlet weak var storeDeliveryPosition_v: UIView!
     @IBOutlet weak var storeDeliveryPosition_img: UIImageView!
     @IBOutlet weak var storeDeliveryPosition_btn: UIButton!
     
     @IBOutlet weak var save_btn: UIButton!
     @IBOutlet weak var delete_btn: UIButton!
+    
+    override func loadView() {
+        super.loadView()
+        
+        labels.forEach { label in label.text = translation(label.text!) }
+        buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +60,7 @@ class ReDeliveryDetailVC: UIViewController {
         setKeyboard()
         
         ([nickName_tf, address_tf, addressDetail_tf, addressZipcode_tf, name_tf, num_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: ["배송지명", "주소", "상세주소", "우편번호", "받는사람", "휴대전화"][i], color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: translation(["배송지명", "주소", "상세주소", "우편번호", "받는사람", "휴대전화"][i]), color: .black.withAlphaComponent(0.3))
         }
         
         ([checkNickName_img, checkAddress_img, checkAddressDetail_img, checkAddressZipcode_img, checkName_img, checkNum_img] as [UIImageView]).forEach { img in
@@ -71,9 +82,11 @@ class ReDeliveryDetailVC: UIViewController {
             storeDeliveryPosition_btn.isSelected = indexpath_row == store_delivery_position
         }
         
+        storeDeliveryPosition_v.isHidden = true
         storeDeliveryPosition_btn.addTarget(self, action: #selector(storeDeliveryPosition_btn(_:)), for: .touchUpInside)
         
         save_btn.addTarget(self, action: #selector(save_btn(_:)), for: .touchUpInside)
+        delete_btn.isHidden = !edit
         delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
     }
     
@@ -115,8 +128,8 @@ class ReDeliveryDetailVC: UIViewController {
             
             requestEditDB(params: params) { status in
                 
-                if status == 200 {
-                    
+                switch status {
+                case 200:
                     StoreObject.store_delivery_position = self.new_store_delivery_position
                     StoreObject.store_delivery = self.store_delivery
                     
@@ -127,12 +140,16 @@ class ReDeliveryDetailVC: UIViewController {
                         message = "등록되었습니다."
                     }
                     
-                    self.alert(title: "", message: message, style: .alert, time: 1) {
-                        if let delegate = ReDeliveryVCdelegate {
-                            delegate.loadingData()
-                        }; self.navigationController?.popViewController(animated: true)
+                    if let delegate = ReDeliveryVCdelegate {
+                        delegate.loadingData()
                     }
-                } else {
+                    if let delegate = ReLiquidateVCdelegate {
+                        delegate.collectionView.reloadData()
+                    }
+                    self.alert(title: "", message: translation(message), style: .alert, time: 1) {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                default:
                     self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                 }
             }
@@ -143,11 +160,55 @@ class ReDeliveryDetailVC: UIViewController {
         
         view.endEditing(true)
         
-        let alert = UIAlertController(title: "", message: "삭제하시겠습니까?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
+        let alert = UIAlertController(title: "", message: translation("삭제하시겠습니까?"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: translation("삭제"), style: .destructive, handler: { _ in
             
+            self.customLoadingIndicator(text: "삭제중...", animated: true)
+            /// 데이터 삭제
+            self.store_delivery.remove(at: self.indexpath_row)
+            
+            var new_store_delivery: Array<[String: Any]> = []
+            /// 데이터 추가
+            self.store_delivery.forEach { data in
+                new_store_delivery.append([
+                    "address": data.address,
+                    "address_detail": data.address_detail,
+                    "address_zipcode": data.address_zipcode,
+                    "name": data.name,
+                    "nickname": data.nickname,
+                    "num": data.num
+                ])
+            }
+            
+            let params: [String: Any] = [
+                "action": "edit",
+                "collection_id": "store",
+                "document_id": StoreObject.store_id,
+                "store_delivery": new_store_delivery,
+            ]
+            
+            requestEditDB(params: params) { status in
+                
+                self.customLoadingIndicator(animated: false)
+                
+                switch status {
+                case 200:
+                    StoreObject.store_delivery = self.store_delivery
+                    if let delegate = ReDeliveryVCdelegate {
+                        delegate.tableView.reloadData()
+                    }
+                    if let delegate = ReLiquidateVCdelegate {
+                        delegate.collectionView.reloadData()
+                    }
+                    self.alert(title: "", message: translation("삭제되었습니다."), style: .alert, time: 1) {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                default:
+                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+                }
+            }
         }))
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: translation("취소"), style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     

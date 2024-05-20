@@ -23,6 +23,14 @@ class ReEnquiryReceiptDetailTC: UITableViewCell {
     @IBOutlet weak var content_sv: UIStackView!
     @IBOutlet weak var content_label: UILabel!
     @IBOutlet weak var datetimeReadorNot_label: UILabel!
+    
+    @IBOutlet weak var orderDetail_btn: UIButton!
+    
+    @IBOutlet weak var deliveryPayment_v: UIView!
+    @IBOutlet weak var deliveryPayment_btn: UIButton!
+    @IBOutlet weak var deliveryReceipt_v: UIView!
+    @IBOutlet weak var deliveryTracking_btn: UIButton!
+    @IBOutlet weak var deliveryReceipt_btn: UIButton!
 }
 
 class ReEnquiryReceiptDetailVC: UIViewController {
@@ -354,6 +362,22 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC3", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.labels.forEach { label in label.text = translation(label.text!) }
+            
+            
+            
+            return cell
+        case data.direction == "touser", content.contains("물류비"):
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC4", for: indexPath) as! ReEnquiryReceiptDetailTC
+            
+//            cell.deliveryPayment_v.isHidden = !((data.order_state == "상품준비중") || (OrderObject.order_state == "배송준비중" && OrderObject.ch_total_delivery_price == 0.0))
+////            cell.deliveryPayment_btn.isHidden = delivery_price_zero && (OrderObject.order_state != "배송준비중")
+//            cell.deliveryPayment_btn.isHidden = (OrderObject.order_state != "배송준비중")
+//            cell.deliveryPayment_btn.setTitle(translation("물류비 결제하기"), for: .normal)
+//            cell.deliveryPayment_btn.tag = delivery_total_price; cell.deliveryPayment_btn.addTarget(self, action: #selector(deliveryPayment_btn(_:)), for: .touchUpInside)
+//            cell.deliveryReceipt_v.isHidden = !cell.deliveryPayment_v.isHidden
+//            cell.deliveryTracking_btn.tag = indexPath.row; cell.deliveryTracking_btn.addTarget(self, action: #selector(deliveryTracking_btn(_:)), for: .touchUpInside)
+//            cell.deliveryReceipt_btn.tag = indexPath.row; cell.deliveryReceipt_btn.addTarget(self, action: #selector(deliveryReceipt_btn(_:)), for: .touchUpInside)
             
             return cell
         default:
