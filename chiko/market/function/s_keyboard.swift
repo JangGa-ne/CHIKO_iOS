@@ -22,7 +22,7 @@ extension UIViewController: UITextFieldDelegate {
         let rect = (s! as AnyObject).cgRectValue
 
         let keyboardFrameEnd = view!.convert(rect!, to: nil)
-        view.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: keyboardFrameEnd.origin.y)
+        view.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: keyboardFrameEnd.origin.y)
         view.layoutIfNeeded()
     }
     
@@ -33,7 +33,7 @@ extension UIViewController: UITextFieldDelegate {
         let rect = (s! as AnyObject).cgRectValue
         
         let keyboardFrameEnd = view!.convert(rect!, to: nil)
-        view.frame = CGRect(x: view.bounds.origin.x, y: view.bounds.origin.y, width: view.bounds.width, height: view.bounds.height + keyboardFrameEnd.size.height)
+        view.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: keyboardFrameEnd.origin.y + keyboardFrameEnd.size.height)
         view.layoutIfNeeded()
     }
     
@@ -47,16 +47,29 @@ extension UIViewController: UITextFieldDelegate {
         view.addGestureRecognizer(tap)
     }
     
-    @objc func dismissKeyboard(_ sender: UITapGestureRecognizer) { view.endEditing(true) }
-    
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        /// hidden keyboard
+    @objc func dismissKeyboard(_ sender: UITapGestureRecognizer) { 
         view.endEditing(true)
     }
     
+//    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesBegan(touches, with: event)
+//        if let touch = touches.first, !(touch.view is UIButton) {
+//            view.endEditing(true)
+//        }
+//    }
+    
     @objc func scrollView(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
         view.endEditing(true)
+    }
+}
+
+extension UIView {
+
+    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+
+        if let touch = touches.first, !(touch.view is UIButton) {
+            self.window?.endEditing(true)
+        }
     }
 }

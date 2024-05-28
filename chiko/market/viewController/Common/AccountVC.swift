@@ -73,8 +73,6 @@ class AccountVC: UIViewController {
     }
     
     @objc func accountBank_view(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "BankListVC") as! BankListVC
         segue.member_type = MemberObject.member_type
@@ -110,8 +108,6 @@ class AccountVC: UIViewController {
     }
     
     @objc func passbook_view(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         setPhoto(max: 1) { photo in
             StoreObject.upload_passbook_img = photo

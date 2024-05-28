@@ -10,22 +10,18 @@ import UIKit
 extension UIViewController {
     
     func segueTabBarController(identifier: String, idx: Int, animated: Bool = true, completion: ((UITabBarController) -> Void)? = nil) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         let tabBarController = storyboard?.instantiateViewController(withIdentifier: identifier) as! UITabBarController
         tabBarController.selectedIndex = idx
-        navigationController?.pushViewController(tabBarController, animated: animated)
+        navigationController?.pushViewController(tabBarController, animated: animated, completion: nil)
         
         completion?(tabBarController)
     }
     
     func segueViewController(identifier: String, animated: Bool = true, completion: ((UIViewController?) -> Void)? = nil) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         let viewController = storyboard?.instantiateViewController(withIdentifier: identifier)
-        navigationController?.pushViewController(viewController!, animated: animated)
+        navigationController?.pushViewController(viewController!, animated: animated, completion: nil)
         
         completion?(viewController)
     }
@@ -45,7 +41,7 @@ extension UIViewController: UIGestureRecognizerDelegate {
 
 extension UINavigationController {
 
-    public func pushViewController(_ viewController: UIViewController, animated: Bool, completion: (() -> Void)? = nil) {
+    public func pushViewController(_ viewController: UIViewController, animated: Bool, completion: (() -> Void)? = nil) { view.endEditing(true)
         CATransaction.begin(); CATransaction.setCompletionBlock(completion); pushViewController(viewController, animated: animated); CATransaction.commit()
     }
     

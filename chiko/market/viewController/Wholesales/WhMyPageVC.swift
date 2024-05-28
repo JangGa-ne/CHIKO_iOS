@@ -41,7 +41,7 @@ class WhMyPageVC: UIViewController {
         (title: "정산관리", content: ["오늘의정산"]),
         (title: "매장관리", content: ["매장태그관리", "직원관리"]),
         (title: "정보관리", content: ["계좌관리", "사업자수정", "내정보수정"]),
-        (title: "고객센터", content: ["자주묻는질문"]),
+        (title: "고객센터", content: ["채팅플러스+"]),
     ]
     let segues: [(String, [String])] = [
         ("상품관리", ["WhGoodsVC", "WhGoodsUploadVC"]),
@@ -49,7 +49,7 @@ class WhMyPageVC: UIViewController {
         ("정산관리", ["WhOrderBatchVC"]),
         ("매장관리", ["TagVC", "EmployeeVC"]),
         ("정보관리", ["AccountVC", "StoreVC", "MemberVC"]),
-        ("고객센터", [""]),
+        ("고객센터", ["WhChatVC"]),
     ]
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
@@ -87,6 +87,7 @@ class WhMyPageVC: UIViewController {
         
         MPayVCdelegate = nil
         
+        WhGoodsVCdelegate = nil
         WhGoodsUploadVCdelegate = nil
         WhGoodsDetailVCdelegate = nil
         WhGoodsTop30VCdelegate = nil
@@ -169,11 +170,11 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
         case 3:
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsVC") as! WhGoodsVC
             segue.indexpath_row = 0
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         case 4:
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsVC") as! WhGoodsVC
             segue.indexpath_row = 1
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         case 5:
 //            segueViewController(identifier: "MPayVC")
             segueViewController(identifier: "SettingVC")
@@ -189,11 +190,11 @@ extension WhMyPageVC: UITableViewDelegate, UITableViewDataSource {
             if indexPath.section == 2, indexPath.row == 0 {
                 let segue = storyboard?.instantiateViewController(withIdentifier: "WhOrderBatchVC") as! WhOrderBatchVC
                 segue.type = "주문"
-                navigationController?.pushViewController(segue, animated: true)
+                navigationController?.pushViewController(segue, animated: true, completion: nil)
             } else if indexPath.section == 3, indexPath.row == 0 {
                 let segue = storyboard?.instantiateViewController(withIdentifier: "WhOrderBatchVC") as! WhOrderBatchVC
                 segue.type = "정산"
-                navigationController?.pushViewController(segue, animated: true)
+                navigationController?.pushViewController(segue, animated: true, completion: nil)
             } else {
                 segueViewController(identifier: segues[indexPath.section-1].1[indexPath.row])
             }

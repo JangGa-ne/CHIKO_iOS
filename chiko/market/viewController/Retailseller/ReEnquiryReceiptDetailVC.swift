@@ -72,7 +72,7 @@ class ReEnquiryReceiptDetailVC: UIViewController {
         guard let data = ReEnquiryReceiptArray.first else { return }
         
         title_label.text = data.store_name != "" ? "\(data.store_name), \(data.summary_address)" : data.summary_address
-        datetime_label.text = setTimestampToDateTime(timestamp: Int(data.timestamp) ?? 0, dateformat: "yyyy.MM.dd a hh:mm")
+        datetime_label.text = setTimestampToDateTime(timestamp: Int(data.timestamp) ?? 0, dateformat: "yy.MM.dd a hh:mm")
         
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
@@ -108,7 +108,7 @@ class ReEnquiryReceiptDetailVC: UIViewController {
             let segue = storyboard?.instantiateViewController(withIdentifier: "ReLiquidateVC") as! ReLiquidateVC
             segue.receipt_mode = true
             segue.LiquidateArray = LiquidateArray
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         } else {
             customAlert(message: "현재 주문할 수 없습니다.\n나중에 다시시도 하세요.", time: 1)
         }
@@ -216,7 +216,7 @@ extension ReEnquiryReceiptDetailVC: UICollectionViewDelegate, UICollectionViewDa
         let segue = storyboard?.instantiateViewController(withIdentifier: "ImageSlideVC") as! ImageSlideVC
         segue.imageUrls = data.attached_imgs
         segue.indexpath_row = indexPath.row
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }
 
@@ -234,8 +234,17 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
         
         guard let data = ReEnquiryReceiptArray.first?.data[indexPath.row+1] else { return UITableViewCell() }
         let content = data.content.replacingOccurrences(of: " ", with: "")
-        let datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yyyy.MM.dd a hh:mm")
+        var datetime: String = ""
         let read_or_not = data.read_or_not ? translation("읽음") : ""
+        
+        let today: Int = Int(setTimestampToDateTime(dateformat: "yyyyMMdd")) ?? 0
+        let date: Int = Int(setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yyyyMMdd")) ?? 0
+        
+        if date == today {
+            datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "a hh:mm")
+        } else {
+            datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yy.MM.dd a hh:mm")
+        }
         
         switch true {
         case data.direction == "touser":

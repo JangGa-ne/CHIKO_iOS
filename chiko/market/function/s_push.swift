@@ -91,6 +91,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 //                }; window.customAlert(message: "로그인을 해주세요.", time: 1)
 //            }
 //        }
+        
         if StoreObject.store_type == "retailseller", let delegate = ReMainTBCdelegate {
             delegate.segueViewController(identifier: "NoticeVC")
         } else if StoreObject.store_type == "wholesales", let delegate = WhHomeVCdelegate {

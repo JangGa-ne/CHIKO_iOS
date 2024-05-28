@@ -18,7 +18,7 @@ class PaymentVC: UIViewController {
     }
     
     var type: String = ""               // 결제타입(상품, 물류)
-    var payment_type: String = ""       // 결제수단(OPCARD, ALIPAY, WECHATPAY)
+    var payment_type: String = ""       // 결제수단(OPCARD, ALIPAY, WECHATPAY, VBANK)
     var item_name: String = ""
     var cny_cash: String = ""
     
@@ -40,7 +40,20 @@ class PaymentVC: UIViewController {
         
         PaymentVCdelegate = self
         
-        print(payment_type, cny_cash)
+        print("""
+            PayMethod : '\(payment_type)',
+            MID: 'testpay01m',
+            MerchantKey: 'Ma29gyAFhvv/+e4/AHpV6pISQIvSKziLIbrNoXPbRS5nfTx2DOs8OJve+NzwyoaQ8p9Uy1AN4S1I0Um5v7oNUg==',
+            GoodsName: '\(item_name)',
+            Amt: '\(cny_cash)',
+            BuyerName: '\(MemberObject.member_name)',
+            BuyerTel: '\(MemberObject.member_num)',
+            BuyerEmail: '\(MemberObject.member_email)',
+            ResultYN: 'Y',
+            Currency: 'CNY',
+            Moid : 'testpay01m' + getDate(),
+            ReturnURL: 'https://pg.innopay.co.kr/ipay/returnPay.jsp',
+        """)
         
         testPayment_btn.isHidden = !(MemberObject.member_id == "receo0005")
         testPayment_btn.addTarget(self, action: #selector(testPayment_btn(_:)), for: .touchUpInside)

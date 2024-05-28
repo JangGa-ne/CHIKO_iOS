@@ -117,7 +117,7 @@ class StoreVC: UIViewController {
         store_name_eng = data.store_name_eng
         /// placeholder, delegate, edti, return next/done
         ([businessRegNum_tf, storeName_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, buildingAddressDetail_tf, domainAddress_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: translation(["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "", "ex. www.example.com", "", ""][i]), color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "", "ex. www.example.com", "", ""][i])
             tf.text = [data.business_reg_num, data.store_name, data.store_name_eng, data.store_tel, data.store_address_street, data.store_address_detail, data.store_address_zipcode, data.summary_address, data.store_domain, data.wechat_id][i]
             input_check[i] = (tf.text! != "")
             tf.delegate = self
@@ -283,8 +283,6 @@ class StoreVC: UIViewController {
     }
     
     @objc func storeType_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         if sender.tag == 0 {
             /// online
@@ -320,8 +318,6 @@ class StoreVC: UIViewController {
     }
     
     @objc func accountBank_view(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "BankListVC") as! BankListVC
         segue.member_type = StoreObject.store_type
@@ -329,8 +325,6 @@ class StoreVC: UIViewController {
     }
     
     @objc func submitDocu_view(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         guard let sender = sender.view else { return }
         setPhoto(max: 1) { photo in
@@ -348,8 +342,6 @@ class StoreVC: UIViewController {
     }
     
     @objc func edit_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
         
         var final_check: Bool = true
         input_check.enumerated().forEach { i, check in
@@ -561,8 +553,6 @@ extension StoreVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
     }
     
     @objc func didSelectItemAt(_ sender: UITapGestureRecognizer) {
-        
-        view.endEditing(true)
         
         guard let sender = sender.view else { return }
         

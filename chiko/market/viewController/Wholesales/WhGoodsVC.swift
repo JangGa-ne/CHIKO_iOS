@@ -43,6 +43,8 @@ class WhGoodsVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        WhGoodsVCdelegate = self
+        
         ([itemFull_v, itemAccount_v] as [UIView]).enumerated().forEach { i, view in
             view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(select_v(_:))))
         }
@@ -208,7 +210,7 @@ extension WhGoodsVC: UITableViewDelegate, UITableViewDataSource {
             
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
             segue.GoodsObject = GoodsArray[indexPath.row]
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         }
     }
 }

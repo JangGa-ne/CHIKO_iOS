@@ -85,7 +85,7 @@ class EmployeeVC: UIViewController {
                 switch status {
                 case 200:
                     StoreObject.store_pw = self.storePw_tf.text!
-                    self.alert(title: "", message: translation("변경되었습니다."), style: .alert, time: 1)
+                    self.alert(title: "", message: "변경되었습니다.", style: .alert, time: 1)
                     self.storePw_btn.backgroundColor = .H_8CD26B
                 default:
                     self.storePw_btn.backgroundColor = .red

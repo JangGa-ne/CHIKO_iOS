@@ -76,6 +76,9 @@ class ReLiquidateVC: UIViewController {
     @IBOutlet weak var wechatPay_img: UIImageView!
     @IBOutlet weak var wechatPay_label: UILabel!
     @IBOutlet weak var wechatPay_btn: UIButton!
+    @IBOutlet weak var virtual_img: UIImageView!
+    @IBOutlet weak var virtual_label: UILabel!
+    @IBOutlet weak var virtual_btn: UIButton!
     /// M.Pay
     @IBOutlet weak var reStoreName_label: UILabel!
     @IBOutlet weak var reStoreCash_label: UILabel!
@@ -143,7 +146,7 @@ class ReLiquidateVC: UIViewController {
         ([overseasCard_label, aliPay_label, wechatPay_label] as [UILabel]).forEach { label in
             label.textColor = .black.withAlphaComponent(0.3)
         }
-        ([overseasCard_btn, aliPay_btn, wechatPay_btn] as [UIButton]).enumerated().forEach { i, btn in
+        ([overseasCard_btn, aliPay_btn, wechatPay_btn, virtual_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.isSelected = false
             btn.tag = i; btn.addTarget(self, action: #selector(paymentType_btn(_:)), for: .touchUpInside)
         }
@@ -178,8 +181,6 @@ class ReLiquidateVC: UIViewController {
     
     @objc func moreItem_view(_ sender: UITapGestureRecognizer) {
         
-        view.endEditing(true)
-        
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReLiquidateDetailVC") as! ReLiquidateDetailVC
         segue.receipt_mode = receipt_mode
         segue.LiquidateArray = LiquidateArray
@@ -199,15 +200,17 @@ class ReLiquidateVC: UIViewController {
             payment_type = "ALIPAY"
         } else if sender == wechatPay_btn {
             payment_type = "WECHATPAY"
+        } else if sender == virtual_btn {
+            payment_type = "VIRTUAL"
         }
         
-        ([overseasCard_img, aliPay_img, wechatPay_img] as [UIImageView]).enumerated().forEach { i, img in
+        ([overseasCard_img, aliPay_img, wechatPay_img, virtual_img] as [UIImageView]).enumerated().forEach { i, img in
             img.image = i == sender.tag ? UIImage(named: "check_on") : UIImage(named: "check_off")
         }
-        ([overseasCard_label, aliPay_label, wechatPay_label] as [UILabel]).enumerated().forEach { i, label in
+        ([overseasCard_label, aliPay_label, wechatPay_label, virtual_label] as [UILabel]).enumerated().forEach { i, label in
             label.textColor = i == sender.tag ? .black : .black.withAlphaComponent(0.3)
         }
-        ([overseasCard_btn, aliPay_btn, wechatPay_btn] as [UIButton]).enumerated().forEach { i, btn in
+        ([overseasCard_btn, aliPay_btn, wechatPay_btn, virtual_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.isSelected = i == sender.tag
         }
     }
@@ -218,8 +221,6 @@ class ReLiquidateVC: UIViewController {
     
     @objc func agreement_btn(_ sender: UIButton) {
         
-        view.endEditing(true)
-        
         let segue = storyboard?.instantiateViewController(withIdentifier: "SafariVC") as! SafariVC
         if sender.tag == 0 {
             segue.linkUrl = "https://sites.google.com/view/chiko-terms4"
@@ -228,12 +229,10 @@ class ReLiquidateVC: UIViewController {
         } else if sender.tag == 2 {
             segue.linkUrl = "https://sites.google.com/view/chiko-terms2"
         }
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func payment_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
         
         if StoreObject.store_delivery.count == 0 {
             customAlert(message: "배송지를 추가해 주세요.", time: 1)
@@ -247,8 +246,15 @@ class ReLiquidateVC: UIViewController {
                     self.totalPrice3_label.text = "KRW \(priceFormatter.string(from: PaymentObject.exchange_rate as NSNumber) ?? "0") = CNY 1"
                 }
             }
+        } else if payment_type == "VIRTUAL" {
+            let segue = storyboard?.instantiateViewController(withIdentifier: "VirtualVC") as! VirtualVC
+            segue.type = "상품"
+            segue.item_name = item_name
+            segue.cny_cash = String((Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100).replacingOccurrences(of: ".", with: "")
+            navigationController?.pushViewController(segue, animated: true, completion: {
+                self.customLoadingIndicator(animated: false)
+            })
         } else {
-            
             let segue = storyboard?.instantiateViewController(withIdentifier: "PaymentVC") as! PaymentVC
             segue.type = "상품"
             segue.payment_type = payment_type

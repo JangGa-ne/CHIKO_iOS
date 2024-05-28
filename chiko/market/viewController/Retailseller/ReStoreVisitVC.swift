@@ -90,7 +90,7 @@ extension ReStoreVisitTC: UICollectionViewDelegate, UICollectionViewDataSource, 
         
         let segue = ReStoreVisitVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
         segue.GoodsObject = GoodsArray[indexPath.row]
-        ReStoreVisitVCdelegate?.navigationController?.pushViewController(segue, animated: true)
+        ReStoreVisitVCdelegate?.navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -290,7 +290,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             } else if sender.tag == 3 {
                 segue.disclosure = "거래처만 공개"
             }
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         }
     }
     

@@ -62,7 +62,7 @@ extension WhNotDeliveryAddTC: UITableViewDelegate, UITableViewDataSource {
         cell.option_label.text = "옵션. \(data.color) / \(data.size)\n가격. \(priceFormatter.string(from: data.price as NSNumber) ?? "0")\n수량. \(priceFormatter.string(from: data.quantity as NSNumber) ?? "0")"
         
         cell.notDeliveryQuantity_tf.paddingLeft(10); cell.notDeliveryQuantity_tf.paddingRight(10)
-        cell.notDeliveryQuantity_tf.placeholder(text: "미송상품 수량을 입력하세요.", color: .black.withAlphaComponent(0.3))
+        cell.notDeliveryQuantity_tf.placeholder(text: "미송상품 수량을 입력하세요.")
         if data.not_delivery_quantity == 0 {
             cell.notDeliveryQuantity_tf.text!.removeAll()
         } else {
@@ -88,8 +88,6 @@ extension WhNotDeliveryAddTC: UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func notDeliveryMemo_btn(_ sender: UIButton) {
-        
-        delegate.view.endEditing(true)
         
         let alert = UIAlertController(title: nil, message: "배송예정일을 입력하세요.", preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "배송날짜", style: .default, handler: { UIAlertAction in
@@ -228,8 +226,6 @@ class WhNotDeliveryAddVC: UIViewController {
     }
     
     @objc func register_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
         
         var check: Bool = true
         

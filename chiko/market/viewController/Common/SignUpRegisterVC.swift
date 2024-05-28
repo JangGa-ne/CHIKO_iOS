@@ -55,7 +55,7 @@ class SignUpRegisterVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // init
-        alert_v.layer.cornerRadius = divice_radius
+        alert_v.layer.cornerRadius = device_radius
         /// 데이터 삭제
         MemberObject_signup.upload_files.removeAll()
         StoreObject_signup.upload_files.removeAll()
@@ -171,24 +171,31 @@ class SignUpRegisterVC: UIViewController {
         customLoadingIndicator(animated: true)
         
         var status_code: Int = 500
-        /// SignUp 요청
+        /// Check ID 요청
         dispatchGroup.enter()
-        requestSignUp { status in
+        requestCheckId(member_id: MemberObject_signup.member_id) { status in
             
             if status == 200 {
-                /// Member FileUpload 요청
+                /// SignUp 요청
                 dispatchGroup.enter()
-                requestFileUpload(action: "add", collection_id: "member", document_id: MemberObject_signup.member_id, file_data: MemberObject_signup.upload_files) { _, status in
-                    dispatchGroup.leave()
+                requestSignUp { status in
+                    
+                    if status == 200 {
+                        /// Member FileUpload 요청
+                        dispatchGroup.enter()
+                        requestFileUpload(action: "add", collection_id: "member", document_id: MemberObject_signup.member_id, file_data: MemberObject_signup.upload_files) { _, status in
+                            dispatchGroup.leave()
+                        }
+                        /// Store FileUpload 요청
+                        dispatchGroup.enter()
+                        requestFileUpload(action: "add", collection_id: "store", document_id: StoreObject_signup.store_id, file_data: StoreObject_signup.upload_files) { _, status in
+                            dispatchGroup.leave()
+                        }
+                    }; status_code = status; dispatchGroup.leave()
                 }
-                /// Store FileUpload 요청
-                dispatchGroup.enter()
-                requestFileUpload(action: "add", collection_id: "store", document_id: StoreObject_signup.store_id, file_data: StoreObject_signup.upload_files) { _, status in
-                    dispatchGroup.leave()
-                }
-            }
-            
-            status_code = status; dispatchGroup.leave()
+            } else {
+                status_code = status
+            }; dispatchGroup.leave()
         }
         
         dispatchGroup.notify(queue: .main) {
@@ -207,6 +214,12 @@ class SignUpRegisterVC: UIViewController {
                             delegate.segueViewController(identifier: "SplashVC")
                         }
                     }
+                }
+            case 204:
+                self.customAlert(message: "먼저 가입한 아이디가 있습니다.\n아이디를 변경해 주세요.", time: 1)
+                if let delegate = SignUpMemberVCdelegate {
+                    delegate.memberId_btn.backgroundColor = .systemOrange
+//                    delegate.noticeMemberId_label.isHidden = false
                 }
             default:
                 self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {

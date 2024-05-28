@@ -143,8 +143,6 @@ extension ReReceiptUploadTC: UICollectionViewDelegate, UICollectionViewDataSourc
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        delegate.view.endEditing(true)
-        
         if indexPath.row == 0 {
             delegate.setPhoto(max: 1000) { photos in
                 self.delegate.ReEnquiryReceiptObject.upload_attached_imgs.append(contentsOf: photos)
@@ -174,7 +172,7 @@ extension ReReceiptUploadTC: UITableViewDelegate, UITableViewDataSource {
         cell.size_btn.setTitle(data.size != "" ? translation(data.size) : translation("사이즈"), for: .normal)
         cell.size_btn.setTitleColor(data.size != "" ? .black : .black.withAlphaComponent(0.3), for: .normal)
         cell.size_btn.tag = indexPath.row; cell.size_btn.addTarget(self, action: #selector(size_btn(_:)), for: .touchUpInside)
-        cell.quantity_tf.placeholder(text: translation("수량"), color: .black.withAlphaComponent(0.3))
+        cell.quantity_tf.placeholder(text: "수량")
         cell.quantity_tf.text = data.quantity != 0 ? String(data.quantity) : ""
         cell.quantity_tf.tag = indexPath.row; cell.quantity_tf.addTarget(self, action: #selector(edit_quantity_tf(_:)), for: .editingChanged)
         cell.delete_v.tag = indexPath.row; cell.delete_v.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(delete_v(_:))))
@@ -468,7 +466,7 @@ extension ReReceiptUploadVC: UITableViewDelegate, UITableViewDataSource {
             
             cell.labels.forEach { label in
                 if label.text!.contains("한 매장의 영수증 이미지만") {
-                    label.text = translation("한 매장의 영수증 이미지만 욜려주세요.\n주문 할 상품에 대하여 동그라미 표시와 상품번호를 맞게 작성해 주세요.")
+                    label.text = translation("한 매장의 영수증 이미지만 욜려주세요.\n주문 할 상품에 대하여 동그라미 표시와 순번을 맞게 작성해 주세요.")
                 } else {
                     label.text = translation(label.text!)
                 }
@@ -490,7 +488,7 @@ extension ReReceiptUploadVC: UITableViewDelegate, UITableViewDataSource {
             cell.itemNum_label.text = (indexPath.row < 9 ? "0" : "") + String(indexPath.row+1) + "."
             cell.delete_btn.tag = indexPath.row; cell.delete_btn.addTarget(cell, action: #selector(cell.delete_btn(_:)), for: .touchUpInside)
             cell.itemName_tf.paddingLeft(10); cell.itemName_tf.paddingRight(10)
-            cell.itemName_tf.placeholder(text: translation("상품명을 입력하세요."), color: .black.withAlphaComponent(0.3))
+            cell.itemName_tf.placeholder(text: "상품명을 입력하세요.")
             cell.itemName_tf.text = data.item_name
             cell.itemName_tf.addTarget(cell, action: #selector(cell.end_itemName_tf(_:)), for: .editingDidEnd)
             let item_category_name = data.item_category_name.map { translation($0) }.joined(separator: " > ")

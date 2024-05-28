@@ -87,7 +87,7 @@ class ReGoodsVC: UIViewController {
         categoryName_label_width.constant = stringWidth(text: categoryName_label.text!, fontSize: 12)+20
         categoryFilter_view.isHidden = true
         categoryFilter_view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(categoryFilter_view(_:))))
-        search_tf.placeholder(text: translation("상품명을 입력하세요."), color: .black.withAlphaComponent(0.3))
+        search_tf.placeholder(text: "상품명을 입력하세요.")
         search_tf.addTarget(self, action: #selector(edit_search_tf(_:)), for: .editingChanged)
         delete_img.isHidden = true
         delete_btn.isHidden = true
@@ -116,8 +116,6 @@ class ReGoodsVC: UIViewController {
     
     @objc func choiceCategory_btn(_ sender: UIButton) {
         
-        view.endEditing(true)
-        
         let segue = storyboard?.instantiateViewController(withIdentifier: "CategoryVC") as! CategoryVC
         segue.ReGoodsVCdelegate = self
         segue.option_type = "category"
@@ -125,8 +123,6 @@ class ReGoodsVC: UIViewController {
     }
     
     @objc func categoryName_view(_ semder: UITapGestureRecognizer) {
-        
-        view.endEditing(true)
         
         item_category_name.removeAll()
         
@@ -184,7 +180,11 @@ class ReGoodsVC: UIViewController {
     @objc func search_btn(_ sender: UIButton) {
         search_tf.resignFirstResponder()
         if search_tf.text! == "" {
-            customAlert(message: "상품명을 입력하세요.", time: 1)
+            customAlert(message: "상품명을 입력하세요.", time: 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
+                    self.search_tf.becomeFirstResponder()
+                }
+            }
             search.removeAll()
         } else if search_tf.text!.count < 2 {
             customAlert(message: "두글자 이상 입력하세요.", time: 1); return
@@ -361,18 +361,16 @@ extension ReGoodsVC: UITableViewDelegate, UITableViewDataSource {
         let data = GoodsArray[sender.tag]
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = data.store_id
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        view.endEditing(true)
         
         if indexPath.section == 0 {
             
             let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
             segue.GoodsObject = GoodsArray[indexPath.row]
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         }
     }
 }

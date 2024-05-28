@@ -28,7 +28,7 @@ var segue_type: String = ""
 var platform_type: String = ""
 var device_info: String = ""
 var device_ratio: String = ""
-var divice_radius: CGFloat = 0.0
+var device_radius: CGFloat = 0.0
 /// Register
 var MemberObject_signup: MemberData = MemberData()
 var StoreObject_signup: StoreData = StoreData()
@@ -81,11 +81,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             device_ratio = ratio
         }
         if device_ratio == "16:9" {
-            divice_radius = 5
+            device_radius = 5
         } else if device_ratio == "18:9" {
-            divice_radius = 30
+            device_radius = 30
         } else if device_ratio == "19:9" {
-            divice_radius = 50
+            device_radius = 50
         }
         /// AppVersion
         appVersion = Double(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") ?? 1.0
@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        window?.endEditing(true)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {

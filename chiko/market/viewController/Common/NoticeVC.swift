@@ -144,6 +144,8 @@ extension NoticeVC: UITableViewDelegate, UITableViewDataSource {
             segueViewController(identifier: "ReOrderVC")
         } else if data.type == "local", data.segue == "order_batch_processing" {
             segueViewController(identifier: "WhOrderBatchVC")
+        } else if data.type == "chats" {
+            segueViewController(identifier: "WhChatVC")
         }
     }
 }

@@ -121,7 +121,7 @@ extension ScrapVC: UITableViewDelegate, UITableViewDataSource {
         let data = ScrapArray[indexPath.row]
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = data.store_id
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {

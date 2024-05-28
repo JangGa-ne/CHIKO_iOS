@@ -173,8 +173,6 @@ class WhGoodsUploadVC: UIViewController {
     
     @objc func upload_btn(_ sender: UIButton) {
         
-        view.endEditing(true)
-        
         GoodsObject.upload_files.removeAll()
         ItemArray.enumerated().forEach { i, data in
             GoodsObject.upload_files.append((field_name: "item_photo_imgs\(i)", file_name: data.file_name, file_data: data.file_data, file_size: data.file_size))
@@ -264,15 +262,20 @@ class WhGoodsUploadVC: UIViewController {
                                     delegate.item_img.delegate = nil
                                     delegate.viewDidLoad()
                                 }
-                            } else if let delegate = WhHomeVCdelegate {
-                                // 데이터 삭제
-                                WhGoodsArray_realtime.removeAll()
-                                
-                                delegate.customLoadingIndicator(text: "불러오는 중...", animated: true)
-                                /// WhRealTime 요청
-                                requestWhRealTime(filter: "최신순", limit: 3) { _ in
-                                    delegate.customLoadingIndicator(animated: false)
-                                    delegate.tableView.reloadData()
+                            } else {
+                                if let delegate = WhHomeVCdelegate {
+                                    // 데이터 삭제
+                                    WhGoodsArray_realtime.removeAll()
+                                    
+                                    delegate.customLoadingIndicator(text: "불러오는 중...", animated: true)
+                                    /// WhRealTime 요청
+                                    requestWhRealTime(filter: "최신순", limit: 3) { _ in
+                                        delegate.customLoadingIndicator(animated: false)
+                                        delegate.tableView.reloadData()
+                                    }
+                                }
+                                if let delegate = WhGoodsVCdelegate {
+                                    delegate.loadingData(first: true)
                                 }
                             }
                         })
@@ -371,7 +374,7 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
                 tf.addTarget(cell, action: #selector(cell.end_textfield(_:)), for: .editingDidEnd)
             }
             
-            cell.itemName_tf.placeholder(text: "소매에게 노출할 상품명을 입력해 주세요.", color: .black.withAlphaComponent(0.3))
+            cell.itemName_tf.placeholder(text: "소매에게 노출할 상품명을 입력해 주세요.")
             cell.itemName_tf.text = GoodsObject.item_name
             
             GoodsObject.item_sale = item_sale
@@ -383,14 +386,14 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
                 cell.sale_label.textColor = .black.withAlphaComponent(0.3)
             }
             cell.itemPrice_view.isHidden = !item_sale
-            cell.itemPrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .black.withAlphaComponent(0.3))
+            cell.itemPrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.")
             if GoodsObject.item_price != 0 {
                 cell.itemPrice_tf.text = priceFormatter.string(from: GoodsObject.item_price as NSNumber) ?? ""
             }
             if item_sale {
-                cell.itemSalePrice_tf.placeholder(text: "할인된 가격을 입력해 주세요.", color: .black.withAlphaComponent(0.3))
+                cell.itemSalePrice_tf.placeholder(text: "할인된 가격을 입력해 주세요.")
             } else {
-                cell.itemSalePrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.", color: .black.withAlphaComponent(0.3))
+                cell.itemSalePrice_tf.placeholder(text: "가격(원가)을 입력해 주세요.")
             }
             if GoodsObject.item_sale_price != 0 {
                 cell.itemSalePrice_tf.text = priceFormatter.string(from: GoodsObject.item_sale_price as NSNumber) ?? ""
@@ -492,10 +495,5 @@ extension WhGoodsUploadVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 2, !item_option_type { return .zero } else { return UITableView.automaticDimension }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        view.endEditing(true)
     }
 }

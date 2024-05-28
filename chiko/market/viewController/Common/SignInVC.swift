@@ -63,7 +63,7 @@ class SignInVC: UIViewController {
         appDelegate.member_type = "retailseller"
         /// 푸시 구독해제
         let store_id: String = StoreObject.store_id
-        ["local", "marketing", "dpcost_request", "enquiry"].forEach { topic in
+        ["local", "marketing", "chats", "dpcost_request", "enquiry"].forEach { topic in
             Messaging.messaging().unsubscribe(fromTopic: "\(topic)_\(store_id)") { error in
                 error == nil ? print("도픽구독해제성공: \(topic)_\(store_id)") : print("도픽구독해제실패: \(topic)_\(store_id)")
             }
@@ -105,8 +105,13 @@ class SignInVC: UIViewController {
         }
         /// member_id, member_pw
         ([memberId_tf, memberPw_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: translation(["아이디를 입력하세요.", "비밀번호를 입력하세요."][i]), color: .black.withAlphaComponent(0.3))
-            if i != [memberId_tf, memberPw_tf].count-2 { tf.returnKeyType = .next } else { tf.returnKeyType = .done }
+            tf.placeholder(text: ["아이디를 입력하세요.", "비밀번호를 입력하세요."][i])
+            tf.delegate = self
+            if tf == memberId_tf {
+                tf.returnKeyType = .next
+            } else {
+                tf.returnKeyType = .done
+            }
         }
         /// find id/pw
         findIdPw_btn.addTarget(self, action: #selector(findIdPw_btn(_:)), for: .touchUpInside)
@@ -119,8 +124,6 @@ class SignInVC: UIViewController {
     }
     
     @objc func memberType_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         if sender.tag == 0 {
             /// retailseller
@@ -141,21 +144,10 @@ class SignInVC: UIViewController {
     }
     
     @objc func findIdPw_btn(_ sender: UIButton) {
-        
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: translation("아이디 찾기"), style: .default, handler: { _ in
-            
-        }))
-        alert.addAction(UIAlertAction(title: translation("비밀번호 찾기"), style: .default, handler: { _ in
-            self.segueViewController(identifier: "FindVC")
-        }))
-        alert.addAction(UIAlertAction(title: translation("취소"), style: .cancel, handler: nil))
-        present(alert, animated: true, completion: nil)
+        segueViewController(identifier: "VerificationVC")
     }
     
     @objc func sign_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         if sender.tag == 0 {
             /// signin
@@ -266,3 +258,16 @@ extension SignInVC: UIScrollViewDelegate {
         
     }
 }
+
+extension SignInVC {
+    
+    override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == memberId_tf {
+            memberPw_tf.becomeFirstResponder()
+        } else if textField == memberPw_tf {
+            memberPw_tf.resignFirstResponder(); sign_btn(UIButton())
+        }
+        return true
+    }
+}
+

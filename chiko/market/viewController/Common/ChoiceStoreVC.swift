@@ -60,7 +60,7 @@ class ChoiceStoreVC: UIViewController {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "SearchStoreVC") as! SearchStoreVC
         segue.ChoiceStoreVCdelegate = self
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {

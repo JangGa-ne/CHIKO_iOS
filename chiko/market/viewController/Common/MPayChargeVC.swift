@@ -71,7 +71,7 @@ class MPayChargeVC: UIViewController {
         if Int(krw_cash) ?? 0 >= 100 {
 //            let segue = storyboard?.instantiateViewController(withIdentifier: "PaymentVC") as! PaymentVC
 //            segue.cny_cash = cny_cash.replacingOccurrences(of: ".", with: "")
-//            navigationController?.pushViewController(segue, animated: true)
+//            navigationController?.pushViewController(segue, animated: true, completion: nil)
             alert(title: "test", message: "페이충전 되었습니다.", style: .alert, time: 1) {
                 StoreObject.store_cash += Int(self.krw_cash) ?? 0
                 if let delegate = MPayVCdelegate {

@@ -21,7 +21,7 @@ extension UIViewController {
     
     func alert(title: String?, message: String?, style: UIAlertController.Style, time: CGFloat, completion: (() -> Void)? = nil) {
         
-        let alert = UIAlertController(title: title, message: message, preferredStyle: style)
+        let alert = UIAlertController(title: translation(title), message: translation(message), preferredStyle: style)
         present(alert, animated: true) {
             DispatchQueue.main.asyncAfter(deadline: .now()+time) { alert.dismiss(animated: true) { completion?() } }
         }

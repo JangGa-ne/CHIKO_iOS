@@ -54,6 +54,9 @@ class ReDeliveryPaymentVC: UIViewController {
     @IBOutlet weak var wechatPay_img: UIImageView!
     @IBOutlet weak var wechatPay_label: UILabel!
     @IBOutlet weak var wechatPay_btn: UIButton!
+    @IBOutlet weak var virtual_img: UIImageView!
+    @IBOutlet weak var virtual_label: UILabel!
+    @IBOutlet weak var virtual_btn: UIButton!
     /// 결제하기
     @IBOutlet weak var deliveryPayment_sv: UIStackView!
     @IBOutlet weak var deliveryPayment_btn: UIButton!
@@ -106,7 +109,7 @@ class ReDeliveryPaymentVC: UIViewController {
         ([overseasCard_label, aliPay_label, wechatPay_label] as [UILabel]).forEach { label in
             label.textColor = .black.withAlphaComponent(0.3)
         }
-        ([overseasCard_btn, aliPay_btn, wechatPay_btn] as [UIButton]).enumerated().forEach { i, btn in
+        ([overseasCard_btn, aliPay_btn, wechatPay_btn, virtual_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.isSelected = false
             btn.tag = i; btn.addTarget(self, action: #selector(paymentType_btn(_:)), for: .touchUpInside)
         }
@@ -123,15 +126,17 @@ class ReDeliveryPaymentVC: UIViewController {
             payment_type = "ALIPAY"
         } else if sender == wechatPay_btn {
             payment_type = "WECHATPAY"
+        } else if sender == virtual_btn {
+            payment_type = "VIRTUAL"
         }
         
-        ([overseasCard_img, aliPay_img, wechatPay_img] as [UIImageView]).enumerated().forEach { i, img in
+        ([overseasCard_img, aliPay_img, wechatPay_img, virtual_img] as [UIImageView]).enumerated().forEach { i, img in
             img.image = i == sender.tag ? UIImage(named: "check_on") : UIImage(named: "check_off")
         }
-        ([overseasCard_label, aliPay_label, wechatPay_label] as [UILabel]).enumerated().forEach { i, label in
+        ([overseasCard_label, aliPay_label, wechatPay_label, virtual_label] as [UILabel]).enumerated().forEach { i, label in
             label.textColor = i == sender.tag ? .black : .black.withAlphaComponent(0.3)
         }
-        ([overseasCard_btn, aliPay_btn, wechatPay_btn] as [UIButton]).enumerated().forEach { i, btn in
+        ([overseasCard_btn, aliPay_btn, wechatPay_btn, virtual_btn] as [UIButton]).enumerated().forEach { i, btn in
             btn.isSelected = i == sender.tag
         }
     }

@@ -846,3 +846,23 @@ func setNotice(noticeDict: [String: Any]) -> NoticeData {
     noticeValue.type = noticeDict["type"] as? String ?? ""
     return noticeValue
 }
+
+class ChatsData {
+    
+    var content: String = ""
+    var direction: String = ""
+    var store_id: String = ""
+    var read_or_not: Bool = false
+    var time: String = ""
+}
+
+func setChats(chatsDict: [String: Any]) -> ChatsData {
+    
+    let chatsValue = ChatsData()
+    chatsValue.content = chatsDict["content"] as? String ?? ""
+    chatsValue.direction = chatsDict["direction"] as? String ?? ""
+    chatsValue.store_id = chatsDict["store_id"] as? String ?? ""
+    chatsValue.read_or_not = Bool(chatsDict["read_or_not"] as? String ?? "false") ?? false
+    chatsValue.time = chatsDict["time"] as? String ?? ""
+    return chatsValue
+}

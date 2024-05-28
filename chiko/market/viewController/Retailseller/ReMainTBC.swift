@@ -51,6 +51,9 @@ class ReMainTBC: UITabBarController {
         tabBar.insertSubview(lineView, at: 1)
         
         tabBar.items!.enumerated().forEach { i, tabBarItem in
+//            tabBarItem.selectedImage = UIImage(named: ["tab0_on", "tab1_on", "tab2_on", "tab2_on"][i])
+//            tabBarItem.image = UIImage(named: ["tab0_off", "tab1_off", "tab2_off", "tab2_off"][i])
+//            tabBarItem.title = translation(["홈", "상품리스트", "챗봇", "마이페이지"][i])
             tabBarItem.selectedImage = UIImage(named: ["tab0_on", "tab1_on", "tab2_on"][i])
             tabBarItem.image = UIImage(named: ["tab0_off", "tab1_off", "tab2_off"][i])
             tabBarItem.title = translation(["홈", "상품리스트", "마이페이지"][i])

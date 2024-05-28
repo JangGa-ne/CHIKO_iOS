@@ -65,8 +65,8 @@ extension UITextField {
         rightView = UIView(frame: CGRect(x: 0, y: 0, width: x, height: frame.height)); rightViewMode = ViewMode.always
     }
     
-    func placeholder(text: String, color: UIColor) {
-        attributedPlaceholder = NSAttributedString(string: text, attributes: [NSAttributedString.Key.foregroundColor: color])
+    func placeholder(text: String, color: UIColor = .black.withAlphaComponent(0.3)) {
+        attributedPlaceholder = NSAttributedString(string: translation(text), attributes: [NSAttributedString.Key.foregroundColor: color])
     }
     
     func removeSpecialChars() {

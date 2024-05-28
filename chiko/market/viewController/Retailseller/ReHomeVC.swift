@@ -94,14 +94,14 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
         let data = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[sender.tag]
         let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = data.store_id
-        ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true)
+        ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
         segue.GoodsObject = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[indexPath.row]
-        ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true)
+        ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }
 
@@ -153,19 +153,21 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             
             setKingfisher(imageView: cell.store_img, imageUrl: data.StoreObject.store_mainphoto_img, cornerRadius: 15)
             setKingfisher(imageView: cell.item_img, imageUrl: data.GoodsObject.item_mainphoto_img, cornerRadius: 10)
-            imageUrlColor(imageUrl: data.StoreObject.store_mainphoto_img, point: cell.store_img.center) { color in
-                cell.item_gv.startColor = color.withAlphaComponent(0.0)
-                cell.item_gv.endColor = color.withAlphaComponent(1.0)
-                if isDarkBackground(color: color) {
-                    cell.itemName_label.textColor = .white
-                    cell.itemPrice_label.textColor = .white.withAlphaComponent(0.3)
-                    cell.itemPrice_lineView.backgroundColor = .white.withAlphaComponent(0.3)
-                    cell.itemSalePrice_label.textColor = .white
-                } else {
-                    cell.itemName_label.textColor = .black
-                    cell.itemPrice_label.textColor = .black.withAlphaComponent(0.3)
-                    cell.itemPrice_lineView.backgroundColor = .black.withAlphaComponent(0.3)
-                    cell.itemSalePrice_label.textColor = .black
+            getColorFromImageURL(data.StoreObject.store_mainphoto_img) { color in
+                if let color = color {
+                    cell.item_gv.startColor = color.withAlphaComponent(0.0)
+                    cell.item_gv.endColor = color.withAlphaComponent(1.0)
+                    if isDarkBackground(color: color) {
+                        cell.itemName_label.textColor = .white
+                        cell.itemPrice_label.textColor = .white.withAlphaComponent(0.3)
+                        cell.itemPrice_lineView.backgroundColor = .white.withAlphaComponent(0.3)
+                        cell.itemSalePrice_label.textColor = .white
+                    } else {
+                        cell.itemName_label.textColor = .black
+                        cell.itemPrice_label.textColor = .black.withAlphaComponent(0.3)
+                        cell.itemPrice_lineView.backgroundColor = .black.withAlphaComponent(0.3)
+                        cell.itemSalePrice_label.textColor = .black
+                    }
                 }
             }
         }
@@ -223,7 +225,7 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             let data = ReStoreArray_best[indexPath.row]
             let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
             segue.GoodsObject = data.GoodsObject
-            ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true)
+            ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true, completion: nil)
         }
     }
     

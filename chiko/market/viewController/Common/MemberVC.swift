@@ -77,7 +77,7 @@ class MemberVC: UIViewController {
         let data = MemberObject
         
         ([phoneNum_tf, phoneNumCheck_tf, beforeMemberPw_tf, afterMemberPw_tf, afterMemberPwCheck_tf, memberName_tf, memberEmail_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: translation(["-없이 입력", "인증번호 입력", "기존 비밀번호", "새 비밀번호", "비밀번호 확인", "", "@이하 주소까지 모두 입력"][i]), color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: ["-없이 입력", "인증번호 입력", "기존 비밀번호", "새 비밀번호", "비밀번호 확인", "", "@이하 주소까지 모두 입력"][i])
             tf.text = [data.member_num, "", "", "", "", data.member_name, data.member_email][i]
             if i < 1 || i >= 5 { input_check[i] = (tf.text! != "") }
             tf.delegate = self
@@ -148,7 +148,7 @@ class MemberVC: UIViewController {
             
             if member_type == "retailseller" {
 //                check.isHidden = !(isChinesePhoneNumValid(text) || text == "01031870005")
-                input_check[sender.tag] = (text.count != 0  || text == "01031870005")
+                input_check[sender.tag] = (text.count != 0 || text == "01031870005")
             } else if member_type == "wholesales" {
                 input_check[sender.tag] = (text.count == 11 || text == "01031870005")
             }
@@ -228,8 +228,6 @@ class MemberVC: UIViewController {
     }
     
     @objc func phoneNum_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         phoneNumCheck_tf.text?.removeAll()
         checkPhoneNumCheck_img.isHidden = true
@@ -240,11 +238,14 @@ class MemberVC: UIViewController {
             requestPhoneNum(phoneNum: phoneNum_tf.text!) { status in
                 self.customLoadingIndicator(animated: false)
                 if status == 200 {
-                    self.customAlert(message: "인증번호를 요청하였습니다.", time: 1)
+                    self.customAlert(message: "인증번호를 요청하였습니다.", time: 1) {
+                        DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
+                            self.phoneNumCheck_tf.becomeFirstResponder()
+                        }
+                    }
                     sender.isSelected = true
                     sender.backgroundColor = .H_8CD26B
                     self.phoneNumCheck_view.isHidden = false
-                    DispatchQueue.main.asyncAfter(deadline: .now()+1) { self.phoneNumCheck_tf.becomeFirstResponder() }
                 } else {
                     self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
                     sender.isSelected = false
@@ -256,8 +257,6 @@ class MemberVC: UIViewController {
     }
     
     @objc func afterMemberPwCheck_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
         
         if beforeMemberPw_tf.text! != "", noticeBeforeMemberPw_label.isHidden, afterMemberPw_tf.text! != "", noticeAfterMemberPw_label.isHidden, afterMemberPwCheck_tf.text! != "", noticeAfterMemberPwCheck_label.isHidden {
             
@@ -293,8 +292,6 @@ class MemberVC: UIViewController {
     }
     
     @objc func memberIdCard_view(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         setPhoto(max: 1) { photo in
             MemberObject.upload_member_idcard_img = photo
@@ -304,8 +301,6 @@ class MemberVC: UIViewController {
     }
     
     @objc func edit_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
         
         var final_check: Bool = true
         var phone_check: Bool = false

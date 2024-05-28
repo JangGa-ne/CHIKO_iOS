@@ -31,7 +31,7 @@ class SearchStoreVC: UIViewController {
     
     @IBOutlet var labels: [UILabel]!
     
-    @IBAction func back_btn(_ sender: UIButton) { view.endEditing(true); navigationController?.popViewController(animated: true) }
+    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
     @IBOutlet weak var navi_lineView: UIView!
     
@@ -56,7 +56,7 @@ class SearchStoreVC: UIViewController {
         navi_label.alpha = 0.0
         navi_lineView.alpha = 0.0
         
-        searchStore_tf.placeholder(text: translation("매장명을 입력하세요."), color: .black.withAlphaComponent(0.3))
+        searchStore_tf.placeholder(text: "매장명을 입력하세요.")
         searchStore_btn(UIButton())
         searchStore_btn.addTarget(self, action: #selector(searchStore_btn(_:)), for: .touchUpInside)
         
@@ -134,15 +134,13 @@ extension SearchStoreVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         let data = StoreArray_search[indexPath.row]
         let alert = UIAlertController(title: translation("비밀번호 입력"), message: translation("스토어를 등록하기 위해\n비밀번호를 입력해 주세요."), preferredStyle: .alert)
         alert.addTextField()
         let storePw_tf = alert.textFields?[0] ?? UITextField()
         storePw_tf.keyboardType = .numberPad
-        storePw_tf.placeholder(text: translation("비밀번호를 입력하세요."), color: .black.withAlphaComponent(0.3))
+        storePw_tf.placeholder(text: "비밀번호를 입력하세요.")
         alert.addAction(UIAlertAction(title: translation("등록"), style: .default, handler: { _ in
             if data.store_pw == storePw_tf.text! {
                 /// signup member

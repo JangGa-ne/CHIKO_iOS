@@ -60,7 +60,7 @@ class ReDeliveryDetailVC: UIViewController {
         setKeyboard()
         
         ([nickName_tf, address_tf, addressDetail_tf, addressZipcode_tf, name_tf, num_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: translation(["배송지명", "주소", "상세주소", "우편번호", "받는사람", "휴대전화"][i]), color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: ["배송지명", "주소", "상세주소", "우편번호", "받는사람", "휴대전화"][i])
         }
         
         ([checkNickName_img, checkAddress_img, checkAddressDetail_img, checkAddressZipcode_img, checkName_img, checkNum_img] as [UIImageView]).forEach { img in
@@ -97,8 +97,6 @@ class ReDeliveryDetailVC: UIViewController {
     }
     
     @objc func save_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
         
         switch "" {
         case address_tf.text!: customAlert(message: "주소를 입력하세요.", time: 1)
@@ -146,7 +144,7 @@ class ReDeliveryDetailVC: UIViewController {
                     if let delegate = ReLiquidateVCdelegate {
                         delegate.collectionView.reloadData()
                     }
-                    self.alert(title: "", message: translation(message), style: .alert, time: 1) {
+                    self.alert(title: "", message: message, style: .alert, time: 1) {
                         self.navigationController?.popViewController(animated: true)
                     }
                 default:
@@ -157,8 +155,6 @@ class ReDeliveryDetailVC: UIViewController {
     }
     
     @objc func delete_btn(_ sender: UIButton) {
-        
-        view.endEditing(true)
         
         let alert = UIAlertController(title: "", message: translation("삭제하시겠습니까?"), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: translation("삭제"), style: .destructive, handler: { _ in
@@ -200,7 +196,7 @@ class ReDeliveryDetailVC: UIViewController {
                     if let delegate = ReLiquidateVCdelegate {
                         delegate.collectionView.reloadData()
                     }
-                    self.alert(title: "", message: translation("삭제되었습니다."), style: .alert, time: 1) {
+                    self.alert(title: "", message: "삭제되었습니다.", style: .alert, time: 1) {
                         self.navigationController?.popViewController(animated: true)
                     }
                 default:

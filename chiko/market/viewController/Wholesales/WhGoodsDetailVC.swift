@@ -143,7 +143,7 @@ class WhGoodsDetailVC: UIViewController {
         let segue = storyboard?.instantiateViewController(withIdentifier: "ImageSlideVC") as! ImageSlideVC
         segue.inputs = sender.images
         segue.indexpath_row = sender.tag
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func edit_btn(_ sender: UIButton) {
@@ -157,7 +157,7 @@ class WhGoodsDetailVC: UIViewController {
         data.item_colors.forEach { color in
             segue.ColorArray.append((option_name: color, option_color: ColorArray[color] ?? "ffffff"))
         }
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func soldOut_btn(_ sender: UIButton) {

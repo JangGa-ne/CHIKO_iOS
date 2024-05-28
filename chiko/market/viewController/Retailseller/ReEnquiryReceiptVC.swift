@@ -120,6 +120,6 @@ extension ReEnquiryReceiptVC: UITableViewDelegate, UITableViewDataSource {
         let segue = self.storyboard?.instantiateViewController(withIdentifier: "ReEnquiryReceiptDetailVC") as! ReEnquiryReceiptDetailVC
         segue.enquiry_time = data.timestamp
         segue.ReEnquiryReceiptArray = [data]
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }

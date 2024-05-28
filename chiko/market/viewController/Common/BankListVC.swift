@@ -89,7 +89,7 @@ class BankListVC: UIViewController {
         
         BankListVCdelegate = self
         // init
-        alert_v.layer.cornerRadius = divice_radius
+        alert_v.layer.cornerRadius = device_radius
         
         pickerView.delegate = self; pickerView.dataSource = self
         

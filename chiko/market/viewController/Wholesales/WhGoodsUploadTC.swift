@@ -186,8 +186,6 @@ class WhGoodsUploadTC: UITableViewCell {
     
     @objc func category_btn(_ sender: UIButton) {
         
-        WhGoodsUploadVCdelegate.view.endEditing(true)
-        
         if sender.tag != 0, WhGoodsUploadVCdelegate.GoodsObject.item_category_name.count == 0 {
             WhGoodsUploadVCdelegate.customAlert(message: "카테고리를 선택해 주세요.", time: 1); return
         }
@@ -224,7 +222,11 @@ class WhGoodsUploadTC: UITableViewCell {
                 WhGoodsUploadVCdelegate.GoodsObject.item_price = 3000000
                 sender.text = "3,000,000"
                 sender.resignFirstResponder()
-                WhGoodsUploadVCdelegate.customAlert(message: "최대 300만원까지만 입력 가능합니다.", time: 1) { sender.becomeFirstResponder() }
+                WhGoodsUploadVCdelegate.customAlert(message: "최대 300만원까지만 입력 가능합니다.", time: 1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
+                        sender.becomeFirstResponder()
+                    }
+                }
             }
         } else if sender.tag == 2 {
             
@@ -232,18 +234,22 @@ class WhGoodsUploadTC: UITableViewCell {
             
             WhGoodsUploadVCdelegate.GoodsObject.item_sale_price = item_sale_price
             
-            if !WhGoodsUploadVCdelegate.item_sale {
-                WhGoodsUploadVCdelegate.GoodsObject.item_price = WhGoodsUploadVCdelegate.GoodsObject.item_sale_price
-                itemPrice_tf.text!.removeAll()
-            }
-            
             if (3000000 < item_sale_price) {
                 WhGoodsUploadVCdelegate.GoodsObject.item_sale_price = 3000000
                 sender.text = "3,000,000"
                 sender.resignFirstResponder()
-                WhGoodsUploadVCdelegate.customAlert(message: "최대 300만원까지만 입력 가능합니다.", time: 1) { sender.becomeFirstResponder() }
+                WhGoodsUploadVCdelegate.customAlert(message: "최대 300만원까지만 입력 가능합니다.", time: 1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now()+0.5) {
+                        sender.becomeFirstResponder()
+                    }
+                }
             } else if itemPrice_tf.text! != "" && item_price < item_sale_price {
                 sender.text = priceFormatter.string(from: item_price as NSNumber) ?? sender.text!
+            }
+            
+            if !WhGoodsUploadVCdelegate.item_sale {
+                WhGoodsUploadVCdelegate.GoodsObject.item_price = WhGoodsUploadVCdelegate.GoodsObject.item_sale_price
+                itemPrice_tf.text!.removeAll()
             }
         }
         
@@ -286,7 +292,6 @@ class WhGoodsUploadTC: UITableViewCell {
     
     @objc func select_btn(_ sender: UIButton) {
         
-        WhGoodsUploadVCdelegate.view.endEditing(true)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
         if sender.tag == 0 {
@@ -324,7 +329,6 @@ class WhGoodsUploadTC: UITableViewCell {
     
     @objc func content_btn(_ sender: UIButton) {
         
-        WhGoodsUploadVCdelegate.view.endEditing(true)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
         if 10-WhGoodsUploadVCdelegate.ContentsArray.count == 0 {
@@ -346,7 +350,6 @@ class WhGoodsUploadTC: UITableViewCell {
     @objc func materialWashing_btn(_ sender: UIButton) {
         
         if sender.frame != .zero {
-            WhGoodsUploadVCdelegate.view.endEditing(true)
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
         
@@ -412,7 +415,6 @@ class WhGoodsUploadTC: UITableViewCell {
     @objc func otherType_btn(_ sender: UIButton) {
             
         if sender.frame != .zero {
-            WhGoodsUploadVCdelegate.view.endEditing(true)
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
         
@@ -559,7 +561,7 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
                 let data = WhGoodsUploadVCdelegate.OptionPriceArray[indexpath_row].size_price[indexPath.row]
                 
                 cell.optionSize_label.text = data.size
-                cell.optionPrice_tf.placeholder(text: priceFormatter.string(from: WhGoodsUploadVCdelegate.GoodsObject.item_sale_price as NSNumber) ?? "0", color: .black.withAlphaComponent(0.3))
+                cell.optionPrice_tf.placeholder(text: priceFormatter.string(from: WhGoodsUploadVCdelegate.GoodsObject.item_sale_price as NSNumber) ?? "0")
                 if data.price <= WhGoodsUploadVCdelegate.GoodsObject.item_sale_price {
                     cell.optionPrice_tf.text!.removeAll()
                 } else {
@@ -631,7 +633,6 @@ extension WhGoodsUploadTC: UICollectionViewDelegate, UICollectionViewDataSource,
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        WhGoodsUploadVCdelegate.view.endEditing(true)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
         if collectionView == itemCollectionView, indexPath.section == 0 {

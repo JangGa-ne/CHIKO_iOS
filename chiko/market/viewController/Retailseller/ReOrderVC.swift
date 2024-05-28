@@ -94,7 +94,7 @@ extension ReOrderItemOptionTC: UITableViewDelegate, UITableViewDataSource {
         let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
         segue.action = delegate.action
         segue.OrderObject = delegate.ReOrderArray[indexpath_row]
-        delegate.navigationController?.pushViewController(segue, animated: true)
+        delegate.navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }
     
@@ -197,7 +197,7 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
 //        let segue = ReOrderVCdelegate.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
 //        segue.store_id = data.store_id
 //        segue.item_key = data.item_key
-//        ReOrderVCdelegate.navigationController?.pushViewController(segue, animated: true)
+//        ReOrderVCdelegate.navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func itemName_btn(_ sender: UIButton) {
@@ -206,7 +206,7 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
         let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
         segue.store_id = data.store_id
         segue.item_key = data.item_key
-        delegate.navigationController?.pushViewController(segue, animated: true)
+        delegate.navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -214,7 +214,7 @@ extension ReOrderTC: UITableViewDelegate, UITableViewDataSource {
         let segue = delegate.storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
         segue.action = delegate.action
         segue.OrderObject = delegate.ReOrderArray[indexpath_row]
-        delegate.navigationController?.pushViewController(segue, animated: true)
+        delegate.navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }
 
@@ -365,7 +365,7 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
         segue.action = action
         segue.OrderObject = ReOrderArray[sender.tag]
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func delete_btn(_ sender: UIButton) {
@@ -377,14 +377,14 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryPaymentVC") as! ReDeliveryPaymentVC
         segue.action = action
         segue.OrderObject = ReOrderArray[sender.tag]
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func deliveryTracking_btn(_ sender: UIButton) {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryTrackingVC") as! ReDeliveryTrackingVC
         segue.linkUrl = "https://www.sf-international.com/kr/ko/dynamic_function/waybill/#search/bill-number/"+ReOrderArray[sender.tag].delivery_tracking_num
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func deliveryReceipt_btn(_ sender: UIButton) {
@@ -392,7 +392,7 @@ extension ReOrderVC: UITableViewDelegate, UITableViewDataSource {
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryPaymentVC") as! ReDeliveryPaymentVC
         segue.action = action
         segue.OrderObject = ReOrderArray[sender.tag]
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -42,7 +42,7 @@ class CalendarVC: UIViewController {
         
         CalendarVCdelegate = self
         // init
-        alert_v.layer.cornerRadius = divice_radius
+        alert_v.layer.cornerRadius = device_radius
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy년 MM월"

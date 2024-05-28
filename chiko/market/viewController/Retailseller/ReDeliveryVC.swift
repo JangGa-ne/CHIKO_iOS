@@ -75,7 +75,7 @@ class ReDeliveryVC: UIViewController {
         segue.store_delivery_position = StoreObject.store_delivery_position
         segue.store_delivery = StoreObject.store_delivery
         segue.indexpath_row = sender.tag
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -141,6 +141,6 @@ extension ReDeliveryVC: UITableViewDelegate, UITableViewDataSource {
         segue.store_delivery_position = StoreObject.store_delivery_position
         segue.store_delivery = StoreObject.store_delivery
         segue.indexpath_row = sender.tag
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }

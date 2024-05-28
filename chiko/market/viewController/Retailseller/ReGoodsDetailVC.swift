@@ -222,7 +222,7 @@ class ReGoodsDetailVC: UIViewController {
             /// order
             let segue = storyboard?.instantiateViewController(withIdentifier: "ReLiquidateVC") as! ReLiquidateVC
             segue.LiquidateArray = [setBasket(basketDict: params)]
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         }
     }
     
@@ -402,7 +402,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = GoodsObject.store_id
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func item_img(_ sender: UITapGestureRecognizer) {
@@ -411,7 +411,7 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
         let segue = storyboard?.instantiateViewController(withIdentifier: "ImageSlideVC") as! ImageSlideVC
         segue.inputs = sender.images
         segue.indexpath_row = sender.tag
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func optionSelect_view(_ sender: UITapGestureRecognizer) {

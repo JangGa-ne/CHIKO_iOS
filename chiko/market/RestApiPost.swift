@@ -13,8 +13,10 @@ import FirebaseMessaging
 import Nuke
 import SDWebImage
 
-let requestPaymentUrl: String = "https://pg.innopay.co.kr/ipay/js/innopay_overseas-2.0.js"
 let requestUrl: String = "https://dk-sto-yy2mch6sra-du.a.run.app"
+let requestPaymentUrl: String = "https://pg.innopay.co.kr/ipay/js/innopay_overseas-2.0.js"
+let requestChatbotUrl: String = "https://api.kakaobrain.com/v1/inference/kogpt/generation"
+
 let dispatchGroup = DispatchGroup()
 let dispatchQueue = DispatchQueue(label: "com.blink.dk.market2", attributes: .concurrent)
 
@@ -283,39 +285,74 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
     }
 }
 
+func requestFindMember(name: String = "", number: String, type: String = "", completionHandler: @escaping ((String, Int) -> Void)) {
+    
+    var params: Parameters = [
+        "action": "find_member",
+        "user_num": number,
+    ]
+    name != "" ? params["user_name"] = name : nil
+    type != "" ? params["user_type"] = type : nil
+    print(params)
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/dk_sto", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                if responseJson["message"] as? String ?? "" == "success" {
+                    let member_id = responseJson["user_id"] as? String ?? ""
+                    if !(name != "" && member_id == "") {
+                        completionHandler(member_id, 200)
+                    } else {
+                        completionHandler("", 204)
+                    }
+                } else {
+                    completionHandler("", 204)
+                }
+            } else {
+                completionHandler("", 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler("", response.error?.responseCode ?? 500)
+        }
+    }
+}
+
 func requestPhoneNum(phoneNum: String, completionHandler: @escaping ((Int) -> Void)) {
     
-    if phoneNum.contains("01031870005") {
-        completionHandler(200)
-    } else {
-        Auth.auth().languageCode = system_language
-        PhoneAuthProvider.provider().verifyPhoneNumber(system_country+phoneNum, uiDelegate: nil) { verificationID, error in
-            if (error == nil) {
-                print(verificationID as Any)
-                UserDefaults.standard.setValue(verificationID ?? "", forKey: "verification_id")
-                completionHandler(200)
-            } else {
-                print(error as Any)
-                completionHandler(500)
-            }
+    var number: String = system_country+phoneNum
+    if (phoneNum == "01031870005") {
+        number = "+8201031870005"
+    } else if (phoneNum == "01031853309") {
+        number = "+8201031853309"
+    } else if (phoneNum == "01025260399") {
+        number = "+8201025260399"
+    }
+    Auth.auth().languageCode = system_language
+    PhoneAuthProvider.provider().verifyPhoneNumber(number, uiDelegate: nil) { verificationID, error in
+        if (error == nil) {
+            print(verificationID as Any)
+            UserDefaults.standard.setValue(verificationID ?? "", forKey: "verification_id")
+            completionHandler(200)
+        } else {
+            print(error as Any)
+            completionHandler(500)
         }
     }
 }
 
 func requestPhoneNumCheck(verificationId: String, phoneNum: String, phoneNumCheck: String, completionHandler: @escaping ((Int) -> Void)) {
     
-    if phoneNum == "01031870005", phoneNumCheck == "000191" {
-        completionHandler(200)
-    } else {
-        let credential = PhoneAuthProvider.provider().credential(withVerificationID: verificationId, verificationCode: phoneNumCheck)
-        Auth.auth().signIn(with: credential) { authResult, error in
-            if error == nil {
-                print(authResult as Any)
-                completionHandler(200)
-            } else {
-                print(error as Any)
-                completionHandler(500)
-            }
+    let credential = PhoneAuthProvider.provider().credential(withVerificationID: verificationId, verificationCode: phoneNumCheck)
+    Auth.auth().signIn(with: credential) { authResult, error in
+        if error == nil {
+            print(authResult as Any)
+            UserDefaults.standard.removeObject(forKey: "verification_id")
+            completionHandler(200)
+        } else {
+            print(error as Any)
+            completionHandler(500)
         }
     }
 }
@@ -1034,6 +1071,147 @@ func requestNotice(completionHandler: ((Int) -> Void)? = nil) {
         } catch {
             print(response.error as Any)
             completionHandler?(response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestVirtual(completionHandler: @escaping ((Int) -> Void)) {
+    
+    let params: Parameters = [
+        "mid": "testpay01m",
+        "licenseKey": "Ma29gyAFhvv/+e4/AHpV6pISQIvSKziLIbrNoXPbRS5nfTx2DOs8OJve+NzwyoaQ8p9Uy1AN4S1I0Um5v7oNUg==",
+        "moid": "test1234567890",
+        "goodsCnt": "1",
+        "goodsName": "테스트",
+        "amt": "1000",
+        "buyerName": "김봉민",
+        "buyerTel": "01012342552",
+        "buyerEmail": "dev@infinisoft.co.kr",
+        "vbankBankCode": "003",
+        "vbankNum": "0001234567890",
+        "vbankExpDate": "",
+        "vbankAccountName": "홍길동",
+        "countryCode": "KR",
+        "socNo": "801212",
+        "addr": "서울시 금천구 가산디지털2로 53",
+        "accountTel": "01012342552",
+        "receiptAmt": "1000",
+        "receiptServiceAmt": "100",
+        "receiptType": "1",
+        "receiptIdentity": "01012341234",
+        "mallReserved": "testData",
+        "userId": "TestCompany",
+        "buyerCode": "",
+        "mallUserId": ""
+    ]
+    /// x-www-form-urlencoded
+    AF.request("https://api.innopay.co.kr/api/vbankReq", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+                print(responseJson)
+                completionHandler(200)
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestVirtual2(completionHandler: @escaping ((Int) -> Void)) {
+    
+    let params: Parameters = [
+        "mid":"testpay01m",
+        "licenseKey":"Ma29gyAFhvv/+e4/AHpV6pISQIvSKziLIbrNoXPbRS5nfTx2DOs8OJve+NzwyoaQ8p9Uy1AN4S1I0Um5v7oNUg==",
+        "moid":"test1234567890",
+        "reqCd":"S",
+        "vbankBankCode":"003",
+        "vbankNum":"0001234567890",
+        "vbankAccountName":"홍길동",
+        "countryCode":"KR",
+        "socNo":"801212",
+        "addr":"서울시 금천구 가산디지털2로 53",
+        "accountTel":"01012342552"
+    ]
+    /// x-www-form-urlencoded
+    AF.request("https://api.innopay.co.kr/api/vacctInquery", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+                print(responseJson)
+                completionHandler(200)
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestChats(action: String, content: String = "", completionHandler: @escaping (([ChatsData], Int) -> Void)) {
+    
+    var params: Parameters = [
+        "direction": "tomanager",
+        "content": content,
+        "read_or_not": "false",
+        "time": String(setGMTUnixTimestamp()),
+    ]
+    
+    if action == "get" { params.removeAll() }
+    
+    params["action"] = action
+    params["store_id"] = StoreObject.store_id
+    params["store_name"] = StoreObject.store_name
+    
+    var ChatsArray: [ChatsData] = []
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/chats", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+                print(responseJson)
+                let array = responseJson["data"] as? Array<[String: Any]> ?? []
+                array.forEach { dict in
+                    /// 데이터 추가
+                    ChatsArray.append(setChats(chatsDict: dict))
+                }
+                ChatsArray.sort { $0.time < $1.time }
+                ChatsArray.count > 0 ? completionHandler(ChatsArray, 200) : completionHandler([], 204)
+            } else {
+                completionHandler([], 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler([], response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestChatbot(comment: String, completionHandler: @escaping ((Int) -> Void)) {
+    
+    let headers: HTTPHeaders = [
+        "Authorization": "KakaoAK 94dea6a5563ce157eb542caad8a07565",
+        "Content-Type": "application/json",
+    ]
+    let params: Parameters = [
+        "prompt": comment,
+        "max_tokens": 120,
+        "top_p": 0.0,
+    ]
+    /// x-www-form-urlencoded
+    AF.request(requestChatbotUrl, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+                print(responseJson)
+                completionHandler(200)
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
         }
     }
 }

@@ -26,7 +26,7 @@ class SignUpStoreVC: UIViewController {
     @IBOutlet var labels: [UILabel]!
     @IBOutlet var buttons: [UIButton]!
     
-    @IBAction func back_btn(_ sender: UIButton) { view.endEditing(true); navigationController?.popViewController(animated: true) }
+    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
     @IBOutlet weak var navi_lineView: UIView!
     
@@ -127,7 +127,7 @@ class SignUpStoreVC: UIViewController {
         navi_lineView.alpha = 0.0
         /// placeholder, delegate, edti, return next/done
         ([businessRegNum_tf, storeName_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, domainAddress_tf, accountBank_tf, depositorName_tf, accountNum_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: translation(["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. www.example.com", "은행명을 입력하세요.", "예금주명을 입력하세요.", "-를 빼고 입력하세요.", "", ""][i]), color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "ex. www.example.com", "은행명을 입력하세요.", "예금주명을 입력하세요.", "-를 빼고 입력하세요.", "", ""][i])
             tf.delegate = self
             tf.tag = i
             tf.addTarget(self, action: #selector(changedEditStoreInfo_if(_:)), for: .editingChanged)
@@ -250,8 +250,6 @@ class SignUpStoreVC: UIViewController {
     }
     
     @objc func storeType_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         if sender.tag == 0 {
             /// online
@@ -287,8 +285,6 @@ class SignUpStoreVC: UIViewController {
     }
     
     @objc func accountBank_view(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "BankListVC") as! BankListVC
         segue.member_type = MemberObject_signup.member_type
@@ -296,8 +292,6 @@ class SignUpStoreVC: UIViewController {
     }
     
     @objc func submitDocu_view(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         guard let sender = sender.view else { return }
         setPhoto(max: 1) { photo in
@@ -318,8 +312,6 @@ class SignUpStoreVC: UIViewController {
     }
     
     @objc func complete_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         var final_check: Bool = true
         var check_img: [UIImageView] = [checkStoreName_img, checkStoreNameEng_img, checkStoreTel_img]
@@ -471,8 +463,6 @@ extension SignUpStoreVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     }
     
     @objc func didSelectItemAt(_ sender: UITapGestureRecognizer) {
-        
-        view.endEditing(true)
         
         guard let sender = sender.view else { return }
         

@@ -25,10 +25,18 @@ func memoryCheck(delete: Bool = false) {
         SDImageCache.shared.clearMemory()
         SDImageCache.shared.clearDisk()
     } else {
-        
-        dataCache?.sizeLimit = 1024 * 1024 * 70
-        
-        SDImageCache.shared.config.maxMemoryCost = 1024 * 1024 * 50
+        /// Kingfisher
+        let Kingfisher = ImageCache.default
+        Kingfisher.memoryStorage.config.totalCostLimit = 1024 * 1024 * 50    // 50MB 메모리 캐시 제한
+        Kingfisher.memoryStorage.config.expiration = .seconds(300)           // 메모리 캐시 만료 시간
+        Kingfisher.diskStorage.config.sizeLimit = 1024 * 1024 * 500          // 500MB 디스크 캐시 제한
+        Kingfisher.diskStorage.config.expiration = .days(7)                  // 디스크 캐시 만료 시간
+        /// SDWebImage
+        let SDWebImage = SDImageCache.shared.config
+        SDWebImage.maxMemoryCost = 1024 * 1024 * 50                          // 50MB 메모리 캐시 제한
+        SDWebImage.maxMemoryCount = 300                                      // 메모리 캐시 만료 시간
+        SDWebImage.maxDiskSize = 1024 * 1024 * 500                           // 500MB 디스크 캐시 제한
+        SDWebImage.maxDiskAge = 60 * 60 * 24 * 7                             // 디스크 캐시 만료 시간
     }
 }
 
@@ -103,7 +111,7 @@ func setImageSlideShew(imageView: ImageSlideshow, imageUrls: [String], cornerRad
 
     imageUrls.enumerated().forEach { i, imageUrl in
         guard let url = URL(string: imageUrl) else { return }
-        SDWebImageManager.shared.loadImage(with: url, options: [], context: [:], progress: nil) { (image, _, _, _, _, _) in
+        SDWebImageManager.shared.loadImage(with: url, options: [.highPriority, .retryFailed, .scaleDownLargeImages], context: [:], progress: nil) { (image, _, _, _, _, _) in
             if let image = image { inputs[i] = ImageSource(image: image) }
             DispatchQueue.main.async {
                 imageView.setImageInputs(inputs); indicator.stopAnimating(); indicator.removeFromSuperview()
@@ -300,3 +308,39 @@ extension UIViewController {
     }
 }
 
+
+
+func getColorFromImageURL(_ urlString: String, completion: @escaping (UIColor?) -> Void) {
+    
+    guard let url = URL(string: urlString) else { completion(nil); return }
+    
+    SDWebImageDownloader.shared.downloadImage(with: url) { (image, _, _, _) in
+        guard let imageData = image?.sd_imageData(), let uiImage = UIImage(data: imageData) else { completion(nil); return }
+        completion(uiImage.getPixelColor(at: uiImage.center))
+    }
+}
+
+extension UIImage {
+    
+    var center: CGPoint {
+        return CGPoint(x: size.width/2, y: size.height-size.height/4)
+    }
+    
+    func getPixelColor(at point: CGPoint) -> UIColor? {
+        guard let cgImage = cgImage else { return nil }
+        
+        let pixelData = cgImage.dataProvider?.data
+        let data: UnsafePointer<UInt8> = CFDataGetBytePtr(pixelData)
+        
+        let bytesPerPixel = 4
+        let bytesPerRow = bytesPerPixel * Int(size.width)
+        let pixelInfo: Int = ((Int(size.width) * Int(point.y)) + Int(point.x)) * bytesPerPixel
+        
+        let red = CGFloat(data[pixelInfo]) / 255.0
+        let green = CGFloat(data[pixelInfo + 1]) / 255.0
+        let blue = CGFloat(data[pixelInfo + 2]) / 255.0
+        let alpha = CGFloat(data[pixelInfo + 3]) / 255.0
+        
+        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+    }
+}

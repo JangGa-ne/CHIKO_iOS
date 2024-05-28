@@ -63,10 +63,11 @@ class SettingVC: UIViewController {
                 MemberObject.topics["enquiry"] as? String ?? "false",
             ]
         } else if StoreObject.store_type == "wholesales" {
-            menus.insert((title: "알림", content: ["마케팅정보 수신"]), at: 0)
+            menus.insert((title: "알림", content: ["마케팅정보", "채팅플러스+"]), at: 0)
             segues.insert((title: "알림", content: [""]), at: 0)
             topics = [
                 MemberObject.topics["marketing"] as? String ?? "false",
+                MemberObject.topics["chats"] as? String ?? "false",
             ]
         }
         
@@ -150,9 +151,12 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
         if sender.tag == 0 {
             title = "마케팅 정보"
             topic = "marketing"
-        } else if sender.tag == 1 {
+        } else if sender.tag == 1, MemberObject.member_type == "retailseller" {
             title = "영수증 주문요청"
             topic = "enquiry"
+        } else if sender.tag == 1, MemberObject.member_type == "wholesales" {
+            title = "채팅플러스+"
+            topic = "chats"
         }; MemberObject.topics[topic] = String(sender.isOn)
         
         guard topic != "" else { self.customLoadingIndicator(animated: false); return }
@@ -203,7 +207,7 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
         } else if indexPath.section == 1 {
             let segue = storyboard?.instantiateViewController(withIdentifier: "SafariVC") as! SafariVC
             segue.linkUrl = identifier
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         } else if indexPath.section == 2 {
             if indexPath.row == 0 {
                 

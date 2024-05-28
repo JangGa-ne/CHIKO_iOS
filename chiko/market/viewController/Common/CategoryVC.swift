@@ -87,8 +87,10 @@ class CategoryVC: UIViewController {
     func loadingData() {
         
         if CategoryObject.ColorArray.count == 0 || CategoryObject.CategoryArray.count == 0 || CategoryObject.SizeArray.count == 0 || CategoryObject.StyleArray.count == 0 || CategoryObject.MaterialArray.count == 0 {
+            customLoadingIndicator(animated: true)
             requestCategory(action: ["color_category", "item_category", "size_category", "style_category", "material_category"]) { _ in
-                self.collectionView.reloadData(); self.tableView.reloadData()
+                self.customLoadingIndicator(animated: false)
+                self.loadingData()
             }
         }
         
@@ -369,7 +371,7 @@ extension CategoryVC: UITableViewDelegate, UITableViewDataSource {
                     alert.addTextField()
                     let sheet_tf = alert.textFields?[0] ?? UITextField()
                     sheet_tf.keyboardType = .numberPad
-                    sheet_tf.placeholder(text: translation("미입력시 퍼센트(%)가 표기 되지 않습니다."), color: .lightGray)
+                    sheet_tf.placeholder(text: "미입력시 퍼센트(%)가 표기 되지 않습니다.")
                     sheet_tf.addTarget(self, action: #selector(textfield(_:)), for: .editingChanged)
                     alert.addAction(UIAlertAction(title: translation("확인"), style: .default, handler: { _ in
                         if alert.textFields?[0].text ?? "" == "" {

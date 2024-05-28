@@ -17,7 +17,7 @@ class SignUpMemberVC: UIViewController {
     @IBOutlet var labels: [UILabel]!
     @IBOutlet var buttons: [UIButton]!
     
-    @IBAction func back_btn(_ sender: UIButton) { view.endEditing(true); navigationController?.popViewController(animated: true) }
+    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     @IBOutlet weak var navi_label: UILabel!
     @IBOutlet weak var navi_lineView: UIView!
     
@@ -91,7 +91,7 @@ class SignUpMemberVC: UIViewController {
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(scrollView(_:))))
         /// placeholder, delegate, edit, return next/done
         ([phoneNum_tf, phoneNumCheck_tf, memberId_tf, memberPw_tf, memberPwCheck_tf, memberName_tf, memberEmail_tf] as [UITextField]).enumerated().forEach { i, tf in
-            tf.placeholder(text: translation(["-없이 입력", "인증번호 입력", "영어 소문자 또는 숫자 4~20자리", "영어+숫자+특수문자 조합 8~15자리", "", "", "@이하 주소까지 모두 입력"][i]), color: .black.withAlphaComponent(0.3))
+            tf.placeholder(text: ["-없이 입력", "인증번호 입력", "영어 소문자 또는 숫자 4~20자리", "영어+숫자+특수문자 조합 8~15자리", "", "", "@이하 주소까지 모두 입력"][i])
             tf.delegate = self
             tf.tag = i
             tf.addTarget(self, action: #selector(changedEditMemberInfo_if(_:)), for: .editingChanged)
@@ -255,8 +255,6 @@ class SignUpMemberVC: UIViewController {
     }
     
     @objc func memberType_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         if sender.tag == 0 {
             /// ceo
@@ -286,36 +284,52 @@ class SignUpMemberVC: UIViewController {
     }
     
     @objc func phoneNum_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         phoneNumCheck_tf.text?.removeAll()
         checkPhoneNumCheck_img.isHidden = true
         
         if phoneNum_tf.text!.count > 0, noticePhoneNum_label.isHidden {
+            
             customLoadingIndicator(animated: true)
-            /// Phone Number Send 요청
-            requestPhoneNum(phoneNum: phoneNum_tf.text!) { status in
-                self.customLoadingIndicator(animated: false)
-                if status == 200 {
-                    self.customAlert(message: "인증번호를 요청하였습니다.", time: 1)
-                    sender.isSelected = true
-                    sender.backgroundColor = .H_8CD26B
-                    self.phoneNumCheck_view.isHidden = false
-                    DispatchQueue.main.asyncAfter(deadline: .now()+1) { self.phoneNumCheck_tf.becomeFirstResponder() }
-                } else {
-                    self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
-                    sender.isSelected = false
-                    sender.backgroundColor = .systemOrange
-                    self.phoneNumCheck_view.isHidden = true
-                }
-            }
+//            /// Find Member 요청
+//            requestFindMember(number: phoneNum_tf.text!, type: MemberObject_signup.member_type) { _, status in
+//                
+//                if status == 200 {
+//                    
+//                    self.customLoadingIndicator(animated: false)
+//                    
+//                    self.phoneNum_btn.backgroundColor = .systemOrange
+//                    self.customAlert(message: "이미 가입된 번호입니다.", time: 1) {
+//                        self.phoneNum_tf.becomeFirstResponder()
+//                    }
+//                } else {
+                    /// Phone Number Send 요청
+                    requestPhoneNum(phoneNum: self.phoneNum_tf.text!) { status in
+                        
+                        self.customLoadingIndicator(animated: false)
+                        
+                        if status == 200 {
+                            self.customAlert(message: "인증번호를 요청하였습니다.", time: 1) {
+                                DispatchQueue.main.asyncAfter(deadline: .now()+0.5) { 
+                                    self.phoneNumCheck_tf.becomeFirstResponder()
+                                }
+                            }
+                            sender.isSelected = true
+                            sender.backgroundColor = .H_8CD26B
+                            self.phoneNumCheck_view.isHidden = false
+                        } else {
+                            self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+                            sender.isSelected = false
+                            sender.backgroundColor = .systemOrange
+                            self.phoneNumCheck_view.isHidden = true
+                        }
+                    }
+//                }
+//            }
         }
     }
     
     @objc func memberId_btn(_ sender: UIButton) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         if memberId_tf.text! == "" {
             customAlert(message: "아이디를 입력하세요.", time: 1)
@@ -337,6 +351,7 @@ class SignUpMemberVC: UIViewController {
                     self.noticeMemberId_label.isHidden = false
                     self.noticeMemberId_label.text = translation("이미 사용중인 아이디 입니다.")
                     self.noticeMemberId_label.textColor = .systemRed
+                    self.memberId_tf.becomeFirstResponder()
                 } else {
                     sender.isSelected = false
                     sender.backgroundColor = .systemOrange
@@ -355,13 +370,11 @@ class SignUpMemberVC: UIViewController {
             let segue = storyboard?.instantiateViewController(withIdentifier: "SearchStoreVC") as! SearchStoreVC
             segue.SignUpMemberVCdelegate = self
             segue.search_store_type = MemberObject_signup.member_type
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         }
     }
     
     @objc func memberIdCard_view(_ sender: UITapGestureRecognizer) {
-        /// hidden keyboard
-        view.endEditing(true)
         
         setPhoto(max: 1) { photo in
             MemberObject_signup.upload_member_idcard_img = photo

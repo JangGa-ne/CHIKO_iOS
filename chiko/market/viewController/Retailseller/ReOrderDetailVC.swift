@@ -276,14 +276,14 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryPaymentVC") as! ReDeliveryPaymentVC
         segue.action = action
         segue.OrderObject = OrderObject
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func deliveryTracking_btn(_ sender: UIButton) {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryTrackingVC") as! ReDeliveryTrackingVC
         segue.linkUrl = "https://www.sf-international.com/kr/ko/dynamic_function/waybill/#search/bill-number/"+OrderObject.delivery_tracking_num
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func deliveryReceipt_btn(_ sender: UIButton) {
@@ -291,7 +291,7 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryPaymentVC") as! ReDeliveryPaymentVC
         segue.action = action
         segue.OrderObject = OrderObject
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func itemName_btn(_ sender: UIButton) {
@@ -300,6 +300,6 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
         segue.store_id = data.store_id
         segue.item_key = data.item_key
-        navigationController?.pushViewController(segue, animated: true)
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }

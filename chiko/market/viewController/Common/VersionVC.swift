@@ -50,7 +50,7 @@ class VersionVC: UIViewController {
     }
     
     @objc func openStore_btn(_ sender: UIButton) {
-        if let url = URL(string: "") {
+        if let url = URL(string: "https://apps.apple.com/us/app/chiko/id6499313211") {
             UIApplication.shared.open(url) { success in if success { exit(0) } }
         } else {
             customAlert(message: "Internal server error", time: 1)

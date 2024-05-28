@@ -184,7 +184,7 @@ extension WhHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             
             let segue = WhHomeVCdelegate.storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
             segue.GoodsObject = WhGoodsArray_realtime[indexPath.row]
-            WhHomeVCdelegate.navigationController?.pushViewController(segue, animated: true)
+            WhHomeVCdelegate.navigationController?.pushViewController(segue, animated: true, completion: nil)
         } else if collectionView == collectionView3 {
             
             
@@ -340,11 +340,11 @@ extension WhHomeVC: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 4 {
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhOrderBatchVC") as! WhOrderBatchVC
             segue.type = "주문"
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         } else if indexPath.section == 5 {
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhOrderBatchVC") as! WhOrderBatchVC
             segue.type = "정산"
-            navigationController?.pushViewController(segue, animated: true)
+            navigationController?.pushViewController(segue, animated: true, completion: nil)
         }
     }
 }

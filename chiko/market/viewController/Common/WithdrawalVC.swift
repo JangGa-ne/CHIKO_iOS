@@ -45,7 +45,7 @@ class WithdrawalVC: UIViewController {
         
         let alert = UIAlertController(title: translation("회원탈퇴"), message: translation("정말 탈퇴하시겠습니까?"), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: translation("탈퇴하기"), style: .destructive, handler: { _ in
-            self.alert(title: "", message: translation("회원탈퇴 처리되었습니다."), style: .alert, time: 1) {
+            self.alert(title: "", message: "회원탈퇴 처리되었습니다.", style: .alert, time: 1) {
                 self.segueViewController(identifier: "SignInVC")
             }
         }))
