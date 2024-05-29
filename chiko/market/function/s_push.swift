@@ -56,12 +56,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if let delegate = NoticeVCdelegate {
             delegate.loadingData()
         }
-        
         if let delegate = ReHomeVCdelegate {
             delegate.noticeDot_v.isHidden = false
         }
         if let delegate = ReGoodsVCdelegate {
             delegate.noticeDot_v.isHidden = false
+        }
+        if let delegate = WhChatVCdelegate {
+            delegate.loadingData()
         }
         if let delegate = ReMyPageVCdelegate {
             delegate.noticeDot_v.isHidden = false
@@ -95,7 +97,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if StoreObject.store_type == "retailseller", let delegate = ReMainTBCdelegate {
             delegate.segueViewController(identifier: "NoticeVC")
         } else if StoreObject.store_type == "wholesales", let delegate = WhHomeVCdelegate {
-            delegate.segueViewController(identifier: "NoticeVC")
+            delegate.segueViewController(identifier: push_type == "chats" ? "WhChatVC" : "NoticeVC")
         }
                       
         completionHandler()

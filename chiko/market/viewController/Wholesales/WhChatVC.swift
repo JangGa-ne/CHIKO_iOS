@@ -112,16 +112,16 @@ extension WhChatVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "WhChatTC1", for: indexPath) as! WhChatTC
             
             cell.comment_v.layer.cornerRadius = 15
-            cell.comment_v.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner]
             cell.content_label.text = translation(data.content.replacingOccurrences(of: "\\n", with: "\n"))
-            cell.datetimeReadorNot_label.text = data.read_or_not ? "\(read_or_not) ∙ \(datetime)" : datetime
+            cell.datetimeReadorNot_label.text = data.read_or_not ? "\(datetime) ∙ \(read_or_not)" : datetime
             
             return cell
         case "tomanager":
             let cell = tableView.dequeueReusableCell(withIdentifier: "WhChatTC2", for: indexPath) as! WhChatTC
             
             cell.comment_v.layer.cornerRadius = 15
-            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner]
             cell.content_label.text = translation(data.content.replacingOccurrences(of: "\\n", with: "\n"))
             cell.datetimeReadorNot_label.text = data.read_or_not ? "\(read_or_not) ∙ \(datetime)" : datetime
             

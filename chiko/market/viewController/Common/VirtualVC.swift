@@ -24,13 +24,6 @@ class VirtualVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        requestVirtual { status in
-//            
-//        }
-        
-        requestVirtual2 { status in
-            
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

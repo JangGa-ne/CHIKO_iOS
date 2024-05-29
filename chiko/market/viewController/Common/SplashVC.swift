@@ -101,7 +101,7 @@ class SplashVC: UIViewController {
                             if push_type == "enquiry" || push_type == "dpcost_request" {
                                 self.customAlert(message: "회원타입 에러: 소매자로 로그인 해주세요.", time: 1)
                             } else if push_type != "" {
-                                delegate?.segueViewController(identifier: "NoticeVC")
+                                delegate?.segueViewController(identifier: push_type == "chats" ? "WhChatVC" : "NoticeVC")
                             }
                         }
 //                    } else {

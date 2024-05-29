@@ -167,31 +167,32 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
             "document_id": MemberObject.member_id,
             "topics": MemberObject.topics,
         ]
+        let topic_name = topic == "chats" ? "chats_\(MemberObject.member_id)" : "\(topic)_\(StoreObject.store_id)"
         
         if sender.isOn {
-            Messaging.messaging().subscribe(toTopic: "\(topic)_\(StoreObject.store_id)") { error in
+            Messaging.messaging().subscribe(toTopic: topic_name) { error in
                 self.customLoadingIndicator(animated: false)
                 if error == nil {
                     requestEditDB(params: params) { _ in
                         self.alert(title: translation(title), message: "\(setTimestampToDateTime())\n\(translation("알림 수신 동의 처리되었습니다."))", style: .alert, time: 1)
-                    }; print("도픽구독성공: \(topic)_\(StoreObject.store_id)")
+                    }; print("도픽구독성공: \(topic_name)")
                 } else {
                     self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
                         MemberObject.topics[topic] = "false"
-                    }; print("도픽구독실패: \(topic)_\(StoreObject.store_id)"); sender.isOn = false
+                    }; print("도픽구독실패: \(topic_name)"); sender.isOn = false
                 }
             }
         } else {
-            Messaging.messaging().unsubscribe(fromTopic: "\(topic)_\(StoreObject.store_id)") { error in
+            Messaging.messaging().unsubscribe(fromTopic: topic_name) { error in
                 self.customLoadingIndicator(animated: false)
                 if error == nil {
                     requestEditDB(params: params) { _ in
                         self.alert(title: translation(title), message: "\(setTimestampToDateTime())\n\(translation("알림 수신 거부 처리되었습니다."))", style: .alert, time: 1)
-                    }; print("도픽구독해제성공: \(topic)_\(StoreObject.store_id)")
+                    }; print("도픽구독해제성공: \(topic_name)")
                 } else {
                     self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
                         MemberObject.topics[topic] = "false"
-                    }; print("도픽구독해제실패: \(topic)_\(StoreObject.store_id)"); sender.isOn = true
+                    }; print("도픽구독해제실패: \(topic_name)"); sender.isOn = true
                 }
             }
         }

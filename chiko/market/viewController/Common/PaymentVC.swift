@@ -42,8 +42,8 @@ class PaymentVC: UIViewController {
         
         print("""
             PayMethod : '\(payment_type)',
-            MID: 'testpay01m',
-            MerchantKey: 'Ma29gyAFhvv/+e4/AHpV6pISQIvSKziLIbrNoXPbRS5nfTx2DOs8OJve+NzwyoaQ8p9Uy1AN4S1I0Um5v7oNUg==',
+            MID: 'buchicocom',
+            MerchantKey: '8XdELC2ifRhtdusuTGnFNE/REqIuIRKBWPib6KkzTqNCUDQzflOmDpOCa/6LAfag6PLJOdCKjpALb5Sx/GFWQw==',
             GoodsName: '\(item_name)',
             Amt: '\(cny_cash)',
             BuyerName: '\(MemberObject.member_name)',
@@ -51,7 +51,7 @@ class PaymentVC: UIViewController {
             BuyerEmail: '\(MemberObject.member_email)',
             ResultYN: 'Y',
             Currency: 'CNY',
-            Moid : 'testpay01m' + getDate(),
+            Moid : 'buchicocom' + getDate(),
             ReturnURL: 'https://pg.innopay.co.kr/ipay/returnPay.jsp',
         """)
         
@@ -79,8 +79,8 @@ class PaymentVC: UIViewController {
                     innopay.goPay({
                         //// 필수 파라미터
                         PayMethod : '\(payment_type)',
-                        MID: 'testpay01m',
-                        MerchantKey: 'Ma29gyAFhvv/+e4/AHpV6pISQIvSKziLIbrNoXPbRS5nfTx2DOs8OJve+NzwyoaQ8p9Uy1AN4S1I0Um5v7oNUg==',
+                        MID: 'buchicocom',
+                        MerchantKey: '8XdELC2ifRhtdusuTGnFNE/REqIuIRKBWPib6KkzTqNCUDQzflOmDpOCa/6LAfag6PLJOdCKjpALb5Sx/GFWQw==',
                         GoodsName: '\(item_name)',
                         Amt: '\(cny_cash)',
                         BuyerName: '\(MemberObject.member_name)',
@@ -88,7 +88,7 @@ class PaymentVC: UIViewController {
                         BuyerEmail: '\(MemberObject.member_email)',
                         ResultYN: 'Y',
                         Currency: 'CNY',
-                        Moid : 'testpay01m' + getDate(),
+                        Moid : 'buchicocom' + getDate(),
                         ReturnURL: 'https://pg.innopay.co.kr/ipay/returnPay.jsp',
                     });
                 });

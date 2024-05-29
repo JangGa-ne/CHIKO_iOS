@@ -866,3 +866,19 @@ func setChats(chatsDict: [String: Any]) -> ChatsData {
     chatsValue.time = chatsDict["time"] as? String ?? ""
     return chatsValue
 }
+
+class ChatbotData {
+    
+    var content: String = ""
+    var direction: String = ""
+    var time: String = ""
+}
+
+func setChatbot(chatbotDict: [String: Any]) -> ChatbotData {
+    
+    let chatbotValue = ChatbotData()
+    chatbotValue.content = chatbotDict["content"] as? String ?? ""
+    chatbotValue.direction = chatbotDict["direction"] as? String ?? ""
+    chatbotValue.time = chatbotDict["time"] as? String ?? ""
+    return chatbotValue
+}

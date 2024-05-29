@@ -63,9 +63,11 @@ class SignInVC: UIViewController {
         appDelegate.member_type = "retailseller"
         /// 푸시 구독해제
         let store_id: String = StoreObject.store_id
+        let member_id: String = MemberObject.member_id
         ["local", "marketing", "chats", "dpcost_request", "enquiry"].forEach { topic in
-            Messaging.messaging().unsubscribe(fromTopic: "\(topic)_\(store_id)") { error in
-                error == nil ? print("도픽구독해제성공: \(topic)_\(store_id)") : print("도픽구독해제실패: \(topic)_\(store_id)")
+            let topic_name = topic == "chats" ? "chats_\(member_id)" : "\(topic)_\(store_id)"
+            Messaging.messaging().unsubscribe(fromTopic: topic_name) { error in
+                error == nil ? print("도픽구독해제성공: \(topic_name)") : print("도픽구독해제실패: \(topic_name)")
             }
         }
         /// 데이터 삭제

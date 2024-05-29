@@ -518,6 +518,7 @@
 /// ReMainTBC
 "홈" = "Home";
 "상품리스트" = "Goods";
+"챗봇" = "Chatbot";
 "마이페이지" = "MyPage";
 /// ReHomeVC
 "요즘 화제" = "最近的话题";

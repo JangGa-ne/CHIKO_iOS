@@ -265,8 +265,9 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
                     /// 토픽 설정
                     MemberObject.topics.forEach { (key: String, value: Any) in
                         if Bool(value as? String ?? "false") ?? false {
-                            Messaging.messaging().subscribe(toTopic: "\(key)_\(StoreObject.store_id)") { error in
-                                if error == nil { print("도픽구독성공: \(key)_\(StoreObject.store_id)") } else { print("도픽구독실패: \(key)_\(StoreObject.store_id)") }
+                            let topic_name = key == "chats" ? "chats_\(MemberObject.member_id)" : "\(key)_\(StoreObject.store_id)"
+                            Messaging.messaging().subscribe(toTopic: topic_name) { error in
+                                if error == nil { print("도픽구독성공: \(topic_name)") } else { print("도픽구독실패: \(topic_name)") }
                             }
                         }
                     }
@@ -1078,8 +1079,8 @@ func requestNotice(completionHandler: ((Int) -> Void)? = nil) {
 func requestVirtual(completionHandler: @escaping ((Int) -> Void)) {
     
     let params: Parameters = [
-        "mid": "testpay01m",
-        "licenseKey": "Ma29gyAFhvv/+e4/AHpV6pISQIvSKziLIbrNoXPbRS5nfTx2DOs8OJve+NzwyoaQ8p9Uy1AN4S1I0Um5v7oNUg==",
+        "mid": "buchicocom",
+        "licenseKey": "8XdELC2ifRhtdusuTGnFNE/REqIuIRKBWPib6KkzTqNCUDQzflOmDpOCa/6LAfag6PLJOdCKjpALb5Sx/GFWQw==",
         "moid": "test1234567890",
         "goodsCnt": "1",
         "goodsName": "테스트",
@@ -1120,51 +1121,17 @@ func requestVirtual(completionHandler: @escaping ((Int) -> Void)) {
     }
 }
 
-func requestVirtual2(completionHandler: @escaping ((Int) -> Void)) {
+func requestChats(action: String, content: String, completionHandler: @escaping (([ChatsData], Int) -> Void)) {
     
     let params: Parameters = [
-        "mid":"testpay01m",
-        "licenseKey":"Ma29gyAFhvv/+e4/AHpV6pISQIvSKziLIbrNoXPbRS5nfTx2DOs8OJve+NzwyoaQ8p9Uy1AN4S1I0Um5v7oNUg==",
-        "moid":"test1234567890",
-        "reqCd":"S",
-        "vbankBankCode":"003",
-        "vbankNum":"0001234567890",
-        "vbankAccountName":"홍길동",
-        "countryCode":"KR",
-        "socNo":"801212",
-        "addr":"서울시 금천구 가산디지털2로 53",
-        "accountTel":"01012342552"
-    ]
-    /// x-www-form-urlencoded
-    AF.request("https://api.innopay.co.kr/api/vacctInquery", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
-        do {
-            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
-                print(responseJson)
-                completionHandler(200)
-            } else {
-                completionHandler(600)
-            }
-        } catch {
-            print(response.error as Any)
-            completionHandler(response.error?.responseCode ?? 500)
-        }
-    }
-}
-
-func requestChats(action: String, content: String = "", completionHandler: @escaping (([ChatsData], Int) -> Void)) {
-    
-    var params: Parameters = [
+        "action": action,
+        "user_id": MemberObject.member_id,
+        "store_id": StoreObject.store_id,
+        "store_name": StoreObject.store_name,
         "direction": "tomanager",
         "content": content,
-        "read_or_not": "false",
         "time": String(setGMTUnixTimestamp()),
     ]
-    
-    if action == "get" { params.removeAll() }
-    
-    params["action"] = action
-    params["store_id"] = StoreObject.store_id
-    params["store_name"] = StoreObject.store_name
     
     var ChatsArray: [ChatsData] = []
     /// x-www-form-urlencoded
@@ -1189,29 +1156,34 @@ func requestChats(action: String, content: String = "", completionHandler: @esca
     }
 }
 
-func requestChatbot(comment: String, completionHandler: @escaping ((Int) -> Void)) {
+func requestChatbot(action: String, content: String, completionHandler: @escaping (([ChatbotData], Int) -> Void)) {
     
-    let headers: HTTPHeaders = [
-        "Authorization": "KakaoAK 94dea6a5563ce157eb542caad8a07565",
-        "Content-Type": "application/json",
-    ]
     let params: Parameters = [
-        "prompt": comment,
-        "max_tokens": 120,
-        "top_p": 0.0,
+        "action": action,
+        "user_id": MemberObject.member_id,
+        "content": content,
+        "time": String(setGMTUnixTimestamp()),
     ]
+    
+    var ChatbotArray: [ChatbotData] = []
     /// x-www-form-urlencoded
-    AF.request(requestChatbotUrl, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers).responseData { response in
+    AF.request(requestUrl+"/chatbot", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
                 print(responseJson)
-                completionHandler(200)
+                let array = responseJson["data"] as? Array<[String: Any]> ?? []
+                array.forEach { dict in
+                    /// 데이터 추가
+                    ChatbotArray.append(setChatbot(chatbotDict: dict))
+                }
+                ChatbotArray.sort { $0.time < $1.time }
+                ChatbotArray.count > 0 ? completionHandler(ChatbotArray, 200) : completionHandler([], 204)
             } else {
-                completionHandler(600)
+                completionHandler([], 600)
             }
         } catch {
             print(response.error as Any)
-            completionHandler(response.error?.responseCode ?? 500)
+            completionHandler([], response.error?.responseCode ?? 500)
         }
     }
 }

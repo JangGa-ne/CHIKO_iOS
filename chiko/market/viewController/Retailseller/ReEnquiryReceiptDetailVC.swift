@@ -251,7 +251,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC1", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.comment_v.layer.cornerRadius = 15
-            cell.comment_v.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner]
             
             cell.content_sv.isHidden = (data.order_item.count == 0)
             cell.content_label.isHidden = (data.order_item.count != 0)
@@ -361,7 +361,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC2", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.comment_v.layer.cornerRadius = 15
-            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner]
             cell.content_label.text = translation(data.content.replacingOccurrences(of: "\\n", with: "\n"))
             cell.datetimeReadorNot_label.text = data.read_or_not ? "\(read_or_not) ∙ \(datetime)" : datetime
             
