@@ -11,8 +11,11 @@ import UIKit
 
 class WhChatTC: UITableViewCell {
     
+    @IBOutlet weak var date_v: UIView!
+    @IBOutlet weak var date_label: UILabel!
+    @IBOutlet weak var date_top: NSLayoutConstraint!
     @IBOutlet weak var comment_v: UIView!
-    @IBOutlet weak var content_label: UILabel!
+    @IBOutlet weak var content_tv: UITextView!
     @IBOutlet weak var datetimeReadorNot_label: UILabel!
 }
 
@@ -26,7 +29,7 @@ class WhChatVC: UIViewController {
     
     @IBOutlet var labels: [UILabel]!
     
-    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
+    @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true, completion: { WhChatVCdelegate = nil }) }
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var content_tv: UITextView!
@@ -95,39 +98,27 @@ extension WhChatVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let data = ChatsArray[indexPath.row]
-        var datetime: String = ""
+        let cell = tableView.dequeueReusableCell(withIdentifier: data.direction == "touser" ? "WhChatTC1" : "WhChatTC2", for: indexPath) as! WhChatTC
+        
+        let datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "a hh:mm")
         let read_or_not = data.read_or_not ? translation("읽음") : ""
         
-        let today: Int = Int(setTimestampToDateTime(dateformat: "yyyyMMdd")) ?? 0
-        let date: Int = Int(setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yyyyMMdd")) ?? 0
-        
-        if date == today {
-            datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "a hh:mm")
+        if indexPath.row > 0 {
+            let before = setTimestampToDateTime(timestamp: Int(ChatsArray[indexPath.row-1].time) ?? 0, dateformat: "yyyyMMdd")
+            let now = setTimestampToDateTime(timestamp: Int(ChatsArray[indexPath.row].time) ?? 0, dateformat: "yyyyMMdd")
+            cell.date_v.isHidden = (before == now)
         } else {
-            datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yy.MM.dd a hh:mm")
+            cell.date_v.isHidden = false
         }
+        cell.date_label.text = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yyyy년 MM월 dd일 E요일")
+        cell.date_top.constant = cell.date_v.isHidden ? 10 : 50
+        cell.comment_v.layer.cornerRadius = 15
+        cell.comment_v.layer.maskedCorners = data.direction == "touser" ? [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner] : [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner]
+        cell.content_tv.isEditable = false
+        cell.content_tv.dataDetectorTypes = .link
+        cell.content_tv.text = data.content
+        cell.datetimeReadorNot_label.text = data.read_or_not ? (data.direction == "touser" ? "\(datetime) ∙ \(read_or_not)" : "\(read_or_not) ∙ \(datetime)") : datetime
         
-        switch data.direction {
-        case "touser":
-            let cell = tableView.dequeueReusableCell(withIdentifier: "WhChatTC1", for: indexPath) as! WhChatTC
-            
-            cell.comment_v.layer.cornerRadius = 15
-            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-            cell.content_label.text = translation(data.content.replacingOccurrences(of: "\\n", with: "\n"))
-            cell.datetimeReadorNot_label.text = data.read_or_not ? "\(datetime) ∙ \(read_or_not)" : datetime
-            
-            return cell
-        case "tomanager":
-            let cell = tableView.dequeueReusableCell(withIdentifier: "WhChatTC2", for: indexPath) as! WhChatTC
-            
-            cell.comment_v.layer.cornerRadius = 15
-            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner]
-            cell.content_label.text = translation(data.content.replacingOccurrences(of: "\\n", with: "\n"))
-            cell.datetimeReadorNot_label.text = data.read_or_not ? "\(read_or_not) ∙ \(datetime)" : datetime
-            
-            return cell
-        default:
-            return UITableViewCell()
-        }
+        return cell
     }
 }

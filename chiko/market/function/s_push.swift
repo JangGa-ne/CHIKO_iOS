@@ -53,6 +53,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         print("알림 받음 userNotificationCenter", userInfo)
         
+        push_type = userInfo["type"] as? String ?? ""
+        segue_type = userInfo["segue"] as? String ?? ""
+        
+        if push_type == "member_register", let delegate = WaitingVCdelegate {
+            MemberObject.waiting_step = 1; delegate.viewDidLoad()
+        }
         if let delegate = NoticeVCdelegate {
             delegate.loadingData()
         }
@@ -62,9 +68,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         if let delegate = ReGoodsVCdelegate {
             delegate.noticeDot_v.isHidden = false
         }
-        if let delegate = WhChatVCdelegate {
-            delegate.loadingData()
-        }
+//        if let delegate = WhChatVCdelegate {
+//            delegate.loadingData()
+//        }
         if let delegate = ReMyPageVCdelegate {
             delegate.noticeDot_v.isHidden = false
         }
@@ -72,16 +78,20 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             delegate.noticeDot_v.isHidden = false
         }
         
-        completionHandler([.alert, .sound, .badge])
+        if WhChatVCdelegate == nil {
+            completionHandler([.alert, .sound, .badge])
+        } else {
+            completionHandler([])
+        }
     }
     
     // PUSH(포그라운드) 누름
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
         let userInfo = response.notification.request.content.userInfo
-        print("알림 누름 userNotificationCenter", userInfo)
-        
         Messaging.messaging().appDidReceiveMessage(userInfo)
+        
+        print("알림 누름 userNotificationCenter", userInfo)
         
         push_type = userInfo["type"] as? String ?? ""
         segue_type = userInfo["segue"] as? String ?? ""
@@ -94,12 +104,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 //            }
 //        }
         
-        if StoreObject.store_type == "retailseller", let delegate = ReMainTBCdelegate {
+        if push_type == "member_register", let delegate = WaitingVCdelegate {
+            MemberObject.waiting_step = 1; delegate.submit_btn.isHidden = (MemberObject.waiting_step == 0)
+        } else if StoreObject.store_type == "retailseller", let delegate = ReMainTBCdelegate {
             delegate.segueViewController(identifier: "NoticeVC")
         } else if StoreObject.store_type == "wholesales", let delegate = WhHomeVCdelegate {
             delegate.segueViewController(identifier: push_type == "chats" ? "WhChatVC" : "NoticeVC")
         }
-                      
+        
         completionHandler()
     }
 }

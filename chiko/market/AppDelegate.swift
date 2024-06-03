@@ -13,6 +13,7 @@ import UIKit
 import Nuke
 import FirebaseCore
 import FirebaseMessaging
+import FirebaseFirestore
 
 var system_language: String = ""
 var system_country: String = ""
@@ -53,6 +54,8 @@ var ReBasketArray: [BasketData] = []
 var WhGoodsArray_realtime: [GoodsData] = []
 var WhCountingObject: WhCountingData = WhCountingData()
 var WhOrderArray: [WhOrderData] = []
+
+var listener: ListenerRegistration? = nil
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

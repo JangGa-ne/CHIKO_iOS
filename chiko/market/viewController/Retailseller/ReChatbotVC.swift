@@ -9,8 +9,11 @@ import UIKit
 
 class ReChatbotTC: UITableViewCell {
     
+    @IBOutlet weak var date_v: UIView!
+    @IBOutlet weak var date_label: UILabel!
+    @IBOutlet weak var date_top: NSLayoutConstraint!
     @IBOutlet weak var comment_v: UIView!
-    @IBOutlet weak var content_label: UILabel!
+    @IBOutlet weak var content_tv: UITextView!
     @IBOutlet weak var datetimeReadorNot_label: UILabel!
 }
 
@@ -91,39 +94,27 @@ extension ReChatbotVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let data = ChatbotArray[indexPath.row]
-        var datetime: String = ""
+        let cell = tableView.dequeueReusableCell(withIdentifier: data.direction == "touser" ? "ReChatbotTC1" : "ReChatbotTC2", for: indexPath) as! ReChatbotTC
         
-        let today: Int = Int(setTimestampToDateTime(dateformat: "yyyyMMdd")) ?? 0
-        let date: Int = Int(setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yyyyMMdd")) ?? 0
+        let datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "a hh:mm")
         
-        if date == today {
-            datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "a hh:mm")
+        if indexPath.row > 0 {
+            let before = setTimestampToDateTime(timestamp: Int(ChatbotArray[indexPath.row-1].time) ?? 0, dateformat: "yyyyMMdd")
+            let now = setTimestampToDateTime(timestamp: Int(ChatbotArray[indexPath.row].time) ?? 0, dateformat: "yyyyMMdd")
+            cell.date_v.isHidden = (before == now)
         } else {
-            datetime = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yy.MM.dd a hh:mm")
+            cell.date_v.isHidden = false
         }
+        cell.date_label.text = setTimestampToDateTime(timestamp: Int(data.time) ?? 0, dateformat: "yyyy년 MM월 dd일 E요일")
+        cell.date_top.constant = cell.date_v.isHidden ? 10 : 50
+        cell.comment_v.layer.cornerRadius = 15
+        cell.comment_v.layer.maskedCorners = data.direction == "touser" ? [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner] : [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner]
+        cell.content_tv.isEditable = false
+        cell.content_tv.dataDetectorTypes = .link
+        cell.content_tv.text = data.content
+        cell.datetimeReadorNot_label.text = datetime
         
-        switch data.direction {
-        case "touser":
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ReChatbotTC1", for: indexPath) as! ReChatbotTC
-            
-            cell.comment_v.layer.cornerRadius = 15
-            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-            cell.content_label.text = translation(data.content.replacingOccurrences(of: "\\n", with: "\n"))
-            cell.datetimeReadorNot_label.text = datetime
-            
-            return cell
-        case "tochatbot":
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ReChatbotTC2", for: indexPath) as! ReChatbotTC
-            
-            cell.comment_v.layer.cornerRadius = 15
-            cell.comment_v.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner]
-            cell.content_label.text = translation(data.content.replacingOccurrences(of: "\\n", with: "\n"))
-            cell.datetimeReadorNot_label.text = datetime
-            
-            return cell
-        default:
-            return UITableViewCell()
-        }
+        return cell
     }
 }
 

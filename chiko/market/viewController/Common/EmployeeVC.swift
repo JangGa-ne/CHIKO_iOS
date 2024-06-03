@@ -15,7 +15,8 @@ class EmployeeTC: UITableViewCell {
     
     @IBOutlet weak var employeeId_label: UILabel!
     @IBOutlet weak var employeeName_label: UILabel!
-    @IBOutlet weak var delete_btn: UIButton!
+    @IBOutlet weak var subscribe_btn: UIButton!
+    @IBOutlet weak var unsubscribe_btn: UIButton!
 }
 
 class EmployeeVC: UIViewController {
@@ -143,14 +144,76 @@ extension EmployeeVC: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.employeeName_label.text = data.member_name
         }
-        cell.delete_btn.isHidden = (data.member_grade == "ceo")
-        cell.delete_btn.tag = indexPath.row; cell.delete_btn.addTarget(self, action: #selector(delete_btn(_:)), for: .touchUpInside)
+        
+        cell.subscribe_btn.isHidden = (data.waiting_step != 0)
+        cell.subscribe_btn.tag = indexPath.row; cell.subscribe_btn.addTarget(self, action: #selector(subscribe_btn(_:)), for: .touchUpInside)
+        cell.unsubscribe_btn.isHidden = (data.member_grade == "ceo")
+        cell.unsubscribe_btn.tag = indexPath.row; cell.unsubscribe_btn.addTarget(self, action: #selector(unsubscribe_btn(_:)), for: .touchUpInside)
         
         return cell
     }
     
-    @objc func delete_btn(_ sender: UIButton) {
+    @objc func subscribe_btn(_ sender: UIButton) { view.endEditing(true)
         
+        customLoadingIndicator(animated: true)
         
+        let data = EmployeeArray[sender.tag]
+        let params: [String: Any] = [
+            "action": "edit",
+            "collection_id": "member",
+            "document_id": data.member_id,
+            "waiting_step": "1",
+        ]
+        
+        requestEditDB(params: params) { status in
+            
+            if status == 200 {
+                
+                let params: [String: Any] = [
+                    "fcm_id": data.fcm_id,
+                    "title": "CHIKO - 로그인/회원가입 안내",
+                    "content": "\(data.member_name)님, 회원가입 승인되었습니다.",
+                    "type": "member_register",
+                ]
+                
+                requestPush(params: params) { status in
+                    
+                    self.customLoadingIndicator(animated: false)
+                    
+                    self.EmployeeArray[sender.tag].waiting_step = 1
+                    self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
+                }
+            } else {
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+            }
+        }
+    }
+    
+    @objc func unsubscribe_btn(_ sender: UIButton) { view.endEditing(true)
+        
+        alert(title: "", message: "서비스 준비중 입니다...", style: .alert, time: 1)
+        
+//        customLoadingIndicator(animated: true)
+//        
+//        let data = EmployeeArray[sender.tag]
+//        let params: [String: Any] = [
+//            "action": "edit",
+//            "collection_id": "member",
+//            "document_id": data.member_id,
+//            "waiting_step": "-1",
+//        ]
+//        
+//        requestEditDB(params: params) { status in
+//            
+//            if status == 200 {
+//                
+//                self.customLoadingIndicator(animated: false)
+//                
+//                self.EmployeeArray[sender.tag].waiting_step = 1
+//                self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
+//            } else {
+//                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+//            }
+//        }
     }
 }

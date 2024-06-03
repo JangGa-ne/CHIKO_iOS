@@ -84,18 +84,26 @@ class SplashVC: UIViewController {
 //                    self.segueViewController(identifier: "ChoiceStoreVC")
 //                } else
                 if MemberObject.member_type == "retailseller" {
-                    self.segueTabBarController(identifier: "ReMainTBC", idx: 0) { delegate in
-//                        if push_type == "" {
-//                            self.customAlert(message: "회원타입 에러: 도매자로 로그인 해주세요.", time: 1)
-//                        }
-                        if push_type != "" {
-                            delegate.segueViewController(identifier: "NoticeVC")
+                    if MemberObject.member_grade == "employee" && (MemberObject.waiting_step == 0 || MemberObject.waiting_step == 1) {
+                        if push_type == "member_register" { MemberObject.waiting_step = 1 }
+                        back_btn_hidden = true; self.segueViewController(identifier: "WaitingVC")
+                    } else {
+                        self.segueTabBarController(identifier: "ReMainTBC", idx: 0) { delegate in
+//                            if push_type == "" {
+//                                self.customAlert(message: "회원타입 에러: 도매자로 로그인 해주세요.", time: 1)
+//                            }
+                            if push_type != "" {
+                                delegate.segueViewController(identifier: "NoticeVC")
+                            }
                         }
                     }
                 } else if MemberObject.member_type == "wholesales" {
                     if StoreObject.waiting_step == 0 || StoreObject.waiting_step == 1 {
-                        back_btn_hidden = true
-                        self.segueViewController(identifier: "WhWaitingVC")
+                        if push_type == "member_register" { StoreObject.waiting_step = 1 }
+                        back_btn_hidden = true; self.segueViewController(identifier: "WaitingVC")
+                    } else if MemberObject.member_grade == "employee" && (MemberObject.waiting_step == 0 || MemberObject.waiting_step == 1) {
+                        if push_type == "member_register" { MemberObject.waiting_step = 1 }
+                        back_btn_hidden = true; self.segueViewController(identifier: "WaitingVC")
                     } else if StoreObject.waiting_step == 2 {
                         self.segueViewController(identifier: "WhHomeVC") { delegate in
                             if push_type == "enquiry" || push_type == "dpcost_request" {

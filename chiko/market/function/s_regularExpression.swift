@@ -34,3 +34,20 @@ func isUrlValid(_ url: String) -> Bool {
 func isChineseAccountNumValid(_ accountNum: String) -> Bool {
     return NSPredicate(format: "SELF MATCHES %@", "^\\d{16,19}$").evaluate(with: accountNum)
 }
+
+func getDomainAddress(text: String) -> String {
+
+    do {
+        // 정규 표현식을 컴파일
+        let regex = try NSRegularExpression(pattern: "(https?://[\\w.-]+|www\\.[\\w.-]+)", options: [])
+        // 주어진 텍스트에서 일치하는 항목을 찾음
+        let matches = regex.matches(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count))
+        // 일치하는 항목을 추출하여 배열에 저장
+        let urls = matches.compactMap { Range($0.range, in: text).map { String(text[$0]) } }
+        // 추출된 URL을 출력
+        return urls.count > 0 ? urls[urls.count-1] : ""
+    } catch {
+        print("정규 표현식 생성 실패: \(error)")
+        return ""
+    }
+}

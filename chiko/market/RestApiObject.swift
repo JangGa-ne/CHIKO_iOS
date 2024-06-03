@@ -66,6 +66,7 @@ class MemberData {
     var profile_img: String = ""
     var my_store: String = ""
     var topics: [String: Any] = [:]
+    var waiting_step: Int = 0
     // 소매자
     var member_idcard_img: String = ""
     
@@ -97,6 +98,7 @@ func setMember(memberDict: [String: Any]) -> MemberData {
     memberValue.member_type = memberDict["user_type"] as? String ?? ""
     memberValue.member_idcard_img = memberDict["user_idcard_img"] as? String ?? ""
     memberValue.topics = memberDict["topics"] as? [String: Any] ?? [:]
+    memberValue.waiting_step = Int(memberDict["waiting_step"] as? String ?? "0") ?? 0
     /// 데이터 추가
     return memberValue
 }

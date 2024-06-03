@@ -71,6 +71,7 @@ class SignInVC: UIViewController {
             }
         }
         /// 데이터 삭제
+        listener = nil
         /// Common
         MemberObject_signup = MemberData()
         StoreObject_signup = StoreData()
@@ -214,10 +215,19 @@ class SignInVC: UIViewController {
 //                        self.segueViewController(identifier: "ChoiceStoreVC")
                         
                         if MemberObject.member_type == "retailseller" {
-                            self.segueTabBarController(identifier: "ReMainTBC", idx: 0)
+                            if MemberObject.member_grade == "employee" && (MemberObject.waiting_step == 0 || MemberObject.waiting_step == 1) {
+                                if push_type == "member_register" { MemberObject.waiting_step = 1 }
+                                self.segueViewController(identifier: "WaitingVC")
+                            } else {
+                                self.segueTabBarController(identifier: "ReMainTBC", idx: 0)
+                            }
                         } else if MemberObject.member_type == "wholesales" {
                             if StoreObject.waiting_step == 0 || StoreObject.waiting_step == 1 {
-                                self.segueViewController(identifier: "WhWaitingVC")
+                                if push_type == "member_register" { StoreObject.waiting_step = 1 }
+                                self.segueViewController(identifier: "WaitingVC")
+                            } else if MemberObject.member_grade == "employee" && (MemberObject.waiting_step == 0 || MemberObject.waiting_step == 1) {
+                                if push_type == "member_register" { MemberObject.waiting_step = 1 }
+                                self.segueViewController(identifier: "WaitingVC")
                             } else if StoreObject.waiting_step == 2 {
                                 self.segueViewController(identifier: "WhHomeVC")
                             }

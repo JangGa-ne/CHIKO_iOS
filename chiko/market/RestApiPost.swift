@@ -78,7 +78,7 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
     
     let timestamp: Int64 = setGMTUnixTimestamp()
     var params: Parameters = [
-        "action": "register"
+        "action": "member_register"
     ]
     /// member
     params["device_info"] = device_info
@@ -1123,6 +1123,7 @@ func requestVirtual(completionHandler: @escaping ((Int) -> Void)) {
 
 func requestChats(action: String, content: String, completionHandler: @escaping (([ChatsData], Int) -> Void)) {
     
+    
     let params: Parameters = [
         "action": action,
         "user_id": MemberObject.member_id,
@@ -1133,25 +1134,37 @@ func requestChats(action: String, content: String, completionHandler: @escaping 
         "time": String(setGMTUnixTimestamp()),
     ]
     
-    var ChatsArray: [ChatsData] = []
     /// x-www-form-urlencoded
-    AF.request(requestUrl+"/chats", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
-        do {
-            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
-                print(responseJson)
-                let array = responseJson["data"] as? Array<[String: Any]> ?? []
-                array.forEach { dict in
-                    /// 데이터 추가
-                    ChatsArray.append(setChats(chatsDict: dict))
+    AF.request(requestUrl+"/chats", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { _ in }
+    listener = Firestore.firestore().collection("chats").document(MemberObject.member_id).addSnapshotListener { docRef, error in
+        
+        if error == nil {
+            
+            var data: [String: Any] = docRef?.data() ?? [:]
+            
+            for (key, value) in data {
+                if var message = value as? [String: Any], message["direction"] as? String == "touser" {
+                    message["read_or_not"] = "true"
+                    data[key] = message
                 }
-                ChatsArray.sort { $0.time < $1.time }
-                ChatsArray.count > 0 ? completionHandler(ChatsArray, 200) : completionHandler([], 204)
-            } else {
-                completionHandler([], 600)
             }
-        } catch {
-            print(response.error as Any)
-            completionHandler([], response.error?.responseCode ?? 500)
+            
+            data.removeValue(forKey: "store_id")
+            data.removeValue(forKey: "store_name")
+            data.removeValue(forKey: "time")
+            
+            let array: Array = Array(data.values)
+            var ChatsArray: [ChatsData] = []
+            
+            array.forEach { dict in
+                /// 데이터 추가
+                ChatsArray.append(setChats(chatsDict: dict as? [String : Any] ?? [:]))
+            }
+            ChatsArray.sort { $0.time < $1.time }
+            ChatsArray.count > 0 ? completionHandler(ChatsArray, 200) : completionHandler([], 204)
+        } else {
+            print(error as Any)
+            completionHandler([], error?.asAFError?.responseCode ?? 500)
         }
     }
 }

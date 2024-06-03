@@ -85,7 +85,7 @@
 		C2A654122AFB1E16009BE424 /* ReGoodsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A654112AFB1E16009BE424 /* ReGoodsVC.swift */; };
 		C2AFF0062B0DA3270014C209 /* WhGoodsUploadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AFF0052B0DA3270014C209 /* WhGoodsUploadVC.swift */; };
 		C2B23BF22B0C38C900C7DA5D /* WhHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B23BF12B0C38C900C7DA5D /* WhHomeVC.swift */; };
-		C2B2895F2B1735C90078EC6E /* WhWaitingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B2895E2B1735C90078EC6E /* WhWaitingVC.swift */; };
+		C2B2895F2B1735C90078EC6E /* WaitingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B2895E2B1735C90078EC6E /* WaitingVC.swift */; };
 		C2B8A8DE2ADF725300BDD470 /* SplashVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B8A8DD2ADF725300BDD470 /* SplashVC.swift */; };
 		C2BB21802B24C72900DE99ED /* EmployeeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BB217F2B24C72900DE99ED /* EmployeeVC.swift */; };
 		C2BE138D2BFEE69B00B45116 /* VirtualVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BE138C2BFEE69B00B45116 /* VirtualVC.swift */; };
@@ -196,7 +196,7 @@
 		C2A654112AFB1E16009BE424 /* ReGoodsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsVC.swift; sourceTree = "<group>"; };
 		C2AFF0052B0DA3270014C209 /* WhGoodsUploadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoodsUploadVC.swift; sourceTree = "<group>"; };
 		C2B23BF12B0C38C900C7DA5D /* WhHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhHomeVC.swift; sourceTree = "<group>"; };
-		C2B2895E2B1735C90078EC6E /* WhWaitingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhWaitingVC.swift; sourceTree = "<group>"; };
+		C2B2895E2B1735C90078EC6E /* WaitingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingVC.swift; sourceTree = "<group>"; };
 		C2B8A8DD2ADF725300BDD470 /* SplashVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashVC.swift; sourceTree = "<group>"; };
 		C2BB217F2B24C72900DE99ED /* EmployeeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeVC.swift; sourceTree = "<group>"; };
 		C2BE138C2BFEE69B00B45116 /* VirtualVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualVC.swift; sourceTree = "<group>"; };
@@ -307,7 +307,6 @@
 		C218741D2B1876890062CA4D /* Wholesales */ = {
 			isa = PBXGroup;
 			children = (
-				C2B2895E2B1735C90078EC6E /* WhWaitingVC.swift */,
 				C2B23BF12B0C38C900C7DA5D /* WhHomeVC.swift */,
 				C25249F52B43AA8200E882D8 /* WhMyPageVC.swift */,
 				C2CA5DEF2B4549500078CF34 /* WhGoodsVC.swift */,
@@ -341,6 +340,7 @@
 				C253B20B2BFDB0CA007587C6 /* ChangeVC.swift */,
 				C2B8A8DD2ADF725300BDD470 /* SplashVC.swift */,
 				C2C971E52ADD1B3000827DA0 /* SignInVC.swift */,
+				C2B2895E2B1735C90078EC6E /* WaitingVC.swift */,
 				C2BF86492ADF970100A858A4 /* ChoiceStoreVC.swift */,
 				C2BF86512ADFA4B000A858A4 /* SearchStoreVC.swift */,
 				C2BF864D2ADFA3C400A858A4 /* SignUpMemberVC.swift */,
@@ -625,7 +625,7 @@
 				C216046E2BEA230E000EAB52 /* WithdrawalVC.swift in Sources */,
 				C2E547F12B1D639C00A19EAF /* WhGoodsUploadTC.swift in Sources */,
 				C2C338CF2B61FC570064A545 /* TagVC.swift in Sources */,
-				C2B2895F2B1735C90078EC6E /* WhWaitingVC.swift in Sources */,
+				C2B2895F2B1735C90078EC6E /* WaitingVC.swift in Sources */,
 				C20905D02B8596BD00DEB5E5 /* BuildingInfo.swift in Sources */,
 				C200C71C2B900C3800B76143 /* MPay.swift in Sources */,
 				C22D641E2B183EF900A160F3 /* ScrapVC.swift in Sources */,
@@ -825,7 +825,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = market/market.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = UPXJ67DYPF;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -866,7 +866,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = market/market.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = UPXJ67DYPF;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;

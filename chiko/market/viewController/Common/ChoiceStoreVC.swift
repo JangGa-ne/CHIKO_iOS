@@ -141,7 +141,7 @@ extension ChoiceStoreVC: UITableViewDelegate, UITableViewDataSource {
             
             WhHomeVCdelegate = nil
             if StoreArray[store_index].waiting_step == 0 || StoreArray[store_index].waiting_step == 1 {
-                segueViewController(identifier: "WhWaitingVC")
+                segueViewController(identifier: "WaitingVC")
             } else if StoreArray[store_index].waiting_step == 2 {
                 segueViewController(identifier: "WhHomeVC")
             }
