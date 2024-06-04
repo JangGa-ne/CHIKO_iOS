@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseMessaging
 
 class SplashVC: UIViewController {
     
@@ -24,9 +25,9 @@ class SplashVC: UIViewController {
         appDelegate.member_pw = UserDefaults.standard.string(forKey: "member_pw") ?? ""
         fcm_id = UserDefaults.standard.string(forKey: "fcm_id") ?? ""
         
-//        if !isNetworkConnect() {
-//            customAlert(message: "인터넷이 연결되어 있지 않습니다.", time: 1); DispatchQueue.main.asyncAfter(deadline: .now()+2) { self.segueViewController(identifier: "SignInVC") }; return
-//        } 
+        if fcm_id == "" {
+            Messaging.messaging().token { token, error in fcm_id = token ?? "" }
+        }
         if UserDefaults.standard.string(forKey: "member_id") == nil {
             segueViewController(identifier: "SignInVC"); return
         }

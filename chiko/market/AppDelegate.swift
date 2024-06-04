@@ -55,7 +55,8 @@ var WhGoodsArray_realtime: [GoodsData] = []
 var WhCountingObject: WhCountingData = WhCountingData()
 var WhOrderArray: [WhOrderData] = []
 
-var listener: ListenerRegistration? = nil
+var WaitingListener: ListenerRegistration? = nil
+var ChatsListener: ListenerRegistration? = nil
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

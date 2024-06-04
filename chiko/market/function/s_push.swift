@@ -57,7 +57,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         segue_type = userInfo["segue"] as? String ?? ""
         
         if push_type == "member_register", let delegate = WaitingVCdelegate {
-            MemberObject.waiting_step = 1; delegate.viewDidLoad()
+            /// WaitingListener 처리
         }
         if let delegate = NoticeVCdelegate {
             delegate.loadingData()
@@ -105,7 +105,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 //        }
         
         if push_type == "member_register", let delegate = WaitingVCdelegate {
-            MemberObject.waiting_step = 1; delegate.submit_btn.isHidden = (MemberObject.waiting_step == 0)
+            /// WaitingListener 처리
         } else if StoreObject.store_type == "retailseller", let delegate = ReMainTBCdelegate {
             delegate.segueViewController(identifier: "NoticeVC")
         } else if StoreObject.store_type == "wholesales", let delegate = WhHomeVCdelegate {

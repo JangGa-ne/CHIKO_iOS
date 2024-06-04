@@ -62,16 +62,28 @@ class SignInVC: UIViewController {
         // init
         appDelegate.member_type = "retailseller"
         /// 푸시 구독해제
-        let store_id: String = StoreObject.store_id
-        let member_id: String = MemberObject.member_id
-        ["local", "marketing", "chats", "dpcost_request", "enquiry"].forEach { topic in
-            let topic_name = topic == "chats" ? "chats_\(member_id)" : "\(topic)_\(store_id)"
-            Messaging.messaging().unsubscribe(fromTopic: topic_name) { error in
-                error == nil ? print("도픽구독해제성공: \(topic_name)") : print("도픽구독해제실패: \(topic_name)")
+        if MemberObject.member_id != "" {
+            /// token
+            let params: [String: Any] = [
+                "action": "edit",
+                "collection_id": "member",
+                "document_id": MemberObject.member_id,
+                "fcm_id": "",
+            ]
+            requestEditDB(params: params) { status in
+                print(status == 200 ? "토큰푸시해제성공" : "토큰푸시해제실패")
+            }
+            /// topic
+            ["local", "marketing", "chats", "dpcost_request", "enquiry"].forEach { topic in
+                let topic_name = topic == "chats" ? "chats_\(MemberObject.member_id)" : "\(topic)_\(StoreObject.store_id)"
+                Messaging.messaging().unsubscribe(fromTopic: topic_name) { error in
+                    error == nil ? print("토픽구독해제성공: \(topic_name)") : print("토픽구독해제실패: \(topic_name)")
+                }
             }
         }
         /// 데이터 삭제
-        listener = nil
+        WaitingListener = nil
+        ChatsListener = nil
         /// Common
         MemberObject_signup = MemberData()
         StoreObject_signup = StoreData()

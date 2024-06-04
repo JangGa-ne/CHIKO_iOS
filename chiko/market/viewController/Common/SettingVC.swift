@@ -175,11 +175,11 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
                 if error == nil {
                     requestEditDB(params: params) { _ in
                         self.alert(title: translation(title), message: "\(setTimestampToDateTime())\n\(translation("알림 수신 동의 처리되었습니다."))", style: .alert, time: 1)
-                    }; print("도픽구독성공: \(topic_name)")
+                    }; print("토픽구독성공: \(topic_name)")
                 } else {
                     self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
                         MemberObject.topics[topic] = "false"
-                    }; print("도픽구독실패: \(topic_name)"); sender.isOn = false
+                    }; print("토픽구독실패: \(topic_name)"); sender.isOn = false
                 }
             }
         } else {
@@ -188,11 +188,11 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
                 if error == nil {
                     requestEditDB(params: params) { _ in
                         self.alert(title: translation(title), message: "\(setTimestampToDateTime())\n\(translation("알림 수신 거부 처리되었습니다."))", style: .alert, time: 1)
-                    }; print("도픽구독해제성공: \(topic_name)")
+                    }; print("토픽구독해제성공: \(topic_name)")
                 } else {
                     self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1) {
                         MemberObject.topics[topic] = "false"
-                    }; print("도픽구독해제실패: \(topic_name)"); sender.isOn = true
+                    }; print("토픽구독해제실패: \(topic_name)"); sender.isOn = true
                 }
             }
         }

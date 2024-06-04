@@ -49,8 +49,11 @@ class EmployeeVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        storePw_tf.text = StoreObject.store_pw
+        storePw_tf.isEnabled = (MemberObject.member_grade == "ceo")
+        storePw_tf.text = MemberObject.member_grade == "ceo" ? StoreObject.store_pw : translation("관리자 계정에서 확인 및 수정할 수 있습니다.")
+        storePw_tf.font = MemberObject.member_grade == "ceo" ? UIFont.boldSystemFont(ofSize: 20) : UIFont.boldSystemFont(ofSize: 16)
         storePw_tf.addTarget(self, action: #selector(edit_storePw_tf(_:)), for: .editingChanged)
+        storePw_btn.isHidden = (MemberObject.member_grade == "employee")
         storePw_btn.addTarget(self, action: #selector(storePw_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
@@ -145,9 +148,9 @@ extension EmployeeVC: UITableViewDelegate, UITableViewDataSource {
             cell.employeeName_label.text = data.member_name
         }
         
-        cell.subscribe_btn.isHidden = (data.waiting_step != 0)
+        cell.subscribe_btn.isHidden = (data.member_grade == "ceo" || MemberObject.member_grade == "employee") ? true : (data.waiting_step != 0)
         cell.subscribe_btn.tag = indexPath.row; cell.subscribe_btn.addTarget(self, action: #selector(subscribe_btn(_:)), for: .touchUpInside)
-        cell.unsubscribe_btn.isHidden = (data.member_grade == "ceo")
+        cell.unsubscribe_btn.isHidden = (data.member_grade == "ceo" || MemberObject.member_grade == "employee")
         cell.unsubscribe_btn.tag = indexPath.row; cell.unsubscribe_btn.addTarget(self, action: #selector(unsubscribe_btn(_:)), for: .touchUpInside)
         
         return cell
@@ -191,29 +194,28 @@ extension EmployeeVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func unsubscribe_btn(_ sender: UIButton) { view.endEditing(true)
         
-        alert(title: "", message: "서비스 준비중 입니다...", style: .alert, time: 1)
+//        alert(title: "", message: "서비스 준비중 입니다...", style: .alert, time: 1)
         
-//        customLoadingIndicator(animated: true)
-//        
-//        let data = EmployeeArray[sender.tag]
-//        let params: [String: Any] = [
-//            "action": "edit",
-//            "collection_id": "member",
-//            "document_id": data.member_id,
-//            "waiting_step": "-1",
-//        ]
-//        
-//        requestEditDB(params: params) { status in
-//            
-//            if status == 200 {
-//                
-//                self.customLoadingIndicator(animated: false)
-//                
-//                self.EmployeeArray[sender.tag].waiting_step = 1
-//                self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
-//            } else {
-//                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
-//            }
-//        }
+        customLoadingIndicator(animated: true)
+        
+        let data = EmployeeArray[sender.tag]
+        let params: [String: Any] = [
+            "action": "edit",
+            "collection_id": "member",
+            "document_id": data.member_id,
+            "waiting_step": "-1",
+        ]
+        
+        requestEditDB(params: params) { status in
+            
+            self.customLoadingIndicator(animated: false)
+            
+            if status == 200 {
+                self.EmployeeArray[sender.tag].waiting_step = -1
+                self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
+            } else {
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+            }
+        }
     }
 }

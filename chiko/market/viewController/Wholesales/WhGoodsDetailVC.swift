@@ -51,6 +51,8 @@ class WhGoodsDetailVC: UIViewController {
     @IBOutlet weak var itemSize_label: UILabel!
     @IBOutlet weak var itemStyle_label: UILabel!
     @IBOutlet weak var itemMaterial_label: UILabel!
+    @IBOutlet weak var itemWeaving_label: UILabel!
+    @IBOutlet weak var itemCountry_label: UILabel!
     @IBOutlet weak var itemDateTime_label: UILabel!
     @IBOutlet weak var itemKey_label: UILabel!
     
@@ -107,6 +109,8 @@ class WhGoodsDetailVC: UIViewController {
         itemSize_label.text = data.item_sizes.map { $0 }.joined(separator: ", ")
         itemStyle_label.text = data.item_style
         itemMaterial_label.text = data.item_materials.map { $0 }.joined(separator: ", ")
+        itemWeaving_label.text = data.item_build
+        itemCountry_label.text = data.item_manufacture_country
         itemDateTime_label.text = setTimestampToDateTime(timestamp: Int(data.item_key) ?? 0, dateformat: "yyyy.MM.dd a hh:mm")
         itemKey_label.text = data.item_key
         

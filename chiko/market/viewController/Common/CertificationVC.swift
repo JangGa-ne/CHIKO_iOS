@@ -29,7 +29,13 @@ class CertificationVC: UIViewController {
     override func loadView() {
         super.loadView()
         
-        labels.forEach { label in label.text = translation(label.text!) }
+        labels.forEach { label in
+            if label.text!.contains("SMS으로") {
+                label.text = translation("SMS으로 인증번호를 발송 하였습니다.\n인증번호를 입력해주세요.")
+            } else {
+                label.text = translation(label.text!)
+            }
+        }
         buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
     }
     

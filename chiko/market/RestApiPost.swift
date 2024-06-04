@@ -267,7 +267,7 @@ func requestSignIn(completionHandler: @escaping ((Int) -> Void)) {
                         if Bool(value as? String ?? "false") ?? false {
                             let topic_name = key == "chats" ? "chats_\(MemberObject.member_id)" : "\(key)_\(StoreObject.store_id)"
                             Messaging.messaging().subscribe(toTopic: topic_name) { error in
-                                if error == nil { print("도픽구독성공: \(topic_name)") } else { print("도픽구독실패: \(topic_name)") }
+                                if error == nil { print("토픽구독성공: \(topic_name)") } else { print("토픽구독실패: \(topic_name)") }
                             }
                         }
                     }
@@ -1136,7 +1136,7 @@ func requestChats(action: String, content: String, completionHandler: @escaping 
     
     /// x-www-form-urlencoded
     AF.request(requestUrl+"/chats", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { _ in }
-    listener = Firestore.firestore().collection("chats").document(MemberObject.member_id).addSnapshotListener { docRef, error in
+    ChatsListener = Firestore.firestore().collection("chats").document(MemberObject.member_id).addSnapshotListener { docRef, error in
         
         if error == nil {
             

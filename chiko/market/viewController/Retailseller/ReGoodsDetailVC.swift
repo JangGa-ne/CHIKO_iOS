@@ -54,6 +54,8 @@ class ReGoodsDetailTC: UITableViewCell {
     @IBOutlet weak var itemSize_label: UILabel!
     @IBOutlet weak var itemStyle_label: UILabel!
     @IBOutlet weak var itemMaterial_label: UILabel!
+    @IBOutlet weak var itemWeaving_label: UILabel!
+    @IBOutlet weak var itemCountry_label: UILabel!
     @IBOutlet weak var itemKey_label: UILabel!
     
     @IBOutlet var itemMaterialWasingInfo_labels: [UILabel]!
@@ -371,6 +373,8 @@ extension ReGoodsDetailVC: UITableViewDelegate, UITableViewDataSource {
                 let material = String(text[..<range.lowerBound])
                 return translation(material) + text.replacingOccurrences(of: "\(material) ", with: "")
             }.joined(separator: ", ")
+            cell.itemWeaving_label.text = data.item_build
+            cell.itemCountry_label.text = data.item_manufacture_country
             cell.itemKey_label.text = data.item_key
             
             data.item_material_washing.forEach { (key: String, value: Any) in

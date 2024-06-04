@@ -28,7 +28,13 @@ class VerificationVC: UIViewController {
     override func loadView() {
         super.loadView()
         
-        labels.forEach { label in label.text = translation(label.text!) }
+        labels.forEach { label in 
+            if label.text!.contains("가입한 이름과") {
+                label.text = translation("가입한 이름과 휴대전화를 입력하세요.\nSMS으로 인증번호를 발송 합니다.")
+            } else {
+                label.text = translation(label.text!)
+            }
+        }
         buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
     }
     

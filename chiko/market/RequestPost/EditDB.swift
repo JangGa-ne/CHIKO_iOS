@@ -15,7 +15,7 @@ func requestEditDB(params: [String: Any], completionHandler: @escaping (Int) -> 
     AF.request(requestUrl+"/edit_db", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
-                print(responseJson)
+//                print(responseJson)
                 completionHandler(200)
             } else {
                 completionHandler(600)
