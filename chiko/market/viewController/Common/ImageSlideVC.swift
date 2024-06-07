@@ -36,16 +36,18 @@ class ImageSlideVC: UIViewController {
         super.viewDidLoad()
         
         if inputs.count > 0 {
+            item_img.contentScaleMode = .scaleAspectFit
             item_img.setImageInputs(inputs)
+            item_img.setCurrentPage(indexpath_row, animated: true)
         } else if imageUrls.count > 0 {
-            setImageSlideShew(imageView: item_img, imageUrls: imageUrls, contentMode: .scaleAspectFit, completionHandler: nil)
+            setImageSlideShew(imageView: item_img, imageUrls: imageUrls, contentMode: .scaleAspectFit) {
+                self.item_img.setCurrentPage(self.indexpath_row, animated: true)
+            }
         }
         
-        item_img.zoomEnabled = true
-        item_img.pageIndicatorPosition = .init(horizontal: .center, vertical: .bottom)
-        item_img.contentScaleMode = .scaleAspectFit
+//        item_img.zoomEnabled = true
         item_img.pageIndicator?.view.tintColor = .white
-        item_img.setScrollViewPage(indexpath_row+1, animated: false)
+        item_img.pageIndicatorPosition = .init(horizontal: .center, vertical: .bottom)
     }
     
     override func viewWillAppear(_ animated: Bool) {

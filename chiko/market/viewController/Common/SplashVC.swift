@@ -25,9 +25,6 @@ class SplashVC: UIViewController {
         appDelegate.member_pw = UserDefaults.standard.string(forKey: "member_pw") ?? ""
         fcm_id = UserDefaults.standard.string(forKey: "fcm_id") ?? ""
         
-        if fcm_id == "" {
-            Messaging.messaging().token { token, error in fcm_id = token ?? "" }
-        }
         if UserDefaults.standard.string(forKey: "member_id") == nil {
             segueViewController(identifier: "SignInVC"); return
         }

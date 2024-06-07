@@ -167,6 +167,38 @@ extension CalendarVC: CVCalendarViewDelegate, CVCalendarViewAppearanceDelegate {
     func dayLabelWeekdaySelectedBackgroundColor() -> UIColor {
         return .H_8CD26B
     }
+    
+    func dotMarker(shouldShowOnDayView dayView: DayView) -> Bool {
+        
+        if let delegate = WhOrderBatchVCdelegate {
+            for data in delegate.WhOrderArray_all {
+                let year = Int(data.order_date.prefix(4))
+                let month = Int(data.order_date.prefix(6).suffix(2))
+                let day = Int(data.order_date.suffix(2))
+                if !dayView.isHidden && dayView.date != nil, (dayView.date.year == year) && (dayView.date.month == month) && (dayView.date.day == day) {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    func dotMarker(sizeOnDayView dayView: DayView) -> CGFloat {
+        return 15
+    }
+    
+    func dotMarker(colorOnDayView dayView: DayView) -> [UIColor] {
+        return [.systemRed]
+    }
+    
+    func dotMarker(moveOffsetOnDayView dayView: DayView) -> CGFloat {
+        return 15
+    }
+    
+    func dotMarker(shouldMoveOnHighlightingOnDayView dayView: DayView) -> Bool {
+        return false
+    }
 }
 
 extension CalendarVC: PanModalPresentable {

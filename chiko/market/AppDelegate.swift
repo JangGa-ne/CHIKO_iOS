@@ -115,7 +115,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Messaging.messaging().isAutoInitEnabled = false
         /// Notification Push init
         UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge], completionHandler: { didAllow, Error in })
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge], completionHandler: { didAllow, Error in
+            if fcm_id == "" { Messaging.messaging().token { token, error in fcm_id = token ?? "" } }
+        })
         application.registerForRemoteNotifications()
         /// first segue
         let segue = storyboard.instantiateViewController(withIdentifier: "SplashVC") as! SplashVC

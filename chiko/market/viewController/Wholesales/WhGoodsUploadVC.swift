@@ -62,7 +62,13 @@ class WhGoodsUploadVC: UIViewController {
         tableView.contentInset = .zero
         tableView.delegate = self; tableView.dataSource = self
         
-        loadingData(all: true)
+        if CategoryObject.ColorArray.count == 0 || CategoryObject.CategoryArray.count == 0 || CategoryObject.SizeArray.count == 0 || CategoryObject.StyleArray.count == 0 || CategoryObject.MaterialArray.count == 0 {
+            requestCategory(action: ["color_category", "item_category", "size_category", "style_category", "material_category"]) { _ in
+                self.loadingData(all: true)
+            }
+        } else {
+            loadingData(all: true)
+        }
         
         upload_btn.addTarget(self, action: #selector(upload_btn(_:)), for: .touchUpInside)
     }
@@ -208,7 +214,7 @@ class WhGoodsUploadVC: UIViewController {
             var timestamp: Int64 = setGMTUnixTimestamp()
             if GoodsObject.item_key != "" { timestamp = Int64(GoodsObject.item_key) ?? setGMTUnixTimestamp() }
             
-            customLoadingIndicator(text: "상품 등록중...", animated: true)
+            customLoadingIndicator(text: "등록중...", animated: true)
             
             var status_code: Int = 500
             /// WhGoods Upload 요청
@@ -256,6 +262,9 @@ class WhGoodsUploadVC: UIViewController {
                                 if let delegate = WhHomeVCdelegate {
                                     WhGoodsArray_realtime[delegate.WhGoodsArray_realtime_row] = self.GoodsObject
                                     UIView.setAnimationsEnabled(false); delegate.tableView.reloadSections(IndexSet(integer: 1), with: .none); UIView.setAnimationsEnabled(true)
+                                }
+                                if let delegate = WhGoodsVCdelegate {
+                                    delegate.loadingData(first: true)
                                 }
                                 if let delegate = WhGoodsDetailVCdelegate {
                                     delegate.GoodsObject = self.GoodsObject

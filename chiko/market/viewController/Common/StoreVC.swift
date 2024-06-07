@@ -117,6 +117,7 @@ class StoreVC: UIViewController {
         store_name_eng = data.store_name_eng
         /// placeholder, delegate, edti, return next/done
         ([businessRegNum_tf, storeName_tf, storeNameEng_tf, storeTel_tf, storeAddressStreet_tf, storeAddressDetail_tf, storeAddressZipCode_tf, buildingAddressDetail_tf, domainAddress_tf, wechatId_tf] as [UITextField]).enumerated().forEach { i, tf in
+            tf.isEnabled = (MemberObject.member_grade == "ceo")
             tf.placeholder(text: ["", "", "", "-를 빼고 입력하세요.", "주소", "상세주소", "우편번호", "", "ex. www.example.com", "", ""][i])
             tf.text = [data.business_reg_num, data.store_name, data.store_name_eng, data.store_tel, data.store_address_street, data.store_address_detail, data.store_address_zipcode, data.summary_address, data.store_domain, data.wechat_id][i]
             input_check[i] = (tf.text! != "")
@@ -138,7 +139,9 @@ class StoreVC: UIViewController {
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(scrollView(_:))))
         /// store type
         ([online_btn, offline_btn, onoffline_btn] as [UIButton]).enumerated().forEach { i, btn in
-            btn.tag = i; btn.addTarget(self, action: #selector(storeType_btn(_:)), for: .touchUpInside)
+            if MemberObject.member_grade == "ceo" {
+                btn.tag = i; btn.addTarget(self, action: #selector(storeType_btn(_:)), for: .touchUpInside)
+            }
             if StoreObject.onoff_type == "online", btn.tag == 0 {
                 btn.isSelected = true
                 btn.backgroundColor = .H_8CD26B
@@ -177,7 +180,9 @@ class StoreVC: UIViewController {
         buildingAddressDetail_tf.isEnabled = false
         buildingAddressDetail_btn.isSelected = data.summary_address != ""
         buildingAddressDetail_btn.backgroundColor = data.summary_address != "" ? .H_8CD26B : .black.withAlphaComponent(0.3)
-        buildingAddressDetail_btn.addTarget(self, action: #selector(buildingAddressDetail_btn(_:)), for: .touchUpInside)
+        if MemberObject.member_grade == "ceo" {
+            buildingAddressDetail_btn.addTarget(self, action: #selector(buildingAddressDetail_btn(_:)), for: .touchUpInside)
+        }
         
         StoreObject.upload_store_mainphoto_img.removeAll()
         imageUrlStringToData(from: StoreObject.store_mainphoto_img) { mimeType, imgData in
@@ -218,7 +223,9 @@ class StoreVC: UIViewController {
         }
         /// submit document
         ([storeMainPhoto_view, businessReg_view] as [UIView]).enumerated().forEach { i, view in
-            view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(submitDocu_view(_:))))
+            if MemberObject.member_grade == "ceo" {
+                view.tag = i; view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(submitDocu_view(_:))))
+            }
         }
         /// building contract
         let layout = UICollectionViewFlowLayout()
@@ -228,6 +235,7 @@ class StoreVC: UIViewController {
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 10)
         collectionView.delegate = self; collectionView.dataSource = self
         
+        edit_btn.isHidden = (MemberObject.member_grade == "employee")
         edit_btn.addTarget(self, action: #selector(edit_btn(_:)), for: .touchUpInside)
     }
     
@@ -282,7 +290,7 @@ class StoreVC: UIViewController {
         notice.isHidden = input_check[sender.tag]
     }
     
-    @objc func storeType_btn(_ sender: UIButton) {
+    @objc func storeType_btn(_ sender: UIButton) { view.endEditing(true)
         
         if sender.tag == 0 {
             /// online
@@ -313,7 +321,7 @@ class StoreVC: UIViewController {
         }
     }
     
-    @objc func buildingAddressDetail_btn(_ sender: UIButton) {
+    @objc func buildingAddressDetail_btn(_ sender: UIButton) { view.endEditing(true)
         segueViewController(identifier: "BuildingListVC")
     }
     
@@ -324,7 +332,7 @@ class StoreVC: UIViewController {
         presentPanModal(segue)
     }
     
-    @objc func submitDocu_view(_ sender: UITapGestureRecognizer) {
+    @objc func submitDocu_view(_ sender: UITapGestureRecognizer) { view.endEditing(true)
         
         guard let sender = sender.view else { return }
         setPhoto(max: 1) { photo in
@@ -533,14 +541,18 @@ extension StoreVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         
         if indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StoreCC0", for: indexPath) as! StoreCC
-            cell.tag = -1; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectItemAt(_:))))
+            if MemberObject.member_grade == "ceo" {
+                cell.tag = -1; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectItemAt(_:))))
+            }
             
             cell.labels.forEach { label in label.text = translation(label.text!) }
             
             return cell
         } else if indexPath.section == 1 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StoreCC1", for: indexPath) as! StoreCC
-            cell.tag = indexPath.row; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectItemAt(_:))))
+            if MemberObject.member_grade == "ceo" {
+                cell.tag = indexPath.row; cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectItemAt(_:))))
+            }
             cell.itemRow_label.text = "  "+String(format: "%02d", indexPath.row+1)
             return cell
         } else {
@@ -552,7 +564,7 @@ extension StoreVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         return CGSize(width: collectionView.frame.height, height: collectionView.frame.height)
     }
     
-    @objc func didSelectItemAt(_ sender: UITapGestureRecognizer) {
+    @objc func didSelectItemAt(_ sender: UITapGestureRecognizer) { view.endEditing(true)
         
         guard let sender = sender.view else { return }
         

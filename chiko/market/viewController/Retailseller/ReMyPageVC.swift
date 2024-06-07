@@ -47,12 +47,12 @@ class ReMyPageVC: UIViewController {
     let menus: [(title: String, content: [String])] = [
         (title: "매장관리", content: ["직원관리"]),
         (title: "정보관리", content: ["사업자수정", "내정보수정", "배송지관리"]),
-        (title: "고객센터", content: ["자주묻는질문"]),
+//        (title: "고객센터", content: ["자주묻는질문"]),
     ]
     let segues: [(String, [String])] = [
         ("매장관리", ["EmployeeVC"]),
         ("정보관리", ["StoreVC", "MemberVC", "ReDeliveryVC"]),
-        ("고객센터", [""]),
+//        ("고객센터", [""]),
     ]
     
     @IBOutlet var buttons: [UIButton]!

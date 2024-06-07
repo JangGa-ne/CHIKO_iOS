@@ -13,6 +13,7 @@ class EmployeeTC: UITableViewCell {
     
     @IBOutlet var buttons: [UIButton]!
     
+    @IBOutlet weak var profile_img: UIImageView!
     @IBOutlet weak var employeeId_label: UILabel!
     @IBOutlet weak var employeeName_label: UILabel!
     @IBOutlet weak var subscribe_btn: UIButton!
@@ -134,6 +135,16 @@ extension EmployeeVC: UITableViewDelegate, UITableViewDataSource {
         if EmployeeArray.count > 0 { return EmployeeArray.count } else { return .zero }
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        let data = EmployeeArray[indexPath.row]
+        guard let cell = cell as? EmployeeTC else { return }
+        
+        if !data.load { data.load = true
+            setKingfisher(imageView: cell.profile_img, imageUrl: data.profile_img, cornerRadius: 10)
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let data = EmployeeArray[indexPath.row]
@@ -141,6 +152,7 @@ extension EmployeeVC: UITableViewDelegate, UITableViewDataSource {
         
         cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
         
+        cell.profile_img.isHidden = (data.profile_img == "")
         cell.employeeId_label.text = data.member_id
         if data.member_grade == "ceo" {
             cell.employeeName_label.text = "\(data.member_name)(CEO)"
@@ -194,28 +206,28 @@ extension EmployeeVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func unsubscribe_btn(_ sender: UIButton) { view.endEditing(true)
         
-//        alert(title: "", message: "서비스 준비중 입니다...", style: .alert, time: 1)
+        alert(title: "", message: "서비스 점검중 입니다...", style: .alert, time: 1)
         
-        customLoadingIndicator(animated: true)
-        
-        let data = EmployeeArray[sender.tag]
-        let params: [String: Any] = [
-            "action": "edit",
-            "collection_id": "member",
-            "document_id": data.member_id,
-            "waiting_step": "-1",
-        ]
-        
-        requestEditDB(params: params) { status in
-            
-            self.customLoadingIndicator(animated: false)
-            
-            if status == 200 {
-                self.EmployeeArray[sender.tag].waiting_step = -1
-                self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
-            } else {
-                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
-            }
-        }
+//        customLoadingIndicator(animated: true)
+//        
+//        let data = EmployeeArray[sender.tag]
+//        let params: [String: Any] = [
+//            "action": "edit",
+//            "collection_id": "member",
+//            "document_id": data.member_id,
+//            "waiting_step": "-1",
+//        ]
+//        
+//        requestEditDB(params: params) { status in
+//            
+//            self.customLoadingIndicator(animated: false)
+//            
+//            if status == 200 {
+//                self.EmployeeArray[sender.tag].waiting_step = -1
+//                self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
+//            } else {
+//                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+//            }
+//        }
     }
 }
