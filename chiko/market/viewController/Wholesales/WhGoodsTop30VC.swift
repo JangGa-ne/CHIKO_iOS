@@ -11,9 +11,6 @@ class WhGoodsTop30TC: UITableViewCell {
     
     @IBOutlet weak var item_img: UIImageView!
     @IBOutlet weak var itemName_label: UILabel!
-    @IBOutlet weak var itemPrice_label: UILabel!
-    @IBOutlet weak var itemSalePrice_label: UILabel!
-    @IBOutlet weak var itemSalePercent_label: UILabel!
 }
 
 class WhGoodsTop30VC: UIViewController {
@@ -40,7 +37,14 @@ class WhGoodsTop30VC: UIViewController {
     
     func loadingData() {
         
-        
+        requestTop30 { array, status in
+            
+            if status == 200 {
+                self.GoodsArray = array
+            } else {
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+            }; self.tableView.reloadData()
+        }
     }
 }
 
@@ -74,11 +78,6 @@ extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WhGoodsTop30TC", for: indexPath) as! WhGoodsTop30TC
         
         cell.itemName_label.text = data.item_name
-        cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
-        cell.itemSalePrice_label.text = "₩\(priceFormatter.string(from: data.item_sale_price as NSNumber) ?? "0")"
-        let percent = ((Double(data.item_price)-Double(data.item_sale_price))/Double(data.item_price)*1000).rounded()/10
-        cell.itemSalePercent_label.isHidden = ((percent == 0) || !data.item_sale)
-        cell.itemSalePercent_label.text = "↓ \(percent)%"
         
         return cell
     }

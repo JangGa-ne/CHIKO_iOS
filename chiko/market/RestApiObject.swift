@@ -123,6 +123,7 @@ class StoreData {
     var item_content_auto3: String = ""
     var passbook_img: String = ""
     var store_cash: Int = 0
+    var best_item: [String] = []
     var best_position: Int = 0
     // 소매자
     var onoff_type: String = "" // "online", "offline", "onoffline"
@@ -201,6 +202,7 @@ func setStore(storeDict: [String: Any]) -> StoreData {
     storeValue.store_tel = storeDict["store_tel"] as? String ?? ""
     storeValue.store_type = storeDict["store_type"] as? String ?? ""
     storeValue.waiting_step = Int(storeDict["waiting_step"] as? String ?? "0") ?? 0
+    storeValue.best_item = storeDict["best_item"] as? [String] ?? []
     storeValue.best_position = storeDict["best_position"] as? Int ?? 0
     /// 데이터 추가
     return storeValue

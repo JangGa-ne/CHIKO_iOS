@@ -1200,3 +1200,66 @@ func requestChatbot(action: String, content: String, completionHandler: @escapin
         }
     }
 }
+
+func requestTop30(completionHandler: @escaping (([GoodsData], Int) -> Void)) {
+    
+    let params: Parameters = [
+        "action": "top_item_get",
+        "store_id": StoreObject.store_id,
+    ]
+    
+    var GoodsArray: [GoodsData] = []
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                /// best goods
+                let data = responseJson["data"] as? Array<[String: Any]> ?? []
+                data.forEach { dict in
+                    /// 데이터 추가
+                    GoodsArray.append(setGoods(goodsDict: dict))
+                }
+                if GoodsArray.count > 0 {
+                    completionHandler(GoodsArray, 204)
+                } else {
+                    completionHandler([], 204)
+                }
+            } else {
+                completionHandler([], 600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler([], response.error?.responseCode ?? 500)
+        }
+    }
+}
+
+func requestTopItem(item_key: String, top: Bool, completionHandler: @escaping ((Int) -> Void)) {
+    
+    let params: Parameters = [
+        "action": "top_item",
+        "store_id": StoreObject.store_id,
+        "item_key": item_key,
+        "item_top_check": String(top)
+    ]
+    /// x-www-form-urlencoded
+    AF.request(requestUrl+"/goods", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
+        do {
+            if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
+//                print(responseJson)
+                if responseJson["message"] as? String ?? "failure" == "success" {
+                    StoreObject.best_item = responseJson["best_item"] as? [String] ?? []
+                    completionHandler(200)
+                } else {
+                    completionHandler(500)
+                }
+            } else {
+                completionHandler(600)
+            }
+        } catch {
+            print(response.error as Any)
+            completionHandler(response.error?.responseCode ?? 500)
+        }
+    }
+}

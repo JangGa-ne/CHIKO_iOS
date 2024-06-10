@@ -36,7 +36,7 @@ class WhMyPageVC: UIViewController {
     }
     
     let menus: [(title: String, content: [String])] = [
-        (title: "상품관리", content: ["조회/수정", "상품등록"]),
+        (title: "상품관리", content: ["조회/수정", "상품등록", "우리매장 TOP30"]),
         (title: "주문관리", content: ["오늘의주문", "전체주문/미송"]),
         (title: "정산관리", content: ["오늘의정산"]),
         (title: "매장관리", content: ["매장태그관리", "직원관리"]),
@@ -44,7 +44,7 @@ class WhMyPageVC: UIViewController {
         (title: "고객센터", content: ["채팅플러스+"]),
     ]
     let segues: [(String, [String])] = [
-        ("상품관리", ["WhGoodsVC", "WhGoodsUploadVC"]),
+        ("상품관리", ["WhGoodsVC", "WhGoodsUploadVC", "WhGoodsTop30VC"]),
         ("주문관리", ["WhOrderBatchVC", "WhInventoryVC"]),
         ("정산관리", ["WhOrderBatchVC"]),
         ("매장관리", ["TagVC", "EmployeeVC"]),

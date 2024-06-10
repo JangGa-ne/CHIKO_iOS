@@ -25,6 +25,7 @@ class WhGoodsDetailVC: UIViewController {
     }
     
     var GoodsObject: GoodsData = GoodsData()
+    var indexPath_row: Int = 0
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
@@ -43,9 +44,8 @@ class WhGoodsDetailVC: UIViewController {
     @IBOutlet weak var categoryName_label_width: NSLayoutConstraint!
     @IBOutlet weak var itemTop_img: UIImageView!
     
-    @IBOutlet weak var itemContent_v: UIView!
-    @IBOutlet weak var itemContentCollectionView: UICollectionView!
-    @IBOutlet weak var itemContent_label: UILabel!
+    @IBOutlet weak var topItem_btn: UIButton!
+    
     @IBOutlet weak var itemCategory_label: UILabel!
     @IBOutlet weak var itemColor_label: UILabel!
     @IBOutlet weak var itemSize_label: UILabel!
@@ -55,6 +55,10 @@ class WhGoodsDetailVC: UIViewController {
     @IBOutlet weak var itemCountry_label: UILabel!
     @IBOutlet weak var itemDateTime_label: UILabel!
     @IBOutlet weak var itemKey_label: UILabel!
+    
+    @IBOutlet weak var itemContent_v: UIView!
+    @IBOutlet weak var itemContentCollectionView: UICollectionView!
+    @IBOutlet weak var itemContent_label: UILabel!
     
     @IBOutlet weak var optionPriceCollectionView: UICollectionView!
     
@@ -100,9 +104,13 @@ class WhGoodsDetailVC: UIViewController {
         categoryName_label_width.constant = stringWidth(text: categoryName_label.text!, fontSize: 12)+20
         itemTop_img.isHidden = !(data.item_top_check)
         
-        itemContent_v.isHidden = (data.item_content_imgs.count == 0)
-        itemContent_label.isHidden = (data.item_content == "")
-        itemContent_label.text = data.item_content
+        if data.item_top_check {
+            topItem_btn.setBackgroundImage(UIImage(), for: .normal)
+            topItem_btn.setTitle("우리매장 TOP30에 내리기", for: .normal)
+        } else {
+            topItem_btn.setBackgroundImage(UIImage(named: "gradation_color"), for: .normal)
+            topItem_btn.setTitle("우리매장 TOP30에 올리기", for: .normal)
+        }; topItem_btn.addTarget(self, action: #selector(topItem_btn(_:)), for: .touchUpInside)
         
         itemCategory_label.text = data.item_category_name.map { $0 }.joined(separator: " > ")
         itemColor_label.text = data.item_colors.map { $0 }.joined(separator: ", ")
@@ -113,6 +121,10 @@ class WhGoodsDetailVC: UIViewController {
         itemCountry_label.text = data.item_manufacture_country
         itemDateTime_label.text = setTimestampToDateTime(timestamp: Int(data.item_key) ?? 0, dateformat: "yyyy.MM.dd a hh:mm")
         itemKey_label.text = data.item_key
+        
+        itemContent_v.isHidden = (data.item_content_imgs.count == 0)
+        itemContent_label.isHidden = (data.item_content == "")
+        itemContent_label.text = data.item_content
         
 //        optionPriceCollectionView.delegate = nil; optionPriceCollectionView.dataSource = nil
         
@@ -148,6 +160,39 @@ class WhGoodsDetailVC: UIViewController {
         segue.inputs = sender.images
         segue.indexpath_row = sender.tag
         navigationController?.pushViewController(segue, animated: true, completion: nil)
+    }
+    
+    @objc func topItem_btn(_ sender: UIButton) {
+        
+        requestTopItem(item_key: GoodsObject.item_key, top: !GoodsObject.item_top_check) { status in
+            
+            if status == 200 {
+                self.GoodsObject.item_top_check = !self.GoodsObject.item_top_check
+                
+                if let delegate = WhGoodsVCdelegate {
+                    delegate.GoodsArray[self.indexPath_row].item_top_check = self.GoodsObject.item_top_check
+                    delegate.tableView.reloadData()
+                }
+                
+                if self.GoodsObject.item_top_check {
+                    
+                    self.itemTop_img.isHidden = false
+                    sender.setBackgroundImage(UIImage(), for: .normal)
+                    sender.setTitle("우리매장 TOP30에 내리기", for: .normal)
+                    
+                    let alert = UIAlertController(title: "", message: "우리매장 TOP30으로 이동하시겠습니까?", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                        self.segueViewController(identifier: "WhGoodsTop30VC")
+                    }))
+                    alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                } else {
+                    self.itemTop_img.isHidden = true
+                    sender.setBackgroundImage(UIImage(named: "gradation_color"), for: .normal)
+                    sender.setTitle("우리매장 TOP30에 올리기", for: .normal)
+                }
+            }
+        }
     }
     
     @objc func edit_btn(_ sender: UIButton) {
