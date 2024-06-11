@@ -1221,7 +1221,7 @@ func requestTop30(completionHandler: @escaping (([GoodsData], Int) -> Void)) {
                     GoodsArray.append(setGoods(goodsDict: dict))
                 }
                 if GoodsArray.count > 0 {
-                    completionHandler(GoodsArray, 204)
+                    completionHandler(GoodsArray, 200)
                 } else {
                     completionHandler([], 204)
                 }

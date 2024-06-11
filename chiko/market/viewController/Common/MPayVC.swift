@@ -52,7 +52,7 @@ class MPayVC: UIViewController {
             
             if status == 200 {
                 self.problemAlert(view: self.tableView)
-                self.StoreCashArray += array
+                self.StoreCashArray = array
                 self.tableView.reloadData()
             } else if status == 204 {
                 self.problemAlert(view: self.tableView, type: "nodata")

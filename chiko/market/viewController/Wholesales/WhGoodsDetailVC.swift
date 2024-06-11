@@ -166,13 +166,10 @@ class WhGoodsDetailVC: UIViewController {
         
         requestTopItem(item_key: GoodsObject.item_key, top: !GoodsObject.item_top_check) { status in
             
+            self.customLoadingIndicator(animated: false)
+            
             if status == 200 {
                 self.GoodsObject.item_top_check = !self.GoodsObject.item_top_check
-                
-                if let delegate = WhGoodsVCdelegate {
-                    delegate.GoodsArray[self.indexPath_row].item_top_check = self.GoodsObject.item_top_check
-                    delegate.tableView.reloadData()
-                }
                 
                 if self.GoodsObject.item_top_check {
                     
@@ -180,16 +177,32 @@ class WhGoodsDetailVC: UIViewController {
                     sender.setBackgroundImage(UIImage(), for: .normal)
                     sender.setTitle("우리매장 TOP30에 내리기", for: .normal)
                     
-                    let alert = UIAlertController(title: "", message: "우리매장 TOP30으로 이동하시겠습니까?", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
-                        self.segueViewController(identifier: "WhGoodsTop30VC")
-                    }))
-                    alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
+//                    let alert = UIAlertController(title: "", message: "우리매장 TOP30으로 이동하시겠습니까?", preferredStyle: .alert)
+//                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+//                        self.segueViewController(identifier: "WhGoodsTop30VC")
+//                    }))
+//                    alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+//                    self.present(alert, animated: true, completion: nil)
                 } else {
                     self.itemTop_img.isHidden = true
                     sender.setBackgroundImage(UIImage(named: "gradation_color"), for: .normal)
                     sender.setTitle("우리매장 TOP30에 올리기", for: .normal)
+                }
+                
+                if let delegate = WhHomeVCdelegate {
+                    // 데이터 삭제
+                    WhGoodsArray_realtime.removeAll()
+                    
+                    delegate.customLoadingIndicator(text: "불러오는 중...", animated: true)
+                    /// WhRealTime 요청
+                    requestWhRealTime(filter: "최신순", limit: 3) { _ in
+                        delegate.customLoadingIndicator(animated: false)
+                        delegate.tableView.reloadData()
+                    }
+                }
+                if let delegate = WhGoodsVCdelegate {
+                    delegate.GoodsArray[self.indexPath_row].item_top_check = self.GoodsObject.item_top_check
+                    delegate.tableView.reloadData()
                 }
             }
         }
