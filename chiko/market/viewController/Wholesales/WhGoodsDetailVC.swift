@@ -75,6 +75,9 @@ class WhGoodsDetailVC: UIViewController {
         scrollView.delegate = self
         
         ([itemContentCollectionView, optionPriceCollectionView] as [UICollectionView]).forEach { collectionView in
+            
+            collectionView.delegate = nil; collectionView.dataSource = nil
+            
             let layout = UICollectionViewFlowLayout()
             layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
             layout.sectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)

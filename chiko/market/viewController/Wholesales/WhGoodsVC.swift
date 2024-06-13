@@ -210,6 +210,7 @@ extension WhGoodsVC: UITableViewDelegate, UITableViewDataSource {
             
             let segue = storyboard?.instantiateViewController(withIdentifier: "WhGoodsDetailVC") as! WhGoodsDetailVC
             segue.GoodsObject = GoodsArray[indexPath.row]
+            segue.indexPath_row = indexPath.row
             navigationController?.pushViewController(segue, animated: true, completion: nil)
         }
     }

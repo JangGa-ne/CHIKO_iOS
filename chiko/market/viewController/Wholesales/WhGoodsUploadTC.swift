@@ -253,6 +253,14 @@ class WhGoodsUploadTC: UITableViewCell {
             }
         }
         
+        WhGoodsUploadVCdelegate.OptionPriceArray = WhGoodsUploadVCdelegate.OptionPriceArray.map({ (color_name: String, size_price: [(size: String, price: Int)]) in
+            var new_size_price: [(size: String, price: Int)] = []
+            size_price.forEach { (size: String, price: Int) in
+                new_size_price.append((size: size, price: WhGoodsUploadVCdelegate.GoodsObject.item_sale_price))
+            }
+            return (color_name: color_name, size_price: new_size_price)
+        })
+        
         UIView.setAnimationsEnabled(false); WhGoodsUploadVCdelegate.tableView.reloadSections(IndexSet(integer: 2), with: .none); UIView.setAnimationsEnabled(true)
     }
     

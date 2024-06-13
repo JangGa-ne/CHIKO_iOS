@@ -206,6 +206,9 @@ extension PaymentVC: WKUIDelegate, WKNavigationDelegate {
         guard let url = navigationAction.request.url else { decisionHandler(.allow); return }
         print(url)
         
+        let dict = navigationAction.request.allHTTPHeaderFields ?? [:]
+        
+        
         if url.scheme != "http" && url.scheme != "https" {
             UIApplication.shared.open(url)
             decisionHandler(.cancel)

@@ -7,16 +7,12 @@
 
 import UIKit
 
-protocol WhGoodsTop30TCdelegate: AnyObject {
-    func cellDidBeginMoving(_ cell: WhGoodsTop30TC)
-}
-
 class WhGoodsTop30TC: UITableViewCell {
     
-    weak var delegateTC: WhGoodsTop30TCdelegate?
-    
+    @IBOutlet weak var number_label: UILabel!
     @IBOutlet weak var item_img: UIImageView!
     @IBOutlet weak var itemName_label: UILabel!
+    @IBOutlet weak var itemPrice_label: UILabel!
 }
 
 class WhGoodsTop30VC: UIViewController {
@@ -40,8 +36,9 @@ class WhGoodsTop30VC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
+        tableView.dragDelegate = self; tableView.dropDelegate = self; tableView.dragInteractionEnabled = true
         
-        edit_btn.isHidden = true
+        edit_btn.alpha = .zero
         edit_btn.addTarget(self, action: #selector(edit_btn(_:)), for: .touchUpInside)
         
         customLoadingIndicator(animated: true)
@@ -51,10 +48,22 @@ class WhGoodsTop30VC: UIViewController {
     
     @objc func edit_btn(_ sender: UIButton) {
         
-        
-        
-        sender.isHidden = true
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
+        let params: [String: Any] = [
+            "action": "edit",
+            "collection_id": "store",
+            "document_id": StoreObject.store_id,
+            "best_goods": GoodsArray.map { $0.item_key },
+        ]
+        /// Edit DB 요청
+        requestEditDB(params: params) { status in
+            
+            if status == 200 {
+                UIView.animate(withDuration: 0.5) { self.edit_btn.alpha = 0 }
+                self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
+            } else {
+                self.customAlert(message: "문제가 발생했습니다. 다시 시도해주세요.", time: 1)
+            }
+        }
     }
     
     func loadingData() {
@@ -87,7 +96,7 @@ class WhGoodsTop30VC: UIViewController {
     }
 }
 
-extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource, WhGoodsTop30TCdelegate {
+extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource, UITableViewDragDelegate, UITableViewDropDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if GoodsArray.count > 0 { return GoodsArray.count } else { return .zero }
@@ -99,7 +108,7 @@ extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource, WhGoodsTop
         guard let cell = cell as? WhGoodsTop30TC else { return }
         
         if !data.load { data.load = true
-            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 10)
+            setKingfisher(imageView: cell.item_img, imageUrl: data.item_mainphoto_img, cornerRadius: 5)
         }
     }
     
@@ -115,9 +124,10 @@ extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource, WhGoodsTop
         
         let data = GoodsArray[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "WhGoodsTop30TC", for: indexPath) as! WhGoodsTop30TC
-        cell.delegateTC = self
         
+        cell.number_label.text = String(indexPath.row+1)
         cell.itemName_label.text = data.item_name
+        cell.itemPrice_label.text = "₩\(priceFormatter.string(from: data.item_price as NSNumber) ?? "0")"
         
         return cell
     }
@@ -134,17 +144,61 @@ extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource, WhGoodsTop
         return true
     }
     
+//    func tableView(_ tableView: UITableView, dragSessionAllowsMoveOperation session: any UIDragSession) -> Bool {
+//        return true
+//    }
+    
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        
+        UIView.animate(withDuration: 0.5) { self.edit_btn.alpha = 1 }
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
         
         let data = GoodsArray[sourceIndexPath.row]
         GoodsArray.remove(at: sourceIndexPath.row)
         GoodsArray.insert(data, at: destinationIndexPath.row)
+        
+        tableView.reloadData()
     }
     
-    func cellDidBeginMoving(_ cell: WhGoodsTop30TC) {
-        if let indexPath = tableView.indexPath(for: cell) {
-            print("Cell at \(indexPath) began moving.")
-            edit_btn.isHidden = false
+    func tableView(_ tableView: UITableView, itemsForBeginning session: any UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        
+        let itemProvider = NSItemProvider(object: "\(GoodsArray[indexPath.row])" as NSString)
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        dragItem.localObject = "\(GoodsArray[indexPath.row])"
+        
+        return [dragItem]
+    }
+    
+    func tableView(_ tableView: UITableView, dragPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+        let preview = UIDragPreviewParameters()
+        preview.backgroundColor = .clear
+        return preview
+    }
+    
+    func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+        let preview = UIDragPreviewParameters()
+        preview.backgroundColor = .clear
+        return preview
+    }
+    
+    func tableView(_ tableView: UITableView, performDropWith coordinator: any UITableViewDropCoordinator) {
+        
+        guard let destinationIndexPath = coordinator.destinationIndexPath, destinationIndexPath.section == 1 else { return }
+        
+        coordinator.items.forEach { dropItem in
+            
+            guard let sourceIndexPath = dropItem.sourceIndexPath else { return }
+            
+            tableView.performBatchUpdates({
+                let movedItem = self.GoodsArray.remove(at: sourceIndexPath.row)
+                self.GoodsArray.insert(movedItem, at: destinationIndexPath.row)
+                tableView.deleteRows(at: [sourceIndexPath], with: .automatic)
+                tableView.insertRows(at: [destinationIndexPath], with: .automatic)
+            }, completion: nil)
+            
+            UIView.animate(withDuration: 0.5) { self.edit_btn.alpha = 1 }
             tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
         }
     }
