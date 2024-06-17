@@ -318,7 +318,7 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
         
         let data = ReBasketArray[sender.tag]
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
-        segue.store_id = data.wh_store_id
+        segue.store_id = data.store_id
         navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
@@ -338,7 +338,7 @@ extension ReBasketVC: UITableViewDelegate, UITableViewDataSource {
         
         let data = ReBasketArray[sender.tag]
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
-        segue.store_id = data.wh_store_id
+        segue.store_id = data.store_id
         segue.item_key = data.item_key
         navigationController?.pushViewController(segue, animated: true, completion: nil)
     }

@@ -17,6 +17,11 @@ class ReChatbotTC: UITableViewCell {
     @IBOutlet weak var datetimeReadorNot_label: UILabel!
 }
 
+class ReChatbotCC: UICollectionViewCell {
+    
+    @IBOutlet weak var title_label: UILabel!
+}
+
 class ReChatbotVC: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -24,6 +29,7 @@ class ReChatbotVC: UIViewController {
     }
     
     var ChatbotArray: [ChatbotData] = []
+    var QuestionArray: [String] = []
     
     @IBOutlet weak var storeMain_img: UIImageView!
     @IBOutlet weak var choiceStore_btn: UIButton!
@@ -31,6 +37,7 @@ class ReChatbotVC: UIViewController {
     @IBOutlet weak var notice_btn: UIButton!
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var content_tv: UITextView!
     @IBOutlet weak var send_btn: UIButton!
     
@@ -47,8 +54,16 @@ class ReChatbotVC: UIViewController {
         notice_btn.addTarget(self, action: #selector(notice_btn(_:)), for: .touchUpInside)
         
         tableView.separatorStyle = .none
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 64, right: 0)
         tableView.delegate = self; tableView.dataSource = self
+        
+        QuestionArray = ["사업자 정보를 수정하고 싶어요", "내 정보를 수정하고 싶어요", "직원은 어떻게 가입하나요?", "아이디 / 비밀번호를 잊어버렸어요!", "영수증주문과 일반주문은 어떻게 다른가요?", "주문 상태가 궁금해요.", "주문을 취소하고 싶어요!", "불량, 오배송 혹은 상품이 누락 되었어요.", "주문건 주소지를 변경하고 싶어요.", "부분 입고된 미송 상품을 먼저 받을 수 있나요?"]
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        layout.minimumLineSpacing = 10; layout.minimumInteritemSpacing = 10; layout.scrollDirection = .horizontal
+        collectionView.setCollectionViewLayout(layout, animated: false, completion: nil)
+        collectionView.delegate = self; collectionView.dataSource = self
         
         content_tv.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         send_btn.addTarget(self, action: #selector(send_btn(_:)), for: .touchUpInside)
@@ -118,3 +133,24 @@ extension ReChatbotVC: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+extension ReChatbotVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if QuestionArray.count > 0 { return QuestionArray.count } else { return .zero }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReChatbotCC", for: indexPath) as! ReChatbotCC
+        cell.title_label.text = QuestionArray[indexPath.row]
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: stringWidth(text: QuestionArray[indexPath.row]), height: collectionView.frame.height-20)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        loadingData(action: "set", content: QuestionArray[indexPath.row])
+    }
+}
