@@ -65,7 +65,7 @@ class ReChatbotVC: UIViewController {
         collectionView.setCollectionViewLayout(layout, animated: false, completion: nil)
         collectionView.delegate = self; collectionView.dataSource = self
         
-        content_tv.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        content_tv.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 42)
         send_btn.addTarget(self, action: #selector(send_btn(_:)), for: .touchUpInside)
         
         loadingData()
@@ -147,7 +147,7 @@ extension ReChatbotVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: stringWidth(text: QuestionArray[indexPath.row]), height: collectionView.frame.height-20)
+        return CGSize(width: stringWidth(text: QuestionArray[indexPath.row], fontSize: 14.5), height: collectionView.frame.height-20)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
