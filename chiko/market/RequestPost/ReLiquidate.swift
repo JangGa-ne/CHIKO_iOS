@@ -63,7 +63,7 @@ func requestReLiquidate(receipt_mode: Bool, LiquidateArray: [BasketData], store_
             "item_sale_price": data.item_sale_price,
             "item_total_price": data.item_total_price,
             "item_total_quantity": data.item_total_quantity,
-            "store_id": data.wh_store_id,
+            "store_id": data.wh_store_id != "" ? data.wh_store_id : data.store_id,
             "store_name": data.store_name,
             "store_name_eng": data.store_name_eng,
             "delivery_state": "상품준비중",
