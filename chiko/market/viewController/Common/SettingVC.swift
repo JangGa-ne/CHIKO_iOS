@@ -201,7 +201,6 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let identifier = segues[indexPath.section].1[indexPath.row]
-        guard identifier != "" else { return }
         
         if indexPath.section == 0 {
             
@@ -211,7 +210,7 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(segue, animated: true, completion: nil)
         } else if indexPath.section == 2 {
             if indexPath.row == 0 {
-                
+                alert(title: "", message: "서비스 점검중 입니다...", style: .alert, time: 1)
             } else if indexPath.row == 1 {
                 segueViewController(identifier: identifier)
             }

@@ -47,8 +47,8 @@ var NoticeArray: [NoticeData] = []
 var notice_read: Bool = true
 /// Retailseller
 var ReStoreArray_best: [(StoreObject: StoreData, GoodsObject: GoodsData)] = []
-var ReGoodsArray_best: [GoodsData] = []
-var ReGoodsArray_best2: [(title: String, ReGoodsArray_best: [GoodsData])] = []
+var ReGoodsArray_top: [GoodsData] = []
+var ReGoodsArray_top2: [(title: String, ReGoodsArray_top: [GoodsData])] = []
 var ReBasketArray: [BasketData] = []
 /// Wholesales
 var WhGoodsArray_realtime: [GoodsData] = []

@@ -68,6 +68,8 @@ class ReChatbotVC: UIViewController {
         content_tv.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 42)
         send_btn.addTarget(self, action: #selector(send_btn(_:)), for: .touchUpInside)
         
+        customLoadingIndicator(animated: true)
+        
         loadingData()
         
         NotificationCenter.default.addObserver(self, selector: #selector(show(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -86,6 +88,8 @@ class ReChatbotVC: UIViewController {
     func loadingData(action: String = "get", content: String = "") {
         
         requestChatbot(action: action, content: content) { array, status in
+            
+            self.customLoadingIndicator(animated: false)
             
             if status == 200 {
                 self.ChatbotArray = array
@@ -151,6 +155,7 @@ extension ReChatbotVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         loadingData(action: "set", content: QuestionArray[indexPath.row])
     }
 }

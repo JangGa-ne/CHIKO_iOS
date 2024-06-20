@@ -93,8 +93,8 @@ class SignInVC: UIViewController {
         NoticeArray.removeAll()
         /// Retailseller
         ReStoreArray_best.removeAll()
-        ReGoodsArray_best.removeAll()
-        ReGoodsArray_best2.removeAll()
+        ReGoodsArray_top.removeAll()
+        ReGoodsArray_top2.removeAll()
         ReBasketArray.removeAll()
         /// Wholesales
         WhGoodsArray_realtime.removeAll()

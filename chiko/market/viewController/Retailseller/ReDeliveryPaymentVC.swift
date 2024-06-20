@@ -99,7 +99,7 @@ class ReDeliveryPaymentVC: UIViewController {
                 self.totalPrice_label.attributedText = attributedPriceString(krw: Int(self.total_option_weight*Double(PaymentObject.dpcostperkg)), cny: self.total_option_weight*Double(PaymentObject.dpcostperkg)/PaymentObject.exchange_rate)
             }
         } else {
-            totalWeight_label.text = "\(priceFormatter.string(from: Double(OrderObject.kr_total_delivery_price)/self.total_option_weight as NSNumber) ?? "0") x \(String(self.total_option_weight).replacingOccurrences(of: ".0", with: ""))kg"
+            totalWeight_label.text = "\(priceFormatter.string(from: Double(OrderObject.kr_total_delivery_price)/self.total_option_weight as NSNumber) ?? "0") x \(String(format: "%.1f", self.total_option_weight).replacingOccurrences(of: ".0", with: ""))kg"
             totalPrice_label.attributedText = attributedPriceString(krw: OrderObject.kr_total_delivery_price, cny: OrderObject.ch_total_delivery_price)
         }
         /// 결제수단
@@ -162,7 +162,7 @@ class ReDeliveryPaymentVC: UIViewController {
         }
     }
     
-    func payment(status: Int) {
+    func payment(status: Int, json: [String: Any] = [:]) {
         
         switch status {
         case 200:
@@ -171,36 +171,20 @@ class ReDeliveryPaymentVC: UIViewController {
             let timestamp = setGMTUnixTimestamp()
 
             customLoadingIndicator(text: "물류비 결제 중...", animated: true)
-                
-            let params: [String: Any] = [
-                "action": "set_dpcost",
-                "store_id": StoreObject.store_id,
-                "AuthCode": "",
-                "AuthDate": "",
-                "BuyerEmail": MemberObject.member_email,
-                "MID": "",
-                "Amt": String(format: "%.2f", total_option_weight*Double(PaymentObject.dpcostperkg)/PaymentObject.exchange_rate).replacingOccurrences(of: ".", with: ""),
-                "TID": "",
-                "GoodsName": "\(item_name)의 물류비",
-                "MallReserved": "",
-                "Currency": "CNY",
-                "PayMethod": payment_type,
-                "name": MemberObject.member_name,
-                "mallUserID": "",
-                "MOID": "",
-                "ResultMsg": "success",
-                "ResultCode": "",
-                "weight": total_option_weight,
-                "kr_price": Int(total_option_weight*Double(PaymentObject.dpcostperkg)),
-                "ch_price": (total_option_weight*Double(PaymentObject.dpcostperkg)/PaymentObject.exchange_rate*100).rounded()/100,
-                "dpre_key": "dpre\(timestamp)",
-                "order_key": OrderObject.order_key,
-                "order_id": MemberObject.member_id,
-                "order_name": MemberObject.member_name,
-                "order_position": MemberObject.member_grade,
-                "order_datetime": String(timestamp),
-                "payment_type": payment_type,
-            ]
+            
+            var params: [String: Any] = json
+            params["action"] = "set_dpcost"
+            params["store_id"] = StoreObject.store_id
+            params["weight"] = total_option_weight
+            params["kr_price"] = Int(total_option_weight*Double(PaymentObject.dpcostperkg))
+            params["ch_price"] = (total_option_weight*Double(PaymentObject.dpcostperkg)/PaymentObject.exchange_rate*100).rounded()/100
+            params["dpre_key"] = "dpre\(timestamp)"
+            params["order_key"] = OrderObject.order_key
+            params["order_id"] = MemberObject.member_id
+            params["order_name"] = MemberObject.member_name
+            params["order_position"] = MemberObject.member_grade
+            params["order_datetime"] = String(timestamp)
+            params["payment_type"] = payment_type
             
             var ReceiptObject: ReceiptData = ReceiptData()
             /// DpCost Receipt 요청

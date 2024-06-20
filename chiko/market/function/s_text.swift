@@ -99,3 +99,22 @@ func attributedPriceString(krw: Int, cny: Double, fontSize: CGFloat = 16) -> NSA
     
     return priceString
 }
+
+class UIStrokeLabel: UILabel {
+    
+    override func drawText(in rect: CGRect) {
+        
+        let context = UIGraphicsGetCurrentContext()
+        context?.setLineWidth(5)
+        context?.setLineJoin(.miter)
+        context?.resetClip()
+        
+        context?.setTextDrawingMode(.stroke)
+        textColor = .black.withAlphaComponent(0.3)
+        super.drawText(in: rect)
+        
+        context?.setTextDrawingMode(.fill)
+        textColor = .white
+        super.drawText(in: rect)
+    }
+}

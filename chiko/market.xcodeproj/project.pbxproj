@@ -83,6 +83,7 @@
 		C29C07072BC3C8380040C8A2 /* ReDeliveryTrackingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29C07062BC3C8380040C8A2 /* ReDeliveryTrackingVC.swift */; };
 		C2A0F7D82B24B649007442A3 /* WhGoodsTop30VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A0F7D72B24B649007442A3 /* WhGoodsTop30VC.swift */; };
 		C2A654122AFB1E16009BE424 /* ReGoodsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A654112AFB1E16009BE424 /* ReGoodsVC.swift */; };
+		C2A8E55A2C23F641000D5BAF /* ReGoodsTop30VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A8E5592C23F641000D5BAF /* ReGoodsTop30VC.swift */; };
 		C2AFF0062B0DA3270014C209 /* WhGoodsUploadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2AFF0052B0DA3270014C209 /* WhGoodsUploadVC.swift */; };
 		C2B23BF22B0C38C900C7DA5D /* WhHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B23BF12B0C38C900C7DA5D /* WhHomeVC.swift */; };
 		C2B2895F2B1735C90078EC6E /* WaitingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B2895E2B1735C90078EC6E /* WaitingVC.swift */; };
@@ -194,6 +195,7 @@
 		C29C07062BC3C8380040C8A2 /* ReDeliveryTrackingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReDeliveryTrackingVC.swift; sourceTree = "<group>"; };
 		C2A0F7D72B24B649007442A3 /* WhGoodsTop30VC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoodsTop30VC.swift; sourceTree = "<group>"; };
 		C2A654112AFB1E16009BE424 /* ReGoodsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsVC.swift; sourceTree = "<group>"; };
+		C2A8E5592C23F641000D5BAF /* ReGoodsTop30VC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsTop30VC.swift; sourceTree = "<group>"; };
 		C2AFF0052B0DA3270014C209 /* WhGoodsUploadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhGoodsUploadVC.swift; sourceTree = "<group>"; };
 		C2B23BF12B0C38C900C7DA5D /* WhHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhHomeVC.swift; sourceTree = "<group>"; };
 		C2B2895E2B1735C90078EC6E /* WaitingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingVC.swift; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 				C278133D2B2A9556005521FD /* ReLiquidateVC.swift */,
 				C24AA5BF2B3044230061B490 /* ReLiquidateDetailVC.swift */,
 				C241796D2B0B47B5006497DF /* ReStoreVisitVC.swift */,
+				C2A8E5592C23F641000D5BAF /* ReGoodsTop30VC.swift */,
 				C20196A92B33F74E00576CF8 /* ReOrderVC.swift */,
 				C2D621592B352E7A002A7E78 /* ReOrderDetailVC.swift */,
 				C2F50D332BB5099F0088D067 /* ReDeliveryPaymentVC.swift */,
@@ -610,6 +613,7 @@
 				C22A0E1F2AE7AEB900F73F7A /* SignUpRegisterVC.swift in Sources */,
 				C20905CA2B8595C300DEB5E5 /* WhNotDelivery.swift in Sources */,
 				C22A0E1B2AE75DE100F73F7A /* s_device.swift in Sources */,
+				C2A8E55A2C23F641000D5BAF /* ReGoodsTop30VC.swift in Sources */,
 				C20905CC2B85966E00DEB5E5 /* EditDB.swift in Sources */,
 				C20905D42B85972300DEB5E5 /* ReOrder.swift in Sources */,
 				C2CF3BAF2B22FDF700843DEA /* WhGoodsDetailVC.swift in Sources */,

@@ -34,7 +34,6 @@ class ReStoreVisitTC: UITableViewCell {
     @IBOutlet weak var detail_btn: UIButton!
     
     @IBOutlet weak var following_view: UIView!
-    @IBOutlet weak var following_label: UILabel!
     @IBOutlet weak var following_img: UIImageView!
     @IBOutlet weak var following_btn: UIButton!
     
@@ -105,9 +104,10 @@ class ReStoreVisitVC: UIViewController {
     }
     
     var store_id: String = ""
-    
     var VisitObject: VisitData = VisitData()
     var following: Bool = false
+    
+    var refreshControl: UIRefreshControl = UIRefreshControl()
     
     @IBAction func back_btn(_ sender: UIButton) { navigationController?.popViewController(animated: true) }
     
@@ -121,9 +121,21 @@ class ReStoreVisitVC: UIViewController {
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.delegate = self; tableView.dataSource = self
+        tableView.refreshControl = refreshControl
+        refreshControl.tintColor = .black.withAlphaComponent(0.3)
+        refreshControl.addTarget(self, action: #selector(refreshControl(_:)), for: .valueChanged)
         
         customLoadingIndicator(text: "불러오는 중...", animated: true)
-        
+        loadingData()
+    }
+    
+    @objc func refreshControl(_ sender: UIRefreshControl) {
+        loadingData(); sender.endRefreshing()
+    }
+    
+    func loadingData() {
+        /// 데이터 삭제
+        VisitObject = VisitData()
         /// ReStore Visit 요청
         requestReStoreVisit(store_id: store_id, limit: 5) { object, status in
             
@@ -190,17 +202,11 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             cell.storeNameEng_label.text = data.store_name_eng
             cell.storeName_label.text = data.store_name
             cell.storeTel_label.text = "Tel. \(data.store_tel)"
-            cell.storeCounting_label.text = "\(translation("거래처 수")) \(data.account_counting) ∙ \(translation("전체상품 수")) \(data.item_full_counting) ∙ \(translation("거래처상품 수")) \(data.item_account_counting)"
+            cell.storeCounting_label.text = "\(translation("스토어찜")) \(data.account_counting) ∙ \(translation("전체상품 수")) \(data.item_full_counting) ∙ \(translation("거래처상품 수")) \(data.item_account_counting)"
             cell.storeTag_label.isHidden = true//(data.store_tag.count == 0)
             data.store_tag.forEach { store_tag in cell.storeTag_label.text!.append("#\(store_tag) ") }
             
-            if data.store_favorites.contains(StoreObject.store_id) {
-                cell.following_view.layer.borderColor = UIColor.H_8CD26B.cgColor
-                cell.following_view.layer.borderWidth = 1
-            } else {
-                cell.following_view.layer.borderColor = UIColor.clear.cgColor
-                cell.following_view.layer.borderWidth = .zero
-            }
+            cell.following_img.isHidden = !data.store_favorites.contains(StoreObject.store_id)
             cell.following_btn.addTarget(self, action: #selector(following_btn(_:)), for: .touchUpInside)
             
             return cell
@@ -212,8 +218,8 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
             cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
             
             if indexPath.row == 1 {
-                cell.tiele_label.text = "BEST"
-                cell.GoodsArray = VisitObject.ReGoodsArray_best
+                cell.tiele_label.text = "TOP"
+                cell.GoodsArray = VisitObject.ReGoodsArray_top
             } else if indexPath.row == 2 {
                 cell.tiele_label.text = translation("전체 공개")
                 cell.GoodsArray = VisitObject.GoodsArray_full
@@ -278,14 +284,16 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
         
         if sender.tag == 3 && !(VisitObject.StoreObject.store_favorites.contains(StoreObject.store_id)) {
             customAlert(message: "'스토어찜'을 하셔야 보실 수 있습니다.", time: 1)
+        } else if sender.tag == 1 {
+            let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsTop30VC") as! ReGoodsTop30VC
+            segue.store_id = VisitObject.StoreObject.store_id
+            navigationController?.pushViewController(segue, animated: true)
         } else {
             
             let segue = storyboard?.instantiateViewController(withIdentifier: "ReGoodsVC") as! ReGoodsVC
             segue.detail = true
             segue.store_id = VisitObject.StoreObject.store_id
-            if sender.tag == 1 {
-                segue.disclosure = ""
-            } else if sender.tag == 2 {
+            if sender.tag == 2 {
                 segue.disclosure = "전체 공개"
             } else if sender.tag == 3 {
                 segue.disclosure = "거래처만 공개"
@@ -295,7 +303,7 @@ extension ReStoreVisitVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.row == 1, VisitObject.ReGoodsArray_best.count == 0 {
+        if indexPath.row == 1, VisitObject.ReGoodsArray_top.count == 0 {
             return .zero
         } else {
             return UITableView.automaticDimension

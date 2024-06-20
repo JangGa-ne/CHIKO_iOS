@@ -40,6 +40,10 @@ class ReDeliveryTrackingVC: UIViewController {
         if let linkUrl = URL(string: linkUrl) { WkWebView.load(URLRequest(url: linkUrl)) }
         
         WkWebView.uiDelegate = self; WkWebView.navigationDelegate = self
+        WkWebView.configuration.preferences.javaScriptEnabled = true
+        WkWebView.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
+        
+        WkWebView.configuration.userContentController = WKUserContentController()
         WkWebView.configuration.userContentController.add(self, name: "callBackHandler")
     }
     
@@ -58,6 +62,28 @@ extension ReDeliveryTrackingVC: WKUIDelegate, WKNavigationDelegate, WKScriptMess
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         decisionHandler(.allow)
+    }
+    
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        print("웹뷰가 페이지 로드를 시작합니다.")
+        customLoadingIndicator(text: "불러오는 중...", animated: true)
+    }
+
+    // 웹뷰가 페이지 로드를 완료했을 때 호출되는 메서드
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        print("웹뷰가 페이지 로드를 완료했습니다.")
+        customLoadingIndicator(animated: false)
+    }
+
+    // 웹뷰가 페이지 로드를 실패했을 때 호출되는 메서드
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        print("웹뷰가 페이지 로드를 실패했습니다. 오류: \(error)")
+        customLoadingIndicator(animated: false)
+    }
+    
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        // 중복적으로 새로고침이 일어나지 않도록 처리 필요.
+        webView.reload()
     }
     
     func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {

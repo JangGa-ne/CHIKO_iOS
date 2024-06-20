@@ -266,7 +266,7 @@ class ReLiquidateVC: UIViewController {
         }
     }
     
-    func payment(status: Int) {
+    func payment(status: Int, json: [String: Any] = [:]) {
         
         switch status {
         case 200:
@@ -286,34 +286,47 @@ class ReLiquidateVC: UIViewController {
 //                customLoadingIndicator(animated: false)
 //                customAlert(message: "M.Pay 잔액이 부족합니다.", time: 1); return
 //            }
-            let params: [String: Any] = [
-                "action": "set_goods",
-                "AuthCode": "",
-                "AuthDate": "",
-                "BuyerEmail": MemberObject.member_email,
-                "MID": "",
-                "Amt": String((Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100).replacingOccurrences(of: ".", with: ""),
-                "TID": "",
-                "GoodsName": item_name,
-                "MallReserved": "",
-                "Currency": "CNY",
-                "PayMethod": payment_type,
-                "name": MemberObject.member_name,
-                "mallUserID": "",
-                "MOID": "",
-                "ResultMsg": "success",
-                "ResultCode": "",
-                "weight": 0,
-                "kr_price": total_price,
-                "ch_price": (Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100,
-                "gdre_key": "gdre\(timestamp)",
-                "order_key": "or\(timestamp)",
-                "order_id": MemberObject.member_id,
-                "order_name": MemberObject.member_name,
-                "order_position": MemberObject.member_grade,
-                "order_datetime": String(timestamp),
-                "payment_type": payment_type,
-            ]
+//            [
+//                "action": "set_goods",
+//                "AuthCode": "",
+//                "AuthDate": "",
+//                "BuyerEmail": MemberObject.member_email,
+//                "MID": "",
+//                "Amt": String((Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100).replacingOccurrences(of: ".", with: ""),
+//                "TID": "",
+//                "GoodsName": item_name,
+//                "MallReserved": "",
+//                "Currency": "CNY",
+//                "PayMethod": payment_type,
+//                "name": MemberObject.member_name,
+//                "mallUserID": "",
+//                "MOID": "",
+//                "ResultMsg": "success",
+//                "ResultCode": "",
+//                "weight": 0,
+//                "kr_price": total_price,
+//                "ch_price": (Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100,
+//                "gdre_key": "gdre\(timestamp)",
+//                "order_key": "or\(timestamp)",
+//                "order_id": MemberObject.member_id,
+//                "order_name": MemberObject.member_name,
+//                "order_position": MemberObject.member_grade,
+//                "order_datetime": String(timestamp),
+//                "payment_type": payment_type,
+//            ]
+            
+            var params: [String: Any] = json
+            params["action"] = "set_goods"
+            params["weight"] = 0
+            params["kr_price"] = total_price
+            params["ch_price"] = (Double(total_price)/PaymentObject.exchange_rate*100).rounded()/100
+            params["gdre_key"] = "gdre\(timestamp)"
+            params["order_key"] = "or\(timestamp)"
+            params["order_id"] = MemberObject.member_id
+            params["order_name"] = MemberObject.member_name
+            params["order_position"] = MemberObject.member_grade
+            params["order_datetime"] = String(timestamp)
+            params["payment_type"] = payment_type
             /// Goods Receipt 요청
             dispatchGroup.enter()
             requestReReceipt(action: "set_goods", params: params) { _, _, status in

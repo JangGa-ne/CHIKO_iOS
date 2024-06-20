@@ -41,7 +41,7 @@ class PaymentVC: UIViewController {
         PaymentVCdelegate = self
         
         print("""
-            PayMethod : '\(payment_type)',
+            PayMethod: '\(payment_type)',
             MID: 'buchicocom',
             MerchantKey: '8XdELC2ifRhtdusuTGnFNE/REqIuIRKBWPib6KkzTqNCUDQzflOmDpOCa/6LAfag6PLJOdCKjpALb5Sx/GFWQw==',
             GoodsName: '\(item_name)',
@@ -58,10 +58,12 @@ class PaymentVC: UIViewController {
         testPayment_btn.isHidden = !(MemberObject.member_id == "receo0005")
         testPayment_btn.addTarget(self, action: #selector(testPayment_btn(_:)), for: .touchUpInside)
         
-        WkWebView.uiDelegate = self
-        WkWebView.navigationDelegate = self
+        WkWebView.uiDelegate = self; WkWebView.navigationDelegate = self
         WkWebView.configuration.preferences.javaScriptEnabled = true
         WkWebView.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
+        
+        WkWebView.configuration.userContentController = WKUserContentController()
+        WkWebView.configuration.userContentController.add(self, name: "payResult")
         
         let htmlString = """
         <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -78,7 +80,7 @@ class PaymentVC: UIViewController {
                     // 결제요청 함수
                     innopay.goPay({
                         //// 필수 파라미터
-                        PayMethod : '\(payment_type)',
+                        PayMethod: '\(payment_type)',
                         MID: 'buchicocom',
                         MerchantKey: '8XdELC2ifRhtdusuTGnFNE/REqIuIRKBWPib6KkzTqNCUDQzflOmDpOCa/6LAfag6PLJOdCKjpALb5Sx/GFWQw==',
                         GoodsName: '\(item_name)',
@@ -187,13 +189,18 @@ class PaymentVC: UIViewController {
     }
 }
 
-extension PaymentVC: WKUIDelegate, WKNavigationDelegate {
+extension PaymentVC: WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {
     
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         if navigationAction.targetFrame == nil {
             // 팝업을 허용하기 위해 새 WKWebView를 만듭니다.
             let newWebView = WKWebView(frame: self.WkWebView.bounds, configuration: configuration)
             newWebView.navigationDelegate = self
+            // 기존 메시지 핸들러가 있는지 확인하고 제거
+            let userContentController = newWebView.configuration.userContentController
+            userContentController.removeScriptMessageHandler(forName: "payResult")
+            // 새 메시지 핸들러 추가
+            userContentController.add(self, name: "payResult")
             self.WkWebView.addSubview(newWebView)
             return newWebView
         } else {
@@ -205,9 +212,6 @@ extension PaymentVC: WKUIDelegate, WKNavigationDelegate {
         
         guard let url = navigationAction.request.url else { decisionHandler(.allow); return }
         print(url)
-        
-        let dict = navigationAction.request.allHTTPHeaderFields ?? [:]
-        
         
         if url.scheme != "http" && url.scheme != "https" {
             UIApplication.shared.open(url)
@@ -237,5 +241,26 @@ extension PaymentVC: WKUIDelegate, WKNavigationDelegate {
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         // 중복적으로 새로고침이 일어나지 않도록 처리 필요.
         webView.reload()
+    }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        
+        switch message.name {
+        case "payResult":
+            guard let data = (message.body as? String ?? "").data(using: .utf8) else { return }
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    if self.type == "상품", let delegate = ReLiquidateVCdelegate {
+                        delegate.payment(status: 200, json: json)
+                    } else if self.type == "물류", let delegate = ReDeliveryPaymentVCdelegate {
+                        delegate.payment(status: 200, json: json)
+                    }; navigationController?.popViewController(animated: true)
+                }
+            } catch {
+                customAlert(message: error.localizedDescription, time: 2)
+            }
+        default:
+            break
+        }
     }
 }

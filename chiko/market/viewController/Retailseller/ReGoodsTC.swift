@@ -9,6 +9,7 @@ import UIKit
 
 class ReGoodsTC: UITableViewCell {
     
+    @IBOutlet weak var position_label: UILabel!
     @IBOutlet weak var best_view: UIView!
     @IBOutlet weak var best_label: UILabel!
     @IBOutlet weak var item_img: UIImageView!

@@ -42,7 +42,7 @@ class BuildingData {
 class VisitData {
     
     var StoreObject: StoreData = StoreData()
-    var ReGoodsArray_best: [GoodsData] = []
+    var ReGoodsArray_top: [GoodsData] = []
     var GoodsArray_full: [GoodsData] = []
     var GoodsArray_business: [GoodsData] = []
 }
