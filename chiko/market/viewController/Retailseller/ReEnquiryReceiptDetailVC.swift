@@ -56,6 +56,7 @@ class ReEnquiryReceiptDetailVC: UIViewController {
     @IBOutlet weak var order_v: UIView!
     @IBOutlet weak var order_btn: UIButton!
     @IBOutlet weak var cancel_btn: UIButton!
+    @IBOutlet weak var orderDetail_btn: UIButton!
     
     override func loadView() {
         super.loadView()
@@ -86,6 +87,8 @@ class ReEnquiryReceiptDetailVC: UIViewController {
         
         order_v.isHidden = !(data.data.count == 2)
         order_btn.addTarget(self, action: #selector(order_btn(_:)), for: .touchUpInside)
+        orderDetail_btn.isHidden = !(ReEnquiryReceiptArray.count < 3)
+        orderDetail_btn.addTarget(self, action: #selector(orderDetail_btn(_:)), for: .touchUpInside)
     }
     
     @objc func order_btn(_ sender: UIButton) {
@@ -112,6 +115,16 @@ class ReEnquiryReceiptDetailVC: UIViewController {
         } else {
             customAlert(message: "현재 주문할 수 없습니다.\n나중에 다시시도 하세요.", time: 1)
         }
+    }
+    
+    @objc func orderDetail_btn(_ sender: UIButton) {
+        
+        guard let data = ReEnquiryReceiptArray.first?.data.first, data.attached_imgs.count > 0 else { return }
+        
+//        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+//        segue.action = "normal"
+//        segue.OrderObject = data
+//        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     func loadingData() {
@@ -154,6 +167,27 @@ class ReEnquiryReceiptDetailVC: UIViewController {
                 /// Push 요청
                 dispatchGroup.enter()
                 requestPush(params: params) { _ in
+                    dispatchGroup.leave()
+                }
+                
+                let params2: [String: Any] = [
+                    "content": "주문 접수됨, 주문내역에서 상세정보 확인할 수 있습니다.\n (물류비는 추후 반영 후 결제요청 예정)",
+                    "direction": "touser",
+                    "read_or_not": "false",
+                    "user_id": MemberObject.member_id,
+                    "store_id": StoreObject.store_id,
+                    "board_index": board_index,
+                ]
+                /// ReEnquiry Receipt 요청
+                dispatchGroup.enter()
+                requestReEnquiryReceipt(parameters: params2) { array, status in
+                    
+                    delegate.ReEnquiryReceiptArray = array
+                    delegate.tableView.reloadData()
+                    
+                    self.ReEnquiryReceiptArray = array.filter { $0.timestamp == self.enquiry_time }
+                    self.orderDetail_btn.isHidden = !(self.ReEnquiryReceiptArray.count > 3)
+                    
                     dispatchGroup.leave()
                 }
             }
@@ -247,7 +281,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         switch true {
-        case data.direction == "touser":
+        case data.direction == "touser", content.contains("관리자로 부터"):
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC1", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.comment_v.layer.cornerRadius = 15
@@ -357,7 +391,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.datetimeReadorNot_label.text = data.read_or_not ? "\(datetime) ∙ \(read_or_not)" : datetime
             
             return cell
-        case data.direction == "tomanager":
+        case data.direction == "tomanager", content.contains("결제완료"):
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC2", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.comment_v.layer.cornerRadius = 15
@@ -371,8 +405,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC3", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.labels.forEach { label in label.text = translation(label.text!) }
-            
-            
+            cell.orderDetail_btn.tag = indexPath.row+1; cell.orderDetail_btn.addTarget(self, action: #selector(orderDetail_btn(_:)), for: .touchUpInside)
             
             return cell
         case data.direction == "touser", content.contains("물류비"):

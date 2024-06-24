@@ -282,7 +282,7 @@ extension ReOrderDetailVC: UITableViewDelegate, UITableViewDataSource {
     @objc func deliveryTracking_btn(_ sender: UIButton) {
         
         let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryTrackingVC") as! ReDeliveryTrackingVC
-        segue.linkUrl = "https://www.sf-international.com/kr/ko/dynamic_function/waybill/#search/bill-number/"+OrderObject.delivery_tracking_num
+        segue.linkUrl = "https://global.cainiao.com/newDetail.htm?mailNoList="+OrderObject.delivery_tracking_num
         navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
