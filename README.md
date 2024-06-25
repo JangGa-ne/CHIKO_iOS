@@ -2,6 +2,10 @@
 
 ![KakaoTalk_Photo_2024-06-19-15-21-33](https://github.com/JangGa-ne/CHIKO_iOS/assets/147118268/fbe8b950-2670-4c30-834b-c1277e6f4f03)
 
+<h3>240625</h3>
+<p>영수증 주문요청 디테일 주문내역 확인 기능 작업</p>
+<p>get_receipt_order_detail</p>
+
 <h3>240624</h3>
 <p>영수증 주문요청 오류 수정 및 보완</p>
 

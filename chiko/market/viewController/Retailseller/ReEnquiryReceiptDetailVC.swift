@@ -42,6 +42,12 @@ class ReEnquiryReceiptDetailVC: UIViewController {
     var enquiry_time: String = ""
     var ReEnquiryReceiptArray: [(store_name: String, summary_address: String, timestamp: String, data: [ReEnquiryReceiptData])] = []
     
+    var action: String = "receipt"
+    var OrderObject: ReOrderData = ReOrderData()
+    
+    var delivery_price_zero: Bool = false
+    var delivery_total_price: Int = 0
+    
     @IBOutlet var labels: [UILabel]!
     @IBOutlet var buttons: [UIButton]!
     
@@ -56,7 +62,6 @@ class ReEnquiryReceiptDetailVC: UIViewController {
     @IBOutlet weak var order_v: UIView!
     @IBOutlet weak var order_btn: UIButton!
     @IBOutlet weak var cancel_btn: UIButton!
-    @IBOutlet weak var orderDetail_btn: UIButton!
     
     override func loadView() {
         super.loadView()
@@ -87,8 +92,10 @@ class ReEnquiryReceiptDetailVC: UIViewController {
         
         order_v.isHidden = !(data.data.count == 2)
         order_btn.addTarget(self, action: #selector(order_btn(_:)), for: .touchUpInside)
-        orderDetail_btn.isHidden = !(ReEnquiryReceiptArray.count < 3)
-        orderDetail_btn.addTarget(self, action: #selector(orderDetail_btn(_:)), for: .touchUpInside)
+        
+        if ReEnquiryReceiptArray.first?.data.count ?? 0 > 2 {
+            requestReOrder(action: <#T##String#>, completionHandler: <#T##([ReOrderData], Int) -> Void#>)
+        }
     }
     
     @objc func order_btn(_ sender: UIButton) {
@@ -117,17 +124,7 @@ class ReEnquiryReceiptDetailVC: UIViewController {
         }
     }
     
-    @objc func orderDetail_btn(_ sender: UIButton) {
-        
-        guard let data = ReEnquiryReceiptArray.first?.data.first, data.attached_imgs.count > 0 else { return }
-        
-//        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
-//        segue.action = "normal"
-//        segue.OrderObject = data
-//        navigationController?.pushViewController(segue, animated: true, completion: nil)
-    }
-    
-    func loadingData() {
+    func loadingData(order_key: String) {
         
         customLoadingIndicator(text: "불러오는 중...", animated: true)
         
@@ -145,6 +142,7 @@ class ReEnquiryReceiptDetailVC: UIViewController {
             "request_id": MemberObject.member_id,
             "user_id": "admin",
             "board_index": board_index,
+            "order_key": order_key,
         ]
         /// ReEnquiry Receipt 요청
         dispatchGroup.enter()
@@ -186,7 +184,6 @@ class ReEnquiryReceiptDetailVC: UIViewController {
                     delegate.tableView.reloadData()
                     
                     self.ReEnquiryReceiptArray = array.filter { $0.timestamp == self.enquiry_time }
-                    self.orderDetail_btn.isHidden = !(self.ReEnquiryReceiptArray.count > 3)
                     
                     dispatchGroup.leave()
                 }
@@ -258,7 +255,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let data = ReEnquiryReceiptArray.first?.data, data.count > 1 {
-            return data.count-1
+            return data.count >= 4 ? 4 : data.count-1
         } else {
             return .zero
         }
@@ -266,7 +263,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let data = ReEnquiryReceiptArray.first?.data[indexPath.row+1] else { return UITableViewCell() }
+        guard let data = ReEnquiryReceiptArray.first?.data[indexPath.row+1 >= 4 ? indexPath.row : indexPath.row+1] else { return UITableViewCell() }
         let content = data.content.replacingOccurrences(of: " ", with: "")
         var datetime: String = ""
         let read_or_not = data.read_or_not ? translation("읽음") : ""
@@ -281,7 +278,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         switch true {
-        case data.direction == "touser", content.contains("관리자로 부터"):
+        case data.direction == "touser" && indexPath.row == 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC1", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.comment_v.layer.cornerRadius = 15
@@ -391,7 +388,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.datetimeReadorNot_label.text = data.read_or_not ? "\(datetime) ∙ \(read_or_not)" : datetime
             
             return cell
-        case data.direction == "tomanager", content.contains("결제완료"):
+        case data.direction == "tomanager" && indexPath.row == 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC2", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.comment_v.layer.cornerRadius = 15
@@ -400,7 +397,7 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.datetimeReadorNot_label.text = data.read_or_not ? "\(read_or_not) ∙ \(datetime)" : datetime
             
             return cell
-        case data.direction == "touser", content.contains("접수됨"):
+        case data.direction == "touser" && indexPath.row == 2:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC3", for: indexPath) as! ReEnquiryReceiptDetailTC
             
@@ -408,22 +405,64 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             cell.orderDetail_btn.tag = indexPath.row+1; cell.orderDetail_btn.addTarget(self, action: #selector(orderDetail_btn(_:)), for: .touchUpInside)
             
             return cell
-        case data.direction == "touser", content.contains("물류비"):
+        case data.direction == "touser" && indexPath.row == 3:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC4", for: indexPath) as! ReEnquiryReceiptDetailTC
             
-//            cell.deliveryPayment_v.isHidden = !((data.order_state == "상품준비중") || (OrderObject.order_state == "배송준비중" && OrderObject.ch_total_delivery_price == 0.0))
-////            cell.deliveryPayment_btn.isHidden = delivery_price_zero && (OrderObject.order_state != "배송준비중")
-//            cell.deliveryPayment_btn.isHidden = (OrderObject.order_state != "배송준비중")
-//            cell.deliveryPayment_btn.setTitle(translation("물류비 결제하기"), for: .normal)
-//            cell.deliveryPayment_btn.tag = delivery_total_price; cell.deliveryPayment_btn.addTarget(self, action: #selector(deliveryPayment_btn(_:)), for: .touchUpInside)
-//            cell.deliveryReceipt_v.isHidden = !cell.deliveryPayment_v.isHidden
-//            cell.deliveryTracking_btn.tag = indexPath.row; cell.deliveryTracking_btn.addTarget(self, action: #selector(deliveryTracking_btn(_:)), for: .touchUpInside)
-//            cell.deliveryReceipt_btn.tag = indexPath.row; cell.deliveryReceipt_btn.addTarget(self, action: #selector(deliveryReceipt_btn(_:)), for: .touchUpInside)
+            cell.labels.forEach { label in
+                if label.text!.contains("상품 입고 후의 검수를") {
+                    label.text = translation("상품 입고 후의 검수를 거쳐 물류비가 적용될 예정입니다.\n물류비 미납 시 상품은 배송되지 않으며, 알림이 공지된 후 일정 기간 내에 결제가 이루어지지 않을 경우 폐기될 수 있습니다.")
+                } else {
+                    label.text = translation(label.text!)
+                }
+            }
+            cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+            
+            cell.deliveryPayment_v.isHidden = !((OrderObject.order_state == "상품준비중") || (OrderObject.order_state == "배송준비중" && OrderObject.ch_total_delivery_price == 0.0))
+//            cell.deliveryPayment_btn.isHidden = delivery_price_zero && (OrderObject.order_state != "배송준비중")
+            cell.deliveryPayment_btn.isHidden = (OrderObject.order_state != "배송준비중")
+            cell.deliveryPayment_btn.setTitle(translation("물류비 결제하기"), for: .normal)
+            cell.deliveryPayment_btn.tag = delivery_total_price; cell.deliveryPayment_btn.addTarget(self, action: #selector(deliveryPayment_btn(_:)), for: .touchUpInside)
+            cell.deliveryReceipt_v.isHidden = !cell.deliveryPayment_v.isHidden
+            cell.deliveryTracking_btn.tag = indexPath.row; cell.deliveryTracking_btn.addTarget(self, action: #selector(deliveryTracking_btn(_:)), for: .touchUpInside)
+            cell.deliveryReceipt_btn.tag = indexPath.row; cell.deliveryReceipt_btn.addTarget(self, action: #selector(deliveryReceipt_btn(_:)), for: .touchUpInside)
             
             return cell
         default:
             return UITableViewCell()
         }
+    }
+    
+    @objc func orderDetail_btn(_ sender: UIButton) {
+        
+        guard let data = ReEnquiryReceiptArray.first?.data.first, data.attached_imgs.count > 0 else { return }
+        
+//        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+//        segue.action = "normal"
+//        segue.OrderObject = data
+//        navigationController?.pushViewController(segue, animated: true, completion: nil)
+    }
+    
+    @objc func deliveryPayment_btn(_ sender: UIButton) {
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryPaymentVC") as! ReDeliveryPaymentVC
+        segue.action = action
+        segue.OrderObject = OrderObject
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
+    }
+    
+    @objc func deliveryTracking_btn(_ sender: UIButton) {
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryTrackingVC") as! ReDeliveryTrackingVC
+        segue.linkUrl = "https://global.cainiao.com/newDetail.htm?mailNoList="+OrderObject.delivery_tracking_num
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
+    }
+    
+    @objc func deliveryReceipt_btn(_ sender: UIButton) {
+        
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReDeliveryPaymentVC") as! ReDeliveryPaymentVC
+        segue.action = action
+        segue.OrderObject = OrderObject
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }

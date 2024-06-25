@@ -350,7 +350,7 @@ class ReLiquidateVC: UIViewController {
                         if self.receipt_mode {
                             self.navigationController?.popViewController(animated: true, completion: {
                                 if let delegate = ReEnquiryReceiptDetailVCdelegate {
-                                    delegate.loadingData()
+                                    delegate.loadingData(order_key: "or\(timestamp)")
                                 }
                             })
                         } else {

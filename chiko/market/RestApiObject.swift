@@ -625,7 +625,7 @@ class ReEnquiryReceiptData {
     var requested_store_name: String = ""
     var summary_address: String = ""
     var time: String = ""
-    
+    var order_key: String = ""
     var order_item: [(
         explain: String,
         item_name: String,
@@ -633,8 +633,8 @@ class ReEnquiryReceiptData {
         item_option: [ItemOptionData],
         item_total_price: Int
     )] = []
-    var upload_attached_imgs: [(file_name: String, file_data: Data, file_size: Int)] = []
     
+    var upload_attached_imgs: [(file_name: String, file_data: Data, file_size: Int)] = []
     var upload_files: [(field_name: String, file_name: String, file_data: Data, file_size: Int)] = []
 }
 
@@ -650,6 +650,7 @@ func setReEnquiryReceipt(enquiryReceiptDict: [String: Any]) -> ReEnquiryReceiptD
     enquiryReceiptValue.requested_store_name = enquiryReceiptDict["requested_store_name"] as? String ?? ""
     enquiryReceiptValue.summary_address = enquiryReceiptDict["summary_address"] as? String ?? ""
     enquiryReceiptValue.time = enquiryReceiptDict["time"] as? String ?? ""
+    enquiryReceiptValue.order_key = enquiryReceiptDict["order_key"] as? String ?? ""
     (enquiryReceiptDict["order_item"] as? Array<[String: Any]> ?? []).forEach { dict in
         var itemOptionArray: [ItemOptionData] = []
         (dict["item_option"] as? Array<[String: Any]> ?? []).forEach { dict in
