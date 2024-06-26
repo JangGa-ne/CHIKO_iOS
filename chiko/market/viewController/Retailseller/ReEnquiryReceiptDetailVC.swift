@@ -42,7 +42,7 @@ class ReEnquiryReceiptDetailVC: UIViewController {
     var enquiry_time: String = ""
     var ReEnquiryReceiptArray: [(store_name: String, summary_address: String, timestamp: String, data: [ReEnquiryReceiptData])] = []
     
-    var action: String = "receipt"
+    var action: String = "receipt_detail"
     var OrderObject: ReOrderData = ReOrderData()
     
     var delivery_price_zero: Bool = false
@@ -93,8 +93,10 @@ class ReEnquiryReceiptDetailVC: UIViewController {
         order_v.isHidden = !(data.data.count == 2)
         order_btn.addTarget(self, action: #selector(order_btn(_:)), for: .touchUpInside)
         
-        if ReEnquiryReceiptArray.first?.data.count ?? 0 > 2 {
-            requestReOrder(action: <#T##String#>, completionHandler: <#T##([ReOrderData], Int) -> Void#>)
+        if ReEnquiryReceiptArray.first?.data.count ?? 0 > 2, let order_key = ReEnquiryReceiptArray.first?.data[2].order_key {
+            requestReOrderDetail(action: action, order_key: order_key) { object, status in
+                self.OrderObject = object ?? ReOrderData(); self.tableView.reloadData()
+            }
         }
     }
     
@@ -187,6 +189,16 @@ class ReEnquiryReceiptDetailVC: UIViewController {
                     
                     dispatchGroup.leave()
                 }
+                
+                dispatchGroup.enter()
+                if array.first?.data.count ?? 0 > 2, let order_key = array.first?.data[2].order_key {
+                    /// ReEnquiry OrderDetail 요청
+                    requestReOrderDetail(action: self.action, order_key: order_key) { object, status in
+                        self.OrderObject = object ?? ReOrderData(); dispatchGroup.leave()
+                    }
+                } else {
+                    dispatchGroup.leave()
+                }
             }
             
             dispatchGroup.leave()
@@ -264,7 +276,6 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let data = ReEnquiryReceiptArray.first?.data[indexPath.row+1 >= 4 ? indexPath.row : indexPath.row+1] else { return UITableViewCell() }
-        let content = data.content.replacingOccurrences(of: " ", with: "")
         var datetime: String = ""
         let read_or_not = data.read_or_not ? translation("읽음") : ""
         
@@ -402,7 +413,8 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ReEnquiryReceiptDetailTC3", for: indexPath) as! ReEnquiryReceiptDetailTC
             
             cell.labels.forEach { label in label.text = translation(label.text!) }
-            cell.orderDetail_btn.tag = indexPath.row+1; cell.orderDetail_btn.addTarget(self, action: #selector(orderDetail_btn(_:)), for: .touchUpInside)
+            cell.buttons.forEach { btn in btn.setTitle(translation(btn.title(for: .normal)), for: .normal) }
+            cell.orderDetail_btn.addTarget(self, action: #selector(orderDetail_btn(_:)), for: .touchUpInside)
             
             return cell
         case data.direction == "touser" && indexPath.row == 3:
@@ -435,12 +447,10 @@ extension ReEnquiryReceiptDetailVC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func orderDetail_btn(_ sender: UIButton) {
         
-        guard let data = ReEnquiryReceiptArray.first?.data.first, data.attached_imgs.count > 0 else { return }
-        
-//        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
-//        segue.action = "normal"
-//        segue.OrderObject = data
-//        navigationController?.pushViewController(segue, animated: true, completion: nil)
+        let segue = storyboard?.instantiateViewController(withIdentifier: "ReOrderDetailVC") as! ReOrderDetailVC
+        segue.action = "receipt"
+        segue.OrderObject = OrderObject
+        navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
     
     @objc func deliveryPayment_btn(_ sender: UIButton) {

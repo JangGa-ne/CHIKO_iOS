@@ -52,7 +52,7 @@ func requestReOrder(action: String, completionHandler: @escaping ([ReOrderData],
     }
 }
 
-func requestReOrderDetail(action: String, completionHandler: @escaping (ReOrderData?, Int) -> Void) {
+func requestReOrderDetail(action: String, order_key: String = "", completionHandler: @escaping (ReOrderData?, Int) -> Void) {
     
     var params: Parameters = [
         "store_id": StoreObject.store_id,
@@ -64,17 +64,16 @@ func requestReOrderDetail(action: String, completionHandler: @escaping (ReOrderD
         params["action"] = "get_enquiry_order"
     } else if action == "receipt_detail" {
         params["action"] = "get_enquiry_order_detail"
+        params["order_key"] = order_key
     }
-    
-    var ReOrderObject: ReOrderData = ReOrderData()
+    print(params as Any)
     /// x-www-form-urlencoded
     AF.request(requestUrl+"/order", method: .post, parameters: params, encoding: JSONEncoding.default).responseData { response in
         do {
             if let responseJson = try JSONSerialization.jsonObject(with: response.data ?? Data()) as? [String: Any] {
-//                print(responseJson)
+                print(responseJson)
                 if let dict = responseJson["data"] as? [String: Any] {
-                    
-                    completionHandler(ReOrderObject, 200)
+                    completionHandler(setReOrder(orderDict: dict), 200)
                 } else {
                     completionHandler(nil, 204)
                 }
