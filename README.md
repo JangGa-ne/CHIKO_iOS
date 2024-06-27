@@ -2,6 +2,10 @@
 
 ![KakaoTalk_Photo_2024-06-19-15-21-33](https://github.com/JangGa-ne/CHIKO_iOS/assets/147118268/fbe8b950-2670-4c30-834b-c1277e6f4f03)
 
+<h3>240627</h3>
+<p>관리자 미리보기 구성중</p>
+<p>회원가입 오류 수정</p>
+
 <h3>240626</h3>
 <p>영수증 주문요청 디테일 페이지 및 데이터 작업</p>
 <p>get_receipt_order_detail 서버 처리</p>

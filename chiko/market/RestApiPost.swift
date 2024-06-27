@@ -78,7 +78,7 @@ func requestSignUp(completionHandler: @escaping ((Int) -> Void)) {
     
     let timestamp: Int64 = setGMTUnixTimestamp()
     var params: Parameters = [
-        "action": "member_register"
+        "action": "register"
     ]
     /// member
     params["device_info"] = device_info

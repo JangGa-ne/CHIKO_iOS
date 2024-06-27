@@ -24,6 +24,7 @@
 		C20D37C02AFB22DD00E8B7B0 /* ReGoodsTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D37BF2AFB22DD00E8B7B0 /* ReGoodsTC.swift */; };
 		C21085802C042D7700A285D6 /* ReChatbotVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C210857F2C042D7700A285D6 /* ReChatbotVC.swift */; };
 		C21085822C046FF800A285D6 /* WhChatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21085812C046FF800A285D6 /* WhChatVC.swift */; };
+		C214B3372C2D4C5200DA1790 /* MaHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C214B3362C2D4C5200DA1790 /* MaHomeVC.swift */; };
 		C2155CD82AF0F59A008B21F2 /* ReMainTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2155CD72AF0F59A008B21F2 /* ReMainTBC.swift */; };
 		C2155CDA2AF0F612008B21F2 /* ReHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2155CD92AF0F612008B21F2 /* ReHomeVC.swift */; };
 		C216046E2BEA230E000EAB52 /* WithdrawalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C216046D2BEA230E000EAB52 /* WithdrawalVC.swift */; };
@@ -133,6 +134,7 @@
 		C20D37BF2AFB22DD00E8B7B0 /* ReGoodsTC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReGoodsTC.swift; sourceTree = "<group>"; };
 		C210857F2C042D7700A285D6 /* ReChatbotVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReChatbotVC.swift; sourceTree = "<group>"; };
 		C21085812C046FF800A285D6 /* WhChatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhChatVC.swift; sourceTree = "<group>"; };
+		C214B3362C2D4C5200DA1790 /* MaHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaHomeVC.swift; sourceTree = "<group>"; };
 		C2155CD72AF0F59A008B21F2 /* ReMainTBC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReMainTBC.swift; sourceTree = "<group>"; };
 		C2155CD92AF0F612008B21F2 /* ReHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReHomeVC.swift; sourceTree = "<group>"; };
 		C216046D2BEA230E000EAB52 /* WithdrawalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithdrawalVC.swift; sourceTree = "<group>"; };
@@ -275,6 +277,14 @@
 				C23C6E652B9955C000183D71 /* Payment.swift */,
 			);
 			path = RequestPost;
+			sourceTree = "<group>";
+		};
+		C214B3352C2D4C2900DA1790 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				C214B3362C2D4C5200DA1790 /* MaHomeVC.swift */,
+			);
+			path = Manager;
 			sourceTree = "<group>";
 		};
 		C218741C2B18766F0062CA4D /* Retailseller */ = {
@@ -439,6 +449,7 @@
 				C236CE5D2B2482F600896BC3 /* Common */,
 				C218741C2B18766F0062CA4D /* Retailseller */,
 				C218741D2B1876890062CA4D /* Wholesales */,
+				C214B3352C2D4C2900DA1790 /* Manager */,
 				C24602D22C002A6600823388 /* aaa.html */,
 			);
 			path = viewController;
@@ -627,6 +638,7 @@
 				C21BB6B32B69F08200A38CFC /* CalendarVC.swift in Sources */,
 				C22BD6CD2B7CC72400436B9D /* ReDeliveryDetailVC.swift in Sources */,
 				C216046E2BEA230E000EAB52 /* WithdrawalVC.swift in Sources */,
+				C214B3372C2D4C5200DA1790 /* MaHomeVC.swift in Sources */,
 				C2E547F12B1D639C00A19EAF /* WhGoodsUploadTC.swift in Sources */,
 				C2C338CF2B61FC570064A545 /* TagVC.swift in Sources */,
 				C2B2895F2B1735C90078EC6E /* WaitingVC.swift in Sources */,
@@ -829,7 +841,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = market/market.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = UPXJ67DYPF;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -848,7 +860,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DDEBUG -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.chiko.market1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -870,7 +882,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = market/market.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = UPXJ67DYPF;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -889,7 +901,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DDEBUG -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.chiko.market1;
 				PRODUCT_NAME = "$(TARGET_NAME)";

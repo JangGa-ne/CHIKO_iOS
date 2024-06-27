@@ -180,7 +180,7 @@ class SignInVC: UIViewController {
                 dispatchGroup.enter()
                 requestSignIn { status in
                     
-                    if status == 200 {
+                    if status == 200, MemberObject.member_id != "admin" {
                         /// Notice 요청
                         dispatchGroup.enter()
                         requestNotice { status in
@@ -226,7 +226,9 @@ class SignInVC: UIViewController {
 //                        /// 매장선택
 //                        self.segueViewController(identifier: "ChoiceStoreVC")
                         
-                        if MemberObject.member_type == "retailseller" {
+                        if MemberObject.member_id == "admin" {
+                            self.segueViewController(identifier: "MaHomeVC")
+                        } else if MemberObject.member_type == "retailseller" {
                             if MemberObject.member_grade == "employee" && (MemberObject.waiting_step == 0 || MemberObject.waiting_step == 1) {
                                 if push_type == "member_register" { MemberObject.waiting_step = 1 }
                                 self.segueViewController(identifier: "WaitingVC")
