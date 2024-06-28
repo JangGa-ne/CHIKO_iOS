@@ -57,6 +57,7 @@ var WhOrderArray: [WhOrderData] = []
 
 var WaitingListener: ListenerRegistration? = nil
 var ChatsListener: ListenerRegistration? = nil
+var AdminListener: ListenerRegistration? = nil
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

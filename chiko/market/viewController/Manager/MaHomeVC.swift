@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 class MaHomeCC: UICollectionViewCell {
     
@@ -34,7 +35,13 @@ class MaHomeVC: UIViewController {
         collectionView.contentInset = UIEdgeInsets(top: 10, left: 20, bottom: 20, right: 20)
         collectionView.delegate = self; collectionView.dataSource = self
         
-        requestExchangeRate { _ in self.collectionView.reloadItems(at: [IndexPath(row: 0, section: 1)]) }
+        AdminListener = Firestore.firestore().collection("admin_data").document("price_info").addSnapshotListener { docRef, error in
+            
+            let dict: [String: Any] = docRef?.data() ?? [:]
+            PaymentObject = setPayment(paymentDict: dict)
+            
+            self.collectionView.reloadSections(IndexSet(integer: 1))
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -47,7 +54,7 @@ class MaHomeVC: UIViewController {
 extension MaHomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -63,7 +70,6 @@ extension MaHomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         
         if indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MaHomeCC1", for: indexPath) as! MaHomeCC
@@ -95,16 +101,21 @@ extension MaHomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        if indexPath.section == 1 {
+            
+        } else if indexPath.section == 2 {
+            segueViewController(identifier: "MaStoreVC")
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         if indexPath.section == 0 {
-            return CGSize(width: UIScreen.main.bounds.width-40, height: 60)
+            return CGSize(width: UIScreen.main.bounds.width-40, height: 70)
         } else if indexPath.section == 1 {
-            return CGSize(width: UIScreen.main.bounds.width/2-30, height: UIScreen.main.bounds.width/2-30)
+            return CGSize(width: UIScreen.main.bounds.width/2-30, height: UIScreen.main.bounds.width/2-80)
         } else if indexPath.section == 2 {
-            return .zero
+            return CGSize(width: UIScreen.main.bounds.width-40, height: 90)
         } else {
             return .zero
         }

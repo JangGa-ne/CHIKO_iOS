@@ -84,6 +84,7 @@ class SignInVC: UIViewController {
         /// 데이터 삭제
         WaitingListener = nil
         ChatsListener = nil
+        AdminListener = nil
         /// Common
         MemberObject_signup = MemberData()
         StoreObject_signup = StoreData()

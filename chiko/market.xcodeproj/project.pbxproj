@@ -75,6 +75,7 @@
 		C28111992BB6725D0034A0E0 /* SettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28111982BB6725D0034A0E0 /* SettingVC.swift */; };
 		C28F55232BD8B90E00CAD468 /* VersionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28F55222BD8B90E00CAD468 /* VersionVC.swift */; };
 		C28FED0C2BFC61880003118C /* CertificationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28FED0B2BFC61880003118C /* CertificationVC.swift */; };
+		C2900B812C2E58BB008E5D6F /* MaStoreVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2900B802C2E58BB008E5D6F /* MaStoreVC.swift */; };
 		C290705B2B05A0740097AA74 /* RestApiPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290705A2B05A0740097AA74 /* RestApiPost.swift */; };
 		C290705E2B05A9F60097AA74 /* ReBasketVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290705D2B05A9F60097AA74 /* ReBasketVC.swift */; };
 		C29292C22B2754CF00DBC9D3 /* ReGoodsFilterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29292C12B2754CF00DBC9D3 /* ReGoodsFilterVC.swift */; };
@@ -188,6 +189,7 @@
 		C28111982BB6725D0034A0E0 /* SettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingVC.swift; sourceTree = "<group>"; };
 		C28F55222BD8B90E00CAD468 /* VersionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionVC.swift; sourceTree = "<group>"; };
 		C28FED0B2BFC61880003118C /* CertificationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificationVC.swift; sourceTree = "<group>"; };
+		C2900B802C2E58BB008E5D6F /* MaStoreVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaStoreVC.swift; sourceTree = "<group>"; };
 		C290705A2B05A0740097AA74 /* RestApiPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestApiPost.swift; sourceTree = "<group>"; };
 		C290705D2B05A9F60097AA74 /* ReBasketVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReBasketVC.swift; sourceTree = "<group>"; };
 		C29292C12B2754CF00DBC9D3 /* ReGoodsFilterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReGoodsFilterVC.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 			isa = PBXGroup;
 			children = (
 				C214B3362C2D4C5200DA1790 /* MaHomeVC.swift */,
+				C2900B802C2E58BB008E5D6F /* MaStoreVC.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -593,6 +596,7 @@
 				C2C971D92ADCD09600827DA0 /* s_vcNavigate.swift in Sources */,
 				C2C971E42ADD067200827DA0 /* UISegmentedControlView.swift in Sources */,
 				C2262EC52B730DDC0059B8B5 /* s_animation.swift in Sources */,
+				C2900B812C2E58BB008E5D6F /* MaStoreVC.swift in Sources */,
 				C20905D82B85A3EF00DEB5E5 /* ReEnquiryReceiptDetailVC.swift in Sources */,
 				C2C971E62ADD1B3000827DA0 /* SignInVC.swift in Sources */,
 				C2A654122AFB1E16009BE424 /* ReGoodsVC.swift in Sources */,
