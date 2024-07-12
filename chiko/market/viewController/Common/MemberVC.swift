@@ -8,6 +8,7 @@
 /// 번역완료
 
 import UIKit
+import PanModal
 
 class MemberVC: UIViewController {
     
@@ -318,6 +319,17 @@ class MemberVC: UIViewController {
         if MemberObject.member_type == "retailseller" && MemberObject.upload_member_idcard_img.count == 0 {
             customAlert(message: "증빙 서류 미제출 항목이 있습니다.", time: 1); return
         }
+        
+        if MemberObject.member_pw2 != "" {
+            let segue = storyboard?.instantiateViewController(withIdentifier: "PasswordVC") as! PasswordVC
+            segue.dismissCompletion = { self.postData() }
+            presentPanModal(segue)
+        } else {
+            postData()
+        }
+    }
+    
+    func postData() {
         
         customLoadingIndicator(animated: true)
         

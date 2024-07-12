@@ -10,9 +10,11 @@ import FirebaseFirestore
 
 class MaStoreTC: UITableViewCell {
     
+    @IBOutlet weak var check_img: UIImageView!
     @IBOutlet weak var store_img: UIImageView!
     @IBOutlet weak var storeName_label: UILabel!
     @IBOutlet weak var storeNameEng_label: UILabel!
+    @IBOutlet weak var state_label: UILabel!
     @IBOutlet weak var lineView: UIView!
 }
 
@@ -86,6 +88,16 @@ extension MaStoreVC: UITableViewDelegate, UITableViewDataSource {
         
         cell.storeName_label.text = data.store_name
         cell.storeNameEng_label.text = data.store_name_eng
+        
+        switch data.waiting_step {
+        case -2: cell.state_label.text = "계정정지"
+        case -1: cell.state_label.text = "일시중지"
+        case 0: cell.state_label.text = "심사대기"
+        case 1, 2: cell.state_label.text = "심사승인"
+        case 3: cell.state_label.text = "심사거절"
+        default:
+            break
+        }
         cell.lineView.isHidden = (indexPath.row == StoreArray.count-1)
         
         return cell
@@ -93,6 +105,10 @@ extension MaStoreVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        let cell = tableView.cellForRow(at: indexPath) as! MaStoreTC
         
+        tableView.beginUpdates()
+        cell.check_img.image = cell.check_img.image == UIImage(named: "check_off") ? UIImage(named: "check_on") : UIImage(named: "check_off")
+        tableView.endUpdates()
     }
 }

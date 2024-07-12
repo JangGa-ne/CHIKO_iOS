@@ -447,11 +447,11 @@ func requestReMain(completionHandler: @escaping ((Int) -> Void)) {
                 /// best goods
                 (data["best_item"] as? Array<[String: Any]> ?? []).forEach { dict in
                     /// 데이터 추가
-                    ReGoodsArray_top.append(setGoods(goodsDict: dict))
+                    ReGoodsArray_best.append(setGoods(goodsDict: dict))
                 }
-                if ReStoreArray_best.count+ReGoodsArray_top.count > 0 {
+                if ReStoreArray_best.count+ReGoodsArray_best.count > 0 {
                     ReStoreArray_best.sort { $0.StoreObject.best_position < $1.StoreObject.best_position }
-                    ReGoodsArray_top.sort { $0.item_pullup_time > $1.item_pullup_time }
+                    ReGoodsArray_best.sort { $0.item_pullup_time > $1.item_pullup_time }
                     completionHandler(200)
                 } else {
                     completionHandler(204)
@@ -481,17 +481,17 @@ func requestBestItems(completionHandler: @escaping ((Int) -> Void)) {
                 let data = responseJson["data"] as? [String: Any] ?? [:]
                 let _: [()]? = data.compactMap({ (key: String, value: Any) in
                     let array = data[key] as? Array<[String: Any]> ?? []
-                    var ReGoodsArray_top: [GoodsData] = []
+                    var ReGoodsArray_best: [GoodsData] = []
                     array.forEach { dict in
                         /// 데이터 추가
-                        ReGoodsArray_top.append(setGoods(goodsDict: dict))
+                        ReGoodsArray_best.append(setGoods(goodsDict: dict))
                     }
-                    ReGoodsArray_top.sort { $0.item_pullup_time > $1.item_pullup_time }
+                    ReGoodsArray_best.sort { $0.item_pullup_time > $1.item_pullup_time }
                     /// 데이터 추가
-                    ReGoodsArray_top2.append((title: key, ReGoodsArray_top: ReGoodsArray_top))
+                    ReGoodsArray_best2.append((title: key, ReGoodsArray_best: ReGoodsArray_best))
                 })
-                ReGoodsArray_top2.sort { $0.title < $1.title }
-                completionHandler(ReGoodsArray_top2.count > 0 ? 200 : 204)
+                ReGoodsArray_best2.sort { $0.title < $1.title }
+                completionHandler(ReGoodsArray_best2.count > 0 ? 200 : 204)
             } else {
                 completionHandler(600)
             }
@@ -662,7 +662,7 @@ func requestReStoreVisit(store_id: String, limit: Int = 99999, completionHandler
                 let visitValue = VisitData()
                 visitValue.StoreObject = setStore(storeDict: dict["store"] as? [String: Any] ?? [:])
                 (dict["toplist"] as? Array<[String: Any]>)?.forEach({ bestDict in
-                    visitValue.ReGoodsArray_top.append(setGoods(goodsDict: bestDict))
+                    visitValue.ReGoodsArray_best.append(setGoods(goodsDict: bestDict))
                 })
                 (dict["fulldisclosure"] as? Array<[String: Any]>)?.forEach({ fullDict in
                     visitValue.GoodsArray_full.append(setGoods(goodsDict: fullDict))
@@ -1122,7 +1122,6 @@ func requestVirtual(completionHandler: @escaping ((Int) -> Void)) {
 }
 
 func requestChats(action: String, content: String, completionHandler: @escaping (([ChatsData], Int) -> Void)) {
-    
     
     let params: Parameters = [
         "action": action,

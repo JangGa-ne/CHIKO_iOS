@@ -206,6 +206,8 @@ class WhHomeVC: UIViewController {
     @IBOutlet weak var myPage_btn: UIButton!
     
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var ad_v: UIView!
+    
     @IBOutlet weak var tableView: UITableView!
     
     @IBOutlet weak var goodsUpload_view: UIView!
@@ -218,6 +220,9 @@ class WhHomeVC: UIViewController {
         noticeDot_v.isHidden = notice_read
         notice_btn.addTarget(self, action: #selector(notice_btn(_:)), for: .touchUpInside)
         myPage_btn.addTarget(self, action: #selector(myPage_btn(_:)), for: .touchUpInside)
+        
+        ad_v.isHidden = (MemberObject.member_id != "whceo0005")
+        ad_v.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ad_v(_:))))
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
@@ -242,6 +247,10 @@ class WhHomeVC: UIViewController {
     
     @objc func myPage_btn(_ sender: UIButton) {
         segueViewController(identifier: "WhMyPageVC")
+    }
+    
+    @objc func ad_v(_ sender: UITapGestureRecognizer) {
+        segueViewController(identifier: "WhAdsVC")
     }
     
     @objc func goodsUpload_view(_ sender: UITapGestureRecognizer) {

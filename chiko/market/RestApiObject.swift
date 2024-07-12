@@ -42,7 +42,7 @@ class BuildingData {
 class VisitData {
     
     var StoreObject: StoreData = StoreData()
-    var ReGoodsArray_top: [GoodsData] = []
+    var ReGoodsArray_best: [GoodsData] = []
     var GoodsArray_full: [GoodsData] = []
     var GoodsArray_business: [GoodsData] = []
 }
@@ -55,6 +55,7 @@ class MemberData {
     var member_num: String = ""
     var member_id: String = ""
     var member_pw: String = ""
+    var member_pw2: String = ""
     var member_name: String = ""
     var member_email: String = ""
     var marketing_agree: Bool = false
@@ -95,6 +96,7 @@ func setMember(memberDict: [String: Any]) -> MemberData {
     memberValue.member_name = memberDict["user_name"] as? String ?? ""
     memberValue.member_num = memberDict["user_num"] as? String ?? ""
     memberValue.member_pw = memberDict["user_pw"] as? String ?? ""
+    memberValue.member_pw2 = memberDict["user_pw2"] as? String ?? ""
     memberValue.member_type = memberDict["user_type"] as? String ?? ""
     memberValue.member_idcard_img = memberDict["user_idcard_img"] as? String ?? ""
     memberValue.topics = memberDict["topics"] as? [String: Any] ?? [:]

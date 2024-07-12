@@ -703,7 +703,11 @@ extension WhGoodsUploadTC: UICollectionViewDragDelegate, UICollectionViewDropDel
     
     func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
         guard collectionView.hasActiveDrag else { collectionView.reloadData(); return UICollectionViewDropProposal(operation: .forbidden) }
-        return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        if let destinationIndexPath = destinationIndexPath, destinationIndexPath.section == 1 {
+            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        } else {
+            return UICollectionViewDropProposal(operation: .cancel)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {

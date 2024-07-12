@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F747BED2C3FA76800D1DAF4 /* PasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F747BEC2C3FA76800D1DAF4 /* PasswordVC.swift */; };
+		3F747BEF2C3FA82800D1DAF4 /* WhAdsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F747BEE2C3FA82800D1DAF4 /* WhAdsVC.swift */; };
 		9C98622429C52DED8AE83733 /* Pods_market.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F28EC4E7303736D5AA7FE6BF /* Pods_market.framework */; };
 		C200C71C2B900C3800B76143 /* MPay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C200C71B2B900C3800B76143 /* MPay.swift */; };
 		C20196AA2B33F74E00576CF8 /* ReOrderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20196A92B33F74E00576CF8 /* ReOrderVC.swift */; };
@@ -119,6 +121,8 @@
 
 /* Begin PBXFileReference section */
 		3B14B2DB482A80A53873B165 /* Pods-market.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-market.release.xcconfig"; path = "Target Support Files/Pods-market/Pods-market.release.xcconfig"; sourceTree = "<group>"; };
+		3F747BEC2C3FA76800D1DAF4 /* PasswordVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordVC.swift; sourceTree = "<group>"; };
+		3F747BEE2C3FA82800D1DAF4 /* WhAdsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhAdsVC.swift; sourceTree = "<group>"; };
 		C200C71B2B900C3800B76143 /* MPay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPay.swift; sourceTree = "<group>"; };
 		C20196A92B33F74E00576CF8 /* ReOrderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReOrderVC.swift; sourceTree = "<group>"; };
 		C201C72A2B293B3800C9442E /* ImageSlideVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSlideVC.swift; sourceTree = "<group>"; };
@@ -324,6 +328,7 @@
 			isa = PBXGroup;
 			children = (
 				C2B23BF12B0C38C900C7DA5D /* WhHomeVC.swift */,
+				3F747BEE2C3FA82800D1DAF4 /* WhAdsVC.swift */,
 				C25249F52B43AA8200E882D8 /* WhMyPageVC.swift */,
 				C2CA5DEF2B4549500078CF34 /* WhGoodsVC.swift */,
 				C2E547F02B1D639C00A19EAF /* WhGoodsUploadTC.swift */,
@@ -382,6 +387,7 @@
 				C28F55222BD8B90E00CAD468 /* VersionVC.swift */,
 				C216046D2BEA230E000EAB52 /* WithdrawalVC.swift */,
 				C22E40162BE4A998003F69F7 /* NoticeVC.swift */,
+				3F747BEC2C3FA76800D1DAF4 /* PasswordVC.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -594,6 +600,7 @@
 				C21085802C042D7700A285D6 /* ReChatbotVC.swift in Sources */,
 				C24AA5C02B3044230061B490 /* ReLiquidateDetailVC.swift in Sources */,
 				C2C971D92ADCD09600827DA0 /* s_vcNavigate.swift in Sources */,
+				3F747BED2C3FA76800D1DAF4 /* PasswordVC.swift in Sources */,
 				C2C971E42ADD067200827DA0 /* UISegmentedControlView.swift in Sources */,
 				C2262EC52B730DDC0059B8B5 /* s_animation.swift in Sources */,
 				C2900B812C2E58BB008E5D6F /* MaStoreVC.swift in Sources */,
@@ -687,6 +694,7 @@
 				C2BF86502ADFA3CE00A858A4 /* SignUpStoreVC.swift in Sources */,
 				C232DE242B6CADD20067F66A /* WhNotDeliveryVC.swift in Sources */,
 				C2028E102BAAD53600A25F00 /* WhInventoryVC.swift in Sources */,
+				3F747BEF2C3FA82800D1DAF4 /* WhAdsVC.swift in Sources */,
 				C2979EFF2BEC897E007CD0EA /* VerificationVC.swift in Sources */,
 				C290705E2B05A9F60097AA74 /* ReBasketVC.swift in Sources */,
 				C2C971EB2ADD1C5600827DA0 /* RestApiObject.swift in Sources */,
@@ -853,6 +861,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = CHIKO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "사진을 찍으려면, 카메라 권한을 허용해 주세요.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "2단계 인증을 위해, 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "첨부(프로필, 매장대표사진, 썸네일 등) 해야하는 이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "첨부(프로필, 매장대표사진, 썸네일 등) 해야하는 이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -865,7 +874,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.4;
-				OTHER_SWIFT_FLAGS = "$(inherited) -DDEBUG -D COCOAPODS";
+				OTHER_SWIFT_FLAGS = "$(inherited) -DDEBUG -D COCOAPODS -emit-ir";
 				PRODUCT_BUNDLE_IDENTIFIER = com.chiko.market1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -894,6 +903,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = CHIKO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "사진을 찍으려면, 카메라 권한을 허용해 주세요.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "2단계 인증을 위해, 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "첨부(프로필, 매장대표사진, 썸네일 등) 해야하는 이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "첨부(프로필, 매장대표사진, 썸네일 등) 해야하는 이미지를 가져오려면, 사진 접근 권한을 허용해 주세요.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -906,7 +916,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.4;
-				OTHER_SWIFT_FLAGS = "$(inherited) -DDEBUG -D COCOAPODS";
+				OTHER_SWIFT_FLAGS = "$(inherited) -DDEBUG -D COCOAPODS -emit-ir";
 				PRODUCT_BUNDLE_IDENTIFIER = com.chiko.market1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

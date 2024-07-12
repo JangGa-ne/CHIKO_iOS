@@ -41,12 +41,12 @@ class ReHomeCC: UICollectionViewCell {
 extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if ReGoodsArray_top2[indexpath_section].ReGoodsArray_top.count > 0 { return ReGoodsArray_top2[indexpath_section].ReGoodsArray_top.count } else { return .zero }
+        if ReGoodsArray_best2[indexpath_section].ReGoodsArray_best.count > 0 { return ReGoodsArray_best2[indexpath_section].ReGoodsArray_best.count } else { return .zero }
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        var data = ReGoodsArray_top2[indexpath_section].ReGoodsArray_top[indexPath.row]
+        var data = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[indexPath.row]
         guard let cell = cell as? ReGoodsTC else { return }
         
         if !data.load { data.load = true
@@ -64,7 +64,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let data = ReGoodsArray_top2[indexpath_section].ReGoodsArray_top[indexPath.row]
+        let data = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "ReGoodsTC", for: indexPath) as! ReGoodsTC
         
         if indexPath.row == 0 {
@@ -91,7 +91,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     
     @objc func store_btn(_ sender: UIButton) {
         
-        let data = ReGoodsArray_top2[indexpath_section].ReGoodsArray_top[sender.tag]
+        let data = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[sender.tag]
         let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReStoreVisitVC") as! ReStoreVisitVC
         segue.store_id = data.store_id
         ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true, completion: nil)
@@ -100,7 +100,7 @@ extension ReHomeCC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let segue = ReHomeVCdelegate?.storyboard?.instantiateViewController(withIdentifier: "ReGoodsDetailVC") as! ReGoodsDetailVC
-        segue.GoodsObject = ReGoodsArray_top2[indexpath_section].ReGoodsArray_top[indexPath.row]
+        segue.GoodsObject = ReGoodsArray_best2[indexpath_section].ReGoodsArray_best[indexPath.row]
         ReHomeVCdelegate?.navigationController?.pushViewController(segue, animated: true, completion: nil)
     }
 }
@@ -137,8 +137,8 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if indexpath_section == 0, ReStoreArray_best.count > 0 {
             return ReStoreArray_best.count
-        } else if indexpath_section == 1, ReGoodsArray_top2.count > 0 {
-            return ReGoodsArray_top2.count
+        } else if indexpath_section == 1, ReGoodsArray_best2.count > 0 {
+            return ReGoodsArray_best2.count
         } else {
             return .zero
         }
@@ -205,7 +205,7 @@ extension ReHomeTC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             return cell
         } else if indexpath_section == 1 {
             
-            let data = ReGoodsArray_top2[indexPath.row]
+            let data = ReGoodsArray_best2[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReHomeCC1", for: indexPath) as! ReHomeCC
             cell.indexpath_section = indexPath.row
             cell.viewDidLoad()
@@ -278,7 +278,7 @@ class ReHomeVC: UIViewController {
         
         preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.StoreObject.store_mainphoto_img) })
         preheatImages(urls: ReStoreArray_best.compactMap { URL(string: $0.GoodsObject.item_mainphoto_img) })
-        ReGoodsArray_top2.forEach { data in preheatImages(urls: data.ReGoodsArray_top.compactMap { URL(string: $0.item_mainphoto_img) }) }
+        ReGoodsArray_best2.forEach { data in preheatImages(urls: data.ReGoodsArray_best.compactMap { URL(string: $0.item_mainphoto_img) }) }
         
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
@@ -315,7 +315,7 @@ extension ReHomeVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0, ReStoreArray_best.count > 0 {
             return 1
-        } else if section == 1, ReGoodsArray_top2.count > 0 {
+        } else if section == 1, ReGoodsArray_best2.count > 0 {
             return 1
         } else {
             return .zero

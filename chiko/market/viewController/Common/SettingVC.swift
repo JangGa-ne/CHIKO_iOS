@@ -29,11 +29,11 @@ class SettingVC: UIViewController {
     
     var menus: [(title: String, content: [String])] = [
         (title: "Agreement", content: ["전자상거래 이용약관", "해외구매 이용약관", "개인정보처리방침", "개인 및 법인정보 제3자 제공동의서"]),
-        (title: "Other", content: ["Face ID 인증 사용", "소프트웨어 업데이트"]),
+        (title: "Other", content: ["2단계 인증 사용", "소프트웨어 업데이트"]),
     ]
     var segues: [(String, [String])] = [
         (title: "Agreement", content: ["https://sites.google.com/view/chiko-terms1", "https://sites.google.com/view/chiko-terms2", "https://sites.google.com/view/chiko-terms3", "https://sites.google.com/view/chiko-terms4"]),
-        (title: "Other", content: ["", "VersionVC"]),
+        (title: "Other", content: ["PasswordVC", "VersionVC"]),
     ]
     var topics: [String] = []
     
@@ -210,7 +210,11 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(segue, animated: true, completion: nil)
         } else if indexPath.section == 2 {
             if indexPath.row == 0 {
-                alert(title: "", message: "서비스 점검중 입니다...", style: .alert, time: 1)
+                let segue = storyboard?.instantiateViewController(withIdentifier: "PasswordVC") as! PasswordVC
+                segue.modalPresentationStyle = .overFullScreen
+                segue.delegate = self
+                segue.type = "normal"
+                present(segue, animated: true, completion: nil)
             } else if indexPath.row == 1 {
                 segueViewController(identifier: identifier)
             }

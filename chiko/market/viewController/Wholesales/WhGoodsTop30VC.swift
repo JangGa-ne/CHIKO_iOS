@@ -202,4 +202,12 @@ extension WhGoodsTop30VC: UITableViewDelegate, UITableViewDataSource, UITableVie
             tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 90, right: 0)
         }
     }
+    
+    func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
+        return session.canLoadObjects(ofClass: NSString.self)
+    }
+    
+    func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+        return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
 }

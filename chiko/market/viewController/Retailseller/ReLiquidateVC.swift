@@ -356,7 +356,7 @@ class ReLiquidateVC: UIViewController {
                         } else {
                             self.navigationController?.popViewController(animated: false, completion: {
                                 if let delegate = ReGoodsDetailVCdelegate {
-                                    delegate.segueTabBarController(identifier: "ReMainTBC", idx: 2, animated: false)
+                                    delegate.segueTabBarController(identifier: "ReMainTBC", idx: 3, animated: false)
                                     delegate.segueViewController(identifier: "ReOrderVC")
                                 } else if let delegate = ReBasketVCdelegate {
                                     delegate.segueViewController(identifier: "ReOrderVC")
