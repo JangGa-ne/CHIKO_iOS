@@ -9,7 +9,6 @@
 
 import UIKit
 import WebKit
-import os.log
 
 class PaymentVC: UIViewController {
     

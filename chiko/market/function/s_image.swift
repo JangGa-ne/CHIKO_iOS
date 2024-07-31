@@ -47,8 +47,11 @@ func setKingfisher(imageView: UIImageView, imageUrl: String, placeholder: UIImag
     imageView.contentMode = contentMode
     
     let indicator = UIActivityIndicatorView(style: .gray)
-    indicator.frame = CGRect(x: imageView.bounds.midX-10, y: imageView.bounds.midY-10, width: 20, height: 20)
-    imageView.addSubview(indicator); indicator.startAnimating()
+    imageView.addSubview(indicator)
+    indicator.translatesAutoresizingMaskIntoConstraints = false
+    indicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive = true
+    indicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+    indicator.startAnimating()
     
     if let imageUrl = URL(string: imageUrl) {
         imageView.kf.setImage(with: imageUrl, options: [
@@ -101,8 +104,11 @@ func setImageSlideShew(imageView: ImageSlideshow, imageUrls: [String], cornerRad
     imageView.contentScaleMode = contentMode
     
     let indicator = UIActivityIndicatorView(style: .gray)
-    indicator.frame = CGRect(x: imageView.bounds.midX-10, y: imageView.bounds.midY-10, width: 20, height: 20)
-    imageView.addSubview(indicator); indicator.startAnimating()
+    imageView.addSubview(indicator)
+    indicator.translatesAutoresizingMaskIntoConstraints = false
+    indicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive = true
+    indicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+    indicator.startAnimating()
     
     var inputs: [ImageSource] = []
     imageUrls.forEach { imageUrl in

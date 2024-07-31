@@ -46,6 +46,7 @@ post_install do |installer|
       config.build_settings.delete('CODE_SIGNING_ALLOWED')
       config.build_settings.delete('CODE_SIGNING_REQUIRED')
       config.build_settings['CONFIGURATION_BUILD_DIR'] ='$PODS_CONFIGURATION_BUILD_DIR'
+      config.build_settings["DEVELOPMENT_TEAM"] = "UPXJ67DYPF"
     end
   end
 end

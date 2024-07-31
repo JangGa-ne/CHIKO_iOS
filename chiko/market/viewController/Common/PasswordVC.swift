@@ -70,6 +70,10 @@ class PasswordVC: UIViewController {
             }
         }
         
+        let alert = UIAlertController(title: "canon", message: "", preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "나아가다", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+        
         guard simple_password.count == 6 else { return }
         
         if type == "new" {
