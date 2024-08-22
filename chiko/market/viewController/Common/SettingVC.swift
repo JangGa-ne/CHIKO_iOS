@@ -29,7 +29,7 @@ class SettingVC: UIViewController {
     
     var menus: [(title: String, content: [String])] = [
         (title: "Agreement", content: ["전자상거래 이용약관", "해외구매 이용약관", "개인정보처리방침", "개인 및 법인정보 제3자 제공동의서"]),
-        (title: "Other", content: ["2단계 인증 사용", "소프트웨어 업데이트"]),
+        (title: "Other", content: ["Face ID 및 암호", "소프트웨어 업데이트"]),
     ]
     var segues: [(String, [String])] = [
         (title: "Agreement", content: ["https://sites.google.com/view/chiko-terms1", "https://sites.google.com/view/chiko-terms2", "https://sites.google.com/view/chiko-terms3", "https://sites.google.com/view/chiko-terms4"]),
@@ -54,6 +54,8 @@ class SettingVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        menus[1].content = MemberObject.member_pw2 == "" ? ["Face ID 및 암호", "소프트웨어 업데이트"] : ["Face ID 및 암호 재설정", "소프트웨어 업데이트"]
         
         if StoreObject.store_type == "retailseller" {
             menus.insert((title: "알림", content: ["마케팅 정보", "영수증 주문요청"]), at: 0)
@@ -128,6 +130,7 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.title_label.text = translation(menus[indexPath.section].content[indexPath.row])
+        cell.title_label.textColor = cell.title_label.text!.contains("재설정") ? .systemRed : .black
         if indexPath.section == 0 {
             cell.switch_btn.isHidden = false
             cell.switch_btn.transform = CGAffineTransform(scaleX: 0.6455, y: 0.6455)
@@ -213,8 +216,8 @@ extension SettingVC: UITableViewDelegate, UITableViewDataSource {
                 let segue = storyboard?.instantiateViewController(withIdentifier: "PasswordVC") as! PasswordVC
                 segue.modalPresentationStyle = .overFullScreen
                 segue.delegate = self
-                segue.type = "normal"
-                present(segue, animated: true, completion: nil)
+                segue.type = MemberObject.member_pw2 == "" ? "new" : "normal"
+                navigationController?.pushViewController(segue, animated: true)
             } else if indexPath.row == 1 {
                 segueViewController(identifier: identifier)
             }

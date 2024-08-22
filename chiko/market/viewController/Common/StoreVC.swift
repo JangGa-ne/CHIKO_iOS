@@ -377,7 +377,7 @@ class StoreVC: UIViewController {
         if MemberObject.member_pw2 != "" {
             let segue = storyboard?.instantiateViewController(withIdentifier: "PasswordVC") as! PasswordVC
             segue.dismissCompletion = { self.postData() }
-           presentPanModal(segue)
+            navigationController?.pushViewController(segue, animated: true)
         } else {
             postData()
         }

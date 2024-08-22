@@ -96,12 +96,22 @@ class WaitingVC: UIViewController {
         
         customLoadingIndicator(animated: true)
         
-        let params: [String: Any] = [
-            "action": "edit",
-            "collection_id": "member",
-            "document_id": MemberObject.member_id,
-            "waiting_step": "2",
-        ]
+        var params: [String: Any] = [:]
+        if MemberObject.member_grade == "ceo" {
+            params = [
+                "action": "edit",
+                "collection_id": "store",
+                "document_id": StoreObject.store_id,
+                "waiting_step": "2",
+            ]
+        } else if MemberObject.member_grade == "employee" {
+            params = [
+                "action": "edit",
+                "collection_id": "member",
+                "document_id": MemberObject.member_id,
+                "waiting_step": "2",
+            ]
+        }
         
         requestEditDB(params: params) { status in
             
